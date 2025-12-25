@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-dark">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Command Reference - Hyper-Engineering</title>
+  <meta content="Complete reference for all 6 hyper commands in the Hyper-Engineering plugin." name="description" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="../css/style.css" rel="stylesheet" type="text/css" />
+  <link href="../css/docs.css" rel="stylesheet" type="text/css" />
+  <script src="../js/main.js" type="text/javascript" defer></script>
+</head>
+
+<body>
+  <div class="background-gradient"></div>
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-brand">
+          <span class="logo-icon"><i class="fa-solid fa-bolt"></i></span>
+          <span class="logo-text">HE Docs</span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul>
+            <li><a href="getting-started.html">Installation</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul>
+            <li><a href="agents.html">Agents (4)</a></li>
+            <li><a href="commands.html" class="active">Commands (7)</a></li>
+            <li><a href="skills.html">Skills (3)</a></li>
+            <li><a href="mcp-servers.html">MCP Servers (2)</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="changelog.html">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>On This Page</h3>
+          <ul>
+            <li><a href="#hyper-commands">Hyper Commands (7)</a></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="docs-content">
+      <div class="docs-header">
+        <nav class="breadcrumb">
+          <a href="../index.html">Home</a>
+          <span>/</span>
+          <a href="getting-started.html">Docs</a>
+          <span>/</span>
+          <span>Commands</span>
+        </nav>
+        <button class="mobile-menu-toggle" data-sidebar-toggle>
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
+      <article class="docs-article">
+        <h1><i class="fa-solid fa-terminal color-accent"></i> Command Reference</h1>
+        <p class="lead">
+          The hyper-engineering workflow is seven commands. Research, spec, implement, verify, review—each one orchestrating agents and enforcing human approval gates. Plus a beautiful statusline to keep you informed. Type <code>/hyper-plan</code> and watch 4 research agents launch in parallel while you grab coffee. That's the point: automation that enforces quality instead of skipping it.
+        </p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon"><i class="fa-solid fa-circle-info"></i></div>
+          <div class="callout-content">
+            <h4>Linear Integration Required</h4>
+            <p>
+              These commands integrate with Linear for project management. You'll need the Linear CLI installed and authenticated. Run <code>linear auth</code> to set up your API key. The commands create Linear projects, documents, and issues to track specs and implementation progress.
+            </p>
+          </div>
+        </div>
+
+        <!-- Hyper Commands -->
+        <section id="hyper-commands">
+          <h2><i class="fa-solid fa-bolt"></i> Hyper Commands (7)</h2>
+          <p>These are the seven commands that define the hyper-engineering workflow: Plan your feature, Implement the tasks, Review the code, Verify it works, Initialize your stack, set up your statusline, and opt out if you prefer.</p>
+
+          <div class="command-detail" id="hyper-plan">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-plan</code>
+              <span class="command-type-badge">planning</span>
+            </div>
+            <p class="command-detail-description">
+              Create a comprehensive specification with <strong>two approval gates</strong>—first validating direction after research, then approving the full spec before task creation. Spawns 4 specialized research agents in parallel.
+            </p>
+            <h4>Arguments</h4>
+            <p><code>[feature or requirement description]</code></p>
+            <h4>Workflow</h4>
+            <ol>
+              <li><strong>Clarification (Required)</strong> - Ask 5-7 clarifying questions about scope, success criteria, constraints, timeline, user impact, and dependencies before any research</li>
+              <li><strong>Research (Parallel)</strong> - Launch 4 agents simultaneously in a single message:
+                <ul>
+                  <li><code>repo-research-analyst</code> - Codebase patterns and conventions</li>
+                  <li><code>best-practices-researcher</code> - External best practices via web search</li>
+                  <li><code>framework-docs-researcher</code> - Framework docs via Context7 MCP</li>
+                  <li><code>git-history-analyzer</code> - Git history and code evolution</li>
+                </ul>
+              </li>
+              <li><strong>🚦 Gate 1: Structure Checkpoint</strong> - Present direction summary for early validation:
+                <ul>
+                  <li>Problem summary (2-3 sentences)</li>
+                  <li>Proposed approach (bullet points)</li>
+                  <li>Key technical decisions</li>
+                  <li>Estimated phases (names only)</li>
+                </ul>
+                <em>Wait for approval before writing detailed spec. Saves significant rework.</em>
+              </li>
+              <li><strong>Spec Creation</strong> - Synthesize research into comprehensive spec with:
+                <ul>
+                  <li>Problem statement and proposed solution</li>
+                  <li><strong>Out of Scope</strong> - Explicit exclusions to prevent scope creep</li>
+                  <li>Mermaid architecture diagrams (required)</li>
+                  <li>ASCII UI layouts for frontend work (required)</li>
+                  <li>Implementation phases (3-5 logical phases)</li>
+                  <li>Success criteria and verification requirements</li>
+                  <li><strong>Open Questions</strong> - Must ALL be resolved before approval</li>
+                </ul>
+              </li>
+              <li><strong>Linear Document Creation</strong> - Create Linear project and spec document</li>
+              <li><strong>🚦 Gate 2: Spec Approval</strong> - Set status to "Spec Review" and STOP. Wait for human approval. Do NOT create tasks yet.</li>
+              <li><strong>Iteration (Optional)</strong> - Update spec based on feedback, return to review gate</li>
+              <li><strong>Task Breakdown (After Approval)</strong> - Create Linear issues for each phase with verification sub-tasks and dependencies</li>
+            </ol>
+            <div class="card-code-block">
+              <pre><code>/hyper-plan "Add user authentication with OAuth"</code></pre>
+            </div>
+            <div class="callout callout-warning">
+              <div class="callout-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="callout-content">
+                <h4>Two Human Review Gates</h4>
+                <p><strong>Gate 1:</strong> Validate direction after research—before investing time in detailed spec writing.<br>
+                <strong>Gate 2:</strong> Approve full specification—before creating Linear tasks.<br>
+                All open questions must be resolved before Gate 2 approval. No ambiguity in the final plan.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="command-detail" id="hyper-implement">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-implement</code>
+              <span class="command-type-badge">implementation</span>
+            </div>
+            <p class="command-detail-description">
+              Implement a Linear task with built-in verification loop, updating status and creating verification sub-tasks automatically. Uses git-worktree skill for isolated parallel development.
+            </p>
+            <h4>Arguments</h4>
+            <p><code>[LINEAR_ISSUE_ID or PROJECT_ID]</code></p>
+            <h4>Workflow</h4>
+            <ol>
+              <li><strong>Initialization</strong> - Retrieve task details and project spec from Linear</li>
+              <li><strong>Branch Setup</strong> - Optionally use git-worktree for isolated work or create branch normally</li>
+              <li><strong>Status Update</strong> - Mark task as "In Progress" in Linear</li>
+              <li><strong>Codebase Understanding</strong> - Read all mentioned files completely, identify verification commands</li>
+              <li><strong>Implementation</strong> - Make changes incrementally following spec, track progress in Linear comments</li>
+              <li><strong>Verification Setup</strong> - Create verification sub-task if doesn't exist</li>
+              <li><strong>Automated Verification</strong> - Run tests, lint, typecheck, build from spec. If any fail → create fix task → re-run until pass</li>
+              <li><strong>Manual Verification Gate</strong> - Stop and inform user. Wait for manual verification confirmation</li>
+              <li><strong>Completion (After Manual Verification)</strong> - Mark verification task and parent task as Done</li>
+            </ol>
+            <div class="card-code-block">
+              <pre><code>/hyper-implement LOT-123</code></pre>
+            </div>
+            <h4>Verification Loop</h4>
+            <p>If automated checks fail:</p>
+            <ol>
+              <li>Document failure in Linear comment</li>
+              <li>Create fix sub-task with error details and approach</li>
+              <li>Implement fix</li>
+              <li>Re-run ALL verification checks</li>
+              <li>Repeat until all pass</li>
+            </ol>
+          </div>
+
+          <div class="command-detail" id="hyper-review">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-review</code>
+              <span class="command-type-badge">review</span>
+            </div>
+            <p class="command-detail-description">
+              Orchestrate comprehensive code review using specialized domain sub-agents (security, architecture, performance, code quality). Spawns reviewers in parallel for multi-angle analysis.
+            </p>
+            <h4>Arguments</h4>
+            <p><code>[ISSUE_ID or file/directory path]</code></p>
+            <h4>Workflow</h4>
+            <ol>
+              <li><strong>Scope Determination</strong> - Identify files to review from Linear task or provided paths</li>
+              <li><strong>Parallel Review</strong> - Spawn specialized reviewers simultaneously:
+                <ul>
+                  <li><strong>Security Reviewer</strong> (always) - Authentication, input validation, injection vulnerabilities, sensitive data</li>
+                  <li><strong>Architecture Reviewer</strong> (for structural changes) - SOLID principles, coupling, abstraction levels</li>
+                  <li><strong>Performance Reviewer</strong> (for data-heavy code) - N+1 queries, algorithm complexity, caching opportunities</li>
+                  <li><strong>Code Quality Reviewer</strong> (always) - Readability, naming, complexity, error handling, tests</li>
+                  <li><strong>Stack-Specific Reviewer</strong> (optional) - TypeScript/React, Python, or Go best practices</li>
+                </ul>
+              </li>
+              <li><strong>Synthesis</strong> - Deduplicate findings, prioritize by severity (Critical/High/Medium/Low), group by theme</li>
+              <li><strong>Report Generation</strong> - Create comprehensive review report with:
+                <ul>
+                  <li>Summary with issue counts and overall assessment</li>
+                  <li>Critical/High/Medium/Low priority issues with locations and fixes</li>
+                  <li>Positive observations</li>
+                  <li>Review verdict (Approved/Approved with Concerns/Changes Requested)</li>
+                </ul>
+              </li>
+              <li><strong>Linear Integration (Optional)</strong> - Add report to Linear task, create fix tasks for critical issues</li>
+            </ol>
+            <div class="card-code-block">
+              <pre><code>/hyper-review LOT-123</code></pre>
+            </div>
+          </div>
+
+          <div class="command-detail" id="hyper-verify">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-verify</code>
+              <span class="command-type-badge">verification</span>
+            </div>
+            <p class="command-detail-description">
+              Run comprehensive automated and manual verification using Playwright MCP, creating fix tasks for failures and looping until all checks pass.
+            </p>
+            <h4>Arguments</h4>
+            <p><code>[ISSUE_ID]</code></p>
+            <h4>Workflow</h4>
+            <ol>
+              <li><strong>Initialization</strong> - Retrieve task and extract verification requirements from spec</li>
+              <li><strong>Automated Checks</strong> - Run in sequence:
+                <ul>
+                  <li>Linting (exit code 0 = pass)</li>
+                  <li>Type checking (exit code 0 = pass)</li>
+                  <li>Tests (exit code 0 = pass)</li>
+                  <li>Build (exit code 0 = pass)</li>
+                </ul>
+              </li>
+              <li><strong>Automated Check Evaluation</strong> - If any fail → create fix tasks → STOP. If all pass → proceed to manual verification</li>
+              <li><strong>Manual Verification</strong> - Use Playwright MCP for interactive browser testing:
+                <ul>
+                  <li>Navigate to relevant pages</li>
+                  <li>Take screenshots at each step</li>
+                  <li>Perform verification actions (clicks, fills, etc.)</li>
+                  <li>Evaluate results against expected behavior</li>
+                </ul>
+              </li>
+              <li><strong>Manual Verification Evaluation</strong> - If any fail → create fix tasks with screenshots → STOP. If all pass → mark complete</li>
+              <li><strong>Completion</strong> - Update verification task to Done, add completion comment with all results</li>
+            </ol>
+            <div class="card-code-block">
+              <pre><code>/hyper-verify LOT-123</code></pre>
+            </div>
+            <h4>Verification Loop Logic</h4>
+            <p>The loop continues until ALL checks pass:</p>
+            <ol>
+              <li>Run automated checks (lint, typecheck, test, build)</li>
+              <li>If any fail → Create fix tasks → STOP</li>
+              <li>If all pass → Run manual verification</li>
+              <li>If any fail → Create fix tasks → STOP</li>
+              <li>If all pass → Mark complete</li>
+            </ol>
+            <p>When user re-runs after fixes, verification starts from step 1 (automated checks) to ensure fixes didn't break anything.</p>
+          </div>
+
+          <div class="command-detail" id="hyper-init-stack">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-init-stack</code>
+              <span class="command-type-badge">setup</span>
+            </div>
+            <p class="command-detail-description">
+              Initialize a stack template for the current project, configuring hyper-engineering with stack-specific verification commands and patterns.
+            </p>
+            <h4>Arguments</h4>
+            <p><code>[stack-name]</code> (optional - auto-detects if not provided)</p>
+            <p>Available stacks: <code>node-typescript</code>, <code>python</code>, <code>go</code></p>
+            <h4>Workflow</h4>
+            <ol>
+              <li><strong>Stack Detection or Confirmation</strong> - Auto-detect based on project files (package.json, pyproject.toml, go.mod) or use provided stack name</li>
+              <li><strong>Copy Stack Template</strong> - Copy from templates/stacks/ to .claude/stacks/</li>
+              <li><strong>Customize Verification Commands</strong> - Interactive prompts for:
+                <ul>
+                  <li>Lint command (e.g., pnpm lint)</li>
+                  <li>Typecheck command (e.g., pnpm typecheck)</li>
+                  <li>Test command (e.g., pnpm test)</li>
+                  <li>Build command (e.g., pnpm build)</li>
+                </ul>
+              </li>
+              <li><strong>Validate Commands</strong> - Test each command to ensure it works</li>
+              <li><strong>Update CLAUDE.md</strong> - Append stack-specific patterns and reviewer guidelines</li>
+            </ol>
+            <div class="card-code-block">
+              <pre><code># Auto-detect stack
+/hyper-init-stack
+
+# Explicit stack
+/hyper-init-stack node-typescript</code></pre>
+            </div>
+            <h4>Files Created</h4>
+            <ul>
+              <li><code>.claude/stacks/stack-config.md</code> - Complete stack configuration with verification commands, patterns, and reviewer guidelines</li>
+              <li><code>.claude/stacks/README.md</code> - Project-specific documentation</li>
+            </ul>
+          </div>
+
+          <div class="command-detail" id="hyper-statusline-setup">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-statusline:setup</code>
+              <span class="command-type-badge">setup</span>
+            </div>
+            <p class="command-detail-description">
+              Install the Dracula-themed statusline with visual context bar, git integration, and session stats.
+            </p>
+            <h4>Features</h4>
+            <ul>
+              <li><strong>Visual Context Bar</strong> - Shows context usage as a colored bar:
+                <ul>
+                  <li style="color: #50fa7b;">Green (0-49%)</li>
+                  <li style="color: #f1fa8c;">Yellow (50-79%)</li>
+                  <li style="color: #ff5555;">Red (80-100%)</li>
+                </ul>
+              </li>
+              <li><strong>Model Badge</strong> - Color-coded: <span style="color: #ff79c6;">◆ Opus</span>, <span style="color: #bd93f9;">◇ Sonnet</span>, <span style="color: #8be9fd;">○ Haiku</span></li>
+              <li><strong>Git Branch</strong> - Shows branch with <span style="color: #ffb86c;">*</span> for uncommitted changes</li>
+              <li><strong>Session Stats</strong> - Lines added/removed, cost in USD</li>
+            </ul>
+            <h4>Preview</h4>
+            <div class="card-code-block">
+              <pre><code style="color: #f8f8f2; background: #282a36;"><span style="color: #ff79c6; font-weight: bold;">◆ Opus</span> <span style="color: #6272a4;">│</span> <span style="color: #8be9fd;"> project</span> <span style="color: #6272a4;">│</span> <span style="color: #bd93f9;"> main*</span> <span style="color: #6272a4;">│</span> <span style="color: #6272a4;">ctx</span> <span style="color: #f1fa8c;">████████░░</span> <span style="color: #6272a4;">78%</span> <span style="color: #6272a4;">│</span> <span style="color: #50fa7b;">+156</span> <span style="color: #ff5555;">-23</span></code></pre>
+            </div>
+            <h4>Workflow</h4>
+            <ol>
+              <li><strong>Copy Script</strong> - Copies statusline.sh to <code>~/.claude/statusline.sh</code></li>
+              <li><strong>Update Settings</strong> - Adds statusLine configuration to <code>~/.claude/settings.json</code></li>
+              <li><strong>Verify Installation</strong> - Tests the script works correctly</li>
+            </ol>
+            <div class="card-code-block">
+              <pre><code>/hyper-statusline:setup</code></pre>
+            </div>
+            <h4>Requirements</h4>
+            <ul>
+              <li><code>jq</code> - Install via <code>brew install jq</code> or <code>apt install jq</code></li>
+              <li>Terminal with 24-bit color support (iTerm2, Kitty, Alacritty)</li>
+            </ul>
+            <div class="callout callout-info">
+              <div class="callout-icon"><i class="fa-solid fa-circle-info"></i></div>
+              <div class="callout-content">
+                <h4>Restart Required</h4>
+                <p>After running the setup command, restart Claude Code to see your new statusline.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="command-detail" id="hyper-statusline-optout">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-statusline:optout</code>
+              <span class="command-type-badge">setup</span>
+            </div>
+            <p class="command-detail-description">
+              Opt out of the statusline setup prompt that appears on session start.
+            </p>
+            <h4>When to Use</h4>
+            <p>If you prefer your current statusline or don't want to see the setup prompt on each new session, run this command to disable it.</p>
+            <h4>What It Does</h4>
+            <ul>
+              <li>Creates <code>~/.claude/.hyper-statusline-optout</code> marker file</li>
+              <li>The SessionStart hook checks for this file and skips the prompt</li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code>/hyper-statusline:optout</code></pre>
+            </div>
+            <h4>Reversing the Opt-Out</h4>
+            <p>To re-enable the prompt or install the statusline later:</p>
+            <div class="card-code-block">
+              <pre><code># Re-enable the prompt
+rm ~/.claude/.hyper-statusline-optout
+
+# Or just install the statusline directly
+/hyper-statusline:setup</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <div class="callout callout-info">
+          <div class="callout-icon"><i class="fa-solid fa-circle-info"></i></div>
+          <div class="callout-content">
+            <h4>The Complete Workflow</h4>
+            <p>
+              <strong>1.</strong> <code>/hyper-init-stack</code> - Configure your project (once)<br>
+              <strong>2.</strong> <code>/hyper-statusline:setup</code> - Install beautiful statusline (once, or opt out)<br>
+              <strong>3.</strong> <code>/hyper-plan "feature"</code> - Research → Spec → Approve → Tasks<br>
+              <strong>4.</strong> <code>/hyper-implement TASK-123</code> - Implement → Auto-verify → Manual verify<br>
+              <strong>5.</strong> <code>/hyper-verify TASK-123</code> - Re-run verification after fixes<br>
+              <strong>6.</strong> <code>/hyper-review TASK-123</code> - Parallel domain reviews → Fix critical issues
+            </p>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="docs-nav-footer">
+          <a href="agents.html" class="nav-prev">
+            <span class="nav-label">Previous</span>
+            <span class="nav-title"><i class="fa-solid fa-arrow-left"></i> Agents</span>
+          </a>
+          <a href="skills.html" class="nav-next">
+            <span class="nav-label">Next</span>
+            <span class="nav-title">Skills <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </nav>
+      </article>
+    </main>
+  </div>
+
+  <script>
+    document.querySelector('[data-sidebar-toggle]')?.addEventListener('click', () => {
+      document.querySelector('.docs-sidebar').classList.toggle('open');
+    });
+  </script>
+</body>
+
+</html>

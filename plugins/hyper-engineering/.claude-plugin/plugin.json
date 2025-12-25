@@ -1,0 +1,36 @@
+{
+  "name": "hyper-engineering",
+  "version": "1.2.0",
+  "description": "Spec-driven development with Linear integration. 4 research agents, 7 commands, 3 skills, 2 MCP servers. Specs first, code second, verification always.",
+  "author": {
+    "name": "Juan Bermudez",
+    "email": "juan@example.com",
+    "url": "https://github.com/juanbermudez"
+  },
+  "homepage": "https://github.com/juanbermudez/hyper-eng",
+  "repository": "https://github.com/juanbermudez/hyper-eng",
+  "license": "MIT",
+  "keywords": [
+    "ai-powered",
+    "hyper-engineering",
+    "linear-integration",
+    "spec-driven",
+    "workflow-automation",
+    "code-review",
+    "verification",
+    "playwright",
+    "browser-automation"
+  ],
+  "mcpServers": {
+    "pw": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "env": {}
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}

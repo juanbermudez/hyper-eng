@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-dark">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Changelog - Hyper-Engineering</title>
+  <meta content="Version history and release notes for the Hyper-Engineering plugin." name="description" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="../css/style.css" rel="stylesheet" type="text/css" />
+  <link href="../css/docs.css" rel="stylesheet" type="text/css" />
+  <script src="../js/main.js" type="text/javascript" defer></script>
+</head>
+
+<body>
+  <div class="background-gradient"></div>
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-brand">
+          <span class="logo-icon"><i class="fa-solid fa-bolt"></i></span>
+          <span class="logo-text">HE Docs</span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul>
+            <li><a href="getting-started.html">Installation</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul>
+            <li><a href="agents.html">Agents (4)</a></li>
+            <li><a href="commands.html">Commands (7)</a></li>
+            <li><a href="skills.html">Skills (3)</a></li>
+            <li><a href="mcp-servers.html">MCP Servers (2)</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="changelog.html" class="active">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>On This Page</h3>
+          <ul>
+            <li><a href="#v1.0.0">v1.0.0</a></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="docs-content">
+      <div class="docs-header">
+        <nav class="breadcrumb">
+          <a href="../index.html">Home</a>
+          <span>/</span>
+          <a href="getting-started.html">Docs</a>
+          <span>/</span>
+          <span>Changelog</span>
+        </nav>
+        <button class="mobile-menu-toggle" data-sidebar-toggle>
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
+      <article class="docs-article">
+        <h1><i class="fa-solid fa-clock-rotate-left color-accent"></i> Changelog</h1>
+        <p class="lead">
+          All notable changes to the hyper-engineering plugin. This project follows
+          <a href="https://semver.org/">Semantic Versioning</a> and
+          <a href="https://keepachangelog.com/">Keep a Changelog</a> conventions.
+        </p>
+
+        <!-- Version 1.0.0 -->
+        <section id="v1.0.0" class="version-section">
+          <div class="version-header">
+            <h2>v1.0.0</h2>
+            <span class="version-date">2025-12-22</span>
+            <span class="version-badge major">Initial Release</span>
+          </div>
+
+          <div class="changelog-category added">
+            <h3><i class="fa-solid fa-plus"></i> Added - Hyper-Engineering Workflow</h3>
+            <p>Major addition: Linear-integrated, spec-driven development workflow with mandatory review gates and verification loops.</p>
+
+            <h4>New Workflow Agents (3)</h4>
+            <ul>
+              <li><strong><code>research-agent</code></strong> - Spawns 4 specialized research agents in parallel for comprehensive research</li>
+              <li><strong><code>planning-agent</code></strong> - Transforms research into specs with mermaid diagrams, enforces human review gates</li>
+              <li><strong><code>engineering-agent</code></strong> - Implements Linear tasks following codebase patterns, runs verification loops</li>
+            </ul>
+
+            <h4>New Review Agents (5)</h4>
+            <ul>
+              <li><strong><code>review-orchestrator</code></strong> - Orchestrates domain reviewers in parallel, synthesizes findings</li>
+              <li><strong><code>security-reviewer</code></strong> - OWASP Top 10, authentication, input validation, secrets management</li>
+              <li><strong><code>architecture-reviewer</code></strong> - SOLID principles, component boundaries, dependency direction</li>
+              <li><strong><code>performance-reviewer</code></strong> - N+1 queries, algorithmic complexity, caching, resource management</li>
+              <li><strong><code>code-quality-reviewer</code></strong> - Naming, clarity, test coverage, error handling</li>
+            </ul>
+
+            <h4>New Commands (7)</h4>
+            <ul>
+              <li><strong><code>/hyper-plan</code></strong> - Spawn 4 specialized research agents → create spec with diagrams → wait for approval → create tasks</li>
+              <li><strong><code>/hyper-implement</code></strong> - Implement Linear task with verification loop, uses <code>git-worktree</code> skill</li>
+              <li><strong><code>/hyper-review</code></strong> - Orchestrate parallel domain reviewers</li>
+              <li><strong><code>/hyper-verify</code></strong> - Run comprehensive automated and manual verification</li>
+              <li><strong><code>/hyper-init-stack</code></strong> - Initialize stack-specific templates (node-typescript, python, go)</li>
+            </ul>
+
+            <h4>New Skill (1)</h4>
+            <ul>
+              <li><strong><code>linear-cli-expert</code></strong> - Expert guidance for spec-driven development with Linear CLI</li>
+            </ul>
+
+            <h4>Stack Templates (4)</h4>
+            <ul>
+              <li><code>node-typescript</code> - React, Next.js, Express patterns and verification</li>
+              <li><code>python</code> - FastAPI, Django, Flask patterns and verification</li>
+              <li><code>go</code> - Go backend services patterns and verification</li>
+              <li><code>_template</code> - Generic template for custom stacks</li>
+            </ul>
+          </div>
+
+          <div class="changelog-summary">
+            <h4>Initial Release Summary</h4>
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Agents</td><td>4</td></tr>
+                <tr><td>Commands</td><td>5</td></tr>
+                <tr><td>Skills</td><td>3</td></tr>
+                <tr><td>MCP Servers</td><td>2</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+      </article>
+    </main>
+  </div>
+</body>
+
+</html>

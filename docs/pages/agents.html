@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-dark">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Agent Reference - Hyper-Engineering</title>
+  <meta content="Complete reference for all 4 specialized research agents in the Hyper-Engineering plugin." name="description" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="../css/style.css" rel="stylesheet" type="text/css" />
+  <link href="../css/docs.css" rel="stylesheet" type="text/css" />
+  <script src="../js/main.js" type="text/javascript" defer></script>
+</head>
+
+<body>
+  <div class="background-gradient"></div>
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-brand">
+          <span class="logo-icon"><i class="fa-solid fa-bolt"></i></span>
+          <span class="logo-text">HE Docs</span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul>
+            <li><a href="getting-started.html">Installation</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul>
+            <li><a href="agents.html" class="active">Agents (4)</a></li>
+            <li><a href="commands.html">Commands (7)</a></li>
+            <li><a href="skills.html">Skills (3)</a></li>
+            <li><a href="mcp-servers.html">MCP Servers (2)</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="changelog.html">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>On This Page</h3>
+          <ul>
+            <li><a href="#research-agents">Research Agents (4)</a></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="docs-content">
+      <div class="docs-header">
+        <nav class="breadcrumb">
+          <a href="../index.html">Home</a>
+          <span>/</span>
+          <a href="getting-started.html">Docs</a>
+          <span>/</span>
+          <span>Agents</span>
+        </nav>
+        <button class="mobile-menu-toggle" data-sidebar-toggle>
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
+      <article class="docs-article">
+        <h1><i class="fa-solid fa-microscope color-accent"></i> Agent Reference</h1>
+        <p class="lead">
+          All 4 agents focus on research. When you run <code>/hyper-plan</code>, these agents launch in parallel to gather comprehensive context before writing a single line of code. They explore your codebase, external best practices, framework documentation, and git history—giving you research-driven specs instead of guesswork.
+        </p>
+
+        <div class="usage-box">
+          <h3>How to Use Agents</h3>
+          <div class="card-code-block">
+            <pre><code># Agents launch automatically during /hyper-plan
+/hyper-plan "Add user authentication"
+
+# Or invoke individually
+claude agent repo-research-analyst
+claude agent framework-docs-researcher "Research Next.js patterns"</code></pre>
+          </div>
+        </div>
+
+        <!-- Research Agents -->
+        <section id="research-agents">
+          <h2><i class="fa-solid fa-microscope"></i> Research Agents (4)</h2>
+          <p>Stop guessing. These agents dig through documentation, GitHub repos, git history, and real-world examples to give you answers backed by evidence. They read faster than you, remember more than you, and synthesize patterns you'd miss. Perfect for "how should I actually do this?" questions.</p>
+
+          <div class="agent-detail" id="repo-research-analyst">
+            <div class="agent-detail-header">
+              <h3>repo-research-analyst</h3>
+              <span class="agent-badge">Codebase</span>
+            </div>
+            <p class="agent-detail-description">
+              Every repo has conventions—some documented, most tribal knowledge. This agent reads ARCHITECTURE.md, issue templates, PR patterns, and actual code to reverse-engineer the standards. Perfect for joining a new project or ensuring your PR matches the team's implicit style. Finds the rules nobody wrote down.
+            </p>
+            <h4>Analysis Areas</h4>
+            <ul>
+              <li>Architecture and documentation files (ARCHITECTURE.md, README.md, CLAUDE.md)</li>
+              <li>GitHub issues for patterns and conventions</li>
+              <li>Issue/PR templates and guidelines</li>
+              <li>Implementation patterns using ast-grep or rg</li>
+              <li>Project-specific conventions and naming</li>
+              <li>Reusable components and utilities</li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code>claude agent repo-research-analyst</code></pre>
+            </div>
+          </div>
+
+          <div class="agent-detail" id="best-practices-researcher">
+            <div class="agent-detail-header">
+              <h3>best-practices-researcher</h3>
+              <span class="agent-badge">External</span>
+            </div>
+            <p class="agent-detail-description">
+              "Best practices" are everywhere and contradictory. This agent cuts through the noise by evaluating sources (official docs, trusted blogs, real GitHub repos), checking recency, and synthesizing actionable guidance. You get code templates, patterns that scale, and answers you can trust—not StackOverflow copy-paste roulette.
+            </p>
+            <h4>Capabilities</h4>
+            <ul>
+              <li>Leverage multiple sources (Context7 MCP, web search, GitHub)</li>
+              <li>Evaluate information quality and recency (uses current year: 2025)</li>
+              <li>Synthesize into actionable guidance with examples</li>
+              <li>Provide code templates following industry standards</li>
+              <li>Research common pitfalls and anti-patterns</li>
+              <li>Find real-world open source implementations</li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code>claude agent best-practices-researcher "Find pagination patterns"</code></pre>
+            </div>
+          </div>
+
+          <div class="agent-detail" id="framework-docs-researcher">
+            <div class="agent-detail-header">
+              <h3>framework-docs-researcher</h3>
+              <span class="agent-badge">Documentation</span>
+            </div>
+            <p class="agent-detail-description">
+              Official docs are scattered. GitHub examples are inconsistent. Deprecations hide in changelogs. This agent pulls it all together—docs, source code, version constraints, real-world examples. Ask "how do I use Hotwire Turbo?" and get back patterns that actually work in production, not toy tutorials.
+            </p>
+            <h4>Capabilities</h4>
+            <ul>
+              <li>Fetch official framework and library documentation via Context7 MCP</li>
+              <li>Identify version-specific constraints and deprecations</li>
+              <li>Search GitHub for real-world usage examples</li>
+              <li>Analyze gem/library source code using <code>bundle show</code></li>
+              <li>Extract API patterns and configuration options</li>
+              <li>Synthesize findings with practical code examples</li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code>claude agent framework-docs-researcher "Research Hotwire Turbo patterns"</code></pre>
+            </div>
+          </div>
+
+          <div class="agent-detail" id="git-history-analyzer">
+            <div class="agent-detail-header">
+              <h3>git-history-analyzer</h3>
+              <span class="agent-badge">History</span>
+            </div>
+            <p class="agent-detail-description">
+              Your codebase has a history—decisions, patterns, mistakes. This agent does archaeology with git tools: file evolution, blame analysis, contributor expertise mapping. Ask "why does this code exist?" and get the commit that explains it. Spot patterns in how bugs appear. Understand the design decisions buried in history.
+            </p>
+            <h4>Analysis Techniques</h4>
+            <ul>
+              <li>Trace file evolution using <code>git log --follow</code></li>
+              <li>Determine code origins using <code>git blame -w -C -C -C</code></li>
+              <li>Identify patterns from commit history with <code>git log --grep</code></li>
+              <li>Map key contributors and expertise areas using <code>git shortlog</code></li>
+              <li>Extract historical patterns of issues and fixes</li>
+              <li>Find when code patterns were introduced using <code>git log -S</code></li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code>claude agent git-history-analyzer "Analyze changes to User model"</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <div class="callout callout-info">
+          <div class="callout-icon"><i class="fa-solid fa-circle-info"></i></div>
+          <div class="callout-content">
+            <h4>Parallel Research for Comprehensive Specs</h4>
+            <p>
+              When you run <code>/hyper-plan</code>, all 4 research agents launch simultaneously. While <strong>repo-research-analyst</strong> explores your codebase patterns, <strong>best-practices-researcher</strong> searches external docs and open source examples, <strong>framework-docs-researcher</strong> fetches official documentation, and <strong>git-history-analyzer</strong> traces code evolution. This parallel research creates comprehensive specs backed by evidence from multiple angles.
+            </p>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="docs-nav-footer">
+          <a href="getting-started.html" class="nav-prev">
+            <span class="nav-label">Previous</span>
+            <span class="nav-title"><i class="fa-solid fa-arrow-left"></i> Getting Started</span>
+          </a>
+          <a href="commands.html" class="nav-next">
+            <span class="nav-label">Next</span>
+            <span class="nav-title">Commands <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </nav>
+      </article>
+    </main>
+  </div>
+
+  <script>
+    document.querySelector('[data-sidebar-toggle]')?.addEventListener('click', () => {
+      document.querySelector('.docs-sidebar').classList.toggle('open');
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-dark">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Hyper-Engineering - Linear-Integrated Spec-Driven Development for Claude Code</title>
+  <meta content="Spec-driven development with Linear integration. 4 research agents, 7 commands, 3 skills, and 2 MCP servers for planning, implementation, review, and verification." name="description" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hyper-Engineering" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:title" content="Hyper-Engineering - Spec-Driven Development" />
+  <meta property="og:description" content="Specs matter more than code. Linear-integrated workflow with 4 research agents, 7 commands, and mandatory verification loops." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Hyper-Engineering" />
+  <meta name="twitter:description" content="4 research agents, 7 commands, 3 skills, and 2 MCP servers for spec-driven development with Linear integration." />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="css/style.css" rel="stylesheet" type="text/css" />
+  <script src="js/main.js" type="text/javascript" defer></script>
+
+  <!-- Pillar styles (inline for reliability) -->
+  <style>
+    .philosophy-pillars {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-xxl);
+    }
+    @media (min-width: 768px) {
+      .philosophy-pillars { grid-template-columns: repeat(2, 1fr); }
+    }
+    .pillar {
+      display: flex;
+      gap: var(--space-l);
+      padding: var(--space-xl);
+      background: var(--color-background);
+      border-radius: var(--radius-l);
+      border: 1.5px solid transparent;
+      background-image: linear-gradient(var(--color-background), var(--color-background)), linear-gradient(135deg, var(--color-accent-light), var(--color-border));
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .pillar:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-accent);
+      box-shadow: 0 8px 24px rgba(129, 140, 248, 0.2);
+    }
+    .pillar-icon {
+      flex-shrink: 0;
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+      border-radius: var(--radius-l);
+      font-size: 36px;
+      color: var(--color-on-accent);
+      box-shadow: 0 8px 20px rgba(129, 140, 248, 0.3);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .pillar:hover .pillar-icon {
+      transform: scale(1.1);
+      box-shadow: 0 12px 30px rgba(129, 140, 248, 0.5);
+    }
+    .pillar-content h3 {
+      margin: 0 0 var(--space-xs) 0;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      letter-spacing: -0.02em;
+    }
+    .pillar-tagline {
+      margin: 0 0 var(--space-m) 0;
+      font-size: 16px;
+      background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 600;
+      font-style: italic;
+    }
+    .pillar-description {
+      margin: 0 0 var(--space-l) 0;
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+    .pillar-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-s);
+    }
+    .tool-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 12px;
+      background-color: var(--color-surface-hover);
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-s);
+      border: 1px solid var(--color-border);
+      transition: all 0.25s ease;
+      font-weight: 500;
+    }
+    .tool-tag:hover {
+      background: linear-gradient(135deg, var(--color-accent-lighter), var(--color-surface-hover));
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+    @media (max-width: 767px) {
+      .pillar { flex-direction: column; text-align: center; }
+      .pillar-icon { margin: 0 auto; }
+      .pillar-tools { justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background-gradient"></div>
+  <div class="page-container">
+    <header class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span class="logo-icon"><i class="fa-solid fa-bolt"></i></span>
+        <span class="logo-text">Hyper-Engineering</span>
+      </a>
+      <nav role="navigation" class="nav-menu" data-navigation>
+        <a href="#agents" class="nav-link">Agents</a>
+        <a href="#commands" class="nav-link">Commands</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#mcp-servers" class="nav-link">MCP Servers</a>
+        <a href="pages/getting-started.html" class="nav-link">Docs</a>
+      </nav>
+      <div class="button-group">
+        <a href="https://github.com/juanbermudez/hyper-eng" class="button ghost compact hide-on-mobile">
+          <div class="fa-brands fa-github icon l"></div>
+        </a>
+        <a href="#install" class="button primary compact">Install</a>
+        <button class="button ghost compact nav-hamburger" data-mobile-toggle aria-label="Show menu">
+          <span class="fa-solid fa-bars icon m"></span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-decoration"></div>
+        <div class="heading hero centered">
+          <a href="https://github.com/juanbermudez/hyper-eng/releases" class="eyebrow">
+            <i class="fa-solid fa-rocket"></i> Version 3.0.0 released!
+          </a>
+          <h1 class="balanced" style="margin-bottom: 32px;">
+            Specs Matter More Than Code. Code Is Disposable.
+          </h1>
+          <p class="paragraph m secondary balanced" style="margin-bottom: 32px;">
+            Linear-integrated, spec-driven development with mandatory review gates and verification loops. Run <code>/hyper-plan</code> and 4 research agents explore your codebase, external docs, and best practices in parallel. Your spec becomes the source of truth. Then <code>/hyper-implement</code> turns it into verified code. That's hyper-engineering: 4 research agents, 7 commands, 3 skills, and 2 MCP servers.
+          </p>
+          <div class="button-group margin-paragraph centered">
+            <a href="#install" class="button primary">
+              <i class="fa-solid fa-download"></i> Install Plugin
+            </a>
+            <a href="pages/getting-started.html" class="button tertiary">
+              <i class="fa-solid fa-book"></i> Read the Docs
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats Section -->
+      <section class="stats-section">
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-microscope"></i></div>
+            <div class="stat-number">4</div>
+            <div class="stat-label">Research Agents</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-terminal"></i></div>
+            <div class="stat-number">5</div>
+            <div class="stat-label">Hyper Commands</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <div class="stat-number">3</div>
+            <div class="stat-label">Core Skills</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-server"></i></div>
+            <div class="stat-number">2</div>
+            <div class="stat-label">MCP Servers</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Philosophy Section -->
+      <section id="philosophy" class="philosophy-section">
+        <div class="heading centered">
+          <h2 class="no-top-margin" style="font-size: 42px; margin-bottom: 16px;">The Hyper-Engineering Workflow</h2>
+          <p class="paragraph l secondary balanced" style="font-size: 21px; line-height: 1.6; font-weight: 500;">
+            Traditional development starts with code. Hyper-engineering starts with <em style="color: var(--color-accent); font-style: normal;">specs</em>. Linear is the source of truth. Code is disposable. The workflow enforces human review gates and verification loops at every step.
+          </p>
+        </div>
+
+        <!-- Philosophy Quote -->
+        <div class="philosophy-quote">
+          <blockquote>
+            "Draft → Spec Review → Ready → In Progress → Verification → Done. Every spec requires human approval before tasks are created. Every implementation requires verification before it's done. The spec is permanent; the code that implements it can always be regenerated."
+          </blockquote>
+        </div>
+
+        <!-- The Four Pillars -->
+        <div class="philosophy-pillars">
+          <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-microscope"></i></div>
+            <div class="pillar-content">
+              <h3>Research</h3>
+              <p class="pillar-tagline">4 specialized agents explore in parallel</p>
+              <p class="pillar-description">
+                Run <code>/hyper-plan</code> and four research agents launch simultaneously: <code>repo-research-analyst</code> explores codebase patterns, <code>best-practices-researcher</code> searches external docs and open source, <code>framework-docs-researcher</code> fetches official documentation via Context7, and <code>git-history-analyzer</code> traces code evolution. Comprehensive research before a single line of code.
+              </p>
+              <div class="pillar-tools">
+                <span class="tool-tag">repo-research-analyst</span>
+                <span class="tool-tag">best-practices-researcher</span>
+                <span class="tool-tag">framework-docs-researcher</span>
+                <span class="tool-tag">git-history-analyzer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="pillar-content">
+              <h3>Spec</h3>
+              <p class="pillar-tagline">Human review gate before any tasks</p>
+              <p class="pillar-description">
+                Research synthesizes into a comprehensive spec with mermaid diagrams and ASCII layouts. The spec lives in Linear as the source of truth. <strong>No tasks are created until you approve the spec.</strong> This is the mandatory review gate. Change the spec? The code can be regenerated. Change the code? It must still match the spec.
+              </p>
+              <div class="pillar-tools">
+                <span class="tool-tag">planning-agent</span>
+                <span class="tool-tag">mermaid diagrams</span>
+                <span class="tool-tag">Linear integration</span>
+                <span class="tool-tag">human review gate</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-code"></i></div>
+            <div class="pillar-content">
+              <h3>Implement</h3>
+              <p class="pillar-tagline">Follow patterns, use worktrees</p>
+              <p class="pillar-description">
+                Run <code>/hyper-implement</code> with a Linear task ID. The <code>engineering-agent</code> reads the spec, follows codebase patterns, and uses <code>git-worktree</code> for isolated parallel development. Implementation matches the approved spec exactly. Deviations require spec updates first.
+              </p>
+              <div class="pillar-tools">
+                <span class="tool-tag">engineering-agent</span>
+                <span class="tool-tag">git-worktree skill</span>
+                <span class="tool-tag">linear-cli-expert skill</span>
+                <span class="tool-tag">/hyper-implement</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pillar">
+            <div class="pillar-icon"><i class="fa-solid fa-check-double"></i></div>
+            <div class="pillar-content">
+              <h3>Verify</h3>
+              <p class="pillar-tagline">Automated + manual checks, every time</p>
+              <p class="pillar-description">
+                Run <code>/hyper-verify</code> for comprehensive verification: lint, test, typecheck, build (automated), then manual checks. If verification fails, a fix task is created automatically. The loop continues until everything passes. <code>/hyper-review</code> spawns 4 domain reviewers in parallel (security, architecture, performance, code quality) for thorough code review.
+              </p>
+              <div class="pillar-tools">
+                <span class="tool-tag">review-orchestrator</span>
+                <span class="tool-tag">security-reviewer</span>
+                <span class="tool-tag">architecture-reviewer</span>
+                <span class="tool-tag">performance-reviewer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Agents Section -->
+      <section id="agents">
+        <div class="heading">
+          <h2 class="no-top-margin">
+            <i class="fa-solid fa-microscope color-accent"></i> 4 Research Agents
+          </h2>
+          <p class="paragraph m secondary">
+            All agents focus on research. When you run <code>/hyper-plan</code>, these 4 agents launch in parallel to gather comprehensive context: codebase patterns, external best practices, framework documentation, and git history. Research-driven planning before a single line of code.
+          </p>
+        </div>
+
+        <!-- Research Agents -->
+        <div class="agent-category">
+          <h3><i class="fa-solid fa-microscope"></i> Research Agents (4)</h3>
+          <div class="grid columns-2">
+            <div class="agent-card">
+              <div class="agent-header">
+                <span class="agent-name">framework-docs-researcher</span>
+                <span class="agent-badge">Research</span>
+              </div>
+              <p class="agent-description">Research framework documentation and best practices. Find official guidance and community patterns.</p>
+              <code class="agent-usage">claude agent framework-docs-researcher</code>
+            </div>
+            <div class="agent-card">
+              <div class="agent-header">
+                <span class="agent-name">best-practices-researcher</span>
+                <span class="agent-badge">Research</span>
+              </div>
+              <p class="agent-description">Gather external best practices and examples from the community and industry standards.</p>
+              <code class="agent-usage">claude agent best-practices-researcher</code>
+            </div>
+            <div class="agent-card">
+              <div class="agent-header">
+                <span class="agent-name">git-history-analyzer</span>
+                <span class="agent-badge">Git</span>
+              </div>
+              <p class="agent-description">Analyze git history and code evolution. Understand how code has changed and why.</p>
+              <code class="agent-usage">claude agent git-history-analyzer</code>
+            </div>
+            <div class="agent-card">
+              <div class="agent-header">
+                <span class="agent-name">repo-research-analyst</span>
+                <span class="agent-badge">Research</span>
+              </div>
+              <p class="agent-description">Research repository structure and conventions. Understand project patterns and organization.</p>
+              <code class="agent-usage">claude agent repo-research-analyst</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Commands Section -->
+      <section id="commands">
+        <div class="heading">
+          <h2 class="no-top-margin">
+            <i class="fa-solid fa-terminal color-accent"></i> 5 Hyper Commands
+          </h2>
+          <p class="paragraph m secondary">
+            The hyper-engineering workflow is five commands: <code>/hyper-plan</code> for research-driven specs, <code>/hyper-implement</code> for verified implementation, <code>/hyper-review</code> for parallel code review, <code>/hyper-verify</code> for automated and manual testing, and <code>/hyper-init-stack</code> for stack configuration.
+          </p>
+        </div>
+
+        <!-- Hyper Commands -->
+        <div class="command-category">
+          <h3><i class="fa-solid fa-arrows-spin"></i> Hyper Commands (5)</h3>
+          <div class="grid columns-2">
+            <div class="command-card">
+              <div class="command-header">
+                <code class="command-name">/hyper-plan</code>
+                <span class="command-type-badge">core</span>
+              </div>
+              <p class="command-description">Create comprehensive specs by spawning 4 research agents in parallel, with human review gates before task creation.</p>
+            </div>
+            <div class="command-card">
+              <div class="command-header">
+                <code class="command-name">/hyper-implement</code>
+                <span class="command-type-badge">core</span>
+              </div>
+              <p class="command-description">Implement Linear tasks with built-in verification loops, updating status and creating fix tasks automatically.</p>
+            </div>
+            <div class="command-card">
+              <div class="command-header">
+                <code class="command-name">/hyper-review</code>
+                <span class="command-type-badge">core</span>
+              </div>
+              <p class="command-description">Orchestrate comprehensive code reviews using specialized domain sub-agents (security, architecture, performance, quality).</p>
+            </div>
+            <div class="command-card">
+              <div class="command-header">
+                <code class="command-name">/hyper-verify</code>
+                <span class="command-type-badge">core</span>
+              </div>
+              <p class="command-description">Run comprehensive automated and manual verification using Playwright MCP, creating fix tasks for failures.</p>
+            </div>
+            <div class="command-card">
+              <div class="command-header">
+                <code class="command-name">/hyper-init-stack</code>
+                <span class="command-type-badge">setup</span>
+              </div>
+              <p class="command-description">Initialize stack template for the project, configuring verification commands and patterns.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills Section -->
+      <section id="skills">
+        <div class="heading">
+          <h2 class="no-top-margin">
+            <i class="fa-solid fa-wand-magic-sparkles color-accent"></i> 3 Core Skills
+          </h2>
+          <p class="paragraph m secondary">
+            Essential expertise for the hyper-engineering workflow. The <code>linear-cli-expert</code> guides Linear CLI usage and spec-driven development. The <code>git-worktree</code> enables isolated parallel development. The <code>compound-docs</code> captures solved problems as searchable documentation.
+          </p>
+        </div>
+
+        <!-- Core Workflow Skills -->
+        <div class="skill-category">
+          <h3><i class="fa-solid fa-bolt"></i> Hyper-Engineering Skills (3)</h3>
+          <div class="grid columns-3">
+            <div class="skill-card">
+              <div class="skill-header">
+                <span class="skill-name">linear-cli-expert</span>
+                <span class="skill-badge">Workflow</span>
+              </div>
+              <p class="skill-description">Expert guidance for spec-driven development with Linear CLI. Orchestrates research, planning, and implementation workflows.</p>
+              <code class="skill-usage">skill: linear-cli-expert</code>
+            </div>
+            <div class="skill-card">
+              <div class="skill-header">
+                <span class="skill-name">git-worktree</span>
+                <span class="skill-badge">Git</span>
+              </div>
+              <p class="skill-description">Manage Git worktrees for isolated parallel development. Work on multiple branches simultaneously without switching.</p>
+              <code class="skill-usage">skill: git-worktree</code>
+            </div>
+            <div class="skill-card">
+              <div class="skill-header">
+                <span class="skill-name">compound-docs</span>
+                <span class="skill-badge">Knowledge</span>
+              </div>
+              <p class="skill-description">Capture solved problems as categorized documentation with YAML frontmatter for fast lookup and institutional knowledge.</p>
+              <code class="skill-usage">skill: compound-docs</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MCP Servers Section -->
+      <section id="mcp-servers">
+        <div class="heading">
+          <h2 class="no-top-margin">
+            <i class="fa-solid fa-server color-accent"></i> Two MCP Servers
+          </h2>
+          <p class="paragraph m secondary">
+            Playwright gives Claude a browser—it can click buttons, take screenshots, fill forms, and validate what your users actually see. Context7 gives it instant access to docs for 100+ frameworks. Need to know how Next.js handles dynamic routes? Context7 fetches the answer in real-time instead of hallucinating from outdated training data.
+          </p>
+        </div>
+
+        <div class="grid columns-2">
+          <div class="mcp-card mcp-card-browser">
+            <div class="mcp-header">
+              <i class="fa-brands fa-chrome mcp-icon"></i>
+              <span class="mcp-name">Playwright</span>
+            </div>
+            <p class="mcp-description">Your AI can now see and click like a user. Test flows, grab screenshots, debug what's actually rendering.</p>
+            <div class="mcp-tools">
+              <h4>Tools Provided: <span class="tools-count">6 tools</span></h4>
+              <ul>
+                <li><code>browser_navigate</code> - Navigate to URLs</li>
+                <li><code>browser_take_screenshot</code> - Take screenshots</li>
+                <li><code>browser_click</code> - Click elements</li>
+                <li><code>browser_fill_form</code> - Fill form fields</li>
+                <li><code>browser_snapshot</code> - Get accessibility snapshot</li>
+                <li><code>browser_evaluate</code> - Execute JavaScript</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mcp-card mcp-card-docs">
+            <div class="mcp-header">
+              <i class="fa-solid fa-book-open mcp-icon"></i>
+              <span class="mcp-name">Context7</span>
+            </div>
+            <p class="mcp-description">Stop getting outdated answers. Context7 fetches current docs from 100+ frameworks in real-time.</p>
+            <div class="mcp-tools">
+              <h4>Tools Provided: <span class="tools-count">2 tools</span></h4>
+              <ul>
+                <li><code>resolve-library-id</code> - Find library ID</li>
+                <li><code>get-library-docs</code> - Get documentation</li>
+              </ul>
+              <p class="mcp-note">Supports: Rails, React, Next.js, Vue, Django, Laravel, and more than 100 others</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Installation Section -->
+      <section id="install" class="install-section">
+        <div class="heading centered">
+          <h2 class="no-top-margin">Three Commands. Zero Configuration.</h2>
+          <p class="paragraph m secondary">
+            You're 30 seconds from running your first spec-driven planning session. No config files. Just copy, paste, go.
+          </p>
+        </div>
+
+        <div class="install-steps">
+          <div class="install-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Add the Marketplace</h3>
+              <div class="card-code-block">
+                <pre><code>claude /plugin marketplace add https://github.com/juanbermudez/hyper-eng</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Install the Plugin</h3>
+              <div class="card-code-block">
+                <pre><code>claude /plugin install hyper-engineering</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Start Building</h3>
+              <div class="card-code-block">
+                <pre><code># Research and create a spec
+/hyper-plan "Add user authentication"
+
+# Implement a Linear task
+/hyper-implement TASK-123
+
+# Run parallel code review
+/hyper-review</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section id="faq">
+        <div class="heading centered">
+          <h2 class="no-top-margin">Frequently Asked Questions</h2>
+        </div>
+        <div class="accordion-container">
+          <details class="accordion-item" name="faq">
+            <summary class="accordion-toggle">
+              <p class="paragraph m bold">What is Hyper-Engineering?</p>
+              <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+            </summary>
+            <div class="accordion-content">
+              <p>
+                Hyper-engineering is spec-driven development with Linear as the source of truth. The workflow is: Draft → Spec Review → Ready → In Progress → Verification → Done. Specs matter more than code—code is disposable and can be regenerated from specs. Every spec requires human approval before tasks are created, and every implementation requires verification before it's done.
+              </p>
+            </div>
+          </details>
+          <details class="accordion-item" name="faq">
+            <summary class="accordion-toggle">
+              <p class="paragraph m bold">How do agents differ from skills?</p>
+              <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+            </summary>
+            <div class="accordion-content">
+              <p>
+                <strong>Agents</strong> are coworkers with specific jobs. The security-sentinel does security reviews. The kieran-rails-reviewer enforces Rails conventions. You call them directly: <code>claude agent security-sentinel</code>.
+              </p>
+              <p>
+                <strong>Skills</strong> are expertise Claude can tap into when needed. The dhh-ruby-style knows 37signals patterns. The gemini-imagegen knows how to generate images. Claude invokes them automatically when relevant, or you can explicitly call them: <code>skill: dhh-ruby-style</code>.
+              </p>
+            </div>
+          </details>
+          <details class="accordion-item" name="faq">
+            <summary class="accordion-toggle">
+              <p class="paragraph m bold">Why aren't MCP servers loading automatically?</p>
+              <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+            </summary>
+            <div class="accordion-content">
+              <p>
+                Yeah, we know. It's a current limitation. The workaround is simple: manually add the MCP servers to your <code>.claude/settings.json</code> file. Check the README for copy-paste config. Takes 30 seconds and you're done.
+              </p>
+            </div>
+          </details>
+          <details class="accordion-item" name="faq">
+            <summary class="accordion-toggle">
+              <p class="paragraph m bold">Can I use this with languages other than Ruby/Rails?</p>
+              <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+            </summary>
+            <div class="accordion-content">
+              <p>
+                Absolutely. We've got Python and TypeScript reviewers alongside the Rails ones. And the workflow commands, research agents, and skills like gemini-imagegen don't care what language you write. The security-sentinel finds SQL injection whether it's in Rails, Django, or Laravel.
+              </p>
+            </div>
+          </details>
+          <details class="accordion-item" name="faq">
+            <summary class="accordion-toggle">
+              <p class="paragraph m bold">How do I create my own agents or skills?</p>
+              <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+            </summary>
+            <div class="accordion-content">
+              <p>
+                Run <code>/create-agent-skill</code> or invoke the <code>create-agent-skills</code> skill. Both give you templates, enforce best practices, and walk you through the structure. You'll have a working agent or skill in minutes instead of reverse-engineering from examples.
+              </p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="promo-cta">
+        <div class="heading centered">
+          <span class="cta-badge"><i class="fa-solid fa-bolt"></i> Free & Open Source</span>
+          <h2>Specs First. Code Second. Verification Always.</h2>
+          <p class="paragraph m cta-subheading">
+            <strong>Your spec is the source of truth.</strong> Linear integration, mandatory review gates, verification loops. Get 4 research agents, 7 hyper commands, 3 core skills, and 2 MCP servers working for you right now.
+          </p>
+          <div class="button-group margin-paragraph centered">
+            <a href="#install" class="button primary cta-primary">
+              <i class="fa-solid fa-download"></i> Install Plugin Now
+              <span class="button-arrow">→</span>
+            </a>
+            <a href="https://github.com/juanbermudez/hyper-eng" class="button tertiary cta-secondary">
+              <i class="fa-brands fa-github"></i> View on GitHub
+            </a>
+          </div>
+          <p class="cta-trust">Join developers who build with specs as the source of truth</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-menu">
+        <div>
+          <p class="paragraph s">
+            &copy; 2025 Juan Bermudez<br />
+            Built with <a href="https://launchkit.evilmartians.io" target="_blank">LaunchKit</a> template by
+            <a href="https://evilmartians.com" target="_blank">Evil Martians</a>
+          </p>
+        </div>
+        <div>
+          <div class="link-list">
+            <a href="#agents" class="ui s">Agents</a>
+            <a href="#commands" class="ui s">Commands</a>
+            <a href="#skills" class="ui s">Skills</a>
+            <a href="pages/getting-started.html" class="ui s">Documentation</a>
+          </div>
+        </div>
+        <div>
+          <div class="link-list">
+            <a href="https://github.com/juanbermudez/hyper-eng" class="icon-link ui s" target="_blank">
+              <div class="fa-brands fa-github icon m color-accent"></div>
+              <div class="pseudo-link">GitHub</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>

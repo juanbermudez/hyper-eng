@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-dark">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Skill Reference - Hyper-Engineering</title>
+  <meta content="Complete reference for all 4 skills in the Hyper-Engineering plugin." name="description" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="../css/style.css" rel="stylesheet" type="text/css" />
+  <link href="../css/docs.css" rel="stylesheet" type="text/css" />
+  <script src="../js/main.js" type="text/javascript" defer></script>
+</head>
+
+<body>
+  <div class="background-gradient"></div>
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" class="nav-brand">
+          <span class="logo-icon"><i class="fa-solid fa-bolt"></i></span>
+          <span class="logo-text">HE Docs</span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul>
+            <li><a href="getting-started.html">Installation</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul>
+            <li><a href="agents.html">Agents (4)</a></li>
+            <li><a href="commands.html">Commands (7)</a></li>
+            <li><a href="skills.html" class="active">Skills (3)</a></li>
+            <li><a href="mcp-servers.html">MCP Servers (2)</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="changelog.html">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>On This Page</h3>
+          <ul>
+            <li><a href="#core-skills">Core Skills (3)</a></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="docs-content">
+      <div class="docs-header">
+        <nav class="breadcrumb">
+          <a href="../index.html">Home</a>
+          <span>/</span>
+          <a href="getting-started.html">Docs</a>
+          <span>/</span>
+          <span>Skills</span>
+        </nav>
+        <button class="mobile-menu-toggle" data-sidebar-toggle>
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
+      <article class="docs-article">
+        <h1><i class="fa-solid fa-wand-magic-sparkles color-accent"></i> Skill Reference</h1>
+        <p class="lead">
+          Skills are specialized knowledge that commands and agents can tap into. The 3 core skills provide essential expertise for the hyper-engineering workflow: Linear CLI usage, git worktree management, and problem documentation. They're invoked automatically when needed or called explicitly.
+        </p>
+
+        <div class="usage-box">
+          <h3>How to Use Skills</h3>
+          <div class="card-code-block">
+            <pre><code># Skills are invoked automatically by commands
+/hyper-plan "Add auth"  # Uses linear-cli-expert
+/hyper-implement TASK-123  # Uses git-worktree and linear-cli-expert
+
+# Or invoke explicitly in conversation
+skill: linear-cli-expert
+skill: git-worktree
+skill: compound-docs</code></pre>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon"><i class="fa-solid fa-circle-info"></i></div>
+          <div class="callout-content">
+            <h4>Skills vs Agents</h4>
+            <p>
+              <strong>Agents</strong> are personas—they <em>do</em> things. <strong>Skills</strong> are knowledge—they teach Claude <em>how</em> to do things. Agents execute workflows. Skills provide expertise and guidance.
+            </p>
+          </div>
+        </div>
+
+        <!-- Core Skills -->
+        <section id="core-skills">
+          <h2><i class="fa-solid fa-bolt"></i> Core Skills (3)</h2>
+          <p>Essential expertise for the hyper-engineering workflow. These skills are invoked automatically by the hyper commands to provide specialized guidance.</p>
+
+          <div class="skill-detail" id="linear-cli-expert">
+            <div class="skill-detail-header">
+              <h3>linear-cli-expert</h3>
+              <span class="skill-badge">Workflow</span>
+            </div>
+            <p class="skill-detail-description">
+              Expert guidance for spec-driven development using the Linear CLI and AI agents. This skill orchestrates research, planning, and implementation workflows with Linear as the single source of truth. Provides comprehensive Linear CLI command reference and workflow stage guidance.
+            </p>
+            <h4>What This Skill Provides</h4>
+            <ul>
+              <li><strong>Linear CLI Reference</strong> - Complete command reference for issues, projects, documents, and workflows</li>
+              <li><strong>Workflow Stages</strong> - Guidance on the hyper-engineering workflow: Research → Planning → Task Breakdown → Implementation → Review</li>
+              <li><strong>Verification Requirements</strong> - Templates for verification checklists (automated + manual)</li>
+              <li><strong>Diagram Requirements</strong> - Mermaid diagram templates (flowchart, sequence, erDiagram, stateDiagram) and ASCII layout patterns</li>
+            </ul>
+            <h4>Used By</h4>
+            <ul>
+              <li><code>/hyper-plan</code> - For creating Linear projects and documents</li>
+              <li><code>/hyper-implement</code> - For updating task status and creating verification sub-tasks</li>
+              <li><code>/hyper-review</code> - For adding review reports to Linear tasks</li>
+              <li><code>/hyper-verify</code> - For updating verification task status</li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code>skill: linear-cli-expert</code></pre>
+            </div>
+            <h4>Example Linear CLI Commands</h4>
+            <div class="card-code-block">
+              <pre><code># Create project with document
+linear project create --name "Auth Feature" --with-doc
+
+# Create issue in project
+linear issue create --title "Implement OAuth" --project LOT-123 --priority 2
+
+# Update issue status
+linear issue update LOT-456 --state "In Progress"
+
+# Add comment to issue
+linear issue comment LOT-456 "Implementation complete"</code></pre>
+            </div>
+          </div>
+
+          <div class="skill-detail" id="git-worktree">
+            <div class="skill-detail-header">
+              <h3>git-worktree</h3>
+              <span class="skill-badge">Git</span>
+            </div>
+            <p class="skill-detail-description">
+              Manage Git worktrees for isolated parallel development. Work on multiple branches simultaneously without switching. This skill handles creating, listing, switching, and cleaning up worktrees with automatic .env file copying and .gitignore management.
+            </p>
+            <h4>What This Skill Provides</h4>
+            <ul>
+              <li><strong>Worktree Creation</strong> - Create isolated worktrees from main branch with clear naming</li>
+              <li><strong>Environment Setup</strong> - Automatically copies .env, .env.local, .env.test files to new worktrees</li>
+              <li><strong>Worktree Management</strong> - List, switch, and clean up worktrees interactively</li>
+              <li><strong>Safety Guarantees</strong> - Confirms before creating or removing, won't remove current worktree</li>
+            </ul>
+            <h4>Key Commands</h4>
+            <ul>
+              <li><code>create &lt;branch-name&gt;</code> - Create new worktree with branch (copies .env files)</li>
+              <li><code>list</code> - Show all worktrees with current status</li>
+              <li><code>switch &lt;name&gt;</code> - Switch to existing worktree</li>
+              <li><code>cleanup</code> - Interactively remove inactive worktrees</li>
+              <li><code>copy-env &lt;name&gt;</code> - Copy .env files to existing worktree</li>
+            </ul>
+            <h4>Used By</h4>
+            <ul>
+              <li><code>/hyper-implement</code> - Offers worktree option for isolated parallel work</li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code>skill: git-worktree</code></pre>
+            </div>
+            <h4>Example Workflow</h4>
+            <div class="card-code-block">
+              <pre><code># Create worktree for feature (automatic .env copy)
+bash ${CLAUDE_PLUGIN_ROOT}/skills/git-worktree/scripts/worktree-manager.sh create feature-login
+
+# List all worktrees
+bash ${CLAUDE_PLUGIN_ROOT}/skills/git-worktree/scripts/worktree-manager.sh list
+
+# Switch to worktree
+bash ${CLAUDE_PLUGIN_ROOT}/skills/git-worktree/scripts/worktree-manager.sh switch feature-login
+
+# Clean up when done
+bash ${CLAUDE_PLUGIN_ROOT}/skills/git-worktree/scripts/worktree-manager.sh cleanup</code></pre>
+            </div>
+            <div class="callout callout-warning">
+              <div class="callout-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="callout-content">
+                <h4>Always Use the Manager Script</h4>
+                <p>
+                  NEVER call <code>git worktree add</code> directly. Always use the worktree-manager.sh script. The script handles critical setup that raw git commands don't: copying .env files, ensuring .worktrees is in .gitignore, and creating consistent directory structure.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-detail" id="compound-docs">
+            <div class="skill-detail-header">
+              <h3>compound-docs</h3>
+              <span class="skill-badge">Knowledge</span>
+            </div>
+            <p class="skill-detail-description">
+              Capture solved problems as categorized documentation with YAML frontmatter for fast lookup. This skill automatically documents solutions after confirmation, building searchable institutional knowledge with category-based organization and enum-validated problem types.
+            </p>
+            <h4>What This Skill Provides</h4>
+            <ul>
+              <li><strong>Auto-Detection</strong> - Triggers after phrases like "that worked", "it's fixed", "problem solved"</li>
+              <li><strong>Structured Documentation</strong> - YAML frontmatter with validated problem types, severity, symptoms, root cause</li>
+              <li><strong>Category Organization</strong> - Single-file architecture in symptom category directories</li>
+              <li><strong>Decision Menu</strong> - Post-documentation options: continue, add to required reading, link related issues, create skill</li>
+            </ul>
+            <h4>7-Step Process</h4>
+            <ol>
+              <li><strong>Detect Confirmation</strong> - Auto-invoke after success phrases or /doc-fix command</li>
+              <li><strong>Gather Context</strong> - Extract module, symptom, investigation, root cause, solution from conversation</li>
+              <li><strong>Check Existing Docs</strong> - Search for similar issues, offer to cross-reference or update</li>
+              <li><strong>Generate Filename</strong> - Format: [sanitized-symptom]-[module]-[YYYYMMDD].md</li>
+              <li><strong>Validate YAML Schema</strong> - Validate against enum values (BLOCKING - must pass to proceed)</li>
+              <li><strong>Create Documentation</strong> - Write to docs/solutions/[category]/[filename].md</li>
+              <li><strong>Cross-Reference & Pattern Detection</strong> - Link related issues, detect critical patterns</li>
+            </ol>
+            <h4>Used By</h4>
+            <ul>
+              <li><code>/hyper-review</code> - Can document recurring issues discovered during review</li>
+              <li>Manual invocation after solving non-trivial problems</li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code>skill: compound-docs</code></pre>
+            </div>
+            <h4>Example YAML Frontmatter</h4>
+            <div class="card-code-block">
+              <pre><code>---
+module: Brief System
+date: 2025-11-10
+problem_type: performance_issue
+component: rails_model
+symptoms:
+  - "N+1 query when loading email threads"
+  - "Brief generation taking >5 seconds"
+root_cause: missing_include
+severity: high
+tags: [n-plus-one, eager-loading, performance]
+---</code></pre>
+            </div>
+            <h4>Decision Menu</h4>
+            <p>After capturing documentation, presents options:</p>
+            <ol>
+              <li><strong>Continue workflow</strong> (recommended) - Return to calling skill</li>
+              <li><strong>Add to Required Reading</strong> - Promote to critical patterns (cora-critical-patterns.md)</li>
+              <li><strong>Link related issues</strong> - Connect to similar problems</li>
+              <li><strong>Add to existing skill</strong> - Add to learning skill (e.g., hotwire-native)</li>
+              <li><strong>Create new skill</strong> - Extract into new learning skill</li>
+              <li><strong>View documentation</strong> - See what was captured</li>
+            </ol>
+          </div>
+
+        </section>
+
+        <div class="callout callout-info">
+          <div class="callout-icon"><i class="fa-solid fa-circle-info"></i></div>
+          <div class="callout-content">
+            <h4>Skills Power the Hyper Workflow</h4>
+            <p>
+              These 3 skills work together across the hyper commands: <strong>linear-cli-expert</strong> guides project and task management, <strong>git-worktree</strong> enables parallel development, and <strong>compound-docs</strong> captures knowledge as you solve problems. They're the foundation that makes spec-driven development systematic and repeatable.
+            </p>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="docs-nav-footer">
+          <a href="commands.html" class="nav-prev">
+            <span class="nav-label">Previous</span>
+            <span class="nav-title"><i class="fa-solid fa-arrow-left"></i> Commands</span>
+          </a>
+          <a href="mcp-servers.html" class="nav-next">
+            <span class="nav-label">Next</span>
+            <span class="nav-title">MCP Servers <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </nav>
+      </article>
+    </main>
+  </div>
+
+  <script>
+    document.querySelector('[data-sidebar-toggle]')?.addEventListener('click', () => {
+      document.querySelector('.docs-sidebar').classList.toggle('open');
+    });
+  </script>
+</body>
+
+</html>

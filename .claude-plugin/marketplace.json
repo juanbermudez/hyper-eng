@@ -1,0 +1,31 @@
+{
+  "name": "hyper-eng-marketplace",
+  "owner": {
+    "name": "Juan Bermudez",
+    "url": "https://github.com/juanbermudez"
+  },
+  "metadata": {
+    "description": "Hyper-Engineering plugin marketplace for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "hyper-engineering",
+      "description": "Spec-driven development with Linear integration. 4 research agents, 7 commands, 3 skills, 2 MCP servers. Specs first, code second, verification always.",
+      "version": "1.2.0",
+      "author": {
+        "name": "Juan Bermudez",
+        "url": "https://github.com/juanbermudez"
+      },
+      "homepage": "https://github.com/juanbermudez/hyper-eng",
+      "tags": [
+        "spec-driven",
+        "linear",
+        "verification",
+        "code-review",
+        "workflow"
+      ],
+      "source": "./plugins/hyper-engineering"
+    }
+  ]
+}
