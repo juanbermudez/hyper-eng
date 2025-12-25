@@ -7,7 +7,7 @@ Best practices and workflow patterns for AI agents using the Linear Agent CLI (D
 ```bash
 # Install from GitHub
 deno install --global --allow-all --name linear \
-  https://raw.githubusercontent.com/juanbermudez/linear-agent-cli/main/src/main.ts
+  https://raw.githubusercontent.com/juanbermudez/agent-linear-cli/main/src/main.ts
 
 # Verify installation
 linear --version

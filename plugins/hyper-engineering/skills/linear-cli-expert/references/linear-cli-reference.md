@@ -11,7 +11,7 @@ The Linear Agent CLI is a Deno-based tool optimized for AI agents:
 ```bash
 # Install from GitHub
 deno install --global --allow-all --name linear \
-  https://raw.githubusercontent.com/juanbermudez/linear-agent-cli/main/src/main.ts
+  https://raw.githubusercontent.com/juanbermudez/agent-linear-cli/main/src/main.ts
 
 # Verify installation
 linear --version
