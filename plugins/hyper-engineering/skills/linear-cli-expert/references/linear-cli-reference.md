@@ -39,22 +39,24 @@ Get your API key from [Linear Settings > API](https://linear.app/settings/api).
 
 ```bash
 linear issue create \
-  --title "Task title" \
-  --description "$(cat description.md)" \
+  -t "Task title" \
+  -d "$(cat description.md)" \
   --team LOT \
-  --assignee @me \
+  -a self \
   --priority 1 \
   --estimate 5 \
-  --label backend feature \
+  -l backend \
+  -l feature \
   --project "API Redesign" \
   --milestone "Phase 1" \
   --cycle "Sprint 5" \
-  --parent LOT-100 \
-  --state "In Progress" \
+  -p LOT-100 \
+  -s "In Progress" \
   --due-date 2025-12-31 \
-  --blocks LOT-101 LOT-102 \
+  --blocks LOT-101 \
+  --blocks LOT-102 \
   --related-to LOT-103 \
-  --duplicate-of LOT-104
+  --start
 ```
 
 **Common Patterns:**
@@ -62,28 +64,29 @@ linear issue create \
 ```bash
 # Quick bug report
 linear issue create \
-  --title "Login button not working" \
+  -t "Login button not working" \
   --priority 1 \
-  --label bug \
-  --assignee @me \
+  -l bug \
+  -a self \
   --team LOT
 
 # Feature with full metadata
 linear issue create \
-  --title "Add OAuth support" \
-  --description "$(cat spec.md)" \
+  -t "Add OAuth support" \
+  -d "$(cat spec.md)" \
   --project "Auth System" \
   --milestone "Phase 1" \
   --estimate 8 \
-  --label backend feature \
+  -l backend \
+  -l feature \
   --blocks LOT-100 \
   --team LOT
 
 # Sub-task
 linear issue create \
-  --title "Write tests" \
-  --parent LOT-123 \
-  --assignee @me \
+  -t "Write tests" \
+  -p LOT-123 \
+  -a self \
   --estimate 3 \
   --team LOT
 ```
@@ -166,29 +169,31 @@ linear issue start LOT-123
 
 ```bash
 linear project create \
-  --name "API Redesign" \
-  --description "Modernize API with GraphQL" \
-  --content "$(cat overview.md)" \
-  --team LOT \
-  --lead @me \
+  -n "API Redesign" \
+  -d "Modernize API with GraphQL" \
+  -c "$(cat overview.md)" \
+  -t LOT \
+  -l self \
   --color "#6366F1" \
   --start-date 2026-01-01 \
   --target-date 2026-09-30 \
-  --priority 1 \
-  --status "In Progress"
+  -p 1 \
+  -s "In Progress"
 
-# With document
+# With linked document
 linear project create \
-  --name "Feature X" \
+  -n "Feature X" \
+  -t LOT \
   --with-doc \
   --doc-title "PRD: Feature X"
 ```
 
 **Key Points:**
-- `--description`: Short summary (max 255 chars)
-- `--content`: Full markdown content (large body)
-- `--lead`: Use `@me` for yourself or username/email
+- `-d, --description`: Short summary (max 255 chars)
+- `-c, --content`: Full markdown content (large body)
+- `-l, --lead`: Use `self` for yourself or username/email
 - `--color`: Hex format `#RRGGBB`
+- `--with-doc`: Creates a linked document automatically
 
 ### View Project
 ```bash
@@ -480,12 +485,13 @@ linear issue comment create --body "Fixed"  # Comments on detected issue
 
 ## Important Notes
 
-1. **User References**: Use `@me` for yourself, not `self`
-2. **Labels**: Space-separated, not repeated flags: `--label A B` not `--label A --label B`
-3. **Milestones**: Require project UUID, not slug (use `| jq -r '.project.id'`)
-4. **Label Groups**: Parent must be created with `--is-group` before children
-5. **Project UUID vs Slug**: Most commands accept slug, but milestones need UUID
-6. **Content from files**: Use `--description "$(cat file.md)"` for long content
+1. **Self-assignment**: Use `self` for yourself (not `@me`)
+2. **Labels**: Use repeated `-l` flags: `-l bug -l feature` (not space-separated)
+3. **Relationships**: Use repeated flags: `--blocks LOT-1 --blocks LOT-2`
+4. **Milestones**: Require project UUID, not slug (use `| jq -r '.project.id'`)
+5. **Label Groups**: Parent must be created with `--is-group` before children
+6. **Project UUID vs Slug**: Most commands accept slug, but milestones need UUID
+7. **Content from files**: Use `-d "$(cat file.md)"` for long content
 
 ## Related Documentation
 

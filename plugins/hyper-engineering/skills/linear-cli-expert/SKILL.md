@@ -58,15 +58,15 @@ The Linear Agent CLI is a Deno-based tool optimized for AI agents with JSON-firs
 
 ```bash
 # Issue operations
-linear issue create --title "Title" --team LOT --priority 2
+linear issue create -t "Title" --team LOT --priority 2 -a self
 linear issue view LOT-123
 linear issue list --state "In Progress"
 linear issue update LOT-123 --state "Done"
 linear issue relate LOT-123 LOT-456 --blocks
 linear issue comment create LOT-123 --body "Comment text"
 
-# Project operations
-linear project create --name "Name" --team LOT --content "$(cat spec.md)"
+# Project operations (with linked document)
+linear project create -n "Name" -t LOT -c "$(cat spec.md)" --with-doc --doc-title "PRD"
 linear project milestone create [uuid] --name "Phase 1" --target-date 2026-03-31
 linear project update-create [slug] --body "Status update" --health onTrack
 
@@ -81,10 +81,11 @@ linear workflow list              # List workflow states
 
 ## Important Notes
 
-- Use `@me` for self-assignment (not `self`)
-- Labels are space-separated: `--label A B C`
+- Use `self` for self-assignment (not `@me`)
+- Labels use repeated flags: `-l bug -l feature`
+- Relationships use repeated flags: `--blocks LOT-1 --blocks LOT-2`
 - Milestones require project UUID, not slug
-- Content from files: `--description "$(cat file.md)"`
+- Content from files: `-d "$(cat file.md)"`
 </linear_cli_reference>
 
 <workflow_stages>

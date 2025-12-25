@@ -1,6 +1,23 @@
-# AI Agent Patterns for Linear CLI
+# AI Agent Patterns for Linear Agent CLI
 
-Best practices and workflow patterns for AI agents using the Linear CLI.
+Best practices and workflow patterns for AI agents using the Linear Agent CLI (Deno-based, JSON-first).
+
+## Installation
+
+```bash
+# Install from GitHub
+deno install --global --allow-all --name linear \
+  https://raw.githubusercontent.com/juanbermudez/linear-agent-cli/main/src/main.ts
+
+# Verify installation
+linear --version
+
+# Authenticate
+linear whoami
+# Enter API key when prompted
+```
+
+Get your API key from [Linear Settings > API](https://linear.app/settings/api).
 
 ## Core Principles
 
@@ -22,7 +39,7 @@ Parse JSON responses to verify success:
 
 ```typescript
 const result = JSON.parse(
-  await exec('linear issue create --title "Task" --team LOT'),
+  await exec('linear issue create -t "Task" --team LOT'),
 )
 if (!result.success) {
   console.error(`Error: ${result.error.message}`)
@@ -37,7 +54,7 @@ Always provide all required options to avoid interactive prompts:
 ```bash
 # Good - Non-interactive
 linear issue create \
-  --title "Fix bug" \
+  -t "Fix bug" \
   --team LOT \
   --priority 1
 
@@ -77,59 +94,36 @@ linear issue update --state "In Progress"  # Updates LOT-123
 }
 ```
 
-### Issue View Response
-
-```json
-{
-  "issue": {
-    "identifier": "LOT-123",
-    "title": "Task title",
-    "description": "...",
-    "state": { "name": "In Progress" },
-    "team": { "key": "LOT", "name": "Engineering" },
-    "assignee": { "name": "John", "email": "john@example.com" },
-    "priority": 1,
-    "estimate": 5,
-    "dueDate": "2025-12-31",
-    "project": { "name": "API Redesign" },
-    "milestone": { "name": "Phase 1", "targetDate": "2026-03-31" },
-    "parent": { "identifier": "LOT-100" },
-    "children": [{ "identifier": "LOT-124" }],
-    "relations": {
-      "nodes": [
-        { "type": "blocks", "issue": { "identifier": "LOT-125" } }
-      ]
-    },
-    "labels": {
-      "nodes": [
-        { "name": "Bugfix", "parent": { "name": "Work-Type" } }
-      ]
-    }
-  }
-}
-```
-
-### Comment Response
+### Project Create Response
 
 ```json
 {
   "success": true,
-  "comments": [
-    {
+  "operation": "create",
+  "project": {
+    "id": "uuid",
+    "name": "API Redesign",
+    "slugId": "api-redesign",
+    "url": "https://linear.app/...",
+    "status": {
       "id": "uuid",
-      "body": "This looks good to merge",
-      "createdAt": "2025-11-02T10:00:00.000Z",
-      "author": {
-        "id": "uuid",
-        "name": "John Doe",
-        "email": "john@example.com"
-      },
-      "issue": {
-        "id": "uuid",
-        "identifier": "LOT-123"
-      }
-    }
-  ]
+      "name": "Planned",
+      "type": "planned"
+    },
+    "lead": {
+      "id": "uuid",
+      "name": "John Doe"
+    },
+    "teams": [
+      { "id": "uuid", "key": "LOT", "name": "LotIQ" }
+    ]
+  },
+  "document": {
+    "id": "uuid",
+    "title": "PRD: API Redesign",
+    "slugId": "prd-api-redesign",
+    "url": "https://linear.app/..."
+  }
 }
 ```
 
@@ -140,7 +134,8 @@ linear issue update --state "In Progress"  # Updates LOT-123
   "success": false,
   "error": {
     "code": "MISSING_REQUIRED_FIELD",
-    "message": "--title is required"
+    "message": "--title is required",
+    "field": "title"
   }
 }
 ```
@@ -154,55 +149,60 @@ linear issue update --state "In Progress"  # Updates LOT-123
 SPEC=$(cat spec.md)
 
 # Create issue with all metadata
+# Note: Use -l for each label (repeated flag pattern)
 ISSUE_JSON=$(linear issue create \
-  --title "Implement OAuth 2.0" \
-  --description "$SPEC" \
+  -t "Implement OAuth 2.0" \
+  -d "$SPEC" \
   --team LOT \
   --project "Auth System" \
   --milestone "Phase 1" \
   --priority 1 \
   --estimate 8 \
-  --label backend security \
-  --assignee @me \
-  --blocks LOT-100 LOT-101)
+  -l backend \
+  -l security \
+  -a self \
+  --blocks LOT-100 \
+  --blocks LOT-101)
 
 # Extract issue ID
 ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.issue.identifier')
 
-# Start working
+# Start working (creates branch, updates status)
 linear issue start $ISSUE_ID
 ```
 
-### Workflow 2: Project with Milestones and Issues
+### Workflow 2: Project with Document and Milestones
 
 ```bash
-# 1. Create project
+# 1. Create project with linked document
 PROJECT_JSON=$(linear project create \
-  --name "Mobile App" \
-  --description "iOS and Android applications" \
-  --content "$(cat project-spec.md)" \
-  --team LOT \
-  --lead @me \
-  --priority 1 \
+  -n "Mobile App" \
+  -d "iOS and Android applications" \
+  -c "$(cat project-spec.md)" \
+  -t LOT \
+  -l self \
+  -p 1 \
   --start-date 2026-01-01 \
-  --target-date 2026-06-30)
+  --target-date 2026-06-30 \
+  --with-doc \
+  --doc-title "PRD: Mobile App")
 
 PROJECT_ID=$(echo "$PROJECT_JSON" | jq -r '.project.id')
-PROJECT_SLUG=$(echo "$PROJECT_JSON" | jq -r '.project.slug')
+PROJECT_SLUG=$(echo "$PROJECT_JSON" | jq -r '.project.slugId')
 
-# 2. Create milestones
+# 2. Create milestone
 linear project milestone create $PROJECT_ID \
   --name "Phase 1: Core Features" \
   --target-date 2026-03-31
 
 # 3. Create issues linked to project and milestone
 linear issue create \
-  --title "Setup authentication" \
+  -t "Setup authentication" \
   --team LOT \
   --project "$PROJECT_SLUG" \
   --milestone "Phase 1: Core Features" \
   --priority 1 \
-  --assignee @me
+  -a self
 
 # 4. Add status update
 linear project update-create $PROJECT_SLUG \
@@ -223,10 +223,11 @@ linear label create --name "New-Feature" --parent "Work-Type" --team LOT
 linear label create --name "Backend" --parent "Scope" --team LOT
 linear label create --name "Frontend" --parent "Scope" --team LOT
 
-# 3. Use on issues (displays as "parent/child")
+# 3. Use on issues (use -l for each label)
 linear issue create \
-  --title "Fix API bug" \
-  --label Bugfix Backend \
+  -t "Fix API bug" \
+  -l Bugfix \
+  -l Backend \
   --team LOT
 # Result: Labels show as "Work-Type/Bugfix, Scope/Backend"
 ```
@@ -236,16 +237,17 @@ linear issue create \
 ```bash
 # Create parent issue
 PARENT=$(linear issue create \
-  --title "Database migration" \
+  -t "Database migration" \
   --team LOT \
   --priority 1 | jq -r '.issue.identifier')
 
-# Create dependent issues with relationships
+# Create sub-task with blocking relationships
 linear issue create \
-  --title "Update API layer" \
+  -t "Update API layer" \
   --team LOT \
-  --parent $PARENT \
-  --blocks LOT-200 LOT-201
+  -p $PARENT \
+  --blocks LOT-200 \
+  --blocks LOT-201
 
 # View all relationships
 linear issue relations $PARENT
@@ -258,7 +260,7 @@ linear issue relations $PARENT
 ```typescript
 try {
   const result = JSON.parse(
-    await exec('linear issue create --title "Task"'),
+    await exec('linear issue create -t "Task"'),
   )
 
   if (!result.success) {
@@ -285,7 +287,7 @@ try {
 
 ```bash
 # Always check the result
-RESULT=$(linear issue create --title "Task")
+RESULT=$(linear issue create -t "Task" --team LOT)
 if echo "$RESULT" | jq -e '.success' > /dev/null; then
   ISSUE_ID=$(echo "$RESULT" | jq -r '.issue.identifier')
   echo "Created $ISSUE_ID"
@@ -358,14 +360,16 @@ graph TB
 
 ```bash
 # Get context first
-TEAM=$(linear whoami | jq -r '.configuration.team_id')
-PROJECT=$(linear project list --team $TEAM | jq -r '.projects[0].slug')
+linear whoami | jq '.'
+
+# Check available teams
+linear team list | jq '.teams[].key'
 
 # Then create with full context
 linear issue create \
-  --title "Task" \
-  --team $TEAM \
-  --project $PROJECT
+  -t "Task" \
+  --team LOT \
+  --project "my-project"
 ```
 
 ### 2. Use Consistent Naming
@@ -387,9 +391,9 @@ linear issue create \
 Always create relationships between related issues:
 
 ```bash
-# When you discover dependencies
+# When you discover dependencies (use repeated flags)
 linear issue create \
-  --title "Add API tests" \
+  -t "Add API tests" \
   --team LOT \
   --blocks LOT-123
 
@@ -403,31 +407,76 @@ linear issue update LOT-124 \
 ```bash
 # Good: Keep content in files
 linear issue create \
-  --title "Task" \
-  --description "$(cat spec.md)"
+  -t "Task" \
+  -d "$(cat spec.md)"
 
 # Avoid: Inline content for long text
 linear issue create \
-  --title "Task" \
-  --description "Very long content..."
+  -t "Task" \
+  -d "Very long content..."
 ```
+
+## CLI Flag Reference
+
+### Issue Create Flags
+
+| Flag | Short | Description |
+|------|-------|-------------|
+| `--title` | `-t` | Issue title (required) |
+| `--description` | `-d` | Issue description (markdown) |
+| `--team` | | Team key |
+| `--assignee` | `-a` | Assign to `self` or username |
+| `--priority` | | Priority 1-4 (1=urgent, 4=low) |
+| `--estimate` | | Points estimate |
+| `--label` | `-l` | Label name (repeat for multiple) |
+| `--project` | | Project name or slug |
+| `--milestone` | | Milestone name |
+| `--cycle` | | Cycle name or ID |
+| `--state` | `-s` | Workflow state name |
+| `--parent` | `-p` | Parent issue identifier |
+| `--blocks` | | Issue this blocks (repeat for multiple) |
+| `--related-to` | | Related issue (repeat for multiple) |
+| `--duplicate-of` | | Duplicate of issue |
+| `--similar-to` | | Similar to issue |
+| `--due-date` | | Due date (YYYY-MM-DD) |
+| `--start` | | Start work after creation |
+| `--human` | | Human-readable output |
+
+### Project Create Flags
+
+| Flag | Short | Description |
+|------|-------|-------------|
+| `--name` | `-n` | Project name (required) |
+| `--description` | `-d` | Short description (max 255 chars) |
+| `--content` | `-c` | Full markdown content |
+| `--team` | `-t` | Team key (repeat for multiple) |
+| `--status` | `-s` | Status name or ID |
+| `--lead` | `-l` | Lead username or email |
+| `--icon` | `-i` | Icon emoji |
+| `--color` | | Color hex (#RRGGBB) |
+| `--start-date` | | Start date (YYYY-MM-DD) |
+| `--target-date` | | Target date (YYYY-MM-DD) |
+| `--priority` | `-p` | Priority 0-4 |
+| `--with-doc` | | Create linked document |
+| `--doc-title` | | Document title |
+| `--human` | | Human-readable output |
 
 ## Important Notes
 
-1. **User References**: Use `@me` for yourself, not `self`
-2. **Labels**: Space-separated, not repeated flags: `--label A B` not `--label A --label B`
-3. **Milestones**: Require project UUID, not slug (use `| jq -r '.project.id'`)
-4. **Label Groups**: Parent must be created with `--is-group` before children
-5. **Project UUID vs Slug**: Most commands accept slug, but milestones need UUID
+1. **Self-assignment**: Use `self` (not `@me` or `@self`)
+2. **Labels**: Use repeated `-l` flags: `-l bug -l feature`
+3. **Relationships**: Use repeated flags: `--blocks LOT-1 --blocks LOT-2`
+4. **Milestones**: Require project UUID, not slug
+5. **Project UUID vs Slug**: Milestone commands need UUID from `jq -r '.project.id'`
+6. **Content from files**: Use `"$(cat file.md)"` for long content
 
 ## Critical Reminders
 
 1. **JSON is the default output** - No flags needed, use `--human` for readable format
 2. **Always check `success` field** in response
-3. **Use `@me`** for self-assignment, not `self`
-4. **Label groups require `--is-group`** flag for parent
-5. **Space-separate multiple labels**: `--label A B C`
-6. **Milestones need project UUID**, not slug
-7. **Cross-references need full URLs** in markdown format
-8. **VCS context is automatically detected** from git branches
-9. **All relationship types are bidirectional** (show outgoing + incoming)
+3. **Use `self`** for self-assignment, not `@me`
+4. **Labels use repeated flags**: `-l A -l B -l C`
+5. **Milestones need project UUID**, not slug
+6. **Cross-references need full URLs** in markdown format
+7. **VCS context is automatically detected** from git branches
+8. **All relationship types are bidirectional** (show outgoing + incoming)
