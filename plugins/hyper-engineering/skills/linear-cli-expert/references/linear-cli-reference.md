@@ -41,7 +41,7 @@ Get your API key from [Linear Settings > API](https://linear.app/settings/api).
 linear issue create \
   -t "Task title" \
   -d "$(cat description.md)" \
-  --team LOT \
+  --team ENG \
   -a self \
   --priority 1 \
   --estimate 5 \
@@ -50,12 +50,12 @@ linear issue create \
   --project "API Redesign" \
   --milestone "Phase 1" \
   --cycle "Sprint 5" \
-  -p LOT-100 \
+  -p ENG-100 \
   -s "In Progress" \
   --due-date 2025-12-31 \
-  --blocks LOT-101 \
-  --blocks LOT-102 \
-  --related-to LOT-103 \
+  --blocks ENG-101 \
+  --blocks ENG-102 \
+  --related-to ENG-103 \
   --start
 ```
 
@@ -68,7 +68,7 @@ linear issue create \
   --priority 1 \
   -l bug \
   -a self \
-  --team LOT
+  --team ENG
 
 # Feature with full metadata
 linear issue create \
@@ -79,22 +79,22 @@ linear issue create \
   --estimate 8 \
   -l backend \
   -l feature \
-  --blocks LOT-100 \
-  --team LOT
+  --blocks ENG-100 \
+  --team ENG
 
 # Sub-task
 linear issue create \
   -t "Write tests" \
-  -p LOT-123 \
+  -p ENG-123 \
   -a self \
   --estimate 3 \
-  --team LOT
+  --team ENG
 ```
 
 ### View Issue
 ```bash
-linear issue view LOT-123
-linear issue view LOT-123 --human
+linear issue view ENG-123
+linear issue view ENG-123 --human
 ```
 
 ### List Issues
@@ -107,7 +107,7 @@ linear issue list --limit 100
 
 ### Update Issue
 ```bash
-linear issue update LOT-123 \
+linear issue update ENG-123 \
   --title "New title" \
   --state "Done" \
   --priority 1 \
@@ -116,7 +116,7 @@ linear issue update LOT-123 \
 
 ### Delete Issue
 ```bash
-linear issue delete LOT-123
+linear issue delete ENG-123
 ```
 
 ### Search Issues
@@ -127,40 +127,40 @@ linear issue search "search query"
 ### Issue Relationships
 ```bash
 # Create relationship
-linear issue relate LOT-123 LOT-456 --blocks
-linear issue relate LOT-123 LOT-456 --blocked-by
-linear issue relate LOT-123 LOT-456 --related-to
-linear issue relate LOT-123 LOT-456 --duplicate-of
+linear issue relate ENG-123 ENG-456 --blocks
+linear issue relate ENG-123 ENG-456 --blocked-by
+linear issue relate ENG-123 ENG-456 --related-to
+linear issue relate ENG-123 ENG-456 --duplicate-of
 
 # Remove relationship
-linear issue unrelate LOT-123 LOT-456
+linear issue unrelate ENG-123 ENG-456
 
 # View relationships
-linear issue relations LOT-123
+linear issue relations ENG-123
 ```
 
 ### Issue Comments
 ```bash
 # Create comment
-linear issue comment create LOT-123 --body "Comment text"
+linear issue comment create ENG-123 --body "Comment text"
 
 # List comments
-linear issue comment list LOT-123
+linear issue comment list ENG-123
 ```
 
 ### Issue Attachments
 ```bash
 # Create attachment
-linear issue attachment create LOT-123 --url "https://..."
+linear issue attachment create ENG-123 --url "https://..."
 
 # List attachments
-linear issue attachment list LOT-123
+linear issue attachment list ENG-123
 ```
 
 ### Start Work (Git Branch)
 ```bash
-linear issue start LOT-123
-# Creates branch: feature/LOT-123-issue-title
+linear issue start ENG-123
+# Creates branch: feature/ENG-123-issue-title
 ```
 
 ## Project Commands
@@ -172,7 +172,7 @@ linear project create \
   -n "API Redesign" \
   -d "Modernize API with GraphQL" \
   -c "$(cat overview.md)" \
-  -t LOT \
+  -t ENG \
   -l self \
   --color "#6366F1" \
   --start-date 2026-01-01 \
@@ -183,7 +183,7 @@ linear project create \
 # With linked document
 linear project create \
   -n "Feature X" \
-  -t LOT \
+  -t ENG \
   --with-doc \
   --doc-title "PRD: Feature X"
 ```
@@ -288,14 +288,14 @@ linear document search "search query"
 ```bash
 linear label create \
   --name "Label Name" \
-  --team LOT \
+  --team ENG \
   --color "#FF0000"
 ```
 
 ### List Labels
 ```bash
 linear label list
-linear label list --team LOT
+linear label list --team ENG
 ```
 
 ### Update Label
@@ -315,7 +315,7 @@ linear label delete [label-id]
 ### List Workflow States
 ```bash
 linear workflow list
-linear workflow list --team LOT
+linear workflow list --team ENG
 ```
 
 ### Refresh Cache
@@ -401,7 +401,7 @@ linear config setup
 ### Set Configuration
 ```bash
 linear config set api_key "lin_api_..."
-linear config set team_key "LOT"
+linear config set team_key "ENG"
 linear config set team_id "[uuid]"
 ```
 
@@ -430,13 +430,13 @@ Shows current user and configuration status.
 ### JSON (Default)
 ```bash
 linear issue list
-# [{"id": "...", "identifier": "LOT-123", ...}]
+# [{"id": "...", "identifier": "ENG-123", ...}]
 ```
 
 ### Human-Readable
 ```bash
 linear issue list --human
-# LOT-123  Fix login bug  In Progress  @juan
+# ENG-123  Fix login bug  In Progress  @juan
 ```
 
 ## Environment Variables
@@ -452,7 +452,7 @@ Location: `.linear.toml` (current directory or home)
 ```toml
 api_key = "lin_api_..."
 team_id = "uuid"
-team_key = "LOT"
+team_key = "ENG"
 ```
 
 ## Caching
@@ -473,7 +473,7 @@ linear status cache
 
 The CLI detects issue context from git branches:
 ```
-feature/LOT-123-issue-title → Detects LOT-123
+feature/ENG-123-issue-title → Detects ENG-123
 ```
 
 This enables commands without explicit IDs:
@@ -487,7 +487,7 @@ linear issue comment create --body "Fixed"  # Comments on detected issue
 
 1. **Self-assignment**: Use `self` for yourself (not `@me`)
 2. **Labels**: Use repeated `-l` flags: `-l bug -l feature` (not space-separated)
-3. **Relationships**: Use repeated flags: `--blocks LOT-1 --blocks LOT-2`
+3. **Relationships**: Use repeated flags: `--blocks ENG-1 --blocks ENG-2`
 4. **Milestones**: Require project UUID, not slug (use `| jq -r '.project.id'`)
 5. **Label Groups**: Parent must be created with `--is-group` before children
 6. **Project UUID vs Slug**: Most commands accept slug, but milestones need UUID

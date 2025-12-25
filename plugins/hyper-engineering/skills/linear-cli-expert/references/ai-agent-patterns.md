@@ -39,7 +39,7 @@ Parse JSON responses to verify success:
 
 ```typescript
 const result = JSON.parse(
-  await exec('linear issue create -t "Task" --team LOT'),
+  await exec('linear issue create -t "Task" --team ENG'),
 )
 if (!result.success) {
   console.error(`Error: ${result.error.message}`)
@@ -55,7 +55,7 @@ Always provide all required options to avoid interactive prompts:
 # Good - Non-interactive
 linear issue create \
   -t "Fix bug" \
-  --team LOT \
+  --team ENG \
   --priority 1
 
 # Avoid - Will prompt for input
@@ -67,9 +67,9 @@ linear issue create
 The CLI automatically detects issue context from git branches:
 
 ```bash
-# If on branch: feature/LOT-123-new-feature
-linear issue view        # Shows LOT-123 automatically
-linear issue update --state "In Progress"  # Updates LOT-123
+# If on branch: feature/ENG-123-new-feature
+linear issue view        # Shows ENG-123 automatically
+linear issue update --state "In Progress"  # Updates ENG-123
 ```
 
 ## JSON Response Formats
@@ -82,11 +82,11 @@ linear issue update --state "In Progress"  # Updates LOT-123
   "operation": "create",
   "issue": {
     "id": "uuid",
-    "identifier": "LOT-123",
+    "identifier": "ENG-123",
     "title": "Task title",
     "url": "https://linear.app/...",
     "state": { "name": "Todo" },
-    "team": { "key": "LOT" },
+    "team": { "key": "ENG" },
     "assignee": { "name": "John" },
     "priority": 1,
     "estimate": 5
@@ -115,7 +115,7 @@ linear issue update --state "In Progress"  # Updates LOT-123
       "name": "John Doe"
     },
     "teams": [
-      { "id": "uuid", "key": "LOT", "name": "LotIQ" }
+      { "id": "uuid", "key": "ENG", "name": "Engineering" }
     ]
   },
   "document": {
@@ -153,7 +153,7 @@ SPEC=$(cat spec.md)
 ISSUE_JSON=$(linear issue create \
   -t "Implement OAuth 2.0" \
   -d "$SPEC" \
-  --team LOT \
+  --team ENG \
   --project "Auth System" \
   --milestone "Phase 1" \
   --priority 1 \
@@ -161,8 +161,8 @@ ISSUE_JSON=$(linear issue create \
   -l backend \
   -l security \
   -a self \
-  --blocks LOT-100 \
-  --blocks LOT-101)
+  --blocks ENG-100 \
+  --blocks ENG-101)
 
 # Extract issue ID
 ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.issue.identifier')
@@ -179,7 +179,7 @@ PROJECT_JSON=$(linear project create \
   -n "Mobile App" \
   -d "iOS and Android applications" \
   -c "$(cat project-spec.md)" \
-  -t LOT \
+  -t ENG \
   -l self \
   -p 1 \
   --start-date 2026-01-01 \
@@ -198,7 +198,7 @@ linear project milestone create $PROJECT_ID \
 # 3. Create issues linked to project and milestone
 linear issue create \
   -t "Setup authentication" \
-  --team LOT \
+  --team ENG \
   --project "$PROJECT_SLUG" \
   --milestone "Phase 1: Core Features" \
   --priority 1 \
@@ -214,21 +214,21 @@ linear project update-create $PROJECT_SLUG \
 
 ```bash
 # 1. Create label groups
-linear label create --name "Work-Type" --is-group --team LOT
-linear label create --name "Scope" --is-group --team LOT
+linear label create --name "Work-Type" --is-group --team ENG
+linear label create --name "Scope" --is-group --team ENG
 
 # 2. Create sub-labels
-linear label create --name "Bugfix" --parent "Work-Type" --team LOT
-linear label create --name "New-Feature" --parent "Work-Type" --team LOT
-linear label create --name "Backend" --parent "Scope" --team LOT
-linear label create --name "Frontend" --parent "Scope" --team LOT
+linear label create --name "Bugfix" --parent "Work-Type" --team ENG
+linear label create --name "New-Feature" --parent "Work-Type" --team ENG
+linear label create --name "Backend" --parent "Scope" --team ENG
+linear label create --name "Frontend" --parent "Scope" --team ENG
 
 # 3. Use on issues (use -l for each label)
 linear issue create \
   -t "Fix API bug" \
   -l Bugfix \
   -l Backend \
-  --team LOT
+  --team ENG
 # Result: Labels show as "Work-Type/Bugfix, Scope/Backend"
 ```
 
@@ -238,16 +238,16 @@ linear issue create \
 # Create parent issue
 PARENT=$(linear issue create \
   -t "Database migration" \
-  --team LOT \
+  --team ENG \
   --priority 1 | jq -r '.issue.identifier')
 
 # Create sub-task with blocking relationships
 linear issue create \
   -t "Update API layer" \
-  --team LOT \
+  --team ENG \
   -p $PARENT \
-  --blocks LOT-200 \
-  --blocks LOT-201
+  --blocks ENG-200 \
+  --blocks ENG-201
 
 # View all relationships
 linear issue relations $PARENT
@@ -287,7 +287,7 @@ try {
 
 ```bash
 # Always check the result
-RESULT=$(linear issue create -t "Task" --team LOT)
+RESULT=$(linear issue create -t "Task" --team ENG)
 if echo "$RESULT" | jq -e '.success' > /dev/null; then
   ISSUE_ID=$(echo "$RESULT" | jq -r '.issue.identifier')
   echo "Created $ISSUE_ID"
@@ -309,7 +309,7 @@ Linear supports rich markdown with cross-references:
 This feature implements OAuth 2.0 authentication.
 
 ## Dependencies
-- Depends on: [LOT-100](https://linear.app/workspace/issue/LOT-100)
+- Depends on: [ENG-100](https://linear.app/workspace/issue/ENG-100)
 - Part of: [Auth Project](https://linear.app/workspace/project/auth-abc)
 
 ## Implementation
@@ -334,15 +334,15 @@ graph TB
 
 | Resource  | Format         | Example                                                 |
 |-----------|----------------|---------------------------------------------------------|
-| Issues    | `[ID](url)`    | `[LOT-123](https://linear.app/workspace/issue/LOT-123)` |
+| Issues    | `[ID](url)`    | `[ENG-123](https://linear.app/workspace/issue/ENG-123)` |
 | Projects  | `[Name](url)`  | `[Project](https://linear.app/workspace/project/slug)`  |
 | Documents | `[Title](url)` | `[Spec](https://linear.app/workspace/document/id)`      |
 | Users     | `@username`    | `@john` or `@alice` (username only)                     |
 
 **What doesn't work:**
-- Plain identifiers: `LOT-123`
-- Hash symbol: `#LOT-123`
-- At symbol for issues: `@LOT-123`
+- Plain identifiers: `ENG-123`
+- Hash symbol: `#ENG-123`
+- At symbol for issues: `@ENG-123`
 
 ### Content Fields Limits
 
@@ -368,7 +368,7 @@ linear team list | jq '.teams[].key'
 # Then create with full context
 linear issue create \
   -t "Task" \
-  --team LOT \
+  --team ENG \
   --project "my-project"
 ```
 
@@ -394,12 +394,12 @@ Always create relationships between related issues:
 # When you discover dependencies (use repeated flags)
 linear issue create \
   -t "Add API tests" \
-  --team LOT \
-  --blocks LOT-123
+  --team ENG \
+  --blocks ENG-123
 
 # When working on related features
-linear issue update LOT-124 \
-  --related-to LOT-123
+linear issue update ENG-124 \
+  --related-to ENG-123
 ```
 
 ### 4. Keep Content in Files
@@ -465,7 +465,7 @@ linear issue create \
 
 1. **Self-assignment**: Use `self` (not `@me` or `@self`)
 2. **Labels**: Use repeated `-l` flags: `-l bug -l feature`
-3. **Relationships**: Use repeated flags: `--blocks LOT-1 --blocks LOT-2`
+3. **Relationships**: Use repeated flags: `--blocks ENG-1 --blocks ENG-2`
 4. **Milestones**: Require project UUID, not slug
 5. **Project UUID vs Slug**: Milestone commands need UUID from `jq -r '.project.id'`
 6. **Content from files**: Use `"$(cat file.md)"` for long content
