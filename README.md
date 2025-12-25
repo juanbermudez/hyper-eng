@@ -21,8 +21,6 @@ Hyper-Engineering inverts this:
 - **Approval before work** — Two gates prevent wasted effort
 - **Verification before done** — Nothing ships without passing all checks
 
-The result: AI-generated code that actually works, with full traceability from requirement to implementation.
-
 ## Quick Start
 
 ```bash
@@ -61,7 +59,7 @@ linear auth
 
 | Command | Description |
 |---------|-------------|
-| `/hyper-plan` | Research → Spec → Approval → Tasks. The complete planning workflow. |
+| `/hyper-plan` | Research → Spec → Approval → Tasks. |
 | `/hyper-implement` | Execute a Linear task with verification loops. |
 | `/hyper-verify` | Run slop detection + automated checks + manual verification. |
 | `/hyper-review` | Parallel code review (security, architecture, performance, quality). |
@@ -83,8 +81,6 @@ AI-specific checks that run before standard verification:
 
 1. **Direction checkpoint** — Validate approach before writing detailed spec
 2. **Full spec approval** — Review complete spec before creating tasks
-
-No wasted effort on the wrong approach.
 
 ### Environment Awareness
 
