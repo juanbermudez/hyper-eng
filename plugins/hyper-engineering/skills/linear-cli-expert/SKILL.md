@@ -41,48 +41,50 @@ Please select an option or describe what you need.
 
 <context>
 <linear_cli_reference>
-The Linear CLI provides comprehensive project management commands:
+The Linear Agent CLI is a Deno-based tool optimized for AI agents with JSON-first output.
 
-## Issue Commands
+**Full documentation:**
+- [linear-cli-reference.md](./references/linear-cli-reference.md) - Complete command reference
+- [ai-agent-patterns.md](./references/ai-agent-patterns.md) - Workflow examples and best practices
+
+## Core Principles
+
+1. **JSON is default output** - No flags needed, use `--human` for readable format
+2. **Non-interactive** - Always provide all options to avoid prompts
+3. **VCS-aware** - Auto-detects issues from git branch names
+4. **Check success field** - Parse JSON and verify `result.success`
+
+## Quick Reference
+
 ```bash
+# Issue operations
 linear issue create --title "Title" --team LOT --priority 2
 linear issue view LOT-123
 linear issue list --state "In Progress"
 linear issue update LOT-123 --state "Done"
 linear issue relate LOT-123 LOT-456 --blocks
 linear issue comment create LOT-123 --body "Comment text"
-```
 
-## Project Commands
-```bash
-linear project create --name "Project Name" --team LOT --status planned
-linear project create --name "Feature" --with-doc --doc-title "PRD: Feature"
-linear project view [project-id]
-linear project list --status planned
-linear project update [project-id] --status started
-```
+# Project operations
+linear project create --name "Name" --team LOT --content "$(cat spec.md)"
+linear project milestone create [uuid] --name "Phase 1" --target-date 2026-03-31
+linear project update-create [slug] --body "Status update" --health onTrack
 
-## Document Commands
-```bash
-linear document create --title "Title" --project [project-id] --content "..."
-linear document view [document-id]
-linear document update [document-id] --content "..."
-linear document list --project [project-id]
-```
+# Document operations
+linear document create --title "Title" --project [id] --content "$(cat doc.md)"
+linear document update [id] --content "$(cat updated.md)"
 
-## Workflow Commands
-```bash
+# Configuration
+linear whoami                     # Show current user and config
 linear workflow list              # List workflow states
-linear workflow cache             # Refresh cache
-linear status list                # List project statuses
 ```
 
-## Configuration
-```bash
-linear config setup               # Interactive setup
-linear config set api_key "..."   # Set API key
-linear whoami                     # Show current user
-```
+## Important Notes
+
+- Use `@me` for self-assignment (not `self`)
+- Labels are space-separated: `--label A B C`
+- Milestones require project UUID, not slug
+- Content from files: `--description "$(cat file.md)"`
 </linear_cli_reference>
 
 <workflow_stages>

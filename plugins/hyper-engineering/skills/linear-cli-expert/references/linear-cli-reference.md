@@ -2,6 +2,27 @@
 
 Complete command reference for the Linear Agent CLI.
 
+> **For AI agent patterns and workflow examples, see [ai-agent-patterns.md](./ai-agent-patterns.md)**
+
+## Installation
+
+The Linear Agent CLI is a Deno-based tool optimized for AI agents:
+
+```bash
+# Install from GitHub
+deno install --global --allow-all --name linear \
+  https://raw.githubusercontent.com/juanbermudez/linear-agent-cli/main/src/main.ts
+
+# Verify installation
+linear --version
+
+# Authenticate
+linear whoami
+# Enter API key when prompted
+```
+
+Get your API key from [Linear Settings > API](https://linear.app/settings/api).
+
 ## Global Flags
 
 | Flag | Description |
@@ -13,17 +34,58 @@ Complete command reference for the Linear Agent CLI.
 ## Issue Commands
 
 ### Create Issue
+
+**All Available Options:**
+
 ```bash
 linear issue create \
-  --title "Issue title" \
+  --title "Task title" \
+  --description "$(cat description.md)" \
   --team LOT \
-  --description "Markdown description" \
-  --priority 2 \
-  --assignee "@username" \
-  --label "bug" \
-  --project [project-id] \
-  --state "To Do" \
-  --parent LOT-123  # For subtasks
+  --assignee @me \
+  --priority 1 \
+  --estimate 5 \
+  --label backend feature \
+  --project "API Redesign" \
+  --milestone "Phase 1" \
+  --cycle "Sprint 5" \
+  --parent LOT-100 \
+  --state "In Progress" \
+  --due-date 2025-12-31 \
+  --blocks LOT-101 LOT-102 \
+  --related-to LOT-103 \
+  --duplicate-of LOT-104
+```
+
+**Common Patterns:**
+
+```bash
+# Quick bug report
+linear issue create \
+  --title "Login button not working" \
+  --priority 1 \
+  --label bug \
+  --assignee @me \
+  --team LOT
+
+# Feature with full metadata
+linear issue create \
+  --title "Add OAuth support" \
+  --description "$(cat spec.md)" \
+  --project "Auth System" \
+  --milestone "Phase 1" \
+  --estimate 8 \
+  --label backend feature \
+  --blocks LOT-100 \
+  --team LOT
+
+# Sub-task
+linear issue create \
+  --title "Write tests" \
+  --parent LOT-123 \
+  --assignee @me \
+  --estimate 3 \
+  --team LOT
 ```
 
 ### View Issue
@@ -101,12 +163,19 @@ linear issue start LOT-123
 ## Project Commands
 
 ### Create Project
+
 ```bash
 linear project create \
-  --name "Project Name" \
+  --name "API Redesign" \
+  --description "Modernize API with GraphQL" \
+  --content "$(cat overview.md)" \
   --team LOT \
-  --description "Description" \
-  --status planned
+  --lead @me \
+  --color "#6366F1" \
+  --start-date 2026-01-01 \
+  --target-date 2026-09-30 \
+  --priority 1 \
+  --status "In Progress"
 
 # With document
 linear project create \
@@ -114,6 +183,12 @@ linear project create \
   --with-doc \
   --doc-title "PRD: Feature X"
 ```
+
+**Key Points:**
+- `--description`: Short summary (max 255 chars)
+- `--content`: Full markdown content (large body)
+- `--lead`: Use `@me` for yourself or username/email
+- `--color`: Hex format `#RRGGBB`
 
 ### View Project
 ```bash
@@ -399,4 +474,20 @@ feature/LOT-123-issue-title → Detects LOT-123
 This enables commands without explicit IDs:
 ```bash
 linear issue view  # Uses branch context
+linear issue update --state "In Progress"  # Updates detected issue
+linear issue comment create --body "Fixed"  # Comments on detected issue
 ```
+
+## Important Notes
+
+1. **User References**: Use `@me` for yourself, not `self`
+2. **Labels**: Space-separated, not repeated flags: `--label A B` not `--label A --label B`
+3. **Milestones**: Require project UUID, not slug (use `| jq -r '.project.id'`)
+4. **Label Groups**: Parent must be created with `--is-group` before children
+5. **Project UUID vs Slug**: Most commands accept slug, but milestones need UUID
+6. **Content from files**: Use `--description "$(cat file.md)"` for long content
+
+## Related Documentation
+
+- [AI Agent Patterns](./ai-agent-patterns.md) - Workflow examples and best practices
+- [Workflow Guide](./workflow-guide.md) - Hyper-engineering workflow stages
