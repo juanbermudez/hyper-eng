@@ -23,19 +23,20 @@ Hyper-Engineering inverts this:
 
 ## Quick Start
 
-```bash
+In Claude Code, run these slash commands:
+
+```
 # Add the marketplace
-claude mcp add-from-claude-plugin https://github.com/juanbermudez/hyper-eng
+/plugin marketplace add juanbermudez/hyper-eng
 
 # Install the plugin
-claude mcp install hyper-engineering
-
-# Authenticate with Linear
-linear auth
+/plugin install hyper-engineering
 
 # Start planning
 /hyper-plan "Add user authentication with OAuth"
 ```
+
+You'll also need the [Agent Linear CLI](https://github.com/juanbermudez/agent-linear-cli) for Linear integration.
 
 ## The Workflow
 
@@ -88,8 +89,8 @@ Before implementing, agents check if your linters, tests, and docs are ready for
 
 ## Requirements
 
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code)
-- [Linear CLI](https://github.com/linear/linear-cli) with API access
+- [Claude Code](https://claude.ai/download)
+- [Agent Linear CLI](https://github.com/juanbermudez/agent-linear-cli) with API key
 - Git (for worktree support)
 
 ## Components
