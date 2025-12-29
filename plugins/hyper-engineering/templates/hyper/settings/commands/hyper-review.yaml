@@ -1,0 +1,137 @@
+# hyper-review Command Customization
+# Customize the code review workflow for your project.
+
+# Add project-specific context for reviews
+context_additions: |
+  # Example:
+  # - We follow Google's code review guidelines
+  # - All PRs require at least 2 approvals
+  # - Security-sensitive changes require security team review
+  # - Performance-critical code needs benchmarks
+
+# Override specific phases of the review workflow
+phase_overrides:
+  # Initial review scope
+  scope_analysis:
+    instructions_append: |
+      # Example:
+      # Identify:
+      # 1. Which teams own the affected code
+      # 2. Any compliance requirements (SOC2, GDPR)
+      # 3. Whether this touches shared libraries
+
+  # Domain reviews customization
+  security_review:
+    instructions_prepend: |
+      # Example:
+      # Check OWASP Top 10 and our security checklist at docs/security.md
+    instructions_append: |
+      # Example:
+      # Flag any:
+      # - New dependencies with known vulnerabilities
+      # - Changes to authentication/authorization
+      # - New API endpoints exposed publicly
+
+  architecture_review:
+    instructions_prepend: |
+      # Example:
+      # Check alignment with our architecture decision records (ADRs)
+    instructions_append: |
+      # Example:
+      # Verify:
+      # - No circular dependencies introduced
+      # - Proper layer separation maintained
+      # - New patterns documented if introduced
+
+  performance_review:
+    instructions_prepend: |
+      # Example:
+      # Our performance budgets: LCP < 2.5s, bundle < 500KB
+    instructions_append: |
+      # Example:
+      # Check for:
+      # - N+1 queries
+      # - Missing pagination
+      # - Large bundle additions
+
+  code_quality_review:
+    instructions_prepend: |
+      # Example:
+      # Follow our style guide at docs/style-guide.md
+    instructions_append: |
+      # Example:
+      # Verify:
+      # - Consistent naming conventions
+      # - Appropriate test coverage
+      # - Clear error messages
+
+# Skip review domains that aren't relevant
+skip_reviews: []
+  # Example:
+  # - performance_review  # Not critical for this project
+
+# Review severity levels
+severity_levels:
+  # P0 - Blocking (must fix before merge)
+  blocking:
+    - "security vulnerability"
+    - "data loss risk"
+    - "breaking change without migration"
+
+  # P1 - High (should fix before merge)
+  high:
+    - "performance regression"
+    - "missing error handling"
+    - "incomplete test coverage"
+
+  # P2 - Medium (fix in follow-up)
+  medium:
+    - "code style issues"
+    - "missing documentation"
+    - "minor refactoring opportunities"
+
+  # P3 - Low (nice to have)
+  low:
+    - "naming suggestions"
+    - "optional optimizations"
+
+# Auto-create fix tasks for issues found
+auto_create_fix_tasks:
+  # Create tasks for blocking issues
+  blocking: true
+  # Create tasks for high-priority issues
+  high: true
+  # Create tasks for medium issues
+  medium: false
+  # Task priority mapping
+  priority_mapping:
+    blocking: "urgent"
+    high: "high"
+    medium: "medium"
+
+# Review output customization
+output:
+  # Include file:line references
+  include_line_references: true
+  # Include code snippets in findings
+  include_code_snippets: true
+  # Group findings by severity
+  group_by_severity: true
+  # Maximum findings to report per category
+  max_findings_per_category: 10
+
+# Integration with review tools
+integrations:
+  # GitHub PR reviews
+  github:
+    # Add review comments to PR
+    add_pr_comments: false
+    # Request changes for blocking issues
+    request_changes_on_blocking: false
+
+  # Document patterns for team learning
+  compound_docs:
+    # Document recurring patterns found
+    document_patterns: true
+    # Document anti-patterns found
+    document_anti_patterns: true

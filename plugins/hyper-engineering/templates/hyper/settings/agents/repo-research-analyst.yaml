@@ -1,0 +1,53 @@
+# Repo Research Analyst Customization
+# This agent researches repository structure and conventions.
+# Customize how codebase analysis is performed for your project.
+
+# Add project-specific context for repository analysis
+context_additions: |
+  # Example:
+  # - This is a Next.js 14 app with App Router
+  # - We use a feature-based folder structure in src/features/
+  # - Shared components are in src/components/ui/
+  # - API routes follow REST conventions in src/app/api/
+
+# Instructions added BEFORE the default analysis instructions
+instructions_prepend: |
+  # Example:
+  # When analyzing this codebase, pay special attention to:
+  # 1. The dependency injection patterns in src/services/
+  # 2. The custom hooks in src/hooks/ that wrap external APIs
+
+# Instructions added AFTER the default analysis instructions
+instructions_append: |
+  # Example:
+  # Also analyze:
+  # - Performance patterns (memoization, lazy loading)
+  # - Error boundary usage and error handling patterns
+
+# Directories to always include in analysis
+include_directories:
+  # Example:
+  # - src/core/
+  # - src/shared/
+  # - packages/common/
+
+# Directories to exclude from analysis
+exclude_directories:
+  # Example:
+  # - src/legacy/         # Old code, don't recommend patterns from here
+  # - node_modules/
+  # - dist/
+  # - .next/
+
+# File patterns to focus on
+focus_patterns:
+  # Example:
+  # - "**/*.tsx"          # React components
+  # - "**/*.service.ts"   # Service layer
+  # - "**/use*.ts"        # Custom hooks
+
+# Override the default output format
+output_format: |
+  # Example:
+  # Include a "Pattern Quality Score" (1-5) for each discovered pattern
+  # Flag any anti-patterns found with suggested alternatives

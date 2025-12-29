@@ -1,0 +1,122 @@
+# hyper-plan Command Customization
+# Customize the planning workflow for your project.
+
+# Add project-specific context for planning
+context_additions: |
+  # Example:
+  # - This project follows Domain-Driven Design principles
+  # - We use a monorepo structure with packages/ directory
+  # - All features require product manager approval
+  # - Tech specs go through architecture review
+
+# Override specific phases of the planning workflow
+phase_overrides:
+  # Initial interview phase customization
+  initial_interview:
+    instructions_prepend: |
+      # Example:
+      # Before starting the interview, review the product roadmap in docs/roadmap.md
+    instructions_append: |
+      # Example:
+      # Always ask about:
+      # 1. Is this feature on the current roadmap?
+      # 2. Who is the product owner for this feature?
+      # 3. Are there any hard deadlines?
+
+  # Research phase customization
+  research:
+    instructions_prepend: |
+      # Example:
+      # Check our internal wiki at docs/internal/ for prior art
+    instructions_append: |
+      # Example:
+      # After research, also check:
+      # 1. Related Linear issues or GitHub discussions
+      # 2. Slack conversations in #engineering-decisions
+
+  # Research review phase customization
+  research_review_and_clarification:
+    instructions_prepend: |
+      # Example:
+      # Summarize research findings before asking follow-up questions
+    instructions_append: |
+      # Example:
+      # Ensure all architectural decisions are documented in the spec
+
+  # Spec creation phase customization
+  spec_creation:
+    instructions_prepend: |
+      # Example:
+      # REQUIRED in every spec:
+      # - Business justification
+      # - Success metrics
+      # - Rollback plan
+    instructions_append: |
+      # Example:
+      # Include links to:
+      # - Related design documents
+      # - API contracts
+      # - Data models
+
+  # Task breakdown phase customization
+  task_breakdown:
+    instructions_prepend: |
+      # Example:
+      # Tasks should be sized to complete in 1-2 days maximum
+    instructions_append: |
+      # Example:
+      # Include a "documentation task" for user-facing features
+
+# Skip phases that aren't relevant
+skip_phases: []
+  # Example:
+  # - structure_checkpoint  # Skip early checkpoint if process is streamlined
+
+# Spec template additions (added to default spec structure)
+spec_template_additions: |
+  # Example:
+  # ## Rollback Plan
+  # [How to revert if issues arise]
+  #
+  # ## Feature Flags
+  # [Feature flag configuration]
+  #
+  # ## Monitoring
+  # [What metrics to track]
+
+# Research scope customization
+research_scope:
+  # Additional topics to always research
+  always_include:
+    # Example:
+    # - "accessibility requirements"
+    # - "performance implications"
+    # - "security considerations"
+
+  # Topics to skip
+  skip_topics:
+    # Example:
+    # - "deployment"  # Handled by platform team
+
+# Interview customization
+interview:
+  # Maximum questions in initial interview
+  max_initial_questions: 10
+  # Maximum follow-up questions after research
+  max_followup_questions: 5
+  # Required topics to cover
+  required_topics:
+    # Example:
+    # - "user impact"
+    # - "success criteria"
+    # - "timeline expectations"
+
+# Approval gate customization
+approval:
+  # Who should approve specs
+  required_approvers:
+    # Example:
+    # - role: "tech-lead"
+    # - role: "product-manager"
+  # Mention format in spec
+  mention_format: "@{approver}"

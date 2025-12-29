@@ -5,6 +5,64 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-12-29
+
+### Added
+
+**Settings & Customization System**
+- New `.hyper/settings/` directory for workflow and agent/command customization
+- `workflows.yaml` - Configure project/task workflow stages, quality gates, and tags
+- Agent customization templates (7 YAML files) for all agents
+- Command customization templates (5 YAML files) for major commands
+- Settings guide reference documentation
+
+**Workflow Configuration**
+- Customizable project workflow stages (planned → review → todo → in-progress → verification → complete)
+- Customizable task workflow stages with `on_enter` actions
+- Quality gates configuration (automated and manual checks)
+- Tags configuration (priority and type categories)
+
+**Agent Customization Options**
+- `context_additions` - Add project-specific context
+- `instructions_prepend` / `instructions_append` - Modify agent instructions
+- `output_format` - Override default output format
+- `skip_sub_agents` - Skip specific sub-agents (orchestrators)
+- `disabled` - Temporarily disable agents
+
+**Command Customization Options**
+- `context_additions` - Add project-specific context
+- `phase_overrides` - Override specific workflow phases
+- `skip_phases` - Skip phases not relevant to project
+- `quality_gates` - Override verification checks
+- `git` - Git workflow settings (branch patterns, commit format)
+
+### Changed
+
+**hyper-init**
+- Now creates `.hyper/settings/` directory structure
+- Creates `workflows.yaml` with default configuration
+- Creates `agents/` and `commands/` subdirectories with README files
+- Optional phase to copy full customization templates
+- Updated structure check to validate settings directory
+
+**hyper-local skill**
+- Added settings customization documentation
+- New routing for settings/customization requests
+- Added `<settings_system>` section with comprehensive examples
+- New `settings-guide.md` reference documentation
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 9 |
+| Skills | 3 |
+| MCP Servers | 1 |
+| Hooks | 2 |
+
+---
+
 ## [2.2.0] - 2025-12-29
 
 ### Added

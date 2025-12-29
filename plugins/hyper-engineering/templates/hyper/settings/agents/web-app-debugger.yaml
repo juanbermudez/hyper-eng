@@ -1,0 +1,94 @@
+# Web App Debugger Customization
+# This agent debugs web applications using Claude Code Chrome extension.
+# Customize how browser debugging is performed for your project.
+
+# Add project-specific context for debugging
+context_additions: |
+  # Example:
+  # - App runs on localhost:3000 (Next.js dev server)
+  # - We use React DevTools for component inspection
+  # - Redux DevTools for state debugging
+  # - Network requests go to localhost:8080 (API server)
+  # - Authentication uses cookies, not localStorage
+
+# Instructions added BEFORE the default debugging instructions
+instructions_prepend: |
+  # Example:
+  # Before debugging, ensure:
+  # 1. Both frontend (port 3000) and backend (port 8080) servers are running
+  # 2. The user is logged in with test credentials if testing authenticated flows
+  # 3. Browser cache is cleared for CSS/JS issues
+
+# Instructions added AFTER the default debugging instructions
+instructions_append: |
+  # Example:
+  # After debugging:
+  # 1. Document any browser-specific issues found
+  # 2. Note if the issue is related to browser extensions
+  # 3. Check if issue reproduces in incognito mode
+
+# Development server configuration
+dev_server:
+  # Frontend URL
+  frontend_url: "http://localhost:3000"
+  # API URL (if separate)
+  api_url: "http://localhost:8080"
+  # Start command (if agent should start the server)
+  start_command: "npm run dev"
+  # Health check endpoint
+  health_check: "/api/health"
+
+# Browser configuration
+browser:
+  # Preferred browser for testing
+  preferred: "chrome"
+  # Viewport sizes to test
+  viewports:
+    - name: "mobile"
+      width: 375
+      height: 667
+    - name: "tablet"
+      width: 768
+      height: 1024
+    - name: "desktop"
+      width: 1440
+      height: 900
+
+# Common debugging scenarios
+debugging_scenarios:
+  # Example:
+  # - name: "Authentication flow"
+  #   pages: ["/login", "/dashboard"]
+  #   checks: ["cookie set", "redirect works", "session persists"]
+  # - name: "Form submission"
+  #   pages: ["/contact", "/checkout"]
+  #   checks: ["validation works", "success message shows", "data persists"]
+
+# Console error patterns to ignore
+ignore_console_errors:
+  # Example:
+  # - "Third-party cookie"           # Known browser warning
+  # - "DevTools failed to load"      # Extension noise
+  # - "Manifest: Line"               # Extension manifest warnings
+
+# Network requests to ignore in analysis
+ignore_network_patterns:
+  # Example:
+  # - "*.hotjar.com"
+  # - "*.google-analytics.com"
+  # - "*.sentry.io"
+
+# Override the default output format
+output_format: |
+  # Example:
+  # Structure debugging reports as:
+  # 1. Issue Summary (one sentence)
+  # 2. Steps to Reproduce (numbered)
+  # 3. Expected vs Actual Behavior
+  # 4. Root Cause Analysis
+  # 5. Recommended Fix (with code if applicable)
+  # 6. Screenshots/Evidence
+
+# Disable this agent (if not doing frontend work)
+disabled: false
+# reason: "Backend-only project"

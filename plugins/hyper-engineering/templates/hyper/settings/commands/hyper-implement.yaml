@@ -1,0 +1,155 @@
+# hyper-implement Command Customization
+# Customize the implementation workflow for your project.
+
+# Add project-specific context for implementation
+context_additions: |
+  # Example:
+  # - Run tests in watch mode during development
+  # - Use conventional commit messages (feat:, fix:, etc.)
+  # - Create a draft PR early for visibility
+  # - Tag relevant reviewers in PR description
+
+# Override specific phases of the implementation workflow
+phase_overrides:
+  # Task reading phase customization
+  read_task:
+    instructions_append: |
+      # Example:
+      # Also check:
+      # 1. Related tasks that might be affected
+      # 2. Any blocking tasks that need to complete first
+
+  # Pre-implementation setup phase
+  setup:
+    instructions_prepend: |
+      # Example:
+      # Before starting:
+      # 1. Pull latest from main
+      # 2. Ensure all dependencies are installed
+      # 3. Run the existing tests to verify baseline
+    instructions_append: |
+      # Example:
+      # Create feature branch following naming convention
+
+  # Implementation phase customization
+  implementation:
+    instructions_prepend: |
+      # Example:
+      # Follow TDD approach:
+      # 1. Write failing test first
+      # 2. Implement minimum code to pass
+      # 3. Refactor with tests passing
+    instructions_append: |
+      # Example:
+      # After implementing:
+      # 1. Run `npm test -- --watch` to verify
+      # 2. Update task file with implementation notes
+      # 3. Self-review diff before verification
+
+  # Verification phase customization
+  verification:
+    instructions_prepend: |
+      # Example:
+      # Run all verification in this order:
+      # 1. Lint (fast feedback)
+      # 2. Type check
+      # 3. Unit tests
+      # 4. Build
+      # 5. E2E (if applicable)
+    instructions_append: |
+      # Example:
+      # If all passes:
+      # 1. Create PR with `gh pr create`
+      # 2. Update task with PR link
+
+  # Browser verification phase customization
+  browser_verification:
+    instructions_prepend: |
+      # Example:
+      # Test these scenarios:
+      # 1. Happy path
+      # 2. Error states
+      # 3. Loading states
+      # 4. Mobile viewport
+    instructions_append: |
+      # Example:
+      # Take screenshots for PR documentation
+
+# Skip phases that aren't relevant
+skip_phases: []
+  # Example:
+  # - browser_verification  # Backend-only project
+
+# Quality gates customization
+quality_gates:
+  # Override lint command
+  lint:
+    command: "npm run lint"
+    required: true
+
+  # Override type check command
+  typecheck:
+    command: "npm run typecheck"
+    required: true
+
+  # Override test command
+  test:
+    command: "npm run test"
+    required: true
+    # Optional: require coverage threshold
+    # threshold:
+    #   coverage: 80
+
+  # Override build command
+  build:
+    command: "npm run build"
+    required: true
+
+  # Override E2E command
+  e2e:
+    command: "npm run e2e"
+    required: false  # Optional by default
+    # timeout_seconds: 600
+
+  # Add custom quality gates
+  # custom_checks:
+  #   - name: "Bundle Size"
+  #     command: "npm run check:bundle"
+  #     required: false
+  #   - name: "Dependency Audit"
+  #     command: "npm audit --production"
+  #     required: true
+
+# Git workflow customization
+git:
+  # Branch naming pattern
+  branch_pattern: "feat/{{PROJECT_SLUG}}/{{TASK_ID}}"
+  # Alternative patterns:
+  # branch_pattern: "{{TASK_ID}}-{{TASK_SLUG}}"
+  # branch_pattern: "feature/{{TASK_ID}}"
+
+  # Commit message prefix
+  commit_prefix: ""
+  # Example: "[{{TASK_ID}}] "
+
+  # Commit message format
+  commit_format: "conventional"  # or "simple"
+
+  # Auto-create PR after implementation
+  auto_create_pr: false
+  # PR settings if auto_create_pr is true
+  # pr_settings:
+  #   draft: true
+  #   reviewers: ["@team/frontend"]
+  #   labels: ["needs-review"]
+
+# Browser testing configuration
+browser_testing:
+  # Enable/disable browser verification
+  enabled: true
+  # Local dev server URL
+  local_url: "http://localhost:3000"
+  # Wait for server to be ready
+  wait_for_server: true
+  # Server startup command (if not already running)
+  server_command: "npm run dev"

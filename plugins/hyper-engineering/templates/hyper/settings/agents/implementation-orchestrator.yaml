@@ -1,0 +1,69 @@
+# Implementation Orchestrator Customization
+# This agent coordinates engineering sub-agents and enforces verification gates.
+# Customize how implementation is coordinated for your project.
+
+# Add project-specific context for implementation
+context_additions: |
+  # Example:
+  # - All new code must include JSDoc comments
+  # - Use TypeScript strict mode
+  # - Components should be functional, not class-based
+  # - We use Prettier for formatting and ESLint for linting
+
+# Instructions added BEFORE the default orchestrator instructions
+instructions_prepend: |
+  # Example:
+  # CRITICAL: Never modify files in src/core/ without explicit approval.
+  # These are shared across multiple products.
+
+# Instructions added AFTER the default orchestrator instructions
+instructions_append: |
+  # Example:
+  # After implementation completes:
+  # 1. Ensure all exports are documented in the package index
+  # 2. Update the internal changelog if this is a breaking change
+
+# Override verification behavior
+verification_overrides:
+  # Add additional verification checks
+  additional_checks: []
+    # Example:
+    # - name: "JSDoc Coverage"
+    #   command: "npm run check:jsdoc"
+    #   required: true
+    # - name: "Bundle Size"
+    #   command: "npm run check:bundle-size"
+    #   required: false
+
+  # Skip certain default checks (use with caution)
+  skip_checks: []
+    # Example:
+    # - e2e  # Skip E2E if not applicable to this change
+
+  # Custom commands to override defaults
+  custom_commands:
+    # lint: "pnpm lint"
+    # typecheck: "pnpm typecheck"
+    # test: "pnpm test --coverage"
+    # build: "pnpm build"
+
+# Git workflow customization
+git_workflow:
+  # Branch naming pattern (uses {{PROJECT_SLUG}} and {{TASK_ID}} variables)
+  branch_pattern: "feat/{{PROJECT_SLUG}}/{{TASK_ID}}"
+  # Commit message prefix
+  commit_prefix: ""
+    # Example: "[{{TASK_ID}}] "
+
+# Browser verification settings (for UI changes)
+browser_verification:
+  # Enable/disable browser verification phase
+  enabled: true
+  # Base URL for local development server
+  local_url: "http://localhost:3000"
+  # Paths to check (relative to local_url)
+  check_paths: []
+    # Example:
+    # - "/"
+    # - "/dashboard"
+    # - "/settings"

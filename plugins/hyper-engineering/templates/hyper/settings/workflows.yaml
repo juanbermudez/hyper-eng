@@ -1,0 +1,290 @@
+# Hyper Engineering - Workflow Configuration
+# This file defines the workflow stages (statuses) for projects and tasks.
+# Customize these to match your team's process.
+
+# =============================================================================
+# PROJECT WORKFLOW
+# =============================================================================
+# Projects move through these stages during the planning and execution lifecycle.
+
+project_workflow:
+  name: "Project Lifecycle"
+  description: "Stages a project moves through from idea to completion"
+
+  stages:
+    - id: planned
+      name: "Planned"
+      description: "Initial state - project created, research in progress"
+      color: "#6B7280"  # gray
+      allowed_transitions:
+        - review
+        - cancelled
+
+    - id: review
+      name: "Spec Review"
+      description: "Specification complete, awaiting human approval"
+      color: "#F59E0B"  # amber
+      gate: true  # Requires explicit approval to proceed
+      allowed_transitions:
+        - todo
+        - planned  # Can go back for revisions
+        - cancelled
+
+    - id: todo
+      name: "Ready"
+      description: "Spec approved, tasks created, ready for implementation"
+      color: "#3B82F6"  # blue
+      allowed_transitions:
+        - in-progress
+        - cancelled
+
+    - id: in-progress
+      name: "In Progress"
+      description: "Active implementation underway"
+      color: "#8B5CF6"  # purple
+      allowed_transitions:
+        - verification
+        - blocked
+        - todo  # Can pause and return to ready
+
+    - id: blocked
+      name: "Blocked"
+      description: "Implementation blocked by external dependency"
+      color: "#EF4444"  # red
+      allowed_transitions:
+        - in-progress
+        - cancelled
+
+    - id: verification
+      name: "Verification"
+      description: "Implementation complete, running verification checks"
+      color: "#F97316"  # orange
+      allowed_transitions:
+        - complete
+        - in-progress  # Failed verification, needs fixes
+
+    - id: complete
+      name: "Complete"
+      description: "All tasks done, verification passed"
+      color: "#10B981"  # green
+      terminal: true
+      allowed_transitions: []
+
+    - id: cancelled
+      name: "Cancelled"
+      description: "Project cancelled or abandoned"
+      color: "#6B7280"  # gray
+      terminal: true
+      allowed_transitions: []
+
+# =============================================================================
+# TASK WORKFLOW
+# =============================================================================
+# Individual tasks within a project follow this workflow.
+
+task_workflow:
+  name: "Task Lifecycle"
+  description: "Stages a task moves through during implementation"
+
+  stages:
+    - id: todo
+      name: "To Do"
+      description: "Task created, not yet started"
+      color: "#6B7280"  # gray
+      allowed_transitions:
+        - in-progress
+        - blocked
+        - cancelled
+
+    - id: in-progress
+      name: "In Progress"
+      description: "Actively being implemented"
+      color: "#8B5CF6"  # purple
+      # When entering this stage, the implementation-orchestrator should:
+      on_enter:
+        - action: update_frontmatter
+          field: started
+          value: "{{DATE}}"
+        - action: add_implementation_log
+          template: |
+            ## Implementation Log
+
+            ### Started: {{DATE}}
+            - Orchestrator: implementation-orchestrator
+            - Branch: feat/{{PROJECT_SLUG}}/{{TASK_ID}}
+      allowed_transitions:
+        - review
+        - blocked
+        - todo  # Can pause
+
+    - id: blocked
+      name: "Blocked"
+      description: "Task blocked by dependency or external factor"
+      color: "#EF4444"  # red
+      allowed_transitions:
+        - in-progress
+        - todo
+        - cancelled
+
+    - id: review
+      name: "In Review"
+      description: "Implementation done, awaiting verification"
+      color: "#F59E0B"  # amber
+      allowed_transitions:
+        - complete
+        - in-progress  # Needs changes
+
+    - id: complete
+      name: "Complete"
+      description: "Task done, all verification passed"
+      color: "#10B981"  # green
+      terminal: true
+      # When entering this stage:
+      on_enter:
+        - action: update_frontmatter
+          field: completed
+          value: "{{DATE}}"
+        - action: append_implementation_log
+          template: |
+            ### Completed: {{DATE}}
+            - All verification gates passed
+            - Ready for next task
+      allowed_transitions: []
+
+    - id: cancelled
+      name: "Cancelled"
+      description: "Task cancelled or no longer needed"
+      color: "#6B7280"  # gray
+      terminal: true
+      allowed_transitions: []
+
+# =============================================================================
+# VERIFICATION WORKFLOW
+# =============================================================================
+# Verification tasks follow a simplified workflow.
+
+verification_workflow:
+  name: "Verification Lifecycle"
+  description: "Workflow for verification sub-tasks"
+
+  stages:
+    - id: pending
+      name: "Pending"
+      description: "Waiting for parent task to complete"
+      color: "#6B7280"
+      allowed_transitions:
+        - in-progress
+
+    - id: in-progress
+      name: "Running"
+      description: "Verification checks in progress"
+      color: "#8B5CF6"
+      allowed_transitions:
+        - passed
+        - failed
+
+    - id: passed
+      name: "Passed"
+      description: "All verification checks passed"
+      color: "#10B981"
+      terminal: true
+      allowed_transitions: []
+
+    - id: failed
+      name: "Failed"
+      description: "One or more verification checks failed"
+      color: "#EF4444"
+      allowed_transitions:
+        - in-progress  # Re-run after fixes
+
+# =============================================================================
+# CUSTOM TAGS
+# =============================================================================
+# Define tags that can be applied to projects and tasks.
+
+tags:
+  priority:
+    - id: urgent
+      name: "Urgent"
+      color: "#EF4444"
+    - id: high
+      name: "High"
+      color: "#F97316"
+    - id: medium
+      name: "Medium"
+      color: "#F59E0B"
+    - id: low
+      name: "Low"
+      color: "#6B7280"
+
+  type:
+    - id: feature
+      name: "Feature"
+      color: "#3B82F6"
+    - id: bugfix
+      name: "Bug Fix"
+      color: "#EF4444"
+    - id: refactor
+      name: "Refactor"
+      color: "#8B5CF6"
+    - id: docs
+      name: "Documentation"
+      color: "#10B981"
+    - id: test
+      name: "Testing"
+      color: "#F59E0B"
+    - id: chore
+      name: "Chore"
+      color: "#6B7280"
+
+# =============================================================================
+# QUALITY GATES
+# =============================================================================
+# Define the verification checks required at each stage.
+
+quality_gates:
+  # Gates required before task can be marked complete
+  task_completion:
+    automated:
+      - id: lint
+        name: "Lint Check"
+        required: true
+        command: "{{LINT_COMMAND}}"
+      - id: typecheck
+        name: "Type Check"
+        required: true
+        command: "{{TYPECHECK_COMMAND}}"
+      - id: test
+        name: "Unit Tests"
+        required: true
+        command: "{{TEST_COMMAND}}"
+      - id: build
+        name: "Build"
+        required: true
+        command: "{{BUILD_COMMAND}}"
+      - id: e2e
+        name: "E2E Tests"
+        required: false  # Optional
+        command: "{{E2E_COMMAND}}"
+
+    manual:
+      - id: browser
+        name: "Browser Testing"
+        required_if: "ui_changes"
+        description: "Visual inspection via web-app-debugger agent"
+      - id: security
+        name: "Security Review"
+        required_if: "security_sensitive"
+        description: "Review by security team"
+
+  # Gates required before project can be marked complete
+  project_completion:
+    - id: all_tasks_complete
+      name: "All Tasks Complete"
+      required: true
+    - id: code_review
+      name: "Code Review"
+      required: true
+    - id: documentation
+      name: "Documentation Updated"
+      required: true

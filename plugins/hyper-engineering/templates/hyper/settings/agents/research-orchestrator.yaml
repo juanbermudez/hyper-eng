@@ -1,0 +1,42 @@
+# Research Orchestrator Customization
+# This agent coordinates parallel research sub-agents and synthesizes findings.
+# Customize how research is coordinated for your project.
+
+# Add project-specific context that the orchestrator should know
+context_additions: |
+  # Example:
+  # - This is a monorepo with multiple packages
+  # - Our documentation lives in docs/ and is built with Docusaurus
+  # - Legacy code in src/legacy/ should be analyzed but not recommended as patterns
+
+# Instructions added BEFORE the default orchestrator instructions
+instructions_prepend: |
+  # Example:
+  # IMPORTANT: Always prioritize security considerations in research synthesis.
+
+# Instructions added AFTER the default orchestrator instructions
+instructions_append: |
+  # Example:
+  # After synthesizing research, also check for:
+  # 1. Related TODOs in the codebase
+  # 2. Open GitHub issues on this topic
+
+# Override the default output format for research synthesis
+output_format: |
+  # Example:
+  # Return findings with severity ratings (high/medium/low impact)
+  # Include confidence scores for recommendations
+
+# Skip specific sub-agents (remove from parallel research)
+# Valid values: repo-research-analyst, best-practices-researcher,
+#               framework-docs-researcher, git-history-analyzer
+skip_sub_agents: []
+  # Example:
+  # - git-history-analyzer  # Skip if git history is messy/not useful
+
+# Adjust sub-agent parallelization
+parallelization:
+  # Maximum concurrent sub-agents (default: 4)
+  max_concurrent: 4
+  # Timeout per sub-agent in seconds (default: 300)
+  timeout_seconds: 300

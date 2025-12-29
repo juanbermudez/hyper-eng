@@ -1,0 +1,91 @@
+# Git History Analyzer Customization
+# This agent analyzes git history and code evolution patterns.
+# Customize how git history analysis is performed for your project.
+
+# Add project-specific context for git history analysis
+context_additions: |
+  # Example:
+  # - We squash merge all PRs, so look at merge commits for feature history
+  # - Commit messages follow Conventional Commits format
+  # - The repo was migrated from SVN in 2022, history before that is incomplete
+  # - Main contributors: @alice (frontend), @bob (backend), @carol (infra)
+
+# Instructions added BEFORE the default analysis instructions
+instructions_prepend: |
+  # Example:
+  # When analyzing git history:
+  # 1. Focus on commits from the last 6 months (older history less relevant)
+  # 2. Pay attention to commits with "BREAKING:" prefix
+  # 3. Look for patterns in revert commits to identify problematic areas
+
+# Instructions added AFTER the default analysis instructions
+instructions_append: |
+  # Example:
+  # Also analyze:
+  # - Commit frequency patterns (identify actively maintained vs stale areas)
+  # - Common commit authors for specific areas (identify domain experts)
+  # - Patterns in bug fix commits (identify fragile areas)
+
+# Time range for analysis
+time_range:
+  # How far back to analyze (default: 12 months)
+  months: 12
+  # Focus on commits after this date (optional)
+  # after: "2024-01-01"
+  # Ignore commits before this date (optional)
+  # before: "2025-01-01"
+
+# Branches to analyze
+branches:
+  # Primary branch to analyze
+  primary: "main"
+  # Additional branches to include
+  include: []
+    # Example:
+    # - "develop"
+    # - "release/*"
+  # Branches to exclude
+  exclude: []
+    # Example:
+    # - "dependabot/*"
+    # - "renovate/*"
+
+# Paths to focus analysis on
+focus_paths:
+  # Example:
+  # - "src/features/"
+  # - "src/components/"
+  # - "packages/core/"
+
+# Paths to exclude from analysis
+exclude_paths:
+  # Example:
+  # - "src/legacy/"
+  # - "src/generated/"
+  # - "*.lock"
+  # - "*.snap"
+
+# Commit message patterns to highlight
+highlight_patterns:
+  # Example:
+  # - pattern: "^fix:"
+  #   label: "Bug fixes"
+  # - pattern: "^feat:"
+  #   label: "Features"
+  # - pattern: "BREAKING"
+  #   label: "Breaking changes"
+  # - pattern: "revert"
+  #   label: "Reverts"
+
+# Override the default output format
+output_format: |
+  # Example:
+  # Include:
+  # - Commit frequency heatmap by directory
+  # - Top contributors by area
+  # - Recently modified files (last 30 days)
+  # - Files with most bug fixes (potential code smell)
+
+# Disable this agent entirely (if git history is not useful)
+disabled: false
+# reason: "Git history is messy due to migration"

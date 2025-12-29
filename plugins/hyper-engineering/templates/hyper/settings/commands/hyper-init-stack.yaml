@@ -1,0 +1,147 @@
+# hyper-init-stack Command Customization
+# Customize how stack-specific templates are initialized.
+
+# Add project-specific context for stack initialization
+context_additions: |
+  # Example:
+  # - We use pnpm instead of npm
+  # - Our CI/CD runs on GitHub Actions
+  # - We deploy to Vercel
+  # - Database is PostgreSQL on Supabase
+
+# Default stack to use if not specified
+default_stack: ""
+  # Example: "node-typescript"
+  # Options: node-typescript, python, go, _template (custom)
+
+# Stack-specific customizations
+stacks:
+  node-typescript:
+    # Override default commands
+    commands:
+      lint: "pnpm lint"
+      typecheck: "pnpm typecheck"
+      test: "pnpm test"
+      build: "pnpm build"
+      e2e: "pnpm e2e"
+
+    # Additional dependencies to suggest
+    suggested_dependencies:
+      dev:
+        # Example:
+        # - "@testing-library/react"
+        # - "vitest"
+        # - "playwright"
+      prod:
+        # Example:
+        # - "zod"
+        # - "date-fns"
+
+    # File patterns for this stack
+    patterns:
+      components: "src/components/**/*.tsx"
+      tests: "**/*.test.ts,**/*.test.tsx"
+      styles: "**/*.css,**/*.scss,**/*.module.css"
+
+    # Custom templates to add
+    additional_templates:
+      # Example:
+      # - source: "templates/component.tsx.template"
+      #   destination: ".hyper/templates/component.tsx"
+      # - source: "templates/hook.ts.template"
+      #   destination: ".hyper/templates/hook.ts"
+
+  python:
+    # Override default commands
+    commands:
+      lint: "ruff check ."
+      typecheck: "mypy ."
+      test: "pytest"
+      build: "python -m build"
+      e2e: "pytest tests/e2e"
+
+    # Python-specific settings
+    python_version: "3.11"
+    package_manager: "pip"  # or "poetry", "pipenv", "uv"
+
+    # Virtual environment settings
+    venv:
+      name: ".venv"
+      auto_activate: true
+
+    # Suggested dependencies
+    suggested_dependencies:
+      dev:
+        # Example:
+        # - "pytest"
+        # - "ruff"
+        # - "mypy"
+      prod:
+        # Example:
+        # - "pydantic"
+        # - "httpx"
+
+  go:
+    # Override default commands
+    commands:
+      lint: "golangci-lint run"
+      typecheck: "go vet ./..."
+      test: "go test ./..."
+      build: "go build ./..."
+      e2e: "go test -tags=e2e ./..."
+
+    # Go-specific settings
+    go_version: "1.21"
+    module_path: ""  # Auto-detected from go.mod
+
+    # Suggested dependencies
+    suggested_dependencies:
+      # Example:
+      # - "github.com/stretchr/testify"
+      # - "github.com/gin-gonic/gin"
+
+# Custom stack definition
+custom_stack:
+  # Define your own stack
+  # name: "rust"
+  # commands:
+  #   lint: "cargo clippy"
+  #   typecheck: "cargo check"
+  #   test: "cargo test"
+  #   build: "cargo build --release"
+  # patterns:
+  #   source: "src/**/*.rs"
+  #   tests: "tests/**/*.rs"
+
+# Initialization behavior
+initialization:
+  # Detect stack automatically from existing files
+  auto_detect: true
+  # Files to check for auto-detection
+  detection_files:
+    node-typescript:
+      - "package.json"
+      - "tsconfig.json"
+    python:
+      - "pyproject.toml"
+      - "setup.py"
+      - "requirements.txt"
+    go:
+      - "go.mod"
+
+  # Create default config files if missing
+  create_config_files: true
+  # Example files to create:
+  # config_files:
+  #   - name: ".prettierrc"
+  #     content: |
+  #       {
+  #         "semi": true,
+  #         "singleQuote": true
+  #       }
+
+# Skip certain initialization steps
+skip_steps: []
+  # Example:
+  # - "git_hooks"  # Don't set up pre-commit hooks
+  # - "ci_config"  # Don't create CI configuration

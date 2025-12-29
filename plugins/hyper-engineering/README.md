@@ -36,8 +36,14 @@ The hyper-engineering workflow uses local `.hyper/` directory as the source of t
 │       │   └── {id}.mdx
 │       └── resources/       # Supporting docs
 │           └── research/    # Research findings
-└── docs/                    # Standalone documentation
-    └── {slug}.mdx
+├── docs/                    # Standalone documentation
+│   └── {slug}.mdx
+└── settings/                # Customization
+    ├── workflows.yaml       # Workflow stages & quality gates
+    ├── agents/              # Agent customization
+    │   └── {agent}.yaml
+    └── commands/            # Command customization
+        └── {command}.yaml
 ```
 
 ### Workflow Stages
@@ -110,6 +116,44 @@ The workflow leverages 3 core skills:
 
 # Verify implementation
 /hyper-verify auth-login
+```
+
+### Settings & Customization
+
+Customize workflows, agents, and commands via `.hyper/settings/`:
+
+**Workflows** (`workflows.yaml`):
+```yaml
+project_workflow:
+  stages:
+    - id: review
+      gate: true  # Human approval required
+quality_gates:
+  task_completion:
+    automated:
+      - id: lint
+        command: "npm run lint"
+        required: true
+```
+
+**Agents** (`agents/{agent}.yaml`):
+```yaml
+context_additions: |
+  - This is a monorepo with packages/ directory
+instructions_append: |
+  After research, also check for related TODOs.
+skip_sub_agents:
+  - git-history-analyzer
+```
+
+**Commands** (`commands/{command}.yaml`):
+```yaml
+phase_overrides:
+  initial_interview:
+    instructions_append: |
+      Always ask about bounded context ownership.
+skip_phases:
+  - browser_verification
 ```
 
 ---

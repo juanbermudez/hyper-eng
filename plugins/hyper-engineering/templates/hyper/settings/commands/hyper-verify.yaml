@@ -1,0 +1,198 @@
+# hyper-verify Command Customization
+# Customize the verification workflow for your project.
+
+# Add project-specific context for verification
+context_additions: |
+  # Example:
+  # - E2E tests require Docker to be running
+  # - Visual regression tests use Percy
+  # - Performance tests run against staging environment
+  # - Security scans require VPN connection
+
+# Override specific phases of the verification workflow
+phase_overrides:
+  # Automated verification phase
+  automated_checks:
+    instructions_prepend: |
+      # Example:
+      # Ensure all services are running before verification:
+      # 1. Database (docker-compose up db)
+      # 2. Redis (docker-compose up redis)
+      # 3. API server (npm run dev:api)
+    instructions_append: |
+      # Example:
+      # Save all verification logs to .hyper/logs/verify-{date}.log
+
+  # Browser verification phase
+  browser_verification:
+    instructions_prepend: |
+      # Example:
+      # Test in this browser order:
+      # 1. Chrome (primary)
+      # 2. Firefox (secondary)
+      # 3. Safari (if on macOS)
+    instructions_append: |
+      # Example:
+      # Document any browser-specific issues found
+
+  # Manual verification phase
+  manual_checks:
+    instructions_prepend: |
+      # Example:
+      # For accessibility verification, use:
+      # 1. axe DevTools browser extension
+      # 2. Keyboard-only navigation test
+      # 3. Screen reader test (VoiceOver/NVDA)
+    instructions_append: |
+      # Example:
+      # Create verification checklist in task comments
+
+# Skip phases that aren't relevant
+skip_phases: []
+  # Example:
+  # - browser_verification  # API-only project
+  # - manual_checks  # Fully automated testing
+
+# Quality gates (verification checks)
+quality_gates:
+  # Automated checks (run in order)
+  automated:
+    lint:
+      name: "Lint"
+      command: "npm run lint"
+      required: true
+      fail_fast: true  # Stop on failure
+
+    typecheck:
+      name: "Type Check"
+      command: "npm run typecheck"
+      required: true
+      fail_fast: true
+
+    test:
+      name: "Unit Tests"
+      command: "npm run test"
+      required: true
+      fail_fast: false  # Continue to see all failures
+      # coverage:
+      #   enabled: true
+      #   threshold: 80
+      #   report_path: "coverage/lcov.info"
+
+    build:
+      name: "Build"
+      command: "npm run build"
+      required: true
+      fail_fast: true
+
+    e2e:
+      name: "E2E Tests"
+      command: "npm run e2e"
+      required: false  # Optional by default
+      timeout_seconds: 600
+      # retries: 2  # Retry flaky tests
+
+    # Add custom automated checks
+    # security_scan:
+    #   name: "Security Scan"
+    #   command: "npm audit --production"
+    #   required: true
+    #
+    # bundle_size:
+    #   name: "Bundle Size"
+    #   command: "npm run analyze"
+    #   required: false
+
+  # Browser checks (for UI changes)
+  browser:
+    enabled: true
+    # Only run if files match these patterns
+    trigger_patterns:
+      - "src/components/**"
+      - "src/pages/**"
+      - "src/app/**"
+      - "*.css"
+      - "*.scss"
+
+    # Pages to verify
+    pages:
+      # Example:
+      # - path: "/"
+      #   name: "Home"
+      #   checks: ["renders", "no-console-errors"]
+      # - path: "/dashboard"
+      #   name: "Dashboard"
+      #   checks: ["renders", "data-loads", "no-console-errors"]
+
+    # Viewport sizes to test
+    viewports:
+      - name: "mobile"
+        width: 375
+        height: 667
+      - name: "desktop"
+        width: 1440
+        height: 900
+
+  # Manual checks (human verification)
+  manual:
+    accessibility:
+      name: "Accessibility"
+      description: "Verify WCAG 2.1 AA compliance"
+      required_if: "ui_changes"
+      checklist:
+        - "Keyboard navigation works"
+        - "Focus indicators visible"
+        - "Color contrast sufficient"
+        - "Screen reader compatible"
+
+    security:
+      name: "Security Review"
+      description: "Verify security requirements"
+      required_if: "security_sensitive"
+      checklist:
+        - "No secrets in code"
+        - "Input validation present"
+        - "Authentication/authorization correct"
+        - "Error messages don't leak info"
+
+    # Add custom manual checks
+    # ux_review:
+    #   name: "UX Review"
+    #   description: "Verify user experience"
+    #   required_if: "user_facing"
+    #   checklist:
+    #     - "Matches design mockups"
+    #     - "Loading states appropriate"
+    #     - "Error states helpful"
+
+# Retry configuration
+retry:
+  # Maximum retries for failed checks
+  max_retries: 1
+  # Delay between retries (seconds)
+  retry_delay: 5
+  # Only retry these check types
+  retry_only:
+    - "e2e"
+    - "integration"
+
+# Failure handling
+on_failure:
+  # Create fix tasks for failed checks
+  create_fix_tasks: true
+  # Task priority for failures
+  task_priority: "high"
+  # Notify on failure
+  # notify:
+  #   slack_channel: "#engineering-alerts"
+
+# Verification output
+output:
+  # Save detailed logs
+  save_logs: true
+  log_directory: ".hyper/logs/verification"
+  # Include timing information
+  include_timing: true
+  # Generate verification report
+  generate_report: true
+  report_format: "markdown"  # or "json", "html"

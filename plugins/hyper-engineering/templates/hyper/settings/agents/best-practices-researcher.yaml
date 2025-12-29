@@ -1,0 +1,63 @@
+# Best Practices Researcher Customization
+# This agent gathers external best practices and industry examples.
+# Customize how external research is conducted for your project.
+
+# Add project-specific context for best practices research
+context_additions: |
+  # Example:
+  # - We prioritize accessibility (WCAG 2.1 AA compliance)
+  # - Performance budget: LCP < 2.5s, FID < 100ms
+  # - We follow the Twelve-Factor App methodology
+  # - Security is critical - we handle PII data
+
+# Instructions added BEFORE the default research instructions
+instructions_prepend: |
+  # Example:
+  # When researching best practices, prioritize:
+  # 1. Enterprise-scale solutions (we have 1M+ users)
+  # 2. Solutions with strong TypeScript support
+  # 3. Patterns that support incremental adoption
+
+# Instructions added AFTER the default research instructions
+instructions_append: |
+  # Example:
+  # For each best practice found, also research:
+  # - Migration path from our current approach
+  # - Potential breaking changes or risks
+  # - Adoption rate in the industry
+
+# Authoritative sources to prioritize
+prioritize_sources:
+  # Example:
+  # - "react.dev"                    # Official React docs
+  # - "nextjs.org"                   # Official Next.js docs
+  # - "web.dev"                      # Google's web best practices
+  # - "owasp.org"                    # Security best practices
+  # - "patterns.dev"                 # Design patterns
+
+# Sources to avoid or deprioritize
+avoid_sources:
+  # Example:
+  # - "w3schools.com"                # Often outdated
+  # - "stackoverflow.com"            # Can be outdated, verify elsewhere
+
+# Topics to always research (in addition to task-specific topics)
+always_research:
+  # Example:
+  # - "accessibility"
+  # - "performance optimization"
+  # - "security best practices"
+
+# Topics to skip (handled by other processes)
+skip_topics:
+  # Example:
+  # - "deployment"                   # Handled by DevOps team
+  # - "infrastructure"               # Handled by platform team
+
+# Override the default output format
+output_format: |
+  # Example:
+  # Rate each best practice by:
+  # - Relevance to our stack (high/medium/low)
+  # - Implementation effort (easy/medium/hard)
+  # - Risk level (low/medium/high)

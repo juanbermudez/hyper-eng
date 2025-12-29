@@ -27,7 +27,8 @@ What would you like to do?
 3. **Review code** - Run comprehensive review with domain sub-agents
 4. **Verify implementation** - Run automated and manual verification checks
 5. **View project status** - See current status of all projects and tasks
-6. **Learn about the workflow** - Understand the hyper-engineering process
+6. **Customize settings** - Modify workflows, agents, or commands
+7. **Learn about the workflow** - Understand the hyper-engineering process
 
 Please select an option or describe what you need.
 </intake>
@@ -41,6 +42,7 @@ Please select an option or describe what you need.
 | Verify, test, check | Invoke `/hyper-verify` command |
 | Status, progress, list | Invoke `/hyper-status` command |
 | Initialize, setup, init | Invoke `/hyper-init` command |
+| Customize, settings, workflows, agents, commands | Read [settings-guide.md](./references/settings-guide.md) or explain <settings_system> |
 | Learn, understand, help | Read [workflow-guide.md](./references/workflow-guide.md) |
 </routing>
 
@@ -52,6 +54,7 @@ The .hyper/ directory is the local file-based alternative to Linear CLI.
 - [directory-structure.md](./references/directory-structure.md) - Complete directory layout
 - [frontmatter-schema.md](./references/frontmatter-schema.md) - MDX frontmatter reference
 - [template-guide.md](./references/template-guide.md) - Template customization
+- [settings-guide.md](./references/settings-guide.md) - Settings customization
 
 ## Directory Structure
 
@@ -69,8 +72,16 @@ The .hyper/ directory is the local file-based alternative to Linear CLI.
 │           ├── specification.md
 │           └── research/
 │               └── *.md
-└── docs/                    # Standalone documentation
-    └── *.mdx
+├── docs/                    # Standalone documentation
+│   └── *.mdx
+└── settings/                # Customization (NEW)
+    ├── workflows.yaml       # Project/task workflow stages
+    ├── agents/              # Agent customization
+    │   ├── README.md
+    │   └── *.yaml           # Per-agent overrides
+    └── commands/            # Command customization
+        ├── README.md
+        └── *.yaml           # Per-command overrides
 ```
 
 ## Core Principles
@@ -264,6 +275,185 @@ Use `{{VARIABLE_NAME}}` for substitution:
 | `{{PROJECT_SLUG}}` | Parent project identifier |
 | `{{NUM}}` | Task number (zero-padded) |
 </template_system>
+
+<settings_system>
+## Settings & Customization
+
+The `.hyper/settings/` directory allows customization of workflows, agents, and commands without modifying plugin files.
+
+### Workflows Configuration
+
+**File:** `.hyper/settings/workflows.yaml`
+
+Defines project and task workflow stages:
+
+```yaml
+project_workflow:
+  stages:
+    - id: planned
+      name: "Planned"
+      allowed_transitions: [review, cancelled]
+    - id: review
+      name: "Spec Review"
+      gate: true  # Requires approval
+      allowed_transitions: [todo, planned, cancelled]
+    - id: todo
+      name: "Ready"
+      allowed_transitions: [in-progress, cancelled]
+    - id: in-progress
+      name: "In Progress"
+      allowed_transitions: [verification, blocked, todo]
+    - id: verification
+      name: "Verification"
+      allowed_transitions: [complete, in-progress]
+    - id: complete
+      name: "Complete"
+      terminal: true
+
+task_workflow:
+  stages:
+    - id: todo
+      name: "To Do"
+      allowed_transitions: [in-progress, blocked]
+    - id: in-progress
+      name: "In Progress"
+      on_enter:
+        - action: update_frontmatter
+          field: started
+          value: "{{DATE}}"
+      allowed_transitions: [review, blocked, todo]
+    - id: review
+      name: "In Review"
+      allowed_transitions: [complete, in-progress]
+    - id: complete
+      name: "Complete"
+      terminal: true
+      on_enter:
+        - action: update_frontmatter
+          field: completed
+          value: "{{DATE}}"
+
+quality_gates:
+  task_completion:
+    automated:
+      - id: lint
+        command: "{{LINT_COMMAND}}"
+        required: true
+      - id: typecheck
+        command: "{{TYPECHECK_COMMAND}}"
+        required: true
+      - id: test
+        command: "{{TEST_COMMAND}}"
+        required: true
+      - id: build
+        command: "{{BUILD_COMMAND}}"
+        required: true
+```
+
+### Agent Customization
+
+**Directory:** `.hyper/settings/agents/`
+
+Each agent can be customized via YAML file:
+
+```yaml
+# .hyper/settings/agents/research-orchestrator.yaml
+
+context_additions: |
+  - This is a monorepo with packages/ directory
+  - Legacy code in src/legacy/ should not be recommended
+
+instructions_prepend: |
+  IMPORTANT: Always prioritize security considerations.
+
+instructions_append: |
+  After research, also check for related TODOs in codebase.
+
+skip_sub_agents:
+  - git-history-analyzer  # Skip if git history is messy
+```
+
+**Available agents:**
+- `research-orchestrator.yaml`
+- `implementation-orchestrator.yaml`
+- `repo-research-analyst.yaml`
+- `best-practices-researcher.yaml`
+- `framework-docs-researcher.yaml`
+- `git-history-analyzer.yaml`
+- `web-app-debugger.yaml`
+
+**Customization options:**
+| Option | Description |
+|--------|-------------|
+| `context_additions` | Project-specific context for the agent |
+| `instructions_prepend` | Instructions added BEFORE default |
+| `instructions_append` | Instructions added AFTER default |
+| `output_format` | Override default output format |
+| `skip_sub_agents` | Skip specific sub-agents (orchestrators only) |
+| `disabled` | Temporarily disable an agent |
+
+### Command Customization
+
+**Directory:** `.hyper/settings/commands/`
+
+Each command can be customized via YAML file:
+
+```yaml
+# .hyper/settings/commands/hyper-plan.yaml
+
+context_additions: |
+  - This project follows Domain-Driven Design
+  - All features require product manager approval
+
+phase_overrides:
+  initial_interview:
+    instructions_append: |
+      Always ask about bounded context ownership.
+
+  spec_creation:
+    instructions_prepend: |
+      REQUIRED: Include event definitions for event sourcing.
+
+skip_phases:
+  - structure_checkpoint  # Skip if process is streamlined
+
+interview:
+  max_initial_questions: 10
+  required_topics:
+    - "user impact"
+    - "success criteria"
+```
+
+**Available commands:**
+- `hyper-plan.yaml`
+- `hyper-implement.yaml`
+- `hyper-review.yaml`
+- `hyper-verify.yaml`
+- `hyper-init-stack.yaml`
+
+**Customization options:**
+| Option | Description |
+|--------|-------------|
+| `context_additions` | Project-specific context |
+| `phase_overrides` | Override specific phases |
+| `skip_phases` | Skip certain phases |
+| `quality_gates` | Override verification checks |
+| `git` | Git workflow settings |
+
+### Loading Priority
+
+1. **Workspace settings**: `.hyper/settings/*.yaml` (highest priority)
+2. **Plugin defaults**: Built-in defaults (fallback)
+
+Only specified options are overridden; defaults are preserved for everything else.
+
+### Best Practices
+
+1. **Start minimal** - Only add customizations you need
+2. **Test changes** - Run a command after customizing
+3. **Version control** - Commit `.hyper/settings/` to share with team
+4. **Reset to defaults** - Delete a file to reset that component
+</settings_system>
 </context>
 
 <verification_requirements>

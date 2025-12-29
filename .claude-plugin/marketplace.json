@@ -11,8 +11,8 @@
   "plugins": [
     {
       "name": "hyper-engineering",
-      "description": "Spec-driven development with local .hyper/ planning. Works standalone or with Hyper Control UI. 7 agents, 9 commands, 3 skills, 1 MCP server.",
-      "version": "2.2.0",
+      "description": "Spec-driven development with local .hyper/ planning. Customizable workflows, agents, and commands. 7 agents, 9 commands, 3 skills, 1 MCP server.",
+      "version": "2.3.0",
       "author": {
         "name": "Juan Bermudez",
         "url": "https://github.com/juanbermudez"

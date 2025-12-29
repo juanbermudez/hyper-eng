@@ -1,0 +1,67 @@
+# Framework Docs Researcher Customization
+# This agent researches framework documentation and official best practices.
+# Customize how framework documentation is researched for your project.
+
+# Add project-specific context for framework research
+context_additions: |
+  # Example:
+  # - We use Next.js 14 with App Router (not Pages Router)
+  # - React 18 with Server Components
+  # - Tailwind CSS v3 for styling
+  # - Prisma for database ORM
+  # - We're on Node.js 20 LTS
+
+# Instructions added BEFORE the default research instructions
+instructions_prepend: |
+  # Example:
+  # IMPORTANT: Always check for App Router specific documentation.
+  # Pages Router patterns are NOT applicable to our codebase.
+
+# Instructions added AFTER the default research instructions
+instructions_append: |
+  # Example:
+  # For each framework feature researched:
+  # 1. Check if we're using the latest stable API
+  # 2. Note any deprecation warnings
+  # 3. Check for upcoming changes in the next major version
+
+# Framework versions to target (helps find version-specific docs)
+framework_versions:
+  # Example:
+  # react: "18.2"
+  # next: "14.0"
+  # typescript: "5.3"
+  # tailwindcss: "3.4"
+  # prisma: "5.7"
+
+# Preferred documentation sources (Context7 library IDs or URLs)
+preferred_sources:
+  # Example:
+  # - library: "react"
+  #   prefer_sections: ["hooks", "server-components"]
+  # - library: "nextjs"
+  #   prefer_sections: ["app-router", "data-fetching"]
+  # - url: "https://ui.shadcn.com/docs"
+  #   description: "shadcn/ui component library"
+
+# Documentation sections to skip
+skip_sections:
+  # Example:
+  # - "pages-router"                 # We use App Router only
+  # - "class-components"             # We use functional components
+  # - "legacy-apis"                  # Not applicable
+
+# Always include these topics in framework research
+always_include:
+  # Example:
+  # - "error-handling"
+  # - "performance"
+  # - "typescript-integration"
+
+# Override the default output format
+output_format: |
+  # Example:
+  # For each documented pattern:
+  # - Include direct links to documentation
+  # - Note the documentation version/date
+  # - Flag if docs mention deprecation or changes
