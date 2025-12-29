@@ -277,13 +277,18 @@ argument-hint: "[feature or requirement description]"
 
     <phase name="spec_creation" required="true">
       <instructions>
-        Create a comprehensive specification document:
+        Create a comprehensive specification document - a technical PRD that provides
+        complete implementation guidance. The spec should be detailed enough that an
+        engineer can implement without needing to ask clarifying questions.
+
+        **SPEC PHILOSOPHY**: This is a technical PRD, not a vague requirements doc.
+        Every section should include concrete details, file references, and examples.
 
         ```bash
         cat > ".hyper/projects/${PROJECT_SLUG}/resources/specification.md" << 'EOF'
         ---
         id: resource-[PROJECT_SLUG]-spec
-        title: "[TITLE] - Specification"
+        title: "[TITLE] - Technical Specification"
         type: resource
         created: [DATE]
         updated: [DATE]
@@ -292,86 +297,352 @@ argument-hint: "[feature or requirement description]"
           - [feature-tags]
         ---
 
-        # [TITLE] - Specification
+        # [TITLE] - Technical Specification
+
+        ## Executive Summary
+
+        **What**: [One sentence describing what we're building]
+        **Why**: [One sentence on the business/user value]
+        **How**: [One sentence on the technical approach]
 
         ## Problem Statement
-        - Clear description of what problem this solves
-        - Why this is needed now
-        - Impact if not addressed
+
+        ### Current State
+        - What exists today and how it works
+        - Specific pain points with file:line references
+        - Example: "Current auth flow in `src/auth/login.ts:45-67` requires manual token refresh"
+
+        ### Desired State
+        - What the system should do after implementation
+        - Measurable improvements
+
+        ### Impact if Not Addressed
+        - Consequences of maintaining status quo
+        - User/business impact
 
         ## Proposed Solution
-        - High-level approach with rationale
-        - Why this approach over alternatives
-        - Key technical decisions
+
+        ### High-Level Approach
+        [2-3 paragraphs describing the solution strategy]
+
+        ### Key Technical Decisions
+
+        | Decision | Choice | Rationale | Alternatives Considered |
+        |----------|--------|-----------|------------------------|
+        | [e.g., State management] | [e.g., Zustand] | [Why this choice] | [What else was considered] |
+        | [e.g., API pattern] | [e.g., REST] | [Why this choice] | [GraphQL, tRPC] |
+
+        ### Why This Approach
+        - Rationale for major architectural decisions
+        - Trade-offs acknowledged
+        - References to research findings: `See resources/research/best-practices.md`
 
         ## Out of Scope (What We're NOT Doing)
-        - Explicit list of excluded functionality
-        - Deferred items for future work
-        - Edge cases intentionally not handled
-        - Related features that are separate efforts
+
+        | Item | Reason | Future Consideration |
+        |------|--------|---------------------|
+        | [Feature X] | [Why excluded] | [v2, never, TBD] |
+        | [Edge case Y] | [Why not handling] | [Future sprint] |
 
         ## Architecture
 
+        ### System Context (Grounded in Real Codebase)
+
         ```mermaid
-        [Required: flowchart, sequence, or component diagram showing the solution architecture]
+        flowchart TB
+            subgraph "Existing Components"
+                A[Component from src/components/X.tsx]
+                B[Service from src/services/Y.ts]
+            end
+            subgraph "New Components"
+                C[New component we're adding]
+                D[New service we're adding]
+            end
+            A --> C
+            C --> D
+            D --> B
+        ```
+
+        **Diagram Notes**:
+        - A: Existing `src/components/X.tsx:23` - current entry point
+        - B: Existing `src/services/Y.ts:45` - current data layer
+        - C: New component to be created at `src/components/NewComponent.tsx`
+        - D: New service to be created at `src/services/NewService.ts`
+
+        ### Data Flow
+
+        ```mermaid
+        sequenceDiagram
+            participant U as User
+            participant C as Component (src/components/X.tsx)
+            participant S as Service (src/services/Y.ts)
+            participant A as API (/api/endpoint)
+
+            U->>C: User action
+            C->>S: Call service method
+            S->>A: API request
+            A-->>S: Response
+            S-->>C: Processed data
+            C-->>U: Updated UI
+        ```
+
+        ### Component Hierarchy (if frontend)
+
+        ```
+        App (src/App.tsx:15)
+        └── Layout (src/components/Layout.tsx:8)
+            └── PageComponent (src/pages/Page.tsx:12)
+                ├── ExistingChild (src/components/Child.tsx:5)
+                └── NewComponent (NEW: src/components/New.tsx)  <-- We're adding this
+                    ├── SubComponentA (NEW)
+                    └── SubComponentB (NEW)
+        ```
+
+        ## Detailed Changes
+
+        ### File-by-File Breakdown
+
+        #### 1. `src/components/ExistingComponent.tsx` (MODIFY)
+
+        **Current** (lines 45-52):
+        ```typescript
+        // Current implementation
+        const handleSubmit = async () => {
+          const result = await api.submit(data);
+          setResult(result);
+        };
+        ```
+
+        **After**:
+        ```typescript
+        // New implementation with validation
+        const handleSubmit = async () => {
+          if (!validate(data)) {
+            setError('Validation failed');
+            return;
+          }
+          const result = await api.submit(data);
+          setResult(result);
+        };
+        ```
+
+        **Why**: Adding validation prevents invalid submissions (See research/best-practices.md)
+
+        #### 2. `src/services/NewService.ts` (CREATE)
+
+        **New file**:
+        ```typescript
+        // Full implementation template
+        export class NewService {
+          async process(input: Input): Promise<Output> {
+            // Implementation following pattern from src/services/ExistingService.ts:34
+          }
+        }
+        ```
+
+        **Pattern Reference**: Follow existing pattern in `src/services/ExistingService.ts:34-67`
+
+        #### 3. `src/types/index.ts` (MODIFY)
+
+        **Add** (after line 23):
+        ```typescript
+        export interface NewType {
+          field1: string;
+          field2: number;
+        }
         ```
 
         ## UI Layout (if frontend work)
 
+        ### Wireframe
+
         ```
-        [Required: ASCII layout showing component structure and arrangement]
+        ┌─────────────────────────────────────────────────────────────┐
+        │  Header (existing: src/components/Header.tsx)                │
+        ├─────────────────────────────────────────────────────────────┤
+        │                                                             │
+        │  ┌─────────────────────────────────────────────────────┐   │
+        │  │  New Component (NEW: src/components/Feature.tsx)     │   │
+        │  │                                                       │   │
+        │  │  ┌──────────────┐  ┌──────────────────────────────┐ │   │
+        │  │  │ Input Field  │  │ Submit Button                │ │   │
+        │  │  │ (NEW)        │  │ (extends existing Button)    │ │   │
+        │  │  └──────────────┘  └──────────────────────────────┘ │   │
+        │  │                                                       │   │
+        │  │  ┌────────────────────────────────────────────────┐ │   │
+        │  │  │ Results List (reuse existing ListComponent)    │ │   │
+        │  │  │ from src/components/List.tsx                   │ │   │
+        │  │  └────────────────────────────────────────────────┘ │   │
+        │  └─────────────────────────────────────────────────────┘   │
+        │                                                             │
+        └─────────────────────────────────────────────────────────────┘
+        ```
+
+        ### Component Props
+
+        ```typescript
+        // NewFeature.tsx props
+        interface NewFeatureProps {
+          initialValue?: string;      // Optional initial value
+          onSubmit: (value: string) => void;  // Required callback
+          variant?: 'default' | 'compact';    // Style variant
+        }
         ```
 
         ## Implementation Phases
 
         ### Phase 1: [Foundation/Core]
-        - Specific files to create/modify
-        - Key changes in each file
-        - Dependencies: None
+
+        **Goal**: [Specific deliverable for this phase]
+
+        **Files**:
+        | File | Action | Description |
+        |------|--------|-------------|
+        | `src/types/new.ts` | CREATE | New type definitions |
+        | `src/services/NewService.ts` | CREATE | Core service logic |
+        | `src/utils/helpers.ts:45` | MODIFY | Add helper function |
+
+        **Before/After Example**:
+        - Before: No type safety for new feature
+        - After: Full TypeScript coverage with `NewType` interface
+
+        **Dependencies**: None (can start immediately)
+
+        **Verification**:
+        - `npm run typecheck` passes
+        - New types are exported correctly
 
         ### Phase 2: [Business Logic]
-        - Specific files to create/modify
-        - Key changes in each file
-        - Dependencies: Phase 1
 
-        ### Phase 3: [Integration]
-        - Specific files to create/modify
-        - Key changes in each file
-        - Dependencies: Phase 1, Phase 2
+        **Goal**: [Specific deliverable for this phase]
+
+        **Files**:
+        | File | Action | Description |
+        |------|--------|-------------|
+        | `src/components/Feature.tsx` | CREATE | Main component |
+        | `src/hooks/useFeature.ts` | CREATE | Custom hook |
+        | `src/components/index.ts:12` | MODIFY | Export new component |
+
+        **Before/After Example**:
+        - Before: Feature not available to users
+        - After: Feature renders and handles user input
+
+        **Dependencies**: Phase 1 (types and service)
+
+        **Verification**:
+        - Component renders without errors
+        - Hook returns expected state
+
+        ### Phase 3: [Integration & Testing]
+
+        **Goal**: [Specific deliverable for this phase]
+
+        **Files**:
+        | File | Action | Description |
+        |------|--------|-------------|
+        | `src/pages/Page.tsx:34` | MODIFY | Integrate new component |
+        | `tests/Feature.test.tsx` | CREATE | Unit tests |
+        | `tests/e2e/feature.spec.ts` | CREATE | E2E tests |
+
+        **Before/After Example**:
+        - Before: Feature exists but not integrated
+        - After: Feature accessible from main page with full test coverage
+
+        **Dependencies**: Phase 1, Phase 2
+
+        **Verification**:
+        - All tests pass
+        - E2E scenarios complete successfully
 
         ## Success Criteria
 
-        Concrete, testable criteria:
-        - [ ] Functional requirement 1
-        - [ ] Functional requirement 2
-        - [ ] Non-functional requirement 1
+        ### Functional Requirements
+        - [ ] User can [specific action] from [specific location]
+        - [ ] System [specific behavior] when [specific condition]
+        - [ ] Data persists correctly to [specific storage]
+
+        ### Non-Functional Requirements
+        - [ ] Page load time < [X]ms (measure with Lighthouse)
+        - [ ] No console errors in browser DevTools
+        - [ ] Accessibility: WCAG 2.1 AA compliance
+
+        ### Definition of Done
+        - [ ] All acceptance criteria met
+        - [ ] Code reviewed and approved
+        - [ ] Tests written and passing
+        - [ ] Documentation updated
 
         ## Verification Requirements
 
         ### Automated Checks
-        - [ ] Tests pass: `[test command]`
-        - [ ] Linting passes: `[lint command]`
-        - [ ] Type checking passes: `[typecheck command]`
-        - [ ] Build succeeds: `[build command]`
+        | Check | Command | Required |
+        |-------|---------|----------|
+        | Lint | `npm run lint` | Yes |
+        | Typecheck | `npm run typecheck` | Yes |
+        | Unit Tests | `npm test` | Yes |
+        | Build | `npm run build` | Yes |
+        | E2E Tests | `npm run test:e2e` | If applicable |
 
-        ### Manual Verification
-        - [ ] Manual test scenario 1
-        - [ ] Manual test scenario 2
-        - [ ] Edge case verification
+        ### Browser Testing (via web-app-debugger agent)
+        - [ ] Visual inspection in Chrome DevTools
+        - [ ] Console has no errors
+        - [ ] Network requests work correctly
+        - [ ] Responsive design verified (mobile, tablet, desktop)
+
+        ### Manual Verification Scenarios
+        | Scenario | Steps | Expected Result |
+        |----------|-------|-----------------|
+        | Happy path | 1. Navigate to X, 2. Click Y, 3. Enter Z | Result appears |
+        | Error case | 1. Navigate to X, 2. Submit empty | Error message shown |
+        | Edge case | 1. [specific steps] | [specific result] |
 
         ## Technical Notes
-        - Performance considerations
-        - Security implications
-        - Accessibility requirements
-        - Browser/platform compatibility
+
+        ### Performance Considerations
+        - [Specific optimization needed, e.g., "Memoize component to prevent re-renders"]
+        - [Bundle size impact, e.g., "New dependency adds ~5KB gzipped"]
+
+        ### Security Implications
+        - [Input validation requirements]
+        - [Authentication/authorization changes]
+        - [Data sanitization needs]
+
+        ### Accessibility Requirements
+        - [ARIA labels needed]
+        - [Keyboard navigation support]
+        - [Screen reader compatibility]
+
+        ### Compatibility
+        - Browsers: [Chrome 90+, Firefox 88+, Safari 14+]
+        - Node: [18.x, 20.x]
+
+        ## Reference Documents
+
+        | Document | Location | Key Sections |
+        |----------|----------|--------------|
+        | Codebase Analysis | `resources/research/codebase-analysis.md` | Patterns, conventions |
+        | Best Practices | `resources/research/best-practices.md` | Recommendations |
+        | Framework Docs | `resources/research/framework-docs.md` | API references |
+        | Git History | `resources/research/git-history.md` | Evolution context |
 
         ## Open Questions (Must Resolve Before Approval)
-        - [ ] Question 1 → Resolution: [pending/resolved: answer]
-        - [ ] Question 2 → Resolution: [pending/resolved: answer]
+
+        | # | Question | Status | Resolution |
+        |---|----------|--------|------------|
+        | 1 | [Specific question] | Pending/Resolved | [Answer if resolved] |
+        | 2 | [Specific question] | Pending/Resolved | [Answer if resolved] |
+
+        **NOTE**: All questions must be resolved before task creation.
         EOF
         ```
 
-        **IMPORTANT**: All open questions must be resolved before proceeding to task breakdown.
+        **SPEC QUALITY CHECKLIST** (verify before presenting for review):
+        - [ ] All file references include actual paths from codebase research
+        - [ ] Diagrams reference real component/file names
+        - [ ] Before/after examples show concrete code changes
+        - [ ] Each phase has clear files, dependencies, and verification
+        - [ ] Success criteria are measurable and testable
+        - [ ] No vague statements like "improve performance" without metrics
       </instructions>
     </phase>
 
@@ -596,6 +867,13 @@ argument-hint: "[feature or requirement description]"
     <practice>Update file frontmatter status at each workflow transition</practice>
     <practice>Link verification requirements to actual commands that will be run</practice>
     <practice>Write research findings to .hyper/projects/{slug}/resources/research/</practice>
+    <!-- Technical PRD Practices -->
+    <practice>Specs must include file:line references to actual codebase locations</practice>
+    <practice>All diagrams must be grounded in real component hierarchy and data flow</practice>
+    <practice>Include before/after code examples for each significant change</practice>
+    <practice>Reference research documents for pattern justification</practice>
+    <practice>Each implementation phase must have: files table, dependencies, before/after, verification</practice>
+    <practice>Avoid vague statements - every claim needs concrete evidence or metrics</practice>
   </best_practices>
 
   <error_handling>
