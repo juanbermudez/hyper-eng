@@ -34,13 +34,22 @@ argument-hint: "[feature or requirement description]"
       Compatible with Hyper Control UI for visual project management.
       Works standalone without UI - file system is the source of truth.
     </hyper_integration>
-    <research_agents>
-      Spawns these specialized agents in parallel for comprehensive research:
-      - repo-research-analyst: Codebase patterns and conventions
-      - best-practices-researcher: External best practices, web search, open source examples
-      - framework-docs-researcher: Framework documentation via Context7 MCP
-      - git-history-analyzer: Git history and code evolution
-    </research_agents>
+    <orchestrators>
+      Uses orchestrator agents for coordinated workflows:
+      - research-orchestrator: Spawns and coordinates 4 research sub-agents
+        - repo-research-analyst: Codebase patterns and conventions
+        - best-practices-researcher: External best practices, web search
+        - framework-docs-researcher: Framework documentation via Context7 MCP
+        - git-history-analyzer: Git history and code evolution
+    </orchestrators>
+    <output_location>
+      Research findings: `.hyper/projects/{slug}/resources/research/`
+      - codebase-analysis.md
+      - best-practices.md
+      - framework-docs.md
+      - git-history.md
+      - research-summary.md
+    </output_location>
   </context>
 
   <working_patterns>
@@ -163,71 +172,72 @@ argument-hint: "[feature or requirement description]"
 
     <phase name="research" required="true">
       <instructions>
-        Launch 4 specialized research agents in parallel using the Task tool.
+        Spawn the research-orchestrator agent to coordinate comprehensive research:
 
-        **IMPORTANT**: Spawn ALL agents in a SINGLE message with multiple Task calls for true parallel execution.
+        ```
+        Task tool with subagent_type: "general-purpose"
+        Prompt: "You are the research-orchestrator. Coordinate comprehensive research for:
 
-        1. **repo-research-analyst** (Codebase Patterns)
-           Prompt: "Research codebase patterns for [feature]. Focus on: similar existing implementations, reusable components, established conventions, file structure patterns. Return file:line references for all key code. Write findings to JSON summary format."
+        Feature: [feature description]
+        Project Slug: ${PROJECT_SLUG}
+        Frameworks/Technologies: [list from clarification]
+        Focus Areas: [from user priorities]
 
-        2. **best-practices-researcher** (External Best Practices)
-           Prompt: "Research external best practices for [feature]. Use web search and Context7 for official docs. Find open source examples and style guides. Return structured findings with source URLs."
+        Your job:
+        1. Spawn 4 research sub-agents in parallel:
+           - repo-research-analyst: Codebase patterns
+           - best-practices-researcher: External best practices
+           - framework-docs-researcher: Framework docs via Context7
+           - git-history-analyzer: Code evolution
 
-        3. **framework-docs-researcher** (Framework Documentation)
-           Prompt: "Research framework documentation for [technology stack]. Fetch official docs via Context7, check source code of key dependencies, identify API patterns and version constraints."
+        2. Synthesize their findings
 
-        4. **git-history-analyzer** (Code Evolution)
-           Prompt: "Analyze git history for [relevant area]. Find recent changes, key contributors, evolution of patterns. Use git log, blame, and shortlog. Return summary of findings."
+        3. Write research documents to:
+           .hyper/projects/${PROJECT_SLUG}/resources/research/
+           - codebase-analysis.md
+           - best-practices.md
+           - framework-docs.md
+           - git-history.md
+           - research-summary.md
 
-        After all agents complete, synthesize findings and write to research directory:
-
-        ```bash
-        # Write each agent's findings to resources/research/
-        # Example for repo-research-analyst:
-        cat > ".hyper/projects/${PROJECT_SLUG}/resources/research/codebase-analysis.md" << 'EOF'
-        ---
-        id: research-[PROJECT_SLUG]-codebase
-        title: "Codebase Analysis"
-        type: resource
-        created: [DATE]
-        updated: [DATE]
-        tags:
-          - research
-          - codebase
-        ---
-
-        # Codebase Research Summary
-
-        [Synthesized findings from repo-research-analyst]
-
-        ## File References
-
-        [file:line references]
-        EOF
+        4. Return JSON summary:
+        {
+          'status': 'complete',
+          'project_slug': '${PROJECT_SLUG}',
+          'research_location': '.hyper/projects/${PROJECT_SLUG}/resources/research/',
+          'key_findings': {
+            'recommended_approach': '...',
+            'key_decisions': [...],
+            'risk_areas': [...],
+            'patterns_to_follow': [...]
+          }
+        }"
         ```
 
-        Repeat for each research agent:
-        - `best-practices.md`
-        - `framework-docs.md`
-        - `git-history.md`
+        The research-orchestrator handles:
+        - Spawning sub-agents in parallel
+        - Collecting and synthesizing results
+        - Writing research documents with proper frontmatter
+        - Creating the research-summary.md synthesis
+
+        Wait for the orchestrator to return before proceeding to structure_checkpoint.
       </instructions>
 
       <example>
-        <parallel_task_spawn>
-          # Spawn all 4 agents in a SINGLE message:
+        <research_orchestrator_call>
+          Task (subagent_type: "general-purpose"):
+          "You are the research-orchestrator. Coordinate comprehensive research for:
 
-          Task repo-research-analyst:
-          "Research codebase patterns for user authentication with OAuth. Focus on: similar implementations, reusable components, established conventions. Return file:line references."
+          Feature: User authentication with OAuth
+          Project Slug: user-auth-oauth
+          Frameworks: Next.js 14, NextAuth.js
+          Focus Areas: Security, session management, token handling
 
-          Task best-practices-researcher:
-          "Research external best practices for OAuth authentication. Use web search and Context7 for official docs. Find open source examples and style guides."
+          Spawn all 4 research agents in parallel, synthesize findings, and write to:
+          .hyper/projects/user-auth-oauth/resources/research/
 
-          Task framework-docs-researcher:
-          "Research framework documentation for [Next.js/React/etc]. Fetch official docs, check source code of auth libraries, identify API patterns."
-
-          Task git-history-analyzer:
-          "Analyze git history for authentication-related code. Find recent changes, key contributors, and evolution of auth patterns."
-        </parallel_task_spawn>
+          Return JSON summary when complete."
+        </research_orchestrator_call>
       </example>
     </phase>
 

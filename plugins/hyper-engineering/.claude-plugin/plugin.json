@@ -1,7 +1,7 @@
 {
   "name": "hyper-engineering",
-  "version": "2.1.0",
-  "description": "Spec-driven development with local .hyper/ planning. Works standalone or with Hyper Control UI. 5 agents, 9 commands, 3 skills, 1 MCP server.",
+  "version": "2.2.0",
+  "description": "Spec-driven development with local .hyper/ planning. Works standalone or with Hyper Control UI. 7 agents, 9 commands, 3 skills, 1 MCP server.",
   "author": {
     "name": "Juan Bermudez",
     "email": "juan@example.com",

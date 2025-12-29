@@ -40,17 +40,87 @@ tags: {{TAGS}}
 
 {{IMPLEMENTATION_PHASES}}
 
-## Verification Requirements
+## Verification Configuration
 
-### Automated Checks
-- [ ] Tests pass: `{{TEST_COMMAND}}`
-- [ ] Linting passes: `{{LINT_COMMAND}}`
-- [ ] Type checking passes: `{{TYPECHECK_COMMAND}}`
-- [ ] Build succeeds: `{{BUILD_COMMAND}}`
+### Stack Commands
+Configure these based on your tech stack (detected or specified via `/hyper-init-stack`):
 
-### Manual Verification
-{{MANUAL_VERIFICATION}}
+| Check | Command | Notes |
+|-------|---------|-------|
+| Lint | `{{LINT_COMMAND}}` | e.g., `npm run lint` or `ruff check .` |
+| Typecheck | `{{TYPECHECK_COMMAND}}` | e.g., `tsc --noEmit` or `mypy .` |
+| Unit Tests | `{{TEST_COMMAND}}` | e.g., `npm test` or `pytest` |
+| Build | `{{BUILD_COMMAND}}` | e.g., `npm run build` or `python -m build` |
+| E2E Tests | `{{E2E_COMMAND}}` | e.g., `npm run test:e2e` (optional) |
+
+### Quality Gates (Project-Level)
+
+All tasks must pass these gates before the project is complete:
+
+**Automated Gates:**
+- [ ] All tasks have status: complete
+- [ ] Full lint pass (no warnings)
+- [ ] Full typecheck pass
+- [ ] All tests pass (unit + integration)
+- [ ] Build succeeds
+- [ ] E2E tests pass (if applicable)
+
+**Manual Gates:**
+- [ ] Code review completed
+- [ ] Browser testing completed (via web-app-debugger agent)
+- [ ] Security review (if applicable)
+- [ ] Performance testing (if applicable)
+- [ ] Documentation updated
+
+### Browser Verification
+
+For projects with UI changes:
+- Use `web-app-debugger` agent for comprehensive testing
+- Test in Chrome DevTools
+- Verify console has no errors
+- Verify network requests work
+- Verify responsive design
+- Verify accessibility
+
+## Git Workflow
+
+### Branch Strategy
+- Feature branch: `feat/{{SLUG}}/{task-id}`
+- Main branch: `{{MAIN_BRANCH}}`
+
+### Commit Convention
+```
+{type}({scope}): {description}
+
+- {detail}
+
+Task: {task-id}
+```
+
+Types: feat, fix, docs, style, refactor, test, chore
+
+### Worktree (Optional)
+Enable isolated development: {{USE_WORKTREE}}
 
 ## Open Questions
 
 {{OPEN_QUESTIONS}}
+
+## Research Resources
+
+Research documents location: `resources/research/`
+
+- codebase-analysis.md
+- best-practices.md
+- framework-docs.md
+- git-history.md
+- research-summary.md
+
+## Final Tasks (Required)
+
+The planning phase should include these tasks at the end:
+
+1. **Quality Gates** - Run all automated quality gates
+2. **Browser Verification** - Manual browser testing (if UI changes)
+3. **Documentation Update** - Update relevant documentation
+4. **Final Review** - Code review before completion

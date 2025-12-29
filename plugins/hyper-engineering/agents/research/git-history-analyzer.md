@@ -97,4 +97,24 @@ When returning results, use this JSON structure:
 
 **HYPER INTEGRATION**
 
-When called during a `/hyper-plan` workflow with a project context, the parent agent will write your findings to `.hyper/projects/{slug}/resources/research/git-history.md`. Return your findings in the structured JSON format above so the parent agent can synthesize them into the research document.
+**Output Location:** `.hyper/projects/{slug}/resources/research/git-history.md`
+
+When called by the research-orchestrator during `/hyper-plan`:
+1. The orchestrator provides you with the project slug and areas to analyze
+2. Return your findings in the structured JSON format above
+3. The orchestrator writes findings to the output location
+4. Your JSON is synthesized into the research summary
+
+**When called directly (not via orchestrator):**
+- Ask for the project slug using AskUserQuestion
+- Write directly to `.hyper/projects/{slug}/resources/research/git-history.md`
+- Include YAML frontmatter:
+  ```yaml
+  ---
+  type: resource
+  category: research
+  title: Git History Analysis
+  project: {slug}
+  created: {DATE}
+  ---
+  ```

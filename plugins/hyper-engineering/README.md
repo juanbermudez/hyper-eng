@@ -8,7 +8,7 @@ Works standalone or with [Hyper Control](https://github.com/juanbermudez/hyper-c
 
 | Component | Count |
 |-----------|-------|
-| Agents | 5 |
+| Agents | 7 |
 | Commands | 9 |
 | Skills | 3 |
 | MCP Servers | 1 |
@@ -71,10 +71,12 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 ### Agents
 
-5 specialized agents for research and debugging:
+7 specialized agents for orchestration, research, and debugging:
 
 | Agent | Category | Purpose |
 |-------|----------|---------|
+| `research-orchestrator` | Orchestrators | Coordinate research sub-agents in parallel |
+| `implementation-orchestrator` | Orchestrators | Coordinate engineering sub-agents and verification |
 | `repo-research-analyst` | Research | Research repository structure and conventions |
 | `best-practices-researcher` | Research | Gather external best practices and examples |
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
@@ -114,12 +116,14 @@ The workflow leverages 3 core skills:
 
 ## Reference
 
-### Agents (5)
+### Agents (7)
 
-Research agents (4) used by `/hyper-plan` + testing agent (1):
+Orchestrators (2), Research agents (4), and Testing agent (1):
 
 | Agent | Category | Description |
 |-------|----------|-------------|
+| `research-orchestrator` | Orchestrators | Coordinate research sub-agents in parallel, synthesize findings |
+| `implementation-orchestrator` | Orchestrators | Coordinate engineering sub-agents, enforce verification gates |
 | `repo-research-analyst` | Research | Research repository structure and conventions |
 | `best-practices-researcher` | Research | Gather external best practices and examples |
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |

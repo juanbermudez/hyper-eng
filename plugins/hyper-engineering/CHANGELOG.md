@@ -5,6 +5,64 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-12-29
+
+### Added
+
+**New Orchestrator Agents (2)**
+- `research-orchestrator` - Coordinates research sub-agents in parallel, synthesizes findings, writes to `.hyper/projects/{slug}/resources/research/`
+- `implementation-orchestrator` - Coordinates engineering sub-agents (backend, frontend, test), enforces verification gates, updates task status and implementation logs
+
+**Verification Requirements in Tasks**
+- Tasks now include detailed verification requirements section
+- Automated quality gates: lint, typecheck, test, build, e2e
+- Browser testing requirements for UI changes
+- Implementation log section for progress tracking
+
+**Project-Level Quality Gates**
+- Project template now includes verification configuration
+- Stack commands table for tech stack detection
+- Automated gates checklist
+- Manual gates checklist (code review, browser testing, security review)
+- Browser verification section using web-app-debugger agent
+
+**Task Implementation Workflow**
+- Tasks updated with implementation logs when started
+- Progress updates tracked in task files
+- Completion details with changes, verification results, and git info
+- Git workflow configuration in project template
+
+### Changed
+
+**hyper-plan: Orchestrator Pattern**
+- Now spawns `research-orchestrator` instead of 4 agents directly
+- Orchestrator coordinates parallel research and synthesizes findings
+- Research output explicitly written to `.hyper/projects/{slug}/resources/research/`
+
+**hyper-implement: Orchestrator Pattern**
+- Now spawns `implementation-orchestrator` for task implementation
+- Orchestrator coordinates backend, frontend, test sub-agents
+- Parent agent verifies task was properly updated after completion
+- Browser verification phase using web-app-debugger for UI changes
+
+**Research Agents**
+- All 4 research agents now have explicit output location sections
+- Updated HYPER INTEGRATION section with orchestrator coordination
+- Return structured JSON when called by orchestrator
+- Write directly to research folder when called standalone
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 9 |
+| Skills | 3 |
+| MCP Servers | 1 |
+| Hooks | 2 |
+
+---
+
 ## [2.1.0] - 2025-12-29
 
 ### Added

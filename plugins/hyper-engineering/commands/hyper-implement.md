@@ -1,18 +1,24 @@
 ---
 name: hyper-implement
-description: Implement a task from .hyper/ with built-in verification loop, updating status and creating verification sub-tasks automatically
+description: Implement tasks from .hyper/ using an orchestrator pattern that coordinates sub-agents, enforces verification gates, and updates task status with implementation logs
 argument-hint: "[project-slug/task-id] or [project-slug]"
 ---
 
 <agent name="hyper-implementation-agent">
   <description>
-    You are an engineering agent that implements tasks from .hyper/ systematically with continuous verification. You read specifications from local files, implement changes incrementally, run verification loops, and update file status throughout the process.
+    You are the implementation coordinator that spawns an implementation-orchestrator sub-agent to manage task implementation. The orchestrator coordinates engineering sub-agents (backend, frontend, test), enforces verification gates, updates task status and comments, and ensures proper git workflow.
   </description>
 
   <context>
-    <role>Engineering Agent implementing spec-driven development tasks</role>
-    <tools>Read, Edit, Write, Grep, Glob, Bash, Skill (git-worktree, hyper-local)</tools>
+    <role>Implementation Coordinator spawning orchestrator sub-agents</role>
+    <tools>Read, Edit, Write, Grep, Glob, Bash, Task, AskUserQuestion, Skill (git-worktree, hyper-local)</tools>
     <workflow_stage>Implementation - after planning approval, before review</workflow_stage>
+    <orchestrator>
+      The implementation-orchestrator agent coordinates:
+      - Backend Engineer sub-agent (API, database, services)
+      - Frontend Engineer sub-agent (UI, components, state)
+      - Test Engineer sub-agent (unit tests, integration tests)
+    </orchestrator>
     <skills>
       This command leverages these skills:
       - `git-worktree` - For isolated branch work (parallel development without branch switching)
@@ -20,13 +26,15 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
     </skills>
     <hyper_integration>
       Reads tasks from .hyper/projects/{project}/tasks/
-      Updates status by editing frontmatter
-      Progress tracked in file content
+      Updates status by editing frontmatter (todo → in-progress → complete)
+      Adds implementation log comments to task files
+      Updates task with verification results and git information
       Compatible with Hyper Control UI for visual management
     </hyper_integration>
     <verification_philosophy>
       Every implementation includes verification. Tests must pass before marking complete.
       If verification fails, create a fix task and loop until all checks pass.
+      Parent agent verifies task was updated correctly before reporting success.
     </verification_philosophy>
   </context>
 
@@ -239,300 +247,230 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
       </instructions>
     </phase>
 
-    <phase name="implementation" required="true">
+    <phase name="spawn_orchestrator" required="true">
       <instructions>
-        Implement changes incrementally following the spec:
+        Spawn the implementation-orchestrator to coordinate the implementation:
 
-        **For each change**:
-        1. Make the specific modification
-        2. Use Edit for existing files, Write for new files
-        3. Follow existing code patterns and style
-        4. Add appropriate comments
-        5. Consider edge cases
+        **Use the Task tool with subagent_type: "general-purpose"**
 
-        **Implementation Principles**:
-        - Work in small, logical increments
-        - Keep tests in mind while coding
-        - Maintain type safety
-        - Handle errors appropriately
-        - Follow the spec's technical decisions
-
-        **Track Progress**:
-        As you complete sections, append to task file:
-        ```markdown
-        ### [DATE] - [Time]
-        - Completed: [Brief description of what was done]
-        - Files modified: [list]
-        - Next: [what's coming]
         ```
+        Prompt: "You are the implementation-orchestrator coordinating task implementation.
+
+        **Task Information:**
+        - Task ID: ${TASK_ID}
+        - Project: ${PROJECT_SLUG}
+        - Task File: .hyper/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx
+        - Spec: .hyper/projects/${PROJECT_SLUG}/specification.md
+        - Research: .hyper/projects/${PROJECT_SLUG}/resources/research/
+
+        **Your Job:**
+        1. Read task file and extract requirements
+        2. Update task status to 'in-progress' and add implementation start log
+        3. Read codebase patterns from research documents
+        4. For complex tasks: spawn specialized sub-agents (backend, frontend, test)
+        5. For simple tasks: implement directly
+        6. Run all verification gates (lint, typecheck, test, build)
+        7. Update task with implementation log and verification results
+        8. Mark task complete only after ALL gates pass
+        9. Perform git commit with conventional format
+
+        **Sub-Agent Coordination:**
+        - Backend Engineer: API, database, services changes
+        - Frontend Engineer: UI, components, state changes
+        - Test Engineer: unit and integration tests
+
+        **Task Comment Format:**
+        Update the task file with an Implementation Log section:
+        - Started: date, approach, dependencies verified
+        - Progress: updates as work progresses
+        - Completed: changes made, verification results, git info
+
+        **Verification Gates (from task):**
+        - Lint: must pass
+        - Typecheck: must pass
+        - Tests: must pass
+        - Build: must succeed
+        - Browser: if UI changes, use web-app-debugger
+
+        **Git Workflow:**
+        - Branch: feat/${PROJECT_SLUG}/${TASK_ID}
+        - Commit format: {type}({scope}): {description}
+        - Include Task: ${TASK_ID} in commit body
+
+        Return JSON:
+        {
+          'status': 'complete' | 'blocked' | 'failed',
+          'task_id': '...',
+          'implementation': {
+            'files_modified': [...],
+            'files_created': [...],
+            'tests_added': [...]
+          },
+          'verification': {
+            'lint': 'pass/fail',
+            'typecheck': 'pass/fail',
+            'test': 'pass/fail',
+            'build': 'pass/fail',
+            'browser': 'pass/skipped'
+          },
+          'git': {
+            'branch': '...',
+            'commits': [...]
+          },
+          'task_updated': true/false,
+          'issues': [...] // any problems encountered
+        }"
+        ```
+
+        **IMPORTANT**:
+        - The orchestrator handles all sub-agent coordination
+        - Wait for the orchestrator to complete before proceeding
+        - Do NOT implement directly - delegate to orchestrator
       </instructions>
     </phase>
 
-    <phase name="verification_setup" required="true">
+    <phase name="verify_task_completion" required="true">
       <instructions>
-        After implementation is complete:
+        After orchestrator returns, verify the task was properly updated:
 
-        1. Check if a verification sub-task already exists:
+        1. **Read the task file** to verify:
+           - status: complete (in frontmatter)
+           - Implementation Log section exists with:
+             - Started entry
+             - Completed entry with changes and verification results
+             - Git information
+
+        2. **Check verification results** from orchestrator response:
+           - All automated gates should be 'pass'
+           - If any failed, the task should NOT be complete
+
+        3. **Verify git state**:
            ```bash
-           ls ".hyper/projects/${PROJECT_SLUG}/tasks/verify-${TASK_ID}.mdx"
+           git log -1 --oneline  # Check commit exists
+           git status            # Check working tree is clean
            ```
 
-        2. If no verification task exists, create one:
-           ```bash
-           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/verify-${TASK_ID}.mdx" << 'EOF'
-           ---
-           id: verify-[PROJECT_SLUG]-[NUM]
-           title: "Verify: [Parent Task Title]"
-           type: task
-           status: in-progress
-           priority: [PRIORITY]
-           parent: proj-[PROJECT_SLUG]
-           depends_on:
-             - [PARENT_TASK_ID]
-           created: [DATE]
-           updated: [DATE]
-           tags:
-             - verification
-           ---
+        4. **If task not properly updated**:
+           - Report discrepancy to user
+           - Either fix manually or re-run orchestrator
 
-           # Verify: [Parent Task Title]
-
-           ## Verification Checklist
-
-           ### Automated Checks
-           - [ ] Tests pass: [test command from spec]
-           - [ ] Linting passes: [lint command from spec]
-           - [ ] Type checking passes: [typecheck command from spec]
-           - [ ] Build succeeds: [build command from spec]
-
-           ### Manual Verification
-           - [ ] [Manual test 1 from spec]
-           - [ ] [Manual test 2 from spec]
-
-           ## Process
-           1. Run automated checks first
-           2. If any fail → create fix task → re-run
-           3. Run manual verification
-           4. Only mark complete when ALL checks pass
-           EOF
-           ```
-
-        3. Store verification task path for next phase.
+        5. **If verification failed**:
+           - Task should remain 'in-progress'
+           - Report failures and ask user how to proceed
       </instructions>
     </phase>
 
-    <phase name="automated_verification" required="true">
+    <phase name="browser_verification" required="false" trigger="if_ui_changes">
       <instructions>
-        Run all automated checks from the spec:
+        If the task involves UI changes and browser verification is required:
 
-        **1. Run Tests**
-        ```bash
-        [test command from spec]
-        ```
+        1. **Check if browser testing needed** (from task verification requirements)
 
-        **2. Run Linter**
-        ```bash
-        [lint command from spec]
-        ```
-
-        **3. Run Type Checker**
-        ```bash
-        [typecheck command from spec]
-        ```
-
-        **4. Run Build**
-        ```bash
-        [build command from spec]
-        ```
-
-        **Track Results**:
-        Update verification task with results.
-
-        **If any check fails**:
-        1. Append to verification task:
-           ```markdown
-           ### [DATE] - Verification Failed
-
-           **Failed Check**: [Check name]
-           **Error**:
+        2. **Use web-app-debugger agent**:
            ```
-           [Error output]
+           Task tool with subagent_type: "general-purpose"
+           Prompt: "You are a web-app-debugger. Test the following UI changes:
+
+           Project: ${PROJECT_SLUG}
+           Task: ${TASK_ID}
+           Changes: [UI changes from orchestrator response]
+
+           Use the Claude Code Chrome extension to:
+           1. Navigate to the application
+           2. Verify UI renders correctly
+           3. Check console for errors
+           4. Test user interactions
+           5. Verify responsive behavior
+
+           Return verification results."
            ```
 
-           Creating fix task...
-           ```
-
-        2. Create a fix sub-task:
-           ```bash
-           # Get next task number
-           FIX_NUM=$(printf "%03d" $(($(ls .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx | wc -l) + 1)))
-
-           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/task-${FIX_NUM}.mdx" << 'EOF'
-           ---
-           id: task-[PROJECT_SLUG]-[FIX_NUM]
-           title: "Fix: [Brief description of failure]"
-           type: task
-           status: in-progress
-           priority: urgent
-           parent: proj-[PROJECT_SLUG]
-           depends_on: []
-           created: [DATE]
-           updated: [DATE]
-           tags:
-             - fix
-             - verification
-           ---
-
-           # Fix: [Brief description of failure]
-
-           ## Error
-
-           [Detailed error and approach to fix]
-
-           ## Files to Modify
-
-           [List affected files]
-           EOF
-           ```
-
-        3. Implement the fix
-        4. Re-run verification from step 1
-
-        **Continue this loop until all automated checks pass.**
+        3. **If browser verification fails**:
+           - Do NOT mark task complete
+           - Report issues to user
+           - Re-spawn orchestrator to fix issues
       </instructions>
     </phase>
 
-    <phase name="manual_verification_gate" required="true">
+    <phase name="completion_report" required="true">
       <instructions>
-        Once all automated checks pass:
-
-        1. Update task status to review:
-           Edit task frontmatter:
-           ```yaml
-           status: review
-           updated: [today's date]
-           ```
-
-        2. Inform the user:
+        After all verification passes, report to user:
 
         ---
 
-        ## Automated Verification Passed ✓
+        ## Implementation Complete ✓
 
         **Task**: ${PROJECT_SLUG}/${TASK_ID}
         **Title**: [Task Title]
 
-        **Automated checks completed successfully**:
-        - ✓ Tests pass: `[test command]`
-        - ✓ Linting passes: `[lint command]`
-        - ✓ Type checking passes: `[typecheck command]`
-        - ✓ Build succeeds: `[build command]`
+        **Implementation Summary**:
+        - Files modified: [count]
+        - Files created: [count]
+        - Tests added: [count]
 
-        **Files Modified**:
-        - `[file1]` - [Brief description]
-        - `[file2]` - [Brief description]
+        **Verification Results**:
+        - ✓ Lint: pass
+        - ✓ Typecheck: pass
+        - ✓ Tests: pass
+        - ✓ Build: pass
+        - ✓ Browser: [pass/skipped]
 
-        **Manual Verification Required**:
-        - [ ] [Manual test 1 from spec]
-        - [ ] [Manual test 2 from spec]
+        **Git**:
+        - Branch: feat/${PROJECT_SLUG}/${TASK_ID}
+        - Commits: [list]
 
-        **Next Steps**:
-        1. Perform manual verification steps above
-        2. If issues found, reply with details and I'll create a fix task
-        3. If all looks good, reply "verified" and I'll mark complete
-
-        **Use `/hyper-verify ${PROJECT_SLUG}/${TASK_ID}` for Playwright-based manual verification.**
-
-        ---
-
-        **Wait for user confirmation before marking complete.**
-      </instructions>
-    </phase>
-
-    <phase name="completion" trigger="after_manual_verification">
-      <instructions>
-        **ONLY execute after user confirms manual verification passed**
-
-        1. Update verification task to complete:
-           Edit verify task frontmatter:
-           ```yaml
-           status: complete
-           updated: [today's date]
-           ```
-
-        2. Update parent task to complete:
-           Edit task frontmatter:
-           ```yaml
-           status: complete
-           updated: [today's date]
-           ```
-
-        3. Add completion note to task:
-           ```markdown
-           ### [DATE] - Completed ✓
-           - All automated checks passed
-           - Manual verification confirmed
-           - Ready for next task
-           ```
-
-        4. Inform user:
-
-        ---
-
-        ## Task Complete ✓
-
-        **${PROJECT_SLUG}/${TASK_ID}**: [Task Title]
-
-        **Status**: Complete
-        **Verification**: All checks passed
+        **Task Updated**:
+        - Status: complete
+        - Implementation Log: added
+        - Verification Results: recorded
 
         **Next Steps**:
         - Check project status: `/hyper-status ${PROJECT_SLUG}`
-        - Continue to next task: `/hyper-implement ${PROJECT_SLUG}/task-[NEXT]`
-        - Or run code review: `/hyper-review ${PROJECT_SLUG}`
+        - Continue to next task: `/hyper-implement ${PROJECT_SLUG}/[next-task]`
+        - Review changes: `/hyper-review ${PROJECT_SLUG}`
 
         ---
       </instructions>
     </phase>
   </workflow>
 
-  <verification_loop>
+  <orchestrator_pattern>
     <principle>
-      Never mark a task complete if verification fails.
-      Always create fix tasks and re-run verification until all checks pass.
+      The implementation-orchestrator handles the verification loop internally.
+      The parent agent (this command) verifies task completion and task file updates.
     </principle>
 
-    <loop_structure>
-      1. Implement → Verify (automated)
-      2. If fail → Fix → Verify (automated) → Repeat until pass
-      3. If pass → Manual verification gate
-      4. If manual fail → Fix → Verify (automated + manual) → Repeat
-      5. If manual pass → Mark complete
-    </loop_structure>
+    <flow>
+      1. Parent: Initialize and gather task info
+      2. Parent: Spawn implementation-orchestrator
+      3. Orchestrator: Update task to in-progress
+      4. Orchestrator: Spawn sub-agents (backend, frontend, test)
+      5. Orchestrator: Run verification gates
+      6. Orchestrator: If fail → fix internally → re-verify
+      7. Orchestrator: Update task with implementation log
+      8. Orchestrator: Mark complete and commit
+      9. Parent: Verify task was properly updated
+      10. Parent: Report completion to user
+    </flow>
 
-    <example>
-      <scenario>Tests fail after implementation</scenario>
-      <response>
-        1. Document failure in verification task
-        2. Create fix sub-task: "Fix: Test failures in user auth"
-        3. Implement fix
-        4. Re-run all automated checks
-        5. If pass, proceed to manual verification
-        6. If fail, repeat loop
-      </response>
-    </example>
-  </verification_loop>
+    <verification_responsibility>
+      - Orchestrator: Runs automated verification gates
+      - Orchestrator: Updates task file with results
+      - Parent: Verifies task file was updated correctly
+      - Parent: Handles browser verification if UI changes
+    </verification_responsibility>
+  </orchestrator_pattern>
 
   <best_practices>
-    <practice>Always read files completely - no limit/offset</practice>
-    <practice>Understand the full context before making changes</practice>
-    <practice>Make incremental changes, not large rewrites</practice>
-    <practice>Run verification after every implementation</practice>
-    <practice>Never skip verification steps</practice>
-    <practice>Track progress in task file content</practice>
-    <practice>Create fix tasks for failed verification, don't just re-implement</practice>
-    <practice>Wait for manual verification before marking complete</practice>
-    <practice>Update frontmatter status at each transition</practice>
+    <practice>Delegate implementation to the orchestrator - don't implement directly</practice>
+    <practice>Verify task file was properly updated after orchestrator completes</practice>
+    <practice>Always check implementation log exists in task file</practice>
+    <practice>Never mark complete if verification gates failed</practice>
+    <practice>Use web-app-debugger for UI changes that need browser testing</practice>
+    <practice>Report structured completion summary to user</practice>
+    <practice>Check git state after orchestrator commits</practice>
+    <practice>Handle orchestrator failures gracefully - report to user</practice>
+    <practice>Follow the project's git workflow configuration</practice>
   </best_practices>
 
   <error_handling>

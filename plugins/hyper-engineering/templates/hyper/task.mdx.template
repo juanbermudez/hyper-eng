@@ -8,6 +8,7 @@ parent: proj-{{PROJECT_SLUG}}
 depends_on: {{DEPENDS_ON}}
 created: {{DATE}}
 updated: {{DATE}}
+completed: null
 tags: {{TAGS}}
 ---
 
@@ -35,16 +36,32 @@ tags: {{TAGS}}
 
 {{ACCEPTANCE_CRITERIA}}
 
-## Verification
+## Verification Requirements
 
-### Automated Checks
-- [ ] Tests pass
-- [ ] Linting passes
-- [ ] Type checking passes
-- [ ] Build succeeds
+### Automated Quality Gates
+| Check | Command | Required |
+|-------|---------|----------|
+| Lint | `{{LINT_COMMAND}}` | Yes |
+| Typecheck | `{{TYPECHECK_COMMAND}}` | Yes |
+| Unit Tests | `{{TEST_COMMAND}}` | Yes |
+| Build | `{{BUILD_COMMAND}}` | Yes |
+| E2E Tests | `{{E2E_COMMAND}}` | {{E2E_REQUIRED}} |
 
 ### Manual Verification
 {{MANUAL_VERIFICATION}}
+
+### Browser Testing (if UI changes)
+- [ ] Visual inspection in Chrome DevTools
+- [ ] Console has no errors
+- [ ] Network requests succeed
+- [ ] Responsive design works
+- [ ] Accessibility check passes
+
+### Security Checks (if applicable)
+- [ ] No hardcoded secrets
+- [ ] Input validation in place
+- [ ] Authentication/authorization correct
+- [ ] OWASP Top 10 considered
 
 ## Dependencies
 
@@ -53,3 +70,11 @@ tags: {{TAGS}}
 ## References
 
 {{REFERENCES}}
+
+---
+
+## Implementation Log
+
+_This section is updated by the implementation-orchestrator_
+
+<!-- Implementation progress will be logged here -->
