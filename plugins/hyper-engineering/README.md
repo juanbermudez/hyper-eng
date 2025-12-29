@@ -8,10 +8,10 @@ Works standalone or with [Hyper Control](https://github.com/juanbermudez/hyper-c
 
 | Component | Count |
 |-----------|-------|
-| Agents | 4 |
+| Agents | 5 |
 | Commands | 9 |
 | Skills | 3 |
-| MCP Servers | 2 |
+| MCP Servers | 1 |
 
 ---
 
@@ -69,16 +69,17 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 | `/hyper-statusline:setup` | Install Dracula statusline |
 | `/hyper-statusline:optout` | Opt out of statusline prompt |
 
-### Research Agents
+### Agents
 
-All 4 agents are research specialists used by `/hyper-plan`:
+5 specialized agents for research and debugging:
 
-| Agent | Purpose |
-|-------|---------|
-| `repo-research-analyst` | Research repository structure and conventions |
-| `best-practices-researcher` | Gather external best practices and examples |
-| `framework-docs-researcher` | Research framework documentation and best practices |
-| `git-history-analyzer` | Analyze git history and code evolution |
+| Agent | Category | Purpose |
+|-------|----------|---------|
+| `repo-research-analyst` | Research | Research repository structure and conventions |
+| `best-practices-researcher` | Research | Gather external best practices and examples |
+| `framework-docs-researcher` | Research | Research framework documentation and best practices |
+| `git-history-analyzer` | Research | Analyze git history and code evolution |
+| `web-app-debugger` | Testing | Debug web apps using Chrome extension for browser inspection |
 
 ### Skills
 
@@ -113,16 +114,17 @@ The workflow leverages 3 core skills:
 
 ## Reference
 
-### Agents (4)
+### Agents (5)
 
-All agents are research specialists used by `/hyper-plan`:
+Research agents (4) used by `/hyper-plan` + testing agent (1):
 
-| Agent | Description |
-|-------|-------------|
-| `repo-research-analyst` | Research repository structure and conventions |
-| `best-practices-researcher` | Gather external best practices and examples |
-| `framework-docs-researcher` | Research framework documentation and best practices |
-| `git-history-analyzer` | Analyze git history and code evolution |
+| Agent | Category | Description |
+|-------|----------|-------------|
+| `repo-research-analyst` | Research | Research repository structure and conventions |
+| `best-practices-researcher` | Research | Gather external best practices and examples |
+| `framework-docs-researcher` | Research | Research framework documentation and best practices |
+| `git-history-analyzer` | Research | Analyze git history and code evolution |
+| `web-app-debugger` | Testing | Debug and test web apps using Claude Code Chrome extension |
 
 ### Commands (9)
 
@@ -148,22 +150,11 @@ Core skills for the hyper-engineering workflow:
 | `git-worktree` | Manage Git worktrees for parallel development |
 | `compound-docs` | Capture solved problems as categorized documentation |
 
-## MCP Servers
+## MCP Server
 
 | Server | Description |
 |--------|-------------|
-| `playwright` | Browser automation via `@playwright/mcp` |
 | `context7` | Framework documentation lookup via Context7 |
-
-### Playwright
-
-**Tools provided:**
-- `browser_navigate` - Navigate to URLs
-- `browser_take_screenshot` - Take screenshots
-- `browser_click` - Click elements
-- `browser_fill_form` - Fill form fields
-- `browser_snapshot` - Get accessibility snapshot
-- `browser_evaluate` - Execute JavaScript
 
 ### Context7
 
@@ -173,7 +164,7 @@ Core skills for the hyper-engineering workflow:
 
 Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, and more.
 
-MCP servers start automatically when the plugin is enabled.
+**Note:** For browser testing, use the `web-app-debugger` agent with Claude Code's Chrome extension instead of Playwright MCP.
 
 ## Installation
 
@@ -198,21 +189,15 @@ This plugin works standalone, but optionally integrates with [Hyper Control](htt
 
 ## Known Issues
 
-### MCP Servers Not Auto-Loading
+### MCP Server Not Auto-Loading
 
-**Issue:** The bundled MCP servers (Playwright and Context7) may not load automatically when the plugin is installed.
+**Issue:** The bundled Context7 MCP server may not load automatically when the plugin is installed.
 
-**Workaround:** Manually add them to your project's `.claude/settings.json`:
+**Workaround:** Manually add it to your project's `.claude/settings.json`:
 
 ```json
 {
   "mcpServers": {
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"],
-      "env": {}
-    },
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
@@ -221,7 +206,7 @@ This plugin works standalone, but optionally integrates with [Hyper Control](htt
 }
 ```
 
-Or add them globally in `~/.claude/settings.json` for all projects.
+Or add it globally in `~/.claude/settings.json` for all projects.
 
 ## Version History
 

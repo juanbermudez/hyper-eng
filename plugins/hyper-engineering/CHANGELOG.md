@@ -5,6 +5,48 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-12-29
+
+### Added
+
+**New Agent: web-app-debugger**
+- Debug and test web applications using Claude Code Chrome extension
+- Guides users through browser DevTools inspection (Console, Network, Elements)
+- Supports React, Next.js, Vue debugging patterns
+- Systematic debugging workflow with hypothesis testing
+
+**Framework Documentation Sources**
+- Added official documentation URLs for 40+ frameworks/technologies
+- Research agents now have direct links to official docs (React, Next.js, Vue, Django, etc.)
+- Improved search strategy: Context7 → Direct WebFetch → WebSearch fallback
+
+**AskUserQuestion Protocol**
+- All agents now include clarification protocol
+- Agents use AskUserQuestion tool to gather context before research
+- Prevents assumptions - agents ask for clarification when uncertain
+
+**Authoritative Sources for Best Practices**
+- Added authoritative source table for different topics (Security, Testing, Architecture, etc.)
+- Research agents prioritize official docs and recognized experts
+
+### Removed
+
+**Playwright MCP Server**
+- Removed Playwright MCP in favor of web-app-debugger agent with Chrome extension
+- Simpler setup - no separate MCP server needed for browser testing
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 5 |
+| Commands | 9 |
+| Skills | 3 |
+| MCP Servers | 1 |
+| Hooks | 2 |
+
+---
+
 ## [2.0.0] - 2025-12-28
 
 ### Breaking Changes
