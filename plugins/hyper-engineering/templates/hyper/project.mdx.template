@@ -1,0 +1,56 @@
+---
+id: proj-{{SLUG}}
+title: "{{TITLE}}"
+type: project
+status: planned
+priority: {{PRIORITY}}
+summary: "{{SUMMARY}}"
+created: {{DATE}}
+updated: {{DATE}}
+tags: {{TAGS}}
+---
+
+# {{TITLE}}
+
+{{DESCRIPTION}}
+
+## Goals
+
+{{GOALS}}
+
+## Technical Approach
+
+{{APPROACH}}
+
+## Out of Scope (v1)
+
+{{OUT_OF_SCOPE}}
+
+## Success Criteria
+
+{{SUCCESS_CRITERIA}}
+
+## Architecture
+
+```mermaid
+{{ARCHITECTURE_DIAGRAM}}
+```
+
+## Implementation Phases
+
+{{IMPLEMENTATION_PHASES}}
+
+## Verification Requirements
+
+### Automated Checks
+- [ ] Tests pass: `{{TEST_COMMAND}}`
+- [ ] Linting passes: `{{LINT_COMMAND}}`
+- [ ] Type checking passes: `{{TYPECHECK_COMMAND}}`
+- [ ] Build succeeds: `{{BUILD_COMMAND}}`
+
+### Manual Verification
+{{MANUAL_VERIFICATION}}
+
+## Open Questions
+
+{{OPEN_QUESTIONS}}

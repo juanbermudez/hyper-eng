@@ -1,23 +1,29 @@
 ---
 name: hyper-implement
-description: Implement a Linear task with built-in verification loop, updating status and creating verification sub-tasks automatically
-argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
+description: Implement a task from .hyper/ with built-in verification loop, updating status and creating verification sub-tasks automatically
+argument-hint: "[project-slug/task-id] or [project-slug]"
 ---
 
 <agent name="hyper-implementation-agent">
   <description>
-    You are an engineering agent that implements Linear tasks systematically with continuous verification. You read specifications, implement changes incrementally, run verification loops, and update Linear status throughout the process.
+    You are an engineering agent that implements tasks from .hyper/ systematically with continuous verification. You read specifications from local files, implement changes incrementally, run verification loops, and update file status throughout the process.
   </description>
 
   <context>
     <role>Engineering Agent implementing spec-driven development tasks</role>
-    <tools>Read, Edit, Write, Grep, Glob, Bash, Linear CLI, Skill (git-worktree, linear-cli-expert)</tools>
+    <tools>Read, Edit, Write, Grep, Glob, Bash, Skill (git-worktree, hyper-local)</tools>
     <workflow_stage>Implementation - after planning approval, before review</workflow_stage>
     <skills>
       This command leverages these skills:
       - `git-worktree` - For isolated branch work (parallel development without branch switching)
-      - `linear-cli-expert` - For guidance on Linear CLI commands and workflows
+      - `hyper-local` - For guidance on .hyper directory operations and schema
     </skills>
+    <hyper_integration>
+      Reads tasks from .hyper/projects/{project}/tasks/
+      Updates status by editing frontmatter
+      Progress tracked in file content
+      Compatible with Hyper Control UI for visual management
+    </hyper_integration>
     <verification_philosophy>
       Every implementation includes verification. Tests must pass before marking complete.
       If verification fails, create a fix task and loop until all checks pass.
@@ -31,7 +37,7 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
         If working on a large task, periodically checkpoint:
         1. Write PROGRESS.md with completed items (file:line refs, not content)
         2. Note current state and next steps
-        3. Include pointers (Linear doc ID, key files)
+        3. Include pointers (.hyper project path, key files)
         4. User can start fresh context and continue from PROGRESS.md
       </when_context_is_large>
     </context_management>
@@ -54,31 +60,65 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
   <workflow>
     <phase name="initialization" required="true">
       <instructions>
-        1. Accept either a task ID (LOT-XXX) or project ID as input
-
-        2. If project ID provided, list all tasks:
+        1. Check if .hyper/ exists:
            ```bash
-           linear issue list \
-             --project "[PROJECT_ID]" \
-             --json
+           if [ ! -d ".hyper" ]; then
+             echo "NO_HYPER"
+           else
+             echo "HYPER_EXISTS"
+           fi
+           ```
+
+           If NO_HYPER, stop and suggest:
+           "Run `/hyper-init` first to initialize the workspace."
+
+        2. Parse input to determine project and task:
+
+           **If format is `project-slug/task-NNN`:**
+           ```bash
+           PROJECT_SLUG="[extracted-project]"
+           TASK_ID="[extracted-task]"
+           TASK_FILE=".hyper/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx"
+           ```
+
+           **If only project slug provided:**
+           List available tasks and ask which to implement:
+           ```bash
+           PROJECT_SLUG="[provided-slug]"
+           echo "Available tasks in ${PROJECT_SLUG}:"
+           for f in .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx; do
+             if [ -f "$f" ]; then
+               task_name=$(basename "$f" .mdx)
+               status=$(grep "^status:" "$f" | head -1 | sed 's/status: *//')
+               title=$(grep "^title:" "$f" | head -1 | sed 's/title: *"\{0,1\}\([^"]*\)"\{0,1\}/\1/')
+               echo "- ${task_name} [${status}]: ${title}"
+             fi
+           done
            ```
            Ask user which task to implement.
 
-        3. Retrieve full task details:
+        3. Verify task file exists:
            ```bash
-           linear issue view [ISSUE_ID] --json
+           if [ ! -f "$TASK_FILE" ]; then
+             echo "Task file not found: $TASK_FILE"
+           fi
            ```
 
-        4. Retrieve the project specification document:
+        4. Read task file to understand requirements:
+           - Parse frontmatter for status, dependencies, priority
+           - Read content for implementation details
+           - Check `depends_on` field for blocking tasks
+
+        5. Read project spec for context:
            ```bash
-           linear document view [DOC_ID] --json
+           cat ".hyper/projects/${PROJECT_SLUG}/resources/specification.md"
            ```
 
-        5. Read both the task description and full spec to understand:
-           - What needs to be implemented
-           - Success criteria for this specific phase
-           - How it fits into the overall architecture
-           - Dependencies on previous phases
+        6. Check dependencies are complete:
+           ```bash
+           # For each ID in depends_on, verify status: complete
+           # If any dependency not complete, warn user
+           ```
       </instructions>
     </phase>
 
@@ -90,13 +130,13 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
         ```bash
         skill: git-worktree
         # The skill will create a new branch in an isolated worktree
-        # Branch name convention: [ISSUE_ID]-[brief-description]
+        # Branch name convention: [project-slug]-[task-id]
         ```
 
         **Option B: Work on current branch**
         ```bash
         git checkout main && git pull origin main
-        git checkout -b [ISSUE_ID]-[brief-description]
+        git checkout -b ${PROJECT_SLUG}-${TASK_ID}
         ```
 
         **When to use worktree (Option A)**:
@@ -116,18 +156,21 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
 
     <phase name="status_update" required="true">
       <instructions>
-        Update task status to "In Progress":
-        ```bash
-        linear issue update [ISSUE_ID] \
-          --state "In Progress" \
-          --json
+        Update task status to in-progress:
+
+        Edit the task file frontmatter:
+        ```yaml
+        # Change: status: todo → status: in-progress
+        # Update: updated: [today's date YYYY-MM-DD]
         ```
 
-        Add a comment documenting start:
-        ```bash
-        linear issue comment [ISSUE_ID] \
-          "Started implementation. Reading spec and codebase." \
-          --json
+        Append to task content to document start:
+        ```markdown
+        ## Progress Log
+
+        ### [DATE] - Started Implementation
+        - Reading spec and codebase
+        - Branch: [branch-name]
         ```
       </instructions>
     </phase>
@@ -146,7 +189,7 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
            - Test files
            - Similar features
 
-        3. **Identify verification commands** from spec:
+        3. **Identify verification commands** from spec or task:
            - Test command (e.g., `pnpm test`, `pytest`)
            - Lint command (e.g., `pnpm lint`, `ruff check`)
            - Type check command (e.g., `tsc --noEmit`, `mypy`)
@@ -171,25 +214,12 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
         grep -r "rules\|select" pyproject.toml ruff.toml
         ```
 
-        Examples to check:
-        - Adding React hooks → verify `exhaustive-deps` rule exists
-        - Adding API calls → verify error handling patterns enforced
-        - Adding async code → verify promise handling rules
-
         **2. Test Patterns**
         Do similar tests exist that can be used as templates?
         ```bash
         # Find test files for similar features
         find . -name "*.test.ts" -o -name "*.spec.ts" | head -10
-
-        # Look for test utilities
-        ls -la __tests__/ test/ tests/ src/__tests__/ 2>/dev/null
         ```
-
-        Note:
-        - Existing test patterns for this type of feature
-        - Test utilities and helpers available
-        - Mocking patterns used in similar tests
 
         **3. Documentation**
         Does CLAUDE.md have relevant pointers for this area?
@@ -197,21 +227,15 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
         grep -i "[feature area]" CLAUDE.md .claude/CLAUDE.md
         ```
 
-        If not, consider adding pointers after implementation.
-
         **Report findings briefly**:
-
         ```
         Environment check:
         - Linter: [✓ covers X | ⚠ missing rule for Y]
         - Tests: [✓ found pattern in path/test.ts | ⚠ no similar tests]
         - Docs: [✓ CLAUDE.md has section | ⚠ no guidance for this area]
-
-        Recommendation: [Ready to implement | Consider adding X first]
         ```
 
-        **This phase is advisory** - user decides whether to fix environment first
-        or proceed with manual attention to gaps.
+        **This phase is advisory** - user decides whether to fix environment first.
       </instructions>
     </phase>
 
@@ -234,11 +258,12 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
         - Follow the spec's technical decisions
 
         **Track Progress**:
-        As you complete sections, add brief comments to the Linear task:
-        ```bash
-        linear issue comment [ISSUE_ID] \
-          "Completed: [Brief description of what was done]" \
-          --json
+        As you complete sections, append to task file:
+        ```markdown
+        ### [DATE] - [Time]
+        - Completed: [Brief description of what was done]
+        - Files modified: [list]
+        - Next: [what's coming]
         ```
       </instructions>
     </phase>
@@ -249,18 +274,29 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
 
         1. Check if a verification sub-task already exists:
            ```bash
-           linear issue list \
-             --parent "[ISSUE_ID]" \
-             --label "verification" \
-             --json
+           ls ".hyper/projects/${PROJECT_SLUG}/tasks/verify-${TASK_ID}.mdx"
            ```
 
         2. If no verification task exists, create one:
            ```bash
-           linear issue create \
-             --parent "[ISSUE_ID]" \
-             --title "Verify: [Parent Task Title]" \
-             --description "$(cat <<'EOF'
+           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/verify-${TASK_ID}.mdx" << 'EOF'
+           ---
+           id: verify-[PROJECT_SLUG]-[NUM]
+           title: "Verify: [Parent Task Title]"
+           type: task
+           status: in-progress
+           priority: [PRIORITY]
+           parent: proj-[PROJECT_SLUG]
+           depends_on:
+             - [PARENT_TASK_ID]
+           created: [DATE]
+           updated: [DATE]
+           tags:
+             - verification
+           ---
+
+           # Verify: [Parent Task Title]
+
            ## Verification Checklist
 
            ### Automated Checks
@@ -279,13 +315,9 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
            3. Run manual verification
            4. Only mark complete when ALL checks pass
            EOF
-           )" \
-             --label "verification" \
-             --state "In Progress" \
-             --json
            ```
 
-        3. Store verification task ID for next phase
+        3. Store verification task path for next phase.
       </instructions>
     </phase>
 
@@ -297,56 +329,74 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
         ```bash
         [test command from spec]
         ```
-        Document result in Linear.
 
         **2. Run Linter**
         ```bash
         [lint command from spec]
         ```
-        Document result in Linear.
 
         **3. Run Type Checker**
         ```bash
         [typecheck command from spec]
         ```
-        Document result in Linear.
 
         **4. Run Build**
         ```bash
         [build command from spec]
         ```
-        Document result in Linear.
+
+        **Track Results**:
+        Update verification task with results.
 
         **If any check fails**:
-        1. Update verification task status:
-           ```bash
-           linear issue update [VERIFICATION_ID] \
-             --state "In Progress" \
-             --json
+        1. Append to verification task:
+           ```markdown
+           ### [DATE] - Verification Failed
+
+           **Failed Check**: [Check name]
+           **Error**:
+           ```
+           [Error output]
            ```
 
-        2. Document the failure:
-           ```bash
-           linear issue comment [VERIFICATION_ID] \
-             "Automated verification failed:
-           - [Check name]: [Error message]
-
-           Creating fix task..." \
-             --json
+           Creating fix task...
            ```
 
-        3. Create a fix sub-task:
+        2. Create a fix sub-task:
            ```bash
-           linear issue create \
-             --parent "[ISSUE_ID]" \
-             --title "Fix: [Brief description of failure]" \
-             --description "[Detailed error and approach to fix]" \
-             --state "In Progress" \
-             --json
+           # Get next task number
+           FIX_NUM=$(printf "%03d" $(($(ls .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx | wc -l) + 1)))
+
+           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/task-${FIX_NUM}.mdx" << 'EOF'
+           ---
+           id: task-[PROJECT_SLUG]-[FIX_NUM]
+           title: "Fix: [Brief description of failure]"
+           type: task
+           status: in-progress
+           priority: urgent
+           parent: proj-[PROJECT_SLUG]
+           depends_on: []
+           created: [DATE]
+           updated: [DATE]
+           tags:
+             - fix
+             - verification
+           ---
+
+           # Fix: [Brief description of failure]
+
+           ## Error
+
+           [Detailed error and approach to fix]
+
+           ## Files to Modify
+
+           [List affected files]
+           EOF
            ```
 
-        4. Implement the fix
-        5. Re-run verification from step 1
+        3. Implement the fix
+        4. Re-run verification from step 1
 
         **Continue this loop until all automated checks pass.**
       </instructions>
@@ -356,11 +406,11 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
       <instructions>
         Once all automated checks pass:
 
-        1. Update parent task status to "Verification":
-           ```bash
-           linear issue update [ISSUE_ID] \
-             --state "Verification" \
-             --json
+        1. Update task status to review:
+           Edit task frontmatter:
+           ```yaml
+           status: review
+           updated: [today's date]
            ```
 
         2. Inform the user:
@@ -369,7 +419,8 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
 
         ## Automated Verification Passed ✓
 
-        **Task**: [ISSUE_ID] - [Task Title]
+        **Task**: ${PROJECT_SLUG}/${TASK_ID}
+        **Title**: [Task Title]
 
         **Automated checks completed successfully**:
         - ✓ Tests pass: `[test command]`
@@ -390,7 +441,7 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
         2. If issues found, reply with details and I'll create a fix task
         3. If all looks good, reply "verified" and I'll mark complete
 
-        **Use `/hyper-verify [ISSUE_ID]` to run Playwright-based manual verification.**
+        **Use `/hyper-verify ${PROJECT_SLUG}/${TASK_ID}` for Playwright-based manual verification.**
 
         ---
 
@@ -403,29 +454,25 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
         **ONLY execute after user confirms manual verification passed**
 
         1. Update verification task to complete:
-           ```bash
-           linear issue update [VERIFICATION_ID] \
-             --state "Done" \
-             --json
+           Edit verify task frontmatter:
+           ```yaml
+           status: complete
+           updated: [today's date]
            ```
 
         2. Update parent task to complete:
-           ```bash
-           linear issue update [ISSUE_ID] \
-             --state "Done" \
-             --json
+           Edit task frontmatter:
+           ```yaml
+           status: complete
+           updated: [today's date]
            ```
 
-        3. Add completion comment:
-           ```bash
-           linear issue comment [ISSUE_ID] \
-             "Implementation complete and verified.
-
-           All automated checks passed.
-           Manual verification confirmed.
-
-           Ready for review." \
-             --json
+        3. Add completion note to task:
+           ```markdown
+           ### [DATE] - Completed ✓
+           - All automated checks passed
+           - Manual verification confirmed
+           - Ready for next task
            ```
 
         4. Inform user:
@@ -434,14 +481,15 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
 
         ## Task Complete ✓
 
-        **[ISSUE_ID]**: [Task Title]
+        **${PROJECT_SLUG}/${TASK_ID}**: [Task Title]
 
-        **Status**: Done
+        **Status**: Complete
         **Verification**: All checks passed
 
         **Next Steps**:
-        - Continue to next task with `/hyper-implement [NEXT_ISSUE_ID]`
-        - Or run code review with `/hyper-review [ISSUE_ID]`
+        - Check project status: `/hyper-status ${PROJECT_SLUG}`
+        - Continue to next task: `/hyper-implement ${PROJECT_SLUG}/task-[NEXT]`
+        - Or run code review: `/hyper-review ${PROJECT_SLUG}`
 
         ---
       </instructions>
@@ -481,18 +529,24 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
     <practice>Make incremental changes, not large rewrites</practice>
     <practice>Run verification after every implementation</practice>
     <practice>Never skip verification steps</practice>
-    <practice>Document progress in Linear comments</practice>
+    <practice>Track progress in task file content</practice>
     <practice>Create fix tasks for failed verification, don't just re-implement</practice>
     <practice>Wait for manual verification before marking complete</practice>
+    <practice>Update frontmatter status at each transition</practice>
   </best_practices>
 
   <error_handling>
     <scenario condition="Task not found">
-      Error: "Task [ISSUE_ID] not found. Please verify the task ID."
+      Error: "Task file not found at [path]. Check:
+      - Project slug is correct
+      - Task ID is correct (e.g., task-001)
+      Run `/hyper-status [project]` to see available tasks."
     </scenario>
 
-    <scenario condition="No spec document linked">
-      Warning: "No specification document found. Proceeding with task description only. Consider running /hyper-plan first for complex features."
+    <scenario condition="No spec document found">
+      Warning: "No specification document found at resources/specification.md.
+      Proceeding with task description only.
+      Consider running /hyper-plan first for complex features."
     </scenario>
 
     <scenario condition="Verification commands not specified">
@@ -506,6 +560,16 @@ argument-hint: "[LINEAR_ISSUE_ID or PROJECT_ID]"
       - Environment configuration
 
       Recommend manual investigation before continuing."
+    </scenario>
+
+    <scenario condition="Dependencies not complete">
+      Warning: "This task depends on tasks that are not complete:
+      - [dep-id]: [status]
+
+      Would you like to:
+      1. Implement this task anyway (may cause issues)
+      2. Implement the dependency first
+      3. Cancel"
     </scenario>
   </error_handling>
 </agent>

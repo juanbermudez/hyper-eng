@@ -1,4 +1,5 @@
 {
+  "description": "Hyper Engineering - Format validation and workflow hooks",
   "hooks": {
     "SessionStart": [
       {
@@ -7,6 +8,28 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-statusline.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/hyper-init-check.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/validate-hyper-file.py",
+            "timeout": 30
           }
         ]
       }

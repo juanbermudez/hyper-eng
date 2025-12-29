@@ -109,3 +109,9 @@ When returning results, use this JSON structure:
 - Extract relevant patterns only
 - Return file:line references when pointing to source code
 - Say "need more context about X" rather than exploring blindly
+
+---
+
+**HYPER INTEGRATION**
+
+When called during a `/hyper-plan` workflow with a project context, the parent agent will write your findings to `.hyper/projects/{slug}/resources/research/framework-docs.md`. Return your findings in the structured JSON format above so the parent agent can synthesize them into the research document.

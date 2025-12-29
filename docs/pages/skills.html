@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Skill Reference - Hyper-Engineering</title>
-  <meta content="Complete reference for all 4 skills in the Hyper-Engineering plugin." name="description" />
+  <meta content="Complete reference for all 3 skills in the Hyper-Engineering plugin. Includes hyper-local for .hyper/ operations." name="description" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -34,7 +34,7 @@
           <h3>Reference</h3>
           <ul>
             <li><a href="agents.html">Agents (4)</a></li>
-            <li><a href="commands.html">Commands (7)</a></li>
+            <li><a href="commands.html">Commands (9)</a></li>
             <li><a href="skills.html" class="active">Skills (3)</a></li>
             <li><a href="mcp-servers.html">MCP Servers (2)</a></li>
           </ul>
@@ -71,18 +71,18 @@
       <article class="docs-article">
         <h1><i class="fa-solid fa-wand-magic-sparkles color-accent"></i> Skill Reference</h1>
         <p class="lead">
-          Skills are specialized knowledge that commands and agents can tap into. The 3 core skills provide essential expertise for the hyper-engineering workflow: Linear CLI usage, git worktree management, and problem documentation. They're invoked automatically when needed or called explicitly.
+          Skills are specialized knowledge that commands and agents can tap into. The 3 core skills provide essential expertise for the hyper-engineering workflow: .hyper/ directory operations, git worktree management, and problem documentation. They're invoked automatically when needed or called explicitly.
         </p>
 
         <div class="usage-box">
           <h3>How to Use Skills</h3>
           <div class="card-code-block">
             <pre><code># Skills are invoked automatically by commands
-/hyper-plan "Add auth"  # Uses linear-cli-expert
-/hyper-implement TASK-123  # Uses git-worktree and linear-cli-expert
+/hyper-plan "Add auth"  # Uses hyper-local
+/hyper-implement auth-login  # Uses git-worktree and hyper-local
 
 # Or invoke explicitly in conversation
-skill: linear-cli-expert
+skill: hyper-local
 skill: git-worktree
 skill: compound-docs</code></pre>
           </div>
@@ -103,44 +103,42 @@ skill: compound-docs</code></pre>
           <h2><i class="fa-solid fa-bolt"></i> Core Skills (3)</h2>
           <p>Essential expertise for the hyper-engineering workflow. These skills are invoked automatically by the hyper commands to provide specialized guidance.</p>
 
-          <div class="skill-detail" id="linear-cli-expert">
+          <div class="skill-detail" id="hyper-local">
             <div class="skill-detail-header">
-              <h3>linear-cli-expert</h3>
+              <h3>hyper-local</h3>
               <span class="skill-badge">Workflow</span>
             </div>
             <p class="skill-detail-description">
-              Expert guidance for spec-driven development using the Linear CLI and AI agents. This skill orchestrates research, planning, and implementation workflows with Linear as the single source of truth. Provides comprehensive Linear CLI command reference and workflow stage guidance.
+              Expert guidance for .hyper/ directory operations and local-first development. This skill provides templates, frontmatter schemas, workflow guidance, and file operations reference for the local workspace.
             </p>
             <h4>What This Skill Provides</h4>
             <ul>
-              <li><strong>Linear CLI Reference</strong> - Complete command reference for issues, projects, documents, and workflows</li>
-              <li><strong>Workflow Stages</strong> - Guidance on the hyper-engineering workflow: Research → Planning → Task Breakdown → Implementation → Review</li>
-              <li><strong>Verification Requirements</strong> - Templates for verification checklists (automated + manual)</li>
-              <li><strong>Diagram Requirements</strong> - Mermaid diagram templates (flowchart, sequence, erDiagram, stateDiagram) and ASCII layout patterns</li>
+              <li><strong>Directory Structure</strong> - Complete reference for .hyper/ layout (initiatives, projects, docs)</li>
+              <li><strong>Frontmatter Schema</strong> - Full YAML frontmatter schema for all document types</li>
+              <li><strong>Template System</strong> - Customizable templates for projects, tasks, initiatives, resources, docs</li>
+              <li><strong>Workflow Guidance</strong> - Intake routing, status transitions, and file operations</li>
             </ul>
             <h4>Used By</h4>
             <ul>
-              <li><code>/hyper-plan</code> - For creating Linear projects and documents</li>
-              <li><code>/hyper-implement</code> - For updating task status and creating verification sub-tasks</li>
-              <li><code>/hyper-review</code> - For adding review reports to Linear tasks</li>
-              <li><code>/hyper-verify</code> - For updating verification task status</li>
+              <li><code>/hyper-init</code> - For creating workspace structure</li>
+              <li><code>/hyper-plan</code> - For creating project directories and specs</li>
+              <li><code>/hyper-implement</code> - For reading/updating task files</li>
+              <li><code>/hyper-status</code> - For parsing project and task status</li>
             </ul>
             <div class="card-code-block">
-              <pre><code>skill: linear-cli-expert</code></pre>
+              <pre><code>skill: hyper-local</code></pre>
             </div>
-            <h4>Example Linear CLI Commands</h4>
+            <h4>Example Operations</h4>
             <div class="card-code-block">
-              <pre><code># Create project with document
-linear project create --name "Auth Feature" --with-doc
+              <pre><code># Create project directory
+mkdir -p .hyper/projects/auth-feature/tasks
+mkdir -p .hyper/projects/auth-feature/resources/research
 
-# Create issue in project
-linear issue create --title "Implement OAuth" --project LOT-123 --priority 2
+# Write project file with frontmatter
+Write .hyper/projects/auth-feature/project.mdx
 
-# Update issue status
-linear issue update LOT-456 --state "In Progress"
-
-# Add comment to issue
-linear issue comment LOT-456 "Implementation complete"</code></pre>
+# Read all tasks for a project
+Glob .hyper/projects/auth-feature/tasks/*.mdx</code></pre>
             </div>
           </div>
 
@@ -266,7 +264,7 @@ tags: [n-plus-one, eager-loading, performance]
           <div class="callout-content">
             <h4>Skills Power the Hyper Workflow</h4>
             <p>
-              These 3 skills work together across the hyper commands: <strong>linear-cli-expert</strong> guides project and task management, <strong>git-worktree</strong> enables parallel development, and <strong>compound-docs</strong> captures knowledge as you solve problems. They're the foundation that makes spec-driven development systematic and repeatable.
+              These 3 skills work together across the hyper commands: <strong>hyper-local</strong> guides .hyper/ directory operations, <strong>git-worktree</strong> enables parallel development, and <strong>compound-docs</strong> captures knowledge as you solve problems. They're the foundation that makes spec-driven development systematic and repeatable.
             </p>
           </div>
         </div>

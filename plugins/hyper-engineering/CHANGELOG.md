@@ -5,6 +5,99 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-12-28
+
+### Breaking Changes
+
+**Local-First Architecture**
+- Default backend changed from Linear CLI to local `.hyper/` directory
+- All planning, implementation, and verification now writes to local files
+- Linear integration is no longer the default (plugin works standalone)
+
+### Added
+
+**New Skill: hyper-local**
+- Complete guidance for `.hyper/` directory operations
+- Intake routing for different request types
+- File operations reference with examples
+- Template system documentation
+- Directory structure: `initiatives/`, `projects/{slug}/`, `docs/`, `workspace.json`
+
+**New Commands (2)**
+- `/hyper-init` - Initialize `.hyper/` workspace structure with templates
+- `/hyper-status` - View project and task status from CLI
+
+**Template System (6 templates)**
+- `workspace.json.template` - Workspace configuration
+- `project.mdx.template` - Project definition with frontmatter
+- `task.mdx.template` - Task with dependencies and verification
+- `initiative.mdx.template` - Strategic grouping of projects
+- `resource.mdx.template` - Supporting documentation
+- `doc.mdx.template` - Standalone documentation
+
+**Validation Hooks**
+- PostToolUse hook validates `.hyper/` file frontmatter on Write/Edit
+- SessionStart hook checks for `.hyper/` existence and structure
+- `validate-hyper-file.py` - Python validation script for frontmatter schema
+
+**Skill References (4)**
+- `directory-structure.md` - Complete `.hyper/` layout documentation
+- `frontmatter-schema.md` - Full YAML frontmatter schema reference
+- `template-guide.md` - Template customization guide
+- `workflow-guide.md` - Local mode workflow documentation
+
+### Changed
+
+**hyper-plan: Local File Operations**
+- Creates project directory in `.hyper/projects/{slug}/`
+- Writes research findings to `resources/research/`
+- Creates `specification.md` with full spec
+- Creates task files in `tasks/` after approval
+- Updates frontmatter status at each workflow transition
+
+**hyper-implement: Local File Operations**
+- Reads tasks from `.hyper/projects/{project}/tasks/`
+- Updates task status by editing frontmatter
+- Tracks implementation progress in task content
+- Creates fix tasks as new files when verification fails
+
+**hyper-verify: Local File Operations**
+- Creates verification tasks in `.hyper/projects/{project}/tasks/`
+- Tracks verification results in task content
+- Creates fix tasks for failed verifications
+
+**Research Agents (4)**
+- All research agents now include HYPER INTEGRATION section
+- Agents return structured JSON for parent agent synthesis
+- Output written to `.hyper/projects/{slug}/resources/research/`
+- Updated: repo-research-analyst, best-practices-researcher, framework-docs-researcher, git-history-analyzer
+
+### Compatibility
+
+**Hyper Control UI**
+- Compatible with Hyper Control desktop app (optional)
+- Hyper Control watches `.hyper/` via file watcher
+- TanStack DB syncs from `.hyper/` files
+- Plugin works standalone without Hyper Control
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 4 |
+| Commands | 9 |
+| Skills | 3 |
+| MCP Servers | 2 |
+| Hooks | 2 |
+
+### Removed
+
+**linear-cli-expert Skill**
+- Removed Linear CLI integration skill - plugin is now fully local-first
+- All workflow operations use `.hyper/` directory instead of Linear
+
+---
+
 ## [1.1.0] - 2025-12-23
 
 ### Added

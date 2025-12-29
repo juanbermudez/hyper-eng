@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Command Reference - Hyper-Engineering</title>
-  <meta content="Complete reference for all 6 hyper commands in the Hyper-Engineering plugin." name="description" />
+  <meta content="Complete reference for all 9 hyper commands in the Hyper-Engineering plugin." name="description" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -34,7 +34,7 @@
           <h3>Reference</h3>
           <ul>
             <li><a href="agents.html">Agents (4)</a></li>
-            <li><a href="commands.html" class="active">Commands (7)</a></li>
+            <li><a href="commands.html" class="active">Commands (9)</a></li>
             <li><a href="skills.html">Skills (3)</a></li>
             <li><a href="mcp-servers.html">MCP Servers (2)</a></li>
           </ul>
@@ -48,7 +48,7 @@
         <div class="nav-section">
           <h3>On This Page</h3>
           <ul>
-            <li><a href="#hyper-commands">Hyper Commands (7)</a></li>
+            <li><a href="#hyper-commands">Hyper Commands (9)</a></li>
           </ul>
         </div>
       </nav>
@@ -71,23 +71,73 @@
       <article class="docs-article">
         <h1><i class="fa-solid fa-terminal color-accent"></i> Command Reference</h1>
         <p class="lead">
-          The hyper-engineering workflow is seven commands. Research, spec, implement, verify, review—each one orchestrating agents and enforcing human approval gates. Plus a beautiful statusline to keep you informed. Type <code>/hyper-plan</code> and watch 4 research agents launch in parallel while you grab coffee. That's the point: automation that enforces quality instead of skipping it.
+          The hyper-engineering workflow is nine commands. Initialize your workspace, check status, research, spec, implement, verify, review—each one orchestrating agents and enforcing human approval gates. Plus a beautiful statusline to keep you informed. Type <code>/hyper-plan</code> and watch 4 research agents launch in parallel while you grab coffee. That's the point: automation that enforces quality instead of skipping it.
         </p>
 
         <div class="callout callout-info">
           <div class="callout-icon"><i class="fa-solid fa-circle-info"></i></div>
           <div class="callout-content">
-            <h4>Linear Integration Required</h4>
+            <h4>Local-First with Optional Linear Integration</h4>
             <p>
-              These commands integrate with Linear for project management. You'll need the Linear CLI installed and authenticated. Run <code>linear auth</code> to set up your API key. The commands create Linear projects, documents, and issues to track specs and implementation progress.
+              These commands use the local <code>.hyper/</code> directory for project management by default. Run <code>/hyper-init</code> to set up your workspace. Optionally, you can still use Linear CLI for integration if you have it installed and authenticated.
             </p>
           </div>
         </div>
 
         <!-- Hyper Commands -->
         <section id="hyper-commands">
-          <h2><i class="fa-solid fa-bolt"></i> Hyper Commands (7)</h2>
-          <p>These are the seven commands that define the hyper-engineering workflow: Plan your feature, Implement the tasks, Review the code, Verify it works, Initialize your stack, set up your statusline, and opt out if you prefer.</p>
+          <h2><i class="fa-solid fa-bolt"></i> Hyper Commands (9)</h2>
+          <p>These are the nine commands that define the hyper-engineering workflow: Initialize your workspace, check status, plan your feature, implement the tasks, review the code, verify it works, configure your stack, set up your statusline, and opt out if you prefer.</p>
+
+          <div class="command-detail" id="hyper-init">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-init</code>
+              <span class="command-type-badge">setup</span>
+            </div>
+            <p class="command-detail-description">
+              Initialize the <code>.hyper/</code> workspace structure in your project. Creates the directory layout, workspace.json, and optionally copies templates.
+            </p>
+            <h4>Directory Structure Created</h4>
+            <pre><code>.hyper/
+├── workspace.json           # Workspace configuration
+├── initiatives/             # Strategic groupings
+├── projects/                # Active projects
+└── docs/                    # Standalone documentation</code></pre>
+            <h4>Workflow</h4>
+            <ol>
+              <li><strong>Check Existing</strong> - Verify if .hyper/ already exists</li>
+              <li><strong>Create Structure</strong> - Create directories and workspace.json</li>
+              <li><strong>Optional Templates</strong> - Ask if user wants to copy templates for customization</li>
+              <li><strong>Gitignore</strong> - Suggest adding .hyper/ to .gitignore if not tracking</li>
+            </ol>
+            <div class="card-code-block">
+              <pre><code>/hyper-init</code></pre>
+            </div>
+          </div>
+
+          <div class="command-detail" id="hyper-status">
+            <div class="command-detail-header">
+              <code class="command-detail-name">/hyper-status</code>
+              <span class="command-type-badge">core</span>
+            </div>
+            <p class="command-detail-description">
+              View project and task status from CLI. Shows an overview of all projects or detailed view of a specific project with task progress.
+            </p>
+            <h4>Arguments</h4>
+            <p><code>[project-slug]</code> (optional - shows overview if not provided)</p>
+            <h4>Output</h4>
+            <ul>
+              <li><strong>Overview Mode</strong> - List all projects with status icons and task counts</li>
+              <li><strong>Project Mode</strong> - Detailed view with all tasks, priorities, and progress</li>
+            </ul>
+            <div class="card-code-block">
+              <pre><code># Overview of all projects
+/hyper-status
+
+# Detailed view of specific project
+/hyper-status user-authentication</code></pre>
+            </div>
+          </div>
 
           <div class="command-detail" id="hyper-plan">
             <div class="command-detail-header">
@@ -130,10 +180,10 @@
                   <li><strong>Open Questions</strong> - Must ALL be resolved before approval</li>
                 </ul>
               </li>
-              <li><strong>Linear Document Creation</strong> - Create Linear project and spec document</li>
-              <li><strong>🚦 Gate 2: Spec Approval</strong> - Set status to "Spec Review" and STOP. Wait for human approval. Do NOT create tasks yet.</li>
+              <li><strong>Project Creation</strong> - Create project in <code>.hyper/projects/{slug}/</code> with specification.md</li>
+              <li><strong>🚦 Gate 2: Spec Approval</strong> - Set status to "review" and STOP. Wait for human approval. Do NOT create tasks yet.</li>
               <li><strong>Iteration (Optional)</strong> - Update spec based on feedback, return to review gate</li>
-              <li><strong>Task Breakdown (After Approval)</strong> - Create Linear issues for each phase with verification sub-tasks and dependencies</li>
+              <li><strong>Task Breakdown (After Approval)</strong> - Create task files in <code>.hyper/projects/{slug}/tasks/</code></li>
             </ol>
             <div class="card-code-block">
               <pre><code>/hyper-plan "Add user authentication with OAuth"</code></pre>
@@ -143,7 +193,7 @@
               <div class="callout-content">
                 <h4>Two Human Review Gates</h4>
                 <p><strong>Gate 1:</strong> Validate direction after research—before investing time in detailed spec writing.<br>
-                <strong>Gate 2:</strong> Approve full specification—before creating Linear tasks.<br>
+                <strong>Gate 2:</strong> Approve full specification—before creating task files.<br>
                 All open questions must be resolved before Gate 2 approval. No ambiguity in the final plan.</p>
               </div>
             </div>
@@ -155,30 +205,30 @@
               <span class="command-type-badge">implementation</span>
             </div>
             <p class="command-detail-description">
-              Implement a Linear task with built-in verification loop, updating status and creating verification sub-tasks automatically. Uses git-worktree skill for isolated parallel development.
+              Implement a task with built-in verification loop, updating status and creating verification sub-tasks automatically. Uses git-worktree skill for isolated parallel development.
             </p>
             <h4>Arguments</h4>
-            <p><code>[LINEAR_ISSUE_ID or PROJECT_ID]</code></p>
+            <p><code>[task-id or project-slug]</code></p>
             <h4>Workflow</h4>
             <ol>
-              <li><strong>Initialization</strong> - Retrieve task details and project spec from Linear</li>
+              <li><strong>Initialization</strong> - Retrieve task details and project spec from <code>.hyper/</code></li>
               <li><strong>Branch Setup</strong> - Optionally use git-worktree for isolated work or create branch normally</li>
-              <li><strong>Status Update</strong> - Mark task as "In Progress" in Linear</li>
+              <li><strong>Status Update</strong> - Update task frontmatter status to "in-progress"</li>
               <li><strong>Codebase Understanding</strong> - Read all mentioned files completely, identify verification commands</li>
-              <li><strong>Implementation</strong> - Make changes incrementally following spec, track progress in Linear comments</li>
+              <li><strong>Implementation</strong> - Make changes incrementally following spec, track progress in task content</li>
               <li><strong>Verification Setup</strong> - Create verification sub-task if doesn't exist</li>
               <li><strong>Automated Verification</strong> - Run tests, lint, typecheck, build from spec. If any fail → create fix task → re-run until pass</li>
               <li><strong>Manual Verification Gate</strong> - Stop and inform user. Wait for manual verification confirmation</li>
-              <li><strong>Completion (After Manual Verification)</strong> - Mark verification task and parent task as Done</li>
+              <li><strong>Completion (After Manual Verification)</strong> - Mark verification task and parent task as complete</li>
             </ol>
             <div class="card-code-block">
-              <pre><code>/hyper-implement LOT-123</code></pre>
+              <pre><code>/hyper-implement auth-login</code></pre>
             </div>
             <h4>Verification Loop</h4>
             <p>If automated checks fail:</p>
             <ol>
-              <li>Document failure in Linear comment</li>
-              <li>Create fix sub-task with error details and approach</li>
+              <li>Document failure in task content</li>
+              <li>Create fix task file with error details and approach</li>
               <li>Implement fix</li>
               <li>Re-run ALL verification checks</li>
               <li>Repeat until all pass</li>

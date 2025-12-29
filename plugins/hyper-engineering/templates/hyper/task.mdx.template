@@ -1,0 +1,55 @@
+---
+id: task-{{PROJECT_SLUG}}-{{NUM}}
+title: "{{TITLE}}"
+type: task
+status: todo
+priority: {{PRIORITY}}
+parent: proj-{{PROJECT_SLUG}}
+depends_on: {{DEPENDS_ON}}
+created: {{DATE}}
+updated: {{DATE}}
+tags: {{TAGS}}
+---
+
+# {{TITLE}}
+
+{{DESCRIPTION}}
+
+## Objectives
+
+{{OBJECTIVES}}
+
+## Files to Create/Modify
+
+### New Files
+{{NEW_FILES}}
+
+### Modified Files
+{{MODIFIED_FILES}}
+
+## Implementation Details
+
+{{IMPLEMENTATION}}
+
+## Acceptance Criteria
+
+{{ACCEPTANCE_CRITERIA}}
+
+## Verification
+
+### Automated Checks
+- [ ] Tests pass
+- [ ] Linting passes
+- [ ] Type checking passes
+- [ ] Build succeeds
+
+### Manual Verification
+{{MANUAL_VERIFICATION}}
+
+## Dependencies
+
+{{DEPENDENCIES}}
+
+## References
+
+{{REFERENCES}}

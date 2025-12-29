@@ -1,0 +1,20 @@
+---
+id: resource-{{PROJECT_SLUG}}-{{SLUG}}
+title: "{{TITLE}}"
+type: resource
+created: {{DATE}}
+updated: {{DATE}}
+tags: {{TAGS}}
+---
+
+# {{TITLE}}
+
+{{DESCRIPTION}}
+
+## Content
+
+{{CONTENT}}
+
+## References
+
+{{REFERENCES}}

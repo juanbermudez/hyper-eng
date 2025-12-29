@@ -1,0 +1,34 @@
+---
+id: init-{{SLUG}}
+title: "{{TITLE}}"
+type: initiative
+status: {{STATUS}}
+priority: {{PRIORITY}}
+created: {{DATE}}
+updated: {{DATE}}
+tags: {{TAGS}}
+---
+
+# {{TITLE}}
+
+{{DESCRIPTION}}
+
+## Goals
+
+{{GOALS}}
+
+## Timeline
+
+{{TIMELINE}}
+
+## Projects
+
+{{PROJECTS}}
+
+## Success Metrics
+
+{{SUCCESS_METRICS}}
+
+## Stakeholders
+
+{{STAKEHOLDERS}}

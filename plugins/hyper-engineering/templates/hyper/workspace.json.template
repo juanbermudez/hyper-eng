@@ -1,0 +1,5 @@
+{
+  "workspacePath": "{{WORKSPACE_PATH}}",
+  "name": "{{NAME}}",
+  "created": "{{DATE}}"
+}

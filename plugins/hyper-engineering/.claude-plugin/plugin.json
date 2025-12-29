@@ -1,7 +1,7 @@
 {
   "name": "hyper-engineering",
-  "version": "1.2.0",
-  "description": "Spec-driven development with Linear integration. 4 research agents, 7 commands, 3 skills, 2 MCP servers. Specs first, code second, verification always.",
+  "version": "2.0.0",
+  "description": "Spec-driven development with local .hyper/ planning. Works standalone or with Hyper Control UI. 4 research agents, 9 commands, 3 skills, 2 MCP servers.",
   "author": {
     "name": "Juan Bermudez",
     "email": "juan@example.com",
@@ -13,13 +13,14 @@
   "keywords": [
     "ai-powered",
     "hyper-engineering",
-    "linear-integration",
+    "local-first",
     "spec-driven",
     "workflow-automation",
     "code-review",
     "verification",
     "playwright",
-    "browser-automation"
+    "browser-automation",
+    "hyper-control"
   ],
   "mcpServers": {
     "pw": {

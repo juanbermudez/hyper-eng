@@ -1,0 +1,20 @@
+---
+id: doc-{{SLUG}}
+title: "{{TITLE}}"
+type: doc
+created: {{DATE}}
+updated: {{DATE}}
+tags: {{TAGS}}
+---
+
+# {{TITLE}}
+
+{{DESCRIPTION}}
+
+## Content
+
+{{CONTENT}}
+
+## Related Documents
+
+{{RELATED_DOCUMENTS}}

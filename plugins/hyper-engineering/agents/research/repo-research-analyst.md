@@ -133,3 +133,9 @@ When returning results, use this JSON structure:
 - Use JSON summaries for structured findings
 - Say "need more context about X" rather than exploring blindly
 - Keep responses focused and scannable
+
+---
+
+**HYPER INTEGRATION**
+
+When called during a `/hyper-plan` workflow with a project context, the parent agent will write your findings to `.hyper/projects/{slug}/resources/research/codebase-analysis.md`. Return your findings in the structured JSON format above so the parent agent can synthesize them into the research document.

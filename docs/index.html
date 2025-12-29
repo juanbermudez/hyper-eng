@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Hyper-Engineering - Linear-Integrated Spec-Driven Development for Claude Code</title>
-  <meta content="Spec-driven development with Linear integration. 4 research agents, 7 commands, 3 skills, and 2 MCP servers for planning, implementation, review, and verification." name="description" />
+  <title>Hyper-Engineering - Local-First Spec-Driven Development for Claude Code</title>
+  <meta content="Spec-driven development with local .hyper/ planning. 4 research agents, 9 commands, 3 skills, and 2 MCP servers. Works standalone or with Hyper Control UI." name="description" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
 
   <!-- Open Graph -->
@@ -12,10 +12,10 @@
   <meta property="og:site_name" content="Hyper-Engineering" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:title" content="Hyper-Engineering - Spec-Driven Development" />
-  <meta property="og:description" content="Specs matter more than code. Linear-integrated workflow with 4 research agents, 7 commands, and mandatory verification loops." />
+  <meta property="og:description" content="Specs matter more than code. Local-first workflow with 4 research agents, 9 commands, and mandatory verification loops." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Hyper-Engineering" />
-  <meta name="twitter:description" content="4 research agents, 7 commands, 3 skills, and 2 MCP servers for spec-driven development with Linear integration." />
+  <meta name="twitter:description" content="4 research agents, 9 commands, 3 skills, and 2 MCP servers for spec-driven development with local .hyper/ planning." />
 
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -155,13 +155,13 @@
         <div class="hero-decoration"></div>
         <div class="heading hero centered">
           <a href="https://github.com/juanbermudez/hyper-eng/releases" class="eyebrow">
-            <i class="fa-solid fa-rocket"></i> Version 3.0.0 released!
+            <i class="fa-solid fa-rocket"></i> Version 2.0.0 released!
           </a>
           <h1 class="balanced" style="margin-bottom: 32px;">
             Specs Matter More Than Code. Code Is Disposable.
           </h1>
           <p class="paragraph m secondary balanced" style="margin-bottom: 32px;">
-            Linear-integrated, spec-driven development with mandatory review gates and verification loops. Run <code>/hyper-plan</code> and 4 research agents explore your codebase, external docs, and best practices in parallel. Your spec becomes the source of truth. Then <code>/hyper-implement</code> turns it into verified code. That's hyper-engineering: 4 research agents, 7 commands, 3 skills, and 2 MCP servers.
+            Local-first, spec-driven development with mandatory review gates and verification loops. Run <code>/hyper-plan</code> and 4 research agents explore your codebase, external docs, and best practices in parallel. Your spec becomes the source of truth in the local <code>.hyper/</code> directory. Then <code>/hyper-implement</code> turns it into verified code. Works standalone or with <a href="https://github.com/juanbermudez/hyper-control">Hyper Control</a> desktop app. 4 research agents, 9 commands, 3 skills, 2 MCP servers.
           </p>
           <div class="button-group margin-paragraph centered">
             <a href="#install" class="button primary">
@@ -184,7 +184,7 @@
           </div>
           <div class="stat-card">
             <div class="stat-icon"><i class="fa-solid fa-terminal"></i></div>
-            <div class="stat-number">5</div>
+            <div class="stat-number">9</div>
             <div class="stat-label">Hyper Commands</div>
           </div>
           <div class="stat-card">
@@ -205,7 +205,7 @@
         <div class="heading centered">
           <h2 class="no-top-margin" style="font-size: 42px; margin-bottom: 16px;">The Hyper-Engineering Workflow</h2>
           <p class="paragraph l secondary balanced" style="font-size: 21px; line-height: 1.6; font-weight: 500;">
-            Traditional development starts with code. Hyper-engineering starts with <em style="color: var(--color-accent); font-style: normal;">specs</em>. Linear is the source of truth. Code is disposable. The workflow enforces human review gates and verification loops at every step.
+            Traditional development starts with code. Hyper-engineering starts with <em style="color: var(--color-accent); font-style: normal;">specs</em>. The local <code>.hyper/</code> directory is the source of truth. Code is disposable. The workflow enforces human review gates and verification loops at every step.
           </p>
         </div>
 
@@ -241,12 +241,12 @@
               <h3>Spec</h3>
               <p class="pillar-tagline">Human review gate before any tasks</p>
               <p class="pillar-description">
-                Research synthesizes into a comprehensive spec with mermaid diagrams and ASCII layouts. The spec lives in Linear as the source of truth. <strong>No tasks are created until you approve the spec.</strong> This is the mandatory review gate. Change the spec? The code can be regenerated. Change the code? It must still match the spec.
+                Research synthesizes into a comprehensive spec with mermaid diagrams and ASCII layouts. The spec lives in <code>.hyper/projects/{slug}/specification.md</code> as the source of truth. <strong>No tasks are created until you approve the spec.</strong> This is the mandatory review gate. Change the spec? The code can be regenerated. Change the code? It must still match the spec.
               </p>
               <div class="pillar-tools">
                 <span class="tool-tag">planning-agent</span>
                 <span class="tool-tag">mermaid diagrams</span>
-                <span class="tool-tag">Linear integration</span>
+                <span class="tool-tag">.hyper/ directory</span>
                 <span class="tool-tag">human review gate</span>
               </div>
             </div>
@@ -258,12 +258,12 @@
               <h3>Implement</h3>
               <p class="pillar-tagline">Follow patterns, use worktrees</p>
               <p class="pillar-description">
-                Run <code>/hyper-implement</code> with a Linear task ID. The <code>engineering-agent</code> reads the spec, follows codebase patterns, and uses <code>git-worktree</code> for isolated parallel development. Implementation matches the approved spec exactly. Deviations require spec updates first.
+                Run <code>/hyper-implement</code> with a task ID. The <code>engineering-agent</code> reads the spec from <code>.hyper/</code>, follows codebase patterns, and uses <code>git-worktree</code> for isolated parallel development. Implementation matches the approved spec exactly. Deviations require spec updates first.
               </p>
               <div class="pillar-tools">
                 <span class="tool-tag">engineering-agent</span>
                 <span class="tool-tag">git-worktree skill</span>
-                <span class="tool-tag">linear-cli-expert skill</span>
+                <span class="tool-tag">hyper-local skill</span>
                 <span class="tool-tag">/hyper-implement</span>
               </div>
             </div>
@@ -344,17 +344,31 @@
       <section id="commands">
         <div class="heading">
           <h2 class="no-top-margin">
-            <i class="fa-solid fa-terminal color-accent"></i> 5 Hyper Commands
+            <i class="fa-solid fa-terminal color-accent"></i> 9 Hyper Commands
           </h2>
           <p class="paragraph m secondary">
-            The hyper-engineering workflow is five commands: <code>/hyper-plan</code> for research-driven specs, <code>/hyper-implement</code> for verified implementation, <code>/hyper-review</code> for parallel code review, <code>/hyper-verify</code> for automated and manual testing, and <code>/hyper-init-stack</code> for stack configuration.
+            The hyper-engineering workflow is nine commands: <code>/hyper-init</code> to set up your workspace, <code>/hyper-status</code> to see progress, <code>/hyper-plan</code> for research-driven specs, <code>/hyper-implement</code> for verified implementation, <code>/hyper-review</code> for parallel code review, <code>/hyper-verify</code> for automated and manual testing, plus setup commands for stack configuration and statusline customization.
           </p>
         </div>
 
         <!-- Hyper Commands -->
         <div class="command-category">
-          <h3><i class="fa-solid fa-arrows-spin"></i> Hyper Commands (5)</h3>
+          <h3><i class="fa-solid fa-arrows-spin"></i> Hyper Commands (9)</h3>
           <div class="grid columns-2">
+            <div class="command-card">
+              <div class="command-header">
+                <code class="command-name">/hyper-init</code>
+                <span class="command-type-badge">setup</span>
+              </div>
+              <p class="command-description">Initialize .hyper/ workspace structure with templates. Creates projects/, docs/, and workspace.json.</p>
+            </div>
+            <div class="command-card">
+              <div class="command-header">
+                <code class="command-name">/hyper-status</code>
+                <span class="command-type-badge">core</span>
+              </div>
+              <p class="command-description">View project and task status from CLI. Shows overview or detailed project view with progress tracking.</p>
+            </div>
             <div class="command-card">
               <div class="command-header">
                 <code class="command-name">/hyper-plan</code>
@@ -367,7 +381,7 @@
                 <code class="command-name">/hyper-implement</code>
                 <span class="command-type-badge">core</span>
               </div>
-              <p class="command-description">Implement Linear tasks with built-in verification loops, updating status and creating fix tasks automatically.</p>
+              <p class="command-description">Implement tasks with built-in verification loops, updating status and creating fix tasks automatically.</p>
             </div>
             <div class="command-card">
               <div class="command-header">
@@ -390,6 +404,13 @@
               </div>
               <p class="command-description">Initialize stack template for the project, configuring verification commands and patterns.</p>
             </div>
+            <div class="command-card">
+              <div class="command-header">
+                <code class="command-name">/hyper-statusline:setup</code>
+                <span class="command-type-badge">setup</span>
+              </div>
+              <p class="command-description">Install the Dracula-themed statusline with visual context bar, git integration, and session stats.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -401,21 +422,21 @@
             <i class="fa-solid fa-wand-magic-sparkles color-accent"></i> 3 Core Skills
           </h2>
           <p class="paragraph m secondary">
-            Essential expertise for the hyper-engineering workflow. The <code>linear-cli-expert</code> guides Linear CLI usage and spec-driven development. The <code>git-worktree</code> enables isolated parallel development. The <code>compound-docs</code> captures solved problems as searchable documentation.
+            Essential expertise for the hyper-engineering workflow. The <code>hyper-local</code> guides .hyper/ directory operations. The <code>git-worktree</code> enables isolated parallel development. The <code>compound-docs</code> captures solved problems as searchable documentation.
           </p>
         </div>
 
         <!-- Core Workflow Skills -->
         <div class="skill-category">
           <h3><i class="fa-solid fa-bolt"></i> Hyper-Engineering Skills (3)</h3>
-          <div class="grid columns-3">
+          <div class="grid columns-2">
             <div class="skill-card">
               <div class="skill-header">
-                <span class="skill-name">linear-cli-expert</span>
+                <span class="skill-name">hyper-local</span>
                 <span class="skill-badge">Workflow</span>
               </div>
-              <p class="skill-description">Expert guidance for spec-driven development with Linear CLI. Orchestrates research, planning, and implementation workflows.</p>
-              <code class="skill-usage">skill: linear-cli-expert</code>
+              <p class="skill-description">Expert guidance for .hyper/ directory operations and local-first development. Provides templates, frontmatter schemas, and workflow guidance.</p>
+              <code class="skill-usage">skill: hyper-local</code>
             </div>
             <div class="skill-card">
               <div class="skill-header">
@@ -518,14 +539,17 @@
             <div class="step-content">
               <h3>Start Building</h3>
               <div class="card-code-block">
-                <pre><code># Research and create a spec
+                <pre><code># Initialize workspace
+/hyper-init
+
+# Research and create a spec
 /hyper-plan "Add user authentication"
 
-# Implement a Linear task
-/hyper-implement TASK-123
+# Implement a task
+/hyper-implement auth-login
 
-# Run parallel code review
-/hyper-review</code></pre>
+# View progress
+/hyper-status</code></pre>
               </div>
             </div>
           </div>
@@ -545,7 +569,7 @@
             </summary>
             <div class="accordion-content">
               <p>
-                Hyper-engineering is spec-driven development with Linear as the source of truth. The workflow is: Draft → Spec Review → Ready → In Progress → Verification → Done. Specs matter more than code—code is disposable and can be regenerated from specs. Every spec requires human approval before tasks are created, and every implementation requires verification before it's done.
+                Hyper-engineering is spec-driven development with the local <code>.hyper/</code> directory as the source of truth. The workflow is: Draft → Spec Review → Ready → In Progress → Verification → Done. Specs matter more than code—code is disposable and can be regenerated from specs. Every spec requires human approval before tasks are created, and every implementation requires verification before it's done. Works standalone or with the Hyper Control desktop app.
               </p>
             </div>
           </details>
@@ -605,7 +629,7 @@
           <span class="cta-badge"><i class="fa-solid fa-bolt"></i> Free & Open Source</span>
           <h2>Specs First. Code Second. Verification Always.</h2>
           <p class="paragraph m cta-subheading">
-            <strong>Your spec is the source of truth.</strong> Linear integration, mandatory review gates, verification loops. Get 4 research agents, 7 hyper commands, 3 core skills, and 2 MCP servers working for you right now.
+            <strong>Your spec is the source of truth.</strong> Local .hyper/ directory, mandatory review gates, verification loops. Get 4 research agents, 9 hyper commands, 3 core skills, and 2 MCP servers working for you right now.
           </p>
           <div class="button-group margin-paragraph centered">
             <a href="#install" class="button primary cta-primary">

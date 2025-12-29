@@ -92,7 +92,8 @@
             <li><a href="https://claude.ai/claude-code" target="_blank">Claude Code</a> installed and configured</li>
             <li>A GitHub account (for marketplace access)</li>
             <li>Node.js 18+ (for MCP servers)</li>
-            <li><a href="https://linear.app" target="_blank">Linear</a> account (for spec-driven workflow)</li>
+            <li>Optional: <a href="https://linear.app" target="_blank">Linear</a> account (for optional Linear integration)</li>
+            <li>Optional: <a href="https://github.com/juanbermudez/hyper-control" target="_blank">Hyper Control</a> desktop app (for visual project management)</li>
           </ul>
 
           <h3>Step 1: Add the Marketplace</h3>
@@ -107,7 +108,14 @@
             <pre><code>claude /plugin install hyper-engineering</code></pre>
           </div>
 
-          <h3>Step 3: Verify Installation</h3>
+          <h3>Step 3: Initialize Workspace</h3>
+          <p>Set up your local <code>.hyper/</code> workspace:</p>
+          <div class="card-code-block">
+            <pre><code>/hyper-init</code></pre>
+          </div>
+          <p>This creates the <code>.hyper/</code> directory structure where all your specs, tasks, and project docs will live.</p>
+
+          <h3>Step 4: Verify Installation</h3>
           <p>Check that it worked:</p>
           <div class="card-code-block">
             <pre><code>claude /plugin list</code></pre>
@@ -131,6 +139,16 @@
 
           <p>Let's see what this thing can actually do. The hyper-engineering workflow: Research → Spec → Implement → Verify:</p>
 
+          <h3>Check Status</h3>
+          <p>See what's in your workspace:</p>
+          <div class="card-code-block">
+            <pre><code># View all projects and their status
+/hyper-status
+
+# View a specific project
+/hyper-status user-authentication</code></pre>
+          </div>
+
           <h3>Create a Spec with Research</h3>
           <p>This is the starting point. Run <code>/hyper-plan</code> and 4 research agents explore in parallel:</p>
           <div class="card-code-block">
@@ -141,18 +159,24 @@
 # - repo-research-analyst (codebase patterns)
 # - best-practices-researcher (external docs, open source)
 # - framework-docs-researcher (official docs via Context7)
-# - git-history-analyzer (code evolution)</code></pre>
+# - git-history-analyzer (code evolution)
+
+# Creates:
+# - .hyper/projects/user-auth/project.mdx
+# - .hyper/projects/user-auth/specification.md
+# - .hyper/projects/user-auth/tasks/*.mdx (after approval)</code></pre>
           </div>
 
-          <h3>Implement a Linear Task</h3>
+          <h3>Implement a Task</h3>
           <p>After your spec is approved, implement with verification loops:</p>
           <div class="card-code-block">
-            <pre><code># Implement a specific Linear task
-/hyper-implement TASK-123
+            <pre><code># Implement a specific task
+/hyper-implement auth-login
 
 # Uses git-worktree for isolated development
 # Follows patterns from the approved spec
-# Runs verification when complete</code></pre>
+# Runs verification when complete
+# Updates task status in .hyper/</code></pre>
           </div>
 
           <h3>Run Parallel Code Review</h3>
@@ -171,11 +195,11 @@ claude agent best-practices-researcher "Find pagination patterns for Rails"</cod
           <h3>Invoke a Skill</h3>
           <p>Skills are like loading a reference book into Claude's brain. When you need deep knowledge in a specific domain:</p>
           <div class="card-code-block">
-            <pre><code># Generate images with Gemini
-skill: gemini-imagegen
+            <pre><code># Get guidance on .hyper/ operations
+skill: hyper-local
 
-# Write Ruby in DHH's style
-skill: dhh-ruby-style
+# Manage git worktrees for parallel development
+skill: git-worktree
 
 # Create a new Claude Code skill
 skill: create-agent-skills</code></pre>

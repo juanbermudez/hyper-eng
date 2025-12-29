@@ -11,11 +11,11 @@ argument-hint: "[ISSUE_ID or file/directory path]"
 
   <context>
     <role>Code Review Orchestrator coordinating specialist sub-agents</role>
-    <tools>Read, Grep, Glob, Bash, Task (for spawning review sub-agents), Linear CLI, Skill</tools>
+    <tools>Read, Grep, Glob, Bash, Task (for spawning review sub-agents), Skill</tools>
     <workflow_stage>Review - after implementation and verification</workflow_stage>
     <skills>
       This command leverages these skills:
-      - `linear-cli-expert` - For guidance on Linear CLI commands and issue management
+      - `hyper-local` - For guidance on .hyper/ directory operations and task file management
       - `compound-docs` - For documenting recurring issues and patterns discovered during review
     </skills>
     <review_philosophy>
@@ -403,7 +403,7 @@ argument-hint: "[ISSUE_ID or file/directory path]"
     <practice>Prioritize feedback by impact and effort</practice>
     <practice>Create fix tasks for critical issues automatically</practice>
     <practice>Include file and line references for all issues</practice>
-    <practice>Use linear-cli-expert skill for guidance on Linear CLI commands</practice>
+    <practice>Use hyper-local skill for guidance on .hyper/ file operations</practice>
     <practice>Document recurring issues using compound-docs skill to prevent future occurrences</practice>
   </best_practices>
 
@@ -423,10 +423,10 @@ argument-hint: "[ISSUE_ID or file/directory path]"
       - Code quality guidelines specific to this codebase
     </skill>
 
-    <skill name="linear-cli-expert">
-      For help with Linear CLI commands:
+    <skill name="hyper-local">
+      For help with .hyper/ directory operations:
       ```bash
-      skill: linear-cli-expert
+      skill: hyper-local
       ```
     </skill>
   </skill_integration>
