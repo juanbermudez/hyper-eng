@@ -13,6 +13,51 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
     <role>Implementation Coordinator spawning orchestrator sub-agents</role>
     <tools>Read, Edit, Write, Grep, Glob, Bash, Task, AskUserQuestion, Skill (git-worktree, hyper-local)</tools>
     <workflow_stage>Implementation - after planning approval, before review</workflow_stage>
+
+    <status_reference>
+      **Task Status Values** (use exact values):
+      - `draft` - Work in progress, not ready
+      - `todo` - Ready to be worked on
+      - `in-progress` - Active work
+      - `qa` - Quality assurance & verification phase
+      - `complete` - Done (all checks passed)
+      - `blocked` - Blocked by dependencies
+
+      **Project Status Values**:
+      - `planned` - Spec phase
+      - `todo` - Ready for implementation
+      - `in-progress` - Work underway
+      - `qa` - All tasks done, project-level QA
+      - `completed` - All quality gates passed
+      - `canceled` - Abandoned
+
+      **Status Transitions in /hyper-implement**:
+      1. Start task: `todo` → `in-progress`
+      2. Implementation done, ready for QA: `in-progress` → `qa`
+      3. All checks pass: `qa` → `complete`
+      4. QA fails: `qa` → `in-progress` (fix and retry)
+      5. Dependency issue: Any → `blocked`
+
+      **QA Status - What Happens Here**:
+      - Run automated checks: lint, typecheck, test, build
+      - Run manual verification: browser testing, code review
+      - If ANY check fails → back to `in-progress` to fix
+      - Only move to `complete` when ALL checks pass
+
+      **When to update project status**:
+      - First task starts: project `todo` → `in-progress`
+      - All tasks complete: project `in-progress` → `qa`
+      - Project QA passes: project `qa` → `completed`
+    </status_reference>
+
+    <id_convention>
+      **Task IDs use initials format**: `{project-initials}-{3-digit-number}`
+      - Example: `ua-001` (user-auth task 1)
+      - Example: `ws-003` (workspace-settings task 3)
+
+      When referencing tasks in depends_on, use the initials format.
+    </id_convention>
+
     <orchestrator>
       The implementation-orchestrator agent coordinates:
       - Backend Engineer sub-agent (API, database, services)
@@ -166,20 +211,35 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
       <instructions>
         Update task status to in-progress:
 
-        Edit the task file frontmatter:
-        ```yaml
-        # Change: status: todo → status: in-progress
-        # Update: updated: [today's date YYYY-MM-DD]
-        ```
+        1. Edit the task file frontmatter:
+           ```yaml
+           # EXACT VALUES - use these strings:
+           # Change: status: todo → status: in-progress
+           # Update: updated: [today's date YYYY-MM-DD]
+           ```
 
-        Append to task content to document start:
-        ```markdown
-        ## Progress Log
+        2. If this is the first task being started, also update project status:
+           ```yaml
+           # In _project.mdx frontmatter:
+           # Change: status: todo → status: in-progress
+           # Update: updated: [today's date YYYY-MM-DD]
+           ```
 
-        ### [DATE] - Started Implementation
-        - Reading spec and codebase
-        - Branch: [branch-name]
-        ```
+        3. Append to task content to document start:
+           ```markdown
+           ## Progress Log
+
+           ### [DATE] - Started Implementation
+           - Reading spec and codebase
+           - Branch: [branch-name]
+           - Status: in-progress
+           ```
+
+        **IMPORTANT**: Use exact status values:
+        - `in-progress` (with hyphen, not `in_progress` or `inprogress`)
+        - `qa` (for quality assurance phase, not `review` or `testing`)
+        - `complete` (not `completed` or `done`)
+        - `todo` (not `to-do` or `pending`)
       </instructions>
     </phase>
 
@@ -333,30 +393,64 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
       <instructions>
         After orchestrator returns, verify the task was properly updated:
 
-        1. **Read the task file** to verify:
-           - status: complete (in frontmatter)
+        1. **Read the task file** to verify status progression:
+           - If checks running: status should be `qa`
+           - If all checks passed: status should be `complete`
            - Implementation Log section exists with:
              - Started entry
-             - Completed entry with changes and verification results
+             - QA entry with verification results
+             - Completed entry (if passed)
              - Git information
 
-        2. **Check verification results** from orchestrator response:
-           - All automated gates should be 'pass'
-           - If any failed, the task should NOT be complete
+        2. **QA Phase Status Flow**:
+           ```
+           in-progress → qa (implementation done, running checks)
+           qa → complete (all checks passed)
+           qa → in-progress (checks failed, needs fixes)
+           ```
 
-        3. **Verify git state**:
+        3. **Check verification results** from orchestrator response:
+           - All automated gates should be 'pass'
+           - If any failed, task stays in `qa` or goes back to `in-progress`
+
+        4. **Status transition on completion**:
+           ```yaml
+           # Task frontmatter DURING QA:
+           status: qa  # Running quality checks
+           updated: [today's date]
+
+           # Task frontmatter AFTER all checks pass:
+           status: complete  # EXACT VALUE (not "completed" or "done")
+           updated: [today's date]
+           ```
+
+        5. **Check if project should move to QA or completed**:
+           ```bash
+           # Count remaining incomplete tasks
+           INCOMPLETE=$(grep -l "^status: \(todo\|in-progress\|qa\|blocked\)" \
+             ".hyper/projects/${PROJECT_SLUG}/tasks/task-"*.mdx 2>/dev/null | wc -l)
+
+           if [ "$INCOMPLETE" -eq 0 ]; then
+             # All tasks complete - move project to QA
+             # In _project.mdx: status: in-progress → status: qa
+             echo "All tasks complete - move project to QA for project-level verification"
+           fi
+           ```
+
+        6. **Verify git state**:
            ```bash
            git log -1 --oneline  # Check commit exists
            git status            # Check working tree is clean
            ```
 
-        4. **If task not properly updated**:
+        7. **If task not properly updated**:
            - Report discrepancy to user
            - Either fix manually or re-run orchestrator
 
-        5. **If verification failed**:
-           - Task should remain 'in-progress'
+        8. **If QA failed**:
+           - Task should move back to `in-progress`
            - Report failures and ask user how to proceed
+           - After fixes, re-run QA (move back to `qa`)
       </instructions>
     </phase>
 

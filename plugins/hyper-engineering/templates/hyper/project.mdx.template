@@ -10,6 +10,27 @@ updated: {{DATE}}
 tags: {{TAGS}}
 ---
 
+<!--
+STATUS TRANSITIONS:
+  planned → todo (spec approved, tasks created)
+  todo → in-progress (implementation started)
+  in-progress → qa (all tasks complete, ready for project-level QA)
+  qa → completed (all quality gates passed)
+  qa → in-progress (if issues found, fix and retry)
+  Any → canceled (project abandoned)
+
+QA STATUS: Project-level quality assurance:
+  - Integration testing across all implemented tasks
+  - Final code review
+  - Documentation verification
+  - Browser/E2E testing for UI projects
+  Only move to 'completed' after ALL checks pass.
+
+TASK ID FORMAT: {project-initials}-{3-digit-number}
+  Derive initials from project slug (first letter of each word)
+  Example: "user-auth" → ua-001, ua-002
+-->
+
 # {{TITLE}}
 
 {{DESCRIPTION}}

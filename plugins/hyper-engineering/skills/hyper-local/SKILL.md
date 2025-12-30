@@ -119,16 +119,24 @@ TASK_NUM="001"
 - `draft` - Work in progress, not ready
 - `todo` - Ready to be worked on
 - `in-progress` - Active work
-- `review` - Awaiting review/verification
-- `complete` - Done
+- `qa` - Quality assurance & verification phase
+- `complete` - Done, all checks passed
 - `blocked` - Blocked by dependencies
 
 **Project Statuses:**
 - `planned` - In backlog, not yet started
 - `todo` - Scheduled for work
 - `in-progress` - Active development
+- `qa` - All tasks done, project-level QA
 - `completed` - Successfully finished
 - `canceled` - Won't do
+
+**QA Status Explained:**
+The `qa` status is where quality checks and verification happen:
+- **Tasks**: Run automated checks (lint, typecheck, test, build) + manual verification
+- **Projects**: Integration testing, final review, documentation check
+- If checks fail → back to `in-progress` to fix
+- Only move to `complete`/`completed` when ALL checks pass
 </hyper_directory_reference>
 
 <workflow_stages>
@@ -145,7 +153,7 @@ TASK_NUM="001"
 - Creates detailed spec in resources/specification.md
 - Includes mermaid diagrams and ASCII layouts
 - Includes verification requirements
-- Project status: **review** (awaits human approval)
+- Project status: **planned** (awaits human approval)
 
 ### 3. Task Breakdown (After Approval)
 - Agent creates task files in tasks/ directory
@@ -156,13 +164,25 @@ TASK_NUM="001"
 ### 4. Implementation Phase
 - Agent reads task spec from task file
 - Implements following codebase patterns
-- Runs verification loop
-- Task status: **in-progress** → **review** → **complete**
+- Task status: **in-progress**
 
-### 5. Review Phase (Optional)
+### 5. QA Phase (Quality Assurance)
+- Run automated checks: lint, typecheck, test, build
+- Run manual verification: browser testing, code review
+- Task status: **qa**
+- If checks fail → back to **in-progress** to fix
+- If all pass → **complete**
+
+### 6. Project QA (After All Tasks Complete)
+- All tasks must be **complete**
+- Project-level integration testing
+- Final review, documentation check
+- Project status: **qa** → **completed**
+
+### 7. Review Phase (Optional)
 - Review orchestrator spawns domain sub-agents
 - Security, architecture, performance, code quality
-- Creates fix tasks as new task files
+- Creates fix tasks as new task files if issues found
 </workflow_stages>
 
 <file_operations>

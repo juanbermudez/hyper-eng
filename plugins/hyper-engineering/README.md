@@ -1,4 +1,12 @@
+<p align="center">
+  <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
+  <img src="https://img.shields.io/badge/Version-2.3.0-blue?style=for-the-badge" alt="Version" />
+</p>
+
 # Hyper-Engineering Plugin
+
+**Specs first. Code second. Verification always.**
 
 Local-first, spec-driven development workflow. Specs matter more than code—specifications are the source of truth, code is disposable.
 
@@ -30,11 +38,11 @@ The hyper-engineering workflow uses local `.hyper/` directory as the source of t
 │   └── {slug}.mdx
 ├── projects/                # Active projects
 │   └── {slug}/
-│       ├── project.mdx      # Project definition
-│       ├── specification.md # Full specification
+│       ├── _project.mdx     # Project definition (IMPORTANT: underscore prefix!)
 │       ├── tasks/           # Task files
-│       │   └── {id}.mdx
+│       │   └── task-NNN.mdx # Tasks with 3-digit numbering
 │       └── resources/       # Supporting docs
+│           ├── specification.md
 │           └── research/    # Research findings
 ├── docs/                    # Standalone documentation
 │   └── {slug}.mdx
@@ -45,6 +53,17 @@ The hyper-engineering workflow uses local `.hyper/` directory as the source of t
     └── commands/            # Command customization
         └── {command}.yaml
 ```
+
+### MDX File Naming
+
+**IMPORTANT**: Follow these naming conventions exactly:
+
+| File Type | Filename | Example |
+|-----------|----------|---------|
+| Project | `_project.mdx` | `.hyper/projects/auth-system/_project.mdx` |
+| Task | `task-NNN.mdx` | `.hyper/projects/auth-system/tasks/task-001.mdx` |
+| Initiative | `{slug}.mdx` | `.hyper/initiatives/q1-goals.mdx` |
+| Doc | `{slug}.mdx` | `.hyper/docs/architecture.mdx` |
 
 ### Workflow Stages
 
@@ -260,6 +279,21 @@ Or add it globally in `~/.claude/settings.json` for all projects.
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
+## Claude Code Documentation
+
+This plugin uses Claude Code's extensibility features:
+
+- [Sub-Agents](https://code.claude.com/docs/en/sub-agents) — Specialized AI assistants with separate context
+- [Plugins](https://code.claude.com/docs/en/plugins) — Packaging commands, agents, and skills
+- [Skills](https://code.claude.com/docs/en/skills) — Model-invoked specialized knowledge
+- [Hooks](https://code.claude.com/docs/en/hooks-guide) — Event-driven automation
+
 ## License
 
 MIT
+
+---
+
+<p align="center">
+  <sub>Built for developers who believe specs should outlive code.</sub>
+</p>

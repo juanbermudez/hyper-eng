@@ -2,6 +2,93 @@
 
 All `.hyper/` documents use YAML frontmatter with specific fields. This schema is compatible with Hyper Control's TanStack DB collections.
 
+## ID Naming Convention
+
+**CRITICAL**: Follow these ID conventions exactly for reliable parsing and incrementing.
+
+### Project IDs
+
+Format: `proj-{kebab-case-slug}`
+
+```yaml
+id: proj-user-auth           # From "User Authentication"
+id: proj-workspace-settings  # From "Workspace Settings"
+id: proj-api-refactor        # From "API Refactor"
+```
+
+### Task IDs
+
+Format: `{project-initials}-{3-digit-number}`
+
+**Generating project initials:**
+1. Take the first letter of each word in the project slug
+2. Combine them (lowercase)
+3. Append 3-digit zero-padded number
+
+| Project Slug | Initials | Task IDs |
+|--------------|----------|----------|
+| `user-auth` | `ua` | `ua-001`, `ua-002`, `ua-003` |
+| `workspace-settings` | `ws` | `ws-001`, `ws-002`, `ws-003` |
+| `content-design-system` | `cds` | `cds-001`, `cds-002`, `cds-003` |
+| `api-refactor` | `ar` | `ar-001`, `ar-002`, `ar-003` |
+| `session-virtualization` | `sv` | `sv-001`, `sv-002`, `sv-003` |
+
+**Finding the next task number:**
+```bash
+# Get highest task number for a project
+PROJECT_DIR=".hyper/projects/${PROJECT_SLUG}"
+INITIALS="[derived-initials]"
+
+# Find existing task files and extract numbers
+LAST_NUM=$(ls "${PROJECT_DIR}/tasks/task-"*.mdx 2>/dev/null | \
+  sed 's/.*task-\([0-9]*\)\.mdx/\1/' | \
+  sort -n | tail -1)
+
+# Default to 0 if no tasks exist
+LAST_NUM=${LAST_NUM:-0}
+NEXT_NUM=$(printf "%03d" $((10#$LAST_NUM + 1)))
+
+# New task ID
+TASK_ID="${INITIALS}-${NEXT_NUM}"
+```
+
+### Task File Naming
+
+Task files use the **number only** (not the full ID):
+- File: `task-001.mdx`, `task-002.mdx`, etc.
+- ID inside: `ua-001`, `ua-002`, etc.
+
+This keeps filenames short while IDs remain unique across projects.
+
+### Examples
+
+```yaml
+# Project: .hyper/projects/user-auth/_project.mdx
+---
+id: proj-user-auth
+title: "User Authentication"
+type: project
+---
+
+# Task: .hyper/projects/user-auth/tasks/task-001.mdx
+---
+id: ua-001
+title: "Phase 1: OAuth Setup"
+type: task
+parent: proj-user-auth
+---
+
+# Task: .hyper/projects/user-auth/tasks/task-002.mdx
+---
+id: ua-002
+title: "Phase 2: Session Management"
+type: task
+parent: proj-user-auth
+depends_on:
+  - ua-001
+---
+```
+
 ## Common Fields (All Documents)
 
 ```yaml
@@ -23,9 +110,9 @@ Valid values for `type`:
 
 | Type | Description | Status Values |
 |------|-------------|---------------|
-| `initiative` | Strategic grouping | planned, in-progress, completed, canceled |
-| `project` | Work container | planned, todo, in-progress, completed, canceled |
-| `task` | Implementation unit | draft, todo, in-progress, review, complete, blocked |
+| `initiative` | Strategic grouping | planned, in-progress, qa, completed, canceled |
+| `project` | Work container | planned, todo, in-progress, qa, completed, canceled |
+| `task` | Implementation unit | draft, todo, in-progress, qa, complete, blocked |
 | `resource` | Supporting documentation | (none) |
 | `doc` | Standalone documentation | (none) |
 
@@ -37,20 +124,25 @@ Valid values for `type`:
 |--------|-------------|-------------|
 | `draft` | Work in progress, not ready | todo |
 | `todo` | Ready to be worked on | in-progress, blocked |
-| `in-progress` | Active work | review, blocked |
-| `review` | Awaiting verification | complete, in-progress |
-| `complete` | Done | (terminal) |
+| `in-progress` | Active work | qa, blocked |
+| `qa` | Quality assurance & verification | complete, in-progress |
+| `complete` | Done, all checks passed | (terminal) |
 | `blocked` | Blocked by dependencies | todo, in-progress |
+
+**QA Status**: This is where automated checks (lint, typecheck, test, build) and manual verification occur. Tasks should only move to `complete` after ALL quality gates pass.
 
 ### Project Statuses
 
 | Status | Description | Next States |
 |--------|-------------|-------------|
-| `planned` | In backlog | todo, canceled |
-| `todo` | Scheduled for work | in-progress, canceled |
-| `in-progress` | Active development | completed, canceled |
+| `planned` | In backlog, spec phase | todo, canceled |
+| `todo` | Spec approved, ready for work | in-progress, canceled |
+| `in-progress` | Active development | qa, canceled |
+| `qa` | All tasks done, project-level QA | completed, in-progress |
 | `completed` | Successfully finished | (terminal) |
 | `canceled` | Won't do | (terminal) |
+
+**QA Status**: Projects enter QA when all tasks are complete. This is for project-level verification: integration testing, final review, documentation check.
 
 ### Initiative Statuses
 

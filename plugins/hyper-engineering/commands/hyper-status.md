@@ -87,10 +87,10 @@ argument-hint: "[project-slug]"
               case "$status" in
                 "completed") status_icon="✓" ;;
                 "in-progress") status_icon="▶" ;;
+                "qa") status_icon="🔍" ;;
                 "todo") status_icon="○" ;;
                 "planned") status_icon="◇" ;;
                 "canceled") status_icon="✗" ;;
-                "review") status_icon="?" ;;
                 *) status_icon="·" ;;
               esac
 
@@ -162,7 +162,7 @@ argument-hint: "[project-slug]"
             case "$status" in
               "complete") status_icon="✓" ;;
               "in-progress") status_icon="▶" ;;
-              "review") status_icon="?" ;;
+              "qa") status_icon="🔍" ;;
               "todo") status_icon="○" ;;
               "blocked") status_icon="⊗" ;;
               "draft") status_icon="◇" ;;
@@ -287,15 +287,15 @@ argument-hint: "[project-slug]"
 
   <output_format>
     <icons>
-      | Icon | Status |
-      |------|--------|
-      | ✓ | complete/completed |
-      | ▶ | in-progress |
-      | ? | review |
-      | ○ | todo |
-      | ⊗ | blocked |
-      | ◇ | draft/planned |
-      | ✗ | canceled |
+      | Icon | Status | Description |
+      |------|--------|-------------|
+      | ✓ | complete/completed | All checks passed |
+      | ▶ | in-progress | Active work |
+      | 🔍 | qa | Quality assurance & verification |
+      | ○ | todo | Ready to be worked on |
+      | ⊗ | blocked | Blocked by dependencies |
+      | ◇ | draft/planned | Not ready / in backlog |
+      | ✗ | canceled | Won't do |
     </icons>
   </output_format>
 

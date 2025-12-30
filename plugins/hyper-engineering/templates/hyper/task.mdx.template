@@ -1,5 +1,5 @@
 ---
-id: task-{{PROJECT_SLUG}}-{{NUM}}
+id: {{PROJECT_INITIALS}}-{{NUM}}
 title: "{{TITLE}}"
 type: task
 status: todo
@@ -8,9 +8,26 @@ parent: proj-{{PROJECT_SLUG}}
 depends_on: {{DEPENDS_ON}}
 created: {{DATE}}
 updated: {{DATE}}
-completed: null
 tags: {{TAGS}}
 ---
+
+<!--
+STATUS TRANSITIONS:
+  draft → todo (ready for work)
+  todo → in-progress (started)
+  in-progress → qa (ready for quality checks)
+  qa → complete (all checks passed)
+  qa → in-progress (if checks fail, fix and retry)
+  Any → blocked (dependency issue)
+
+QA STATUS: Run all quality gates here:
+  - Automated: lint, typecheck, test, build
+  - Manual: browser testing, code review
+  Only move to 'complete' after ALL checks pass.
+
+ID FORMAT: {project-initials}-{3-digit-number}
+  Example: ua-001, ws-002, cds-003
+-->
 
 # {{TITLE}}
 

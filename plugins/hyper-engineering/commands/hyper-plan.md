@@ -25,6 +25,60 @@ argument-hint: "[feature or requirement description]"
     <role>Senior Software Architect creating implementation specifications</role>
     <tools>Read, Write, Edit, Grep, Glob, Bash, WebFetch, WebSearch, Task (for specialized research agents), Context7 MCP, Skill</tools>
     <workflow_stage>Planning - after requirements gathering, before implementation</workflow_stage>
+
+    <status_reference>
+      **Project Status Values** (use exact values):
+      - `planned` - Initial state, research/spec phase
+      - `todo` - Spec approved, tasks created, ready for work
+      - `in-progress` - Implementation underway
+      - `qa` - All tasks done, project-level quality assurance
+      - `completed` - All quality gates passed
+      - `canceled` - Project abandoned
+
+      **Task Status Values** (use exact values):
+      - `draft` - Work in progress, not ready
+      - `todo` - Ready to be worked on
+      - `in-progress` - Active work
+      - `qa` - Quality assurance & verification phase
+      - `complete` - Done (all checks passed)
+      - `blocked` - Blocked by dependencies
+
+      **QA Status Explained**:
+      - Tasks: Run automated checks (lint, typecheck, test, build) + manual verification
+      - Projects: Integration testing, final review, documentation check
+      - Only move to complete/completed after ALL quality gates pass
+      - If issues found in QA, move back to in-progress, fix, then return to QA
+
+      **Status Transitions in /hyper-plan**:
+      1. Create project → status: `planned`
+      2. Spec ready for review → status: `planned` (unchanged, awaiting Gate 2)
+      3. Spec approved → status: `todo` + create tasks
+    </status_reference>
+
+    <id_convention>
+      **Project ID**: `proj-{kebab-case-slug}`
+      Example: `proj-user-auth`, `proj-workspace-settings`
+
+      **Task ID**: `{project-initials}-{3-digit-number}`
+      - Derive initials from project slug (first letter of each word)
+      - Example: `user-auth` → `ua`, so tasks are `ua-001`, `ua-002`
+      - Example: `workspace-settings` → `ws`, so tasks are `ws-001`, `ws-002`
+
+      **Generating initials from slug**:
+      ```bash
+      # Convert slug to initials
+      INITIALS=$(echo "$PROJECT_SLUG" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) printf substr($i,1,1)}')
+      ```
+
+      **Finding next task number**:
+      ```bash
+      LAST_NUM=$(ls ".hyper/projects/${PROJECT_SLUG}/tasks/task-"*.mdx 2>/dev/null | \
+        sed 's/.*task-\([0-9]*\)\.mdx/\1/' | sort -n | tail -1)
+      LAST_NUM=${LAST_NUM:-0}
+      NEXT_NUM=$(printf "%03d" $((10#$LAST_NUM + 1)))
+      ```
+    </id_convention>
+
     <skills>
       This command leverages these skills:
       - `hyper-local` - For guidance on .hyper directory operations and schema
@@ -867,18 +921,28 @@ argument-hint: "[feature or requirement description]"
         1. Update project status to todo:
            ```bash
            # Edit _project.mdx frontmatter
-           # Change: status: review → status: todo
+           # Change: status: planned → status: todo
+           # Update: updated: [today's date]
            ```
 
-        2. For each implementation phase in the spec, create a task file:
+        2. Generate project initials for task IDs:
+           ```bash
+           # Derive initials from project slug
+           INITIALS=$(echo "$PROJECT_SLUG" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) printf substr($i,1,1)}')
+           echo "Project initials: $INITIALS"
+           # Examples: user-auth → ua, workspace-settings → ws
+           ```
+
+        3. For each implementation phase in the spec, create a task file:
 
            ```bash
            TASK_NUM=1
-           TASK_ID=$(printf "%03d" $TASK_NUM)
+           TASK_FILE_NUM=$(printf "%03d" $TASK_NUM)
+           TASK_ID="${INITIALS}-${TASK_FILE_NUM}"
 
-           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/task-${TASK_ID}.mdx" << 'EOF'
+           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/task-${TASK_FILE_NUM}.mdx" << 'EOF'
            ---
-           id: task-[PROJECT_SLUG]-[NUM]
+           id: [TASK_ID]
            title: "Phase [N]: [Phase Name]"
            type: task
            status: todo
@@ -928,25 +992,30 @@ argument-hint: "[feature or requirement description]"
            EOF
            ```
 
-        3. For tasks with dependencies, add to frontmatter:
+        4. For tasks with dependencies, use the initials-based IDs:
            ```yaml
+           # Example for user-auth project (initials: ua)
            depends_on:
-             - task-[PROJECT_SLUG]-001
-             - task-[PROJECT_SLUG]-002
+             - ua-001
+             - ua-002
            ```
 
-        4. Create verification sub-tasks for each main task:
+        5. Create verification sub-tasks for each main task:
            ```bash
-           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/verify-task-${TASK_ID}.mdx" << 'EOF'
+           VERIFY_NUM=$((TASK_NUM + 100))  # Verification tasks start at 101
+           VERIFY_FILE_NUM=$(printf "%03d" $VERIFY_NUM)
+           VERIFY_ID="${INITIALS}-${VERIFY_FILE_NUM}"
+
+           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/task-${VERIFY_FILE_NUM}.mdx" << 'EOF'
            ---
-           id: verify-[PROJECT_SLUG]-[NUM]
+           id: [VERIFY_ID]
            title: "Verify: Phase [N] - [Phase Name]"
            type: task
            status: todo
            priority: [PRIORITY]
            parent: proj-[PROJECT_SLUG]
            depends_on:
-             - task-[PROJECT_SLUG]-[NUM]
+             - [TASK_ID]
            created: [DATE]
            updated: [DATE]
            tags:
@@ -975,24 +1044,29 @@ argument-hint: "[feature or requirement description]"
            EOF
            ```
 
-        5. Return summary:
+        6. Return summary:
 
         ---
 
         ## Tasks Created
 
         **Project**: `${PROJECT_SLUG}`
+        **Project Initials**: `${INITIALS}`
         **Location**: `.hyper/projects/${PROJECT_SLUG}/tasks/`
 
         ### Implementation Tasks
-        - `task-001.mdx`: Phase 1 - [Description]
-        - `task-002.mdx`: Phase 2 - [Description]
-        - `task-003.mdx`: Phase 3 - [Description]
+        | File | ID | Title |
+        |------|-----|-------|
+        | `task-001.mdx` | `${INITIALS}-001` | Phase 1 - [Description] |
+        | `task-002.mdx` | `${INITIALS}-002` | Phase 2 - [Description] |
+        | `task-003.mdx` | `${INITIALS}-003` | Phase 3 - [Description] |
 
         ### Verification Tasks
-        - `verify-task-001.mdx`: Verify Phase 1
-        - `verify-task-002.mdx`: Verify Phase 2
-        - `verify-task-003.mdx`: Verify Phase 3
+        | File | ID | Title |
+        |------|-----|-------|
+        | `task-101.mdx` | `${INITIALS}-101` | Verify Phase 1 |
+        | `task-102.mdx` | `${INITIALS}-102` | Verify Phase 2 |
+        | `task-103.mdx` | `${INITIALS}-103` | Verify Phase 3 |
 
         **View in Hyper Control** for visual task management.
 

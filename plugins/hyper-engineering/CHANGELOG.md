@@ -5,6 +5,61 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2025-12-29
+
+### Added
+
+**QA Status for Tasks and Projects**
+- New `qa` status for quality assurance and verification phase
+- Tasks: `todo` → `in-progress` → `qa` → `complete`
+- Projects: `todo` → `in-progress` → `qa` → `completed`
+- QA is where all automated checks (lint, typecheck, test, build) and manual verification occur
+- Tasks/projects only move to complete/completed after ALL checks pass
+
+**Task ID Naming Convention**
+- New initials-based task ID format: `{project-initials}-{3-digit-number}`
+- Example: `user-auth` project → tasks `ua-001`, `ua-002`, `ua-003`
+- Bash script for generating initials from project slug
+- Reliable incrementing with zero-padded numbers
+
+**Claude Code Documentation References**
+- Added links to official Claude Code documentation
+- Sub-Agents: https://code.claude.com/docs/en/sub-agents
+- Plugins: https://code.claude.com/docs/en/plugins
+- Skills: https://code.claude.com/docs/en/skills
+- Hooks: https://code.claude.com/docs/en/hooks-guide
+
+### Changed
+
+**Status Reference in Commands**
+- `hyper-plan.md` now includes explicit `<status_reference>` and `<id_convention>` sections
+- `hyper-implement.md` now includes explicit status transitions with QA phase
+- `hyper-status.md` updated with 🔍 icon for `qa` status
+
+**Templates Updated**
+- `task.mdx.template` includes status transitions comment with QA phase
+- `project.mdx.template` includes status transitions comment with QA phase
+
+**Skill Updates**
+- `hyper-local/SKILL.md` updated with QA status and workflow stages
+- `frontmatter-schema.md` updated with full ID naming convention and QA status
+
+**Plugin Documentation**
+- `CLAUDE.md` updated with QA status section and Claude Code doc links
+- `README.md` updated with badges and file naming conventions
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 9 |
+| Skills | 3 |
+| MCP Servers | 1 |
+| Hooks | 2 |
+
+---
+
 ## [2.3.0] - 2025-12-29
 
 ### Added
