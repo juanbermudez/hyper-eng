@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>MCP Servers Reference - Hyper-Engineering</title>
-  <meta content="Complete reference for the two MCP servers in the Hyper-Engineering plugin." name="description" />
+  <title>MCP Server Reference - Hyper-Engineering</title>
+  <meta content="Reference for the Context7 MCP server in the Hyper-Engineering plugin." name="description" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -33,10 +33,10 @@
         <div class="nav-section">
           <h3>Reference</h3>
           <ul>
-            <li><a href="agents.html">Agents (4)</a></li>
+            <li><a href="agents.html">Agents (7)</a></li>
             <li><a href="commands.html">Commands (9)</a></li>
             <li><a href="skills.html">Skills (3)</a></li>
-            <li><a href="mcp-servers.html" class="active">MCP Servers (2)</a></li>
+            <li><a href="mcp-servers.html" class="active">MCP Server (1)</a></li>
           </ul>
         </div>
         <div class="nav-section">
@@ -48,8 +48,8 @@
         <div class="nav-section">
           <h3>On This Page</h3>
           <ul>
-            <li><a href="#playwright">Playwright</a></li>
             <li><a href="#context7">Context7</a></li>
+            <li><a href="#browser-testing">Browser Testing</a></li>
             <li><a href="#manual-config">Manual Configuration</a></li>
           </ul>
         </div>
@@ -63,7 +63,7 @@
           <span>/</span>
           <a href="getting-started.html">Docs</a>
           <span>/</span>
-          <span>MCP Servers</span>
+          <span>MCP Server</span>
         </nav>
         <button class="mobile-menu-toggle" data-sidebar-toggle>
           <i class="fa-solid fa-bars"></i>
@@ -71,9 +71,9 @@
       </div>
 
       <article class="docs-article">
-        <h1><i class="fa-solid fa-server color-accent"></i> MCP Servers Reference</h1>
+        <h1><i class="fa-solid fa-server color-accent"></i> MCP Server Reference</h1>
         <p class="lead">
-          Think of MCP servers as power tools that plug into Claude Code. Want Claude to actually <em>open a browser</em> and click around your app? That's Playwright. Need the latest Rails docs without leaving your terminal? That's Context7. The plugin bundles both servers—they just work when you install.
+          The plugin bundles Context7 for fetching up-to-date framework documentation. For browser testing, use the <code>web-app-debugger</code> agent with Claude Code's built-in Chrome extension.
         </p>
 
         <div class="callout callout-warning">
@@ -81,90 +81,10 @@
           <div class="callout-content">
             <h4>Known Issue: Auto-Loading</h4>
             <p>
-              Sometimes MCP servers don't wake up automatically. If Claude can't take screenshots or look up docs, you'll need to add them manually. See <a href="#manual-config">Manual Configuration</a> for the fix.
+              Sometimes the MCP server doesn't load automatically. If Claude can't look up docs, you'll need to add it manually. See <a href="#manual-config">Manual Configuration</a> for the fix.
             </p>
           </div>
         </div>
-
-        <!-- Playwright -->
-        <section id="playwright">
-          <h2><i class="fa-brands fa-chrome"></i> Playwright</h2>
-          <p>
-            You know how you can tell a junior developer "open Chrome and click the login button"? Now you can tell Claude the same thing. Playwright gives Claude hands to control a real browser—clicking buttons, filling forms, taking screenshots, running JavaScript. It's like pair programming with someone who has a browser open next to you.
-          </p>
-
-          <h3>Tools Provided</h3>
-          <table class="docs-table">
-            <thead>
-              <tr>
-                <th>Tool</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>browser_navigate</code></td>
-                <td>Go to any URL—your localhost dev server, production, staging, that competitor's site you're studying</td>
-              </tr>
-              <tr>
-                <td><code>browser_take_screenshot</code></td>
-                <td>Capture what you're seeing right now. Perfect for "does this look right?" design reviews</td>
-              </tr>
-              <tr>
-                <td><code>browser_click</code></td>
-                <td>Click buttons, links, whatever. Claude finds it by text or CSS selector, just like you would</td>
-              </tr>
-              <tr>
-                <td><code>browser_fill_form</code></td>
-                <td>Type into forms faster than you can. Great for testing signup flows without manual clicking</td>
-              </tr>
-              <tr>
-                <td><code>browser_snapshot</code></td>
-                <td>Get the page's accessibility tree—how screen readers see it. Useful for understanding structure without HTML noise</td>
-              </tr>
-              <tr>
-                <td><code>browser_evaluate</code></td>
-                <td>Run any JavaScript in the page. Check localStorage, trigger functions, read variables—full console access</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3>When You'll Use This</h3>
-          <ul>
-            <li><strong>Design reviews without leaving the terminal</strong> - "Take a screenshot of the new navbar on mobile" gets you a PNG in seconds</li>
-            <li><strong>Testing signup flows while you code</strong> - "Fill in the registration form with test@example.com and click submit" runs the test for you</li>
-            <li><strong>Debugging production issues</strong> - "Navigate to the error page and show me what's in localStorage" gives you the state without opening DevTools</li>
-            <li><strong>Competitive research</strong> - "Go to competitor.com and screenshot their pricing page" builds your swipe file automatically</li>
-          </ul>
-
-          <h3>Example Usage</h3>
-          <div class="card-code-block">
-            <pre><code># Just talk to Claude naturally—it knows when to use Playwright
-
-# Design review
-"Take a screenshot of the login page"
-
-# Testing a form
-"Navigate to /signup and fill in the email field with test@example.com"
-
-# Debug JavaScript state
-"Go to localhost:3000 and run console.log(window.currentUser)"
-
-# The browser runs in the background. You'll get results without switching windows.</code></pre>
-          </div>
-
-          <h3>Configuration</h3>
-          <div class="card-code-block">
-            <pre><code>{
-  "playwright": {
-    "type": "stdio",
-    "command": "npx",
-    "args": ["-y", "@playwright/mcp@latest"],
-    "env": {}
-  }
-}</code></pre>
-          </div>
-        </section>
 
         <!-- Context7 -->
         <section id="context7">
@@ -264,11 +184,49 @@
           </div>
         </section>
 
+        <!-- Browser Testing -->
+        <section id="browser-testing">
+          <h2><i class="fa-brands fa-chrome"></i> Browser Testing</h2>
+          <p>
+            For browser testing and debugging, use the <code>web-app-debugger</code> agent instead of a separate MCP server. This agent uses Claude Code's built-in Chrome extension (<code>mcp__claude-in-chrome__*</code> tools) for:
+          </p>
+
+          <ul>
+            <li><strong>Taking screenshots</strong> - Capture what the user sees</li>
+            <li><strong>Inspecting DOM elements</strong> - Read the page structure</li>
+            <li><strong>Reading console logs</strong> - Check for JavaScript errors</li>
+            <li><strong>Interacting with UI</strong> - Click buttons, fill forms</li>
+          </ul>
+
+          <h3>Example Usage</h3>
+          <div class="card-code-block">
+            <pre><code># Use the web-app-debugger agent for browser verification
+
+/hyper-verify auth-system/task-001
+
+# The agent will:
+# 1. Run automated checks (lint, typecheck, test, build)
+# 2. Spawn web-app-debugger for manual verification
+# 3. Take screenshots and interact with UI
+# 4. Report any issues found</code></pre>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-icon"><i class="fa-solid fa-info-circle"></i></div>
+            <div class="callout-content">
+              <h4>No Extra Setup Required</h4>
+              <p>
+                The Chrome extension is built into Claude Code. Just make sure you have the Claude Code extension installed in Chrome and you're good to go.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <!-- Manual Configuration -->
         <section id="manual-config">
           <h2><i class="fa-solid fa-gear"></i> Manual Configuration</h2>
           <p>
-            If the servers don't load automatically (you'll know because Claude can't take screenshots or fetch docs), you need to wire them up yourself. It's a two-minute copy-paste job.
+            If Context7 doesn't load automatically (you'll know because Claude can't fetch docs), you need to wire it up yourself. It's a quick copy-paste job.
           </p>
 
           <h3>Project-Level Configuration</h3>
@@ -276,12 +234,6 @@
           <div class="card-code-block">
             <pre><code>{
   "mcpServers": {
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"],
-      "env": {}
-    },
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
@@ -291,16 +243,10 @@
           </div>
 
           <h3>Global Configuration</h3>
-          <p>Or enable everywhere—every project on your machine gets these servers. Add to <code>~/.claude/settings.json</code>:</p>
+          <p>Or enable everywhere—every project on your machine gets this server. Add to <code>~/.claude/settings.json</code>:</p>
           <div class="card-code-block">
             <pre><code>{
   "mcpServers": {
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"],
-      "env": {}
-    },
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
@@ -309,39 +255,16 @@
 }</code></pre>
           </div>
 
-          <h3>Requirements</h3>
-          <table class="docs-table">
-            <thead>
-              <tr>
-                <th>Server</th>
-                <th>Requirement</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Playwright</td>
-                <td>Node.js 18+ and npx</td>
-              </tr>
-              <tr>
-                <td>Context7</td>
-                <td>Internet connection (HTTP endpoint)</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3>Verifying MCP Servers</h3>
+          <h3>Verifying MCP Server</h3>
           <p>After you add the config, restart Claude Code. Then test that everything works:</p>
           <div class="card-code-block">
             <pre><code># Ask Claude what it has
 "What MCP tools do you have access to?"
 
-# Test Playwright (should work now)
-"Take a screenshot of the current directory listing"
-
 # Test Context7 (should fetch real docs)
 "Look up Rails Active Record documentation"
 
-# If either fails, double-check your JSON syntax and file paths</code></pre>
+# If it fails, double-check your JSON syntax and file paths</code></pre>
           </div>
         </section>
 

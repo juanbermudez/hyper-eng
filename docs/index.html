@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Hyper-Engineering - Local-First Spec-Driven Development for Claude Code</title>
-  <meta content="Spec-driven development with local .hyper/ planning. 4 research agents, 9 commands, 3 skills, and 2 MCP servers. Works standalone or with Hyper Control UI." name="description" />
+  <meta content="Spec-driven development with local .hyper/ planning. 7 agents, 9 commands, 3 skills, and Context7 MCP server. Works standalone or with Hyper Control UI." name="description" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
 
   <!-- Open Graph -->
@@ -15,7 +15,7 @@
   <meta property="og:description" content="Specs matter more than code. Local-first workflow with 4 research agents, 9 commands, and mandatory verification loops." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Hyper-Engineering" />
-  <meta name="twitter:description" content="4 research agents, 9 commands, 3 skills, and 2 MCP servers for spec-driven development with local .hyper/ planning." />
+  <meta name="twitter:description" content="7 agents, 9 commands, 3 skills, and Context7 MCP server for spec-driven development with local .hyper/ planning." />
 
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -161,7 +161,7 @@
             Specs Matter More Than Code. Code Is Disposable.
           </h1>
           <p class="paragraph m secondary balanced" style="margin-bottom: 32px;">
-            Local-first, spec-driven development with mandatory review gates and verification loops. Run <code>/hyper-plan</code> and 4 research agents explore your codebase, external docs, and best practices in parallel. Your spec becomes the source of truth in the local <code>.hyper/</code> directory. Then <code>/hyper-implement</code> turns it into verified code. Works standalone or with <a href="https://github.com/juanbermudez/hyper-control">Hyper Control</a> desktop app. 4 research agents, 9 commands, 3 skills, 2 MCP servers.
+            Local-first, spec-driven development with mandatory review gates and verification loops. Run <code>/hyper-plan</code> and 4 research agents explore your codebase, external docs, and best practices in parallel. Your spec becomes the source of truth in the local <code>.hyper/</code> directory. Then <code>/hyper-implement</code> turns it into verified code. Works standalone or with <a href="https://github.com/juanbermudez/hyper-control">Hyper Control</a> desktop app. 7 agents, 9 commands, 3 skills, 1 MCP server.
           </p>
           <div class="button-group margin-paragraph centered">
             <a href="#install" class="button primary">
@@ -179,8 +179,8 @@
         <div class="stats-container">
           <div class="stat-card">
             <div class="stat-icon"><i class="fa-solid fa-microscope"></i></div>
-            <div class="stat-number">4</div>
-            <div class="stat-label">Research Agents</div>
+            <div class="stat-number">7</div>
+            <div class="stat-label">Agents</div>
           </div>
           <div class="stat-card">
             <div class="stat-icon"><i class="fa-solid fa-terminal"></i></div>
@@ -194,8 +194,8 @@
           </div>
           <div class="stat-card">
             <div class="stat-icon"><i class="fa-solid fa-server"></i></div>
-            <div class="stat-number">2</div>
-            <div class="stat-label">MCP Servers</div>
+            <div class="stat-number">1</div>
+            <div class="stat-label">MCP Server</div>
           </div>
         </div>
       </section>
@@ -395,7 +395,7 @@
                 <code class="command-name">/hyper-verify</code>
                 <span class="command-type-badge">core</span>
               </div>
-              <p class="command-description">Run comprehensive automated and manual verification using Playwright MCP, creating fix tasks for failures.</p>
+              <p class="command-description">Run comprehensive automated and manual verification, creating fix tasks for failures.</p>
             </div>
             <div class="command-card">
               <div class="command-header">
@@ -458,36 +458,18 @@
         </div>
       </section>
 
-      <!-- MCP Servers Section -->
+      <!-- MCP Server & Browser Testing Section -->
       <section id="mcp-servers">
         <div class="heading">
           <h2 class="no-top-margin">
-            <i class="fa-solid fa-server color-accent"></i> Two MCP Servers
+            <i class="fa-solid fa-server color-accent"></i> MCP Server & Browser Testing
           </h2>
           <p class="paragraph m secondary">
-            Playwright gives Claude a browser—it can click buttons, take screenshots, fill forms, and validate what your users actually see. Context7 gives it instant access to docs for 100+ frameworks. Need to know how Next.js handles dynamic routes? Context7 fetches the answer in real-time instead of hallucinating from outdated training data.
+            Context7 gives Claude instant access to docs for 100+ frameworks. Need to know how Next.js handles dynamic routes? Context7 fetches the answer in real-time instead of hallucinating from outdated training data. For browser testing, the web-app-debugger agent uses Claude Code's built-in Chrome extension.
           </p>
         </div>
 
         <div class="grid columns-2">
-          <div class="mcp-card mcp-card-browser">
-            <div class="mcp-header">
-              <i class="fa-brands fa-chrome mcp-icon"></i>
-              <span class="mcp-name">Playwright</span>
-            </div>
-            <p class="mcp-description">Your AI can now see and click like a user. Test flows, grab screenshots, debug what's actually rendering.</p>
-            <div class="mcp-tools">
-              <h4>Tools Provided: <span class="tools-count">6 tools</span></h4>
-              <ul>
-                <li><code>browser_navigate</code> - Navigate to URLs</li>
-                <li><code>browser_take_screenshot</code> - Take screenshots</li>
-                <li><code>browser_click</code> - Click elements</li>
-                <li><code>browser_fill_form</code> - Fill form fields</li>
-                <li><code>browser_snapshot</code> - Get accessibility snapshot</li>
-                <li><code>browser_evaluate</code> - Execute JavaScript</li>
-              </ul>
-            </div>
-          </div>
           <div class="mcp-card mcp-card-docs">
             <div class="mcp-header">
               <i class="fa-solid fa-book-open mcp-icon"></i>
@@ -501,6 +483,23 @@
                 <li><code>get-library-docs</code> - Get documentation</li>
               </ul>
               <p class="mcp-note">Supports: Rails, React, Next.js, Vue, Django, Laravel, and more than 100 others</p>
+            </div>
+          </div>
+          <div class="mcp-card mcp-card-browser">
+            <div class="mcp-header">
+              <i class="fa-brands fa-chrome mcp-icon"></i>
+              <span class="mcp-name">web-app-debugger</span>
+            </div>
+            <p class="mcp-description">Debug web apps using Claude Code's Chrome extension. Take screenshots, inspect DOM, read console logs, and interact with UI.</p>
+            <div class="mcp-tools">
+              <h4>Agent Capabilities:</h4>
+              <ul>
+                <li>Take screenshots of running apps</li>
+                <li>Inspect DOM elements</li>
+                <li>Read browser console logs</li>
+                <li>Click buttons, fill forms</li>
+              </ul>
+              <p class="mcp-note">Uses built-in Chrome extension—no extra setup required</p>
             </div>
           </div>
         </div>

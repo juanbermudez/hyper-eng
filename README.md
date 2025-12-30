@@ -1,14 +1,14 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Linear-Integrated-blue?style=for-the-badge" alt="Linear Integrated" />
+  <img src="https://img.shields.io/badge/Version-2.4.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering
 
 **Specs first. Code second. Verification always.**
 
-A Claude Code plugin for spec-driven development with Linear integration. Transform vague ideas into comprehensive specifications, implement them systematically, and verify everything before it ships.
+A Claude Code plugin for local-first, spec-driven development. Transform vague ideas into comprehensive specifications, implement them systematically, and verify everything before it ships.
 
 ## Why Hyper-Engineering?
 
@@ -32,11 +32,12 @@ In Claude Code, run these slash commands:
 # Install the plugin
 /plugin install hyper-engineering
 
+# Initialize workspace
+/hyper-init
+
 # Start planning
 /hyper-plan "Add user authentication with OAuth"
 ```
-
-You'll also need the [Agent Linear CLI](https://github.com/juanbermudez/agent-linear-cli) for Linear integration.
 
 ## The Workflow
 
@@ -51,7 +52,7 @@ You'll also need the [Agent Linear CLI](https://github.com/juanbermudez/agent-li
                           │                   │                  │
                           ▼                   ▼                  ▼
                     ┌─────────────────────────────────────────────────┐
-                    │                    LINEAR                        │
+                    │               .hyper/ DIRECTORY                  │
                     │    Projects • Specs • Tasks • Status Updates     │
                     └─────────────────────────────────────────────────┘
 ```
@@ -60,10 +61,12 @@ You'll also need the [Agent Linear CLI](https://github.com/juanbermudez/agent-li
 
 | Command | Description |
 |---------|-------------|
-| `/hyper-plan` | Research → Spec → Approval → Tasks. |
-| `/hyper-implement` | Execute a Linear task with verification loops. |
-| `/hyper-verify` | Run slop detection + automated checks + manual verification. |
-| `/hyper-review` | Parallel code review (security, architecture, performance, quality). |
+| `/hyper-init` | Initialize `.hyper/` workspace structure |
+| `/hyper-plan` | Research → Spec → Approval → Tasks |
+| `/hyper-implement` | Execute a task with verification loops |
+| `/hyper-verify` | Run slop detection + automated checks + manual verification |
+| `/hyper-review` | Parallel code review (security, architecture, performance, quality) |
+| `/hyper-status` | View project and task status |
 
 ## What Makes It Different
 
@@ -83,24 +86,26 @@ AI-specific checks that run before standard verification:
 1. **Direction checkpoint** — Validate approach before writing detailed spec
 2. **Full spec approval** — Review complete spec before creating tasks
 
-### Environment Awareness
+### QA Status
 
-Before implementing, agents check if your linters, tests, and docs are ready for the work ahead. Good environments make AI succeed.
+Tasks and projects include a `qa` status for quality assurance:
+- Run automated checks (lint, typecheck, test, build)
+- Manual verification with browser testing
+- Only move to `complete` when ALL checks pass
 
 ## Requirements
 
 - [Claude Code](https://claude.ai/download)
-- [Agent Linear CLI](https://github.com/juanbermudez/agent-linear-cli) with API key
 - Git (for worktree support)
 
 ## Components
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Agents | 4 | Parallel research specialists |
-| Commands | 7 | Core workflow commands |
+| Agents | 7 | Research specialists + orchestrators |
+| Commands | 9 | Core workflow commands |
 | Skills | 3 | Reusable capabilities |
-| MCP Servers | 2 | Playwright + Context7 |
+| MCP Servers | 1 | Context7 for framework docs |
 
 ## Philosophy
 
@@ -108,7 +113,7 @@ Before implementing, agents check if your linters, tests, and docs are ready for
 
 Code is disposable. It can be regenerated, refactored, rewritten. Specifications capture intent, decisions, and rationale. They're the permanent artifact.
 
-Hyper-Engineering treats specs as the source of truth. Linear holds everything—projects, documents, tasks, status. Code is just an implementation detail.
+Hyper-Engineering treats specs as the source of truth. The local `.hyper/` directory holds everything—projects, documents, tasks, status. Code is just an implementation detail.
 
 ## Contributing
 
