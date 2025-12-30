@@ -15,16 +15,15 @@ All planning artifacts are stored locally in `.hyper/`:
 ## Workflow Stages
 
 ```
-planned → todo → in-progress → review → complete
+planned → todo → in-progress → qa → complete/completed
 ```
 
 | Stage | Project Status | Task Status | Description |
 |-------|---------------|-------------|-------------|
 | Research | `planned` | - | Agent explores codebase with sub-agents |
-| Spec Review | `review` | - | Human approval gate for specification |
 | Ready | `todo` | `todo` | Tasks created from approved spec |
 | Implementation | `in-progress` | `in-progress` | Active development |
-| Verification | `in-progress` | `review` | Automated + manual verification |
+| QA | `qa` | `qa` | Automated + manual verification |
 | Complete | `completed` | `complete` | All checks passed |
 
 ## Commands
@@ -118,13 +117,13 @@ Creates:
 - Creates fix tasks for failures
 - Loops until all pass
 
-**Manual Verification Gate**
-- Updates task: `status: in-progress` → `status: review`
-- User performs manual verification
-- Playwright MCP for browser testing
+**QA Phase (Quality Assurance)**
+- Updates task: `status: in-progress` → `status: qa`
+- Run automated checks + manual verification
+- web-app-debugger agent for browser testing (uses Chrome extension)
 
 **Completion**
-- Updates task: `status: review` → `status: complete`
+- Updates task: `status: qa` → `status: complete`
 - Moves to next task
 
 ### 4. Verify Implementation
@@ -145,7 +144,7 @@ Creates:
 - Build
 
 **Manual Verification**
-- Uses Playwright MCP for browser testing
+- Uses web-app-debugger agent with Chrome extension
 - Screenshots at each step
 - Asserts expected behavior
 

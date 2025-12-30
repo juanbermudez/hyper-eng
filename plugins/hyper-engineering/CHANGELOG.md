@@ -48,6 +48,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CLAUDE.md` updated with QA status section and Claude Code doc links
 - `README.md` updated with badges and file naming conventions
 
+### Removed
+
+**Playwright MCP References**
+- Removed all remaining Playwright MCP references from documentation
+- `hyper-verify.md` now uses `web-app-debugger` agent for browser testing
+- `workflow-guide.md` updated to reference `web-app-debugger` agent
+- `SKILL.md` updated to reference `web-app-debugger` agent
+- Browser testing now uses Claude Code's Chrome extension instead of Playwright MCP
+
 ### Summary
 
 | Component | Count |

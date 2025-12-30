@@ -539,7 +539,7 @@ Agent:
    - `pnpm typecheck` ✓
    - `pnpm test` ✓
    - `pnpm build` ✓
-7. Manual verification (Playwright if available)
+7. Manual verification (web-app-debugger agent if UI changes)
 8. Updates task status: `in-progress` → `complete`
 </example>
 </examples>

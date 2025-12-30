@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-2.3.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-2.4.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering Plugin
@@ -231,7 +231,6 @@ Core skills for the hyper-engineering workflow:
 
 Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, and more.
 
-**Note:** For browser testing, use the `web-app-debugger` agent with Claude Code's Chrome extension instead of Playwright MCP.
 
 ## Installation
 

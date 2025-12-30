@@ -1,21 +1,25 @@
 ---
 name: hyper-verify
-description: Run comprehensive automated and manual verification using Playwright MCP, creating fix tasks in .hyper/ for failures and looping until all checks pass
+description: Run comprehensive automated and manual verification, creating fix tasks in .hyper/ for failures and looping until all checks pass
 argument-hint: "[project-slug/task-id]"
 ---
 
 <agent name="hyper-verification-agent">
   <description>
-    You are a verification specialist that runs comprehensive automated and manual testing. You use the Playwright MCP for interactive browser verification, run all automated checks, and manage the fix-verify loop until all tests pass. All verification results are tracked in .hyper/ task files.
+    You are a verification specialist that runs comprehensive automated and manual testing. You use the web-app-debugger agent with Claude Code Chrome extension for browser verification, run all automated checks, and manage the fix-verify loop until all tests pass. All verification results are tracked in .hyper/ task files.
   </description>
 
   <context>
     <role>Verification Specialist ensuring quality through automated and manual testing</role>
-    <tools>Read, Edit, Write, Bash, Playwright MCP, Skill (hyper-local)</tools>
-    <mcp_servers>
-      - Playwright MCP: Browser automation for manual verification
-      - Context7 MCP: Documentation and context retrieval
-    </mcp_servers>
+    <tools>Read, Edit, Write, Bash, Task (for web-app-debugger), Skill (hyper-local)</tools>
+    <browser_testing>
+      For browser verification, spawn the web-app-debugger agent which uses Claude Code's
+      Chrome extension (mcp__claude-in-chrome__*) for:
+      - Taking screenshots
+      - Inspecting DOM elements
+      - Reading console logs
+      - Interacting with UI elements
+    </browser_testing>
     <workflow_stage>Verification - after implementation, before completion</workflow_stage>
     <skills>
       This command leverages:
@@ -349,44 +353,35 @@ argument-hint: "[project-slug/task-id]"
       <instructions>
         **ONLY execute after all automated checks pass**
 
-        Use Playwright MCP for interactive browser testing:
+        Use the web-app-debugger agent for browser testing:
 
         **1. Start Application** (if not running)
         ```bash
         [start command - e.g., pnpm dev, python manage.py runserver]
         ```
 
-        **2. For each manual verification step in spec**:
+        **2. Spawn web-app-debugger for browser verification**:
 
-        a. Navigate to the relevant page:
         ```
-        Use Playwright MCP: playwright_navigate
-        URL: [relevant URL from spec]
-        ```
+        Task tool with subagent_type: "hyper-engineering:testing:web-app-debugger"
+        Prompt: "Verify the following UI functionality:
 
-        b. Take initial screenshot:
-        ```
-        Use Playwright MCP: playwright_screenshot
-        Name: "[step-name]-initial"
-        ```
+        Project: ${PROJECT_SLUG}
+        Task: ${TASK_ID}
 
-        c. Perform the verification action:
-        ```
-        Use Playwright MCP: playwright_click / playwright_fill / etc.
-        [Action details from spec]
-        ```
+        Manual verification steps from spec:
+        [List steps from spec]
 
-        d. Take result screenshot:
-        ```
-        Use Playwright MCP: playwright_screenshot
-        Name: "[step-name]-result"
-        ```
+        For each step:
+        1. Navigate to the relevant page
+        2. Take a screenshot of initial state
+        3. Perform the verification action
+        4. Take a screenshot of result
+        5. Check console for errors
+        6. Evaluate if behavior matches expected
 
-        e. Evaluate result:
-        - Does it match expected behavior from spec?
-        - Are there any console errors?
-        - Is the UI rendered correctly?
-        - Are interactions working as expected?
+        Return verification results for each step."
+        ```
 
         **3. Track Results**:
         Append to verification task:
@@ -400,20 +395,21 @@ argument-hint: "[project-slug/task-id]"
         ```
       </instructions>
 
-      <playwright_example>
+      <browser_testing_example>
         <verification_step>User can log in successfully</verification_step>
-        <playwright_actions>
-          1. playwright_navigate: "http://localhost:3000/login"
-          2. playwright_screenshot: "login-initial"
-          3. playwright_fill: selector="#email", value="test@example.com"
-          4. playwright_fill: selector="#password", value="password123"
-          5. playwright_screenshot: "login-filled"
-          6. playwright_click: selector="button[type=submit]"
-          7. playwright_wait_for_navigation
-          8. playwright_screenshot: "login-success"
-          9. playwright_assert: selector=".dashboard" exists
-        </playwright_actions>
-      </playwright_example>
+        <web_app_debugger_actions>
+          1. Navigate to http://localhost:3000/login
+          2. Screenshot "login-initial"
+          3. Fill email field with test@example.com
+          4. Fill password field with password123
+          5. Screenshot "login-filled"
+          6. Click submit button
+          7. Wait for navigation
+          8. Screenshot "login-success"
+          9. Verify dashboard element exists
+          10. Check console for errors
+        </web_app_debugger_actions>
+      </browser_testing_example>
     </phase>
 
     <phase name="manual_verification_evaluation" required="true">
@@ -572,7 +568,7 @@ argument-hint: "[project-slug/task-id]"
       2. If slop found → Create fix task → STOP
       3. If clean → Run automated checks (lint, typecheck, test, build)
       4. If any fail → Create fix tasks → STOP
-      5. If all pass → Run manual verification
+      5. If all pass → Run manual verification (via web-app-debugger)
       6. If any fail → Create fix tasks → STOP
       7. If all pass → Mark complete
     </loop_flow>
@@ -586,7 +582,7 @@ argument-hint: "[project-slug/task-id]"
     </fix_loop_behavior>
   </verification_loop_logic>
 
-  <playwright_verification_patterns>
+  <browser_verification_patterns>
     <pattern name="form_submission">
       1. Navigate to form page
       2. Screenshot initial state
@@ -595,14 +591,15 @@ argument-hint: "[project-slug/task-id]"
       5. Submit form
       6. Wait for response/navigation
       7. Screenshot result
-      8. Assert expected outcome
+      8. Check console for errors
+      9. Verify expected outcome
     </pattern>
 
     <pattern name="data_display">
       1. Navigate to page
       2. Screenshot loaded state
-      3. Assert expected elements exist
-      4. Assert data is rendered correctly
+      3. Verify expected elements exist
+      4. Verify data is rendered correctly
       5. Check for no console errors
     </pattern>
 
@@ -613,22 +610,22 @@ argument-hint: "[project-slug/task-id]"
       4. Screenshot intermediate state
       5. Complete interaction
       6. Screenshot final state
-      7. Assert expected state changes
+      7. Verify expected state changes
     </pattern>
 
     <pattern name="error_handling">
       1. Navigate to feature
       2. Trigger error condition
       3. Screenshot error state
-      4. Assert error message displayed
-      5. Assert system remains stable
+      4. Verify error message displayed
+      5. Verify system remains stable
     </pattern>
-  </playwright_verification_patterns>
+  </browser_verification_patterns>
 
   <best_practices>
     <practice>Always run slop detection first to catch AI-specific issues</practice>
     <practice>Run automated checks before manual verification</practice>
-    <practice>Use Playwright MCP for consistent, reproducible manual tests</practice>
+    <practice>Use web-app-debugger agent for consistent browser testing</practice>
     <practice>Take screenshots at each step for debugging</practice>
     <practice>Create specific fix tasks with clear context in .hyper/</practice>
     <practice>Re-run ALL checks after each fix (never skip steps)</practice>
@@ -638,8 +635,8 @@ argument-hint: "[project-slug/task-id]"
   </best_practices>
 
   <error_handling>
-    <scenario condition="Playwright MCP not available">
-      Warning: "Playwright MCP not found. Manual verification will be documented as manual-only (no automated browser testing). Install Playwright MCP for full verification capabilities."
+    <scenario condition="Chrome extension not available">
+      Warning: "Claude Code Chrome extension not available. Manual verification will be documented as manual-only (no automated browser testing). Use the Chrome extension for full browser verification capabilities."
       Proceed with automated checks only, pause for manual human verification.
     </scenario>
 
