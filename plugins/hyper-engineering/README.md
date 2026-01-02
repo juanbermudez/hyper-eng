@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-2.4.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-2.6.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering Plugin
@@ -217,7 +217,7 @@ Core skills for the hyper-engineering workflow:
 | `git-worktree` | Manage Git worktrees for parallel development |
 | `compound-docs` | Capture solved problems as categorized documentation |
 
-## MCP Server
+## MCP Servers
 
 | Server | Description |
 |--------|-------------|
@@ -230,6 +230,8 @@ Core skills for the hyper-engineering workflow:
 - `get-library-docs` - Get documentation for a specific library
 
 Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, and more.
+
+> **Tauri Testing:** For Tauri v2 app testing, install the separate [tauri-testing plugin](https://github.com/Hyper-Builders/tauri-testing-plugin).
 
 
 ## Installation

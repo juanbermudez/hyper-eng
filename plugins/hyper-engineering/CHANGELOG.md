@@ -5,6 +5,60 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2026-01-02
+
+### Removed
+
+**tauri-testing Skill**
+- Moved to separate plugin: [Hyper-Builders/tauri-testing-plugin](https://github.com/Hyper-Builders/tauri-testing-plugin)
+- Tauri-specific testing is now an optional plugin for better separation of concerns
+- hyper-engineering remains technology-agnostic (general-purpose spec-driven framework)
+
+**tauri-testing MCP Server**
+- Moved to separate plugin alongside the skill
+- Install the tauri-testing plugin separately if you need Tauri app testing
+
+### Changed
+
+- Bumped version to 2.6.0
+- Updated skill count from 4 to 3
+- Updated MCP server count from 2 to 1
+- Removed `tauri` and `desktop-apps` keywords (now in tauri-testing plugin)
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 9 |
+| Skills | 3 |
+| MCP Servers | 1 |
+
+---
+
+## [2.5.0] - 2026-01-02
+
+### Added
+
+**tauri-testing Skill**
+- New skill for verification workflow guidance for Tauri v2 applications
+- Includes detection script to identify Tauri projects
+- References for verification workflow and troubleshooting
+- Works with tauri-plugin-mcp-bridge for WebSocket communication
+
+**tauri-testing MCP Server**
+- Added `tauri-mcp-server` npm package for Tauri app automation
+- Tools: `tauri_launch_app`, `tauri_screenshot`, `tauri_click`, `tauri_get_text`, `tauri_type`
+- Screenshot-to-file support via `filePath` parameter
+- Configurable screenshot directory via `TAURI_MCP_SCREENSHOT_DIR` env var
+
+### Changed
+
+- Bumped version to 2.5.0
+- Updated skill count from 3 to 4
+- Updated MCP server count from 1 to 2
+- Added `tauri` and `desktop-apps` keywords
+
 ## [2.4.0] - 2025-12-29
 
 ### Added
