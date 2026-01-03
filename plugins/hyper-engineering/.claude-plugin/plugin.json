@@ -1,7 +1,7 @@
 {
   "name": "hyper-engineering",
-  "version": "2.6.0",
-  "description": "Spec-driven development with local .hyper/ planning. Customizable workflows, agents, and commands. 7 agents, 9 commands, 3 skills, 1 MCP server.",
+  "version": "2.7.0",
+  "description": "Spec-driven development with local .hyper/ planning. Includes CLI for project/task management and automatic session activity tracking. 7 agents, 9 commands, 3 skills, 1 MCP server.",
   "author": {
     "name": "Juan Bermudez",
     "email": "juan@example.com",

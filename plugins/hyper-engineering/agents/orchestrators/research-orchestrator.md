@@ -13,6 +13,11 @@ argument-hint: "[feature or problem to research] [project-slug]"
     <role>Research Orchestrator coordinating specialist sub-agents</role>
     <tools>Read, Write, Edit, Grep, Glob, Bash, Task (for spawning research sub-agents), AskUserQuestion, Skill</tools>
     <output_location>.hyper/projects/{project-slug}/resources/research/</output_location>
+    <activity_tracking>
+      Activity is automatically tracked via PostToolUse hook when writing to .hyper/ files.
+      The hook captures session_id and logs all modifications.
+      No manual activity logging is needed - just use Write/Edit tools normally.
+    </activity_tracking>
   </context>
 
   <clarification_protocol>

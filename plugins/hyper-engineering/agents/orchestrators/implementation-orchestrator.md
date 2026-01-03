@@ -42,8 +42,8 @@ argument-hint: "[task-id or project-slug/task-id]"
            - depends_on (check dependencies are complete)
            - parent (project reference)
 
-        4. Read project specification:
-           `.hyper/projects/{project-slug}/specification.md`
+        4. Read project specification (inline in _project.mdx):
+           `.hyper/projects/{project-slug}/_project.mdx`
 
         5. Read relevant research if exists:
            `.hyper/projects/{project-slug}/resources/research/`
@@ -56,15 +56,17 @@ argument-hint: "[task-id or project-slug/task-id]"
 
     <phase name="status_update_start" required="true">
       <instructions>
-        Update task to 'in-progress':
+        Update task to 'in-progress' using the Hyper CLI:
 
-        1. Edit task file frontmatter:
-           ```yaml
-           status: in-progress
-           updated: {CURRENT_DATE}
+        1. Update task status via CLI:
+           ```bash
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+             --id "{task-id}" \
+             --project "{project-slug}" \
+             --status "in-progress"
            ```
 
-        2. Add implementation start comment to task:
+        2. Add implementation start comment to task (via Edit tool):
            ```markdown
            ## Implementation Log
 
@@ -78,6 +80,9 @@ argument-hint: "[task-id or project-slug/task-id]"
            - Read project.mdx for git workflow settings
            - If worktree enabled: `skill: git-worktree`
            - Branch naming: `feat/{project-slug}/{task-id}`
+
+        **Note**: Activity tracking is automatic via PostToolUse hook.
+        The hook captures session_id and logs modifications to .hyper/ files.
       </instructions>
     </phase>
 
@@ -247,14 +252,15 @@ argument-hint: "[task-id or project-slug/task-id]"
       <instructions>
         After successful verification:
 
-        1. Update task frontmatter:
-           ```yaml
-           status: complete
-           updated: {CURRENT_DATE}
-           completed: {CURRENT_DATE}
+        1. Update task status via CLI:
+           ```bash
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+             --id "{task-id}" \
+             --project "{project-slug}" \
+             --status "complete"
            ```
 
-        2. Add completion comment to task:
+        2. Add completion comment to task (via Edit tool):
            ```markdown
            ### Completed: {DATE}
 

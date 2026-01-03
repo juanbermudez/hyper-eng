@@ -65,11 +65,10 @@ The .hyper/ directory is the local file-based alternative to Linear CLI.
 │   └── *.mdx
 ├── projects/                # Project containers
 │   └── {project-slug}/
-│       ├── _project.mdx     # Project definition
+│       ├── _project.mdx     # Project definition + spec (inline)
 │       ├── tasks/           # Task files
 │       │   └── task-*.mdx
 │       └── resources/       # Supporting documents
-│           ├── specification.md
 │           └── research/
 │               └── *.md
 ├── docs/                    # Standalone documentation
@@ -91,6 +90,7 @@ The .hyper/ directory is the local file-based alternative to Linear CLI.
 3. **Hyper Control compatible** - UI watches for file changes in real-time
 4. **Template system** - Customizable per-workspace
 5. **Version controllable** - Everything in git
+6. **Activity tracking** - Session history recorded in frontmatter
 
 ## Quick Reference
 
@@ -99,19 +99,49 @@ The .hyper/ directory is the local file-based alternative to Linear CLI.
 mkdir -p .hyper/{initiatives,projects,docs}
 echo '{"workspacePath": "'$(pwd)'", "name": "My Project", "created": "'$(date +%Y-%m-%d)'"}' > .hyper/workspace.json
 
-# Create project
-PROJECT_SLUG="auth-system"
-mkdir -p ".hyper/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
-# Write _project.mdx using template
+# Create project (using CLI)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+  --slug "auth-system" \
+  --title "User Authentication System" \
+  --priority "high" \
+  --summary "OAuth-based authentication with Google and GitHub providers"
 
-# Create task
-TASK_NUM="001"
-# Write task file: .hyper/projects/${PROJECT_SLUG}/tasks/task-${TASK_NUM}.mdx
+# Create task (using CLI)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+  --project "auth-system" \
+  --id "as-001" \
+  --title "Phase 1: OAuth Provider Setup" \
+  --priority "high"
 
-# Update status (edit frontmatter)
-# Change: status: todo → status: in-progress
-# Update: updated: YYYY-MM-DD
+# Update status (using CLI)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+  --id "as-001" \
+  --project "auth-system" \
+  --status "in-progress"
 ```
+
+## Activity Tracking
+
+Activity is automatically tracked via PostToolUse hook when agents write to `.hyper/` files.
+Session IDs are captured and logged in the `activity` array in frontmatter.
+
+**Automatic (agent sessions)**:
+- PostToolUse hook detects Write/Edit to `.hyper/*.mdx`
+- Hook script calls CLI to append activity entry
+- Session ID and parent session tracked
+
+**Manual (user actions via UI/CLI)**:
+```bash
+# Add a comment
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
+  --file ".hyper/projects/auth-system/tasks/task-001.mdx" \
+  --actor-type user \
+  --actor-id "user-uuid" \
+  --actor-name "Juan Bermudez" \
+  "This looks ready for review"
+```
+
+See [frontmatter-schema.md](./references/frontmatter-schema.md) for full activity format.
 
 ## Status Values
 
@@ -150,7 +180,7 @@ The `qa` status is where quality checks and verification happen:
 
 ### 2. Planning Phase
 - Agent reads research, asks scope questions
-- Creates detailed spec in resources/specification.md
+- Creates detailed spec inline in _project.mdx
 - Includes mermaid diagrams and ASCII layouts
 - Includes verification requirements
 - Project status: **planned** (awaits human approval)
@@ -188,67 +218,60 @@ The `qa` status is where quality checks and verification happen:
 <file_operations>
 ## Common File Operations
 
-### Creating a Project
+### Creating a Project (CLI)
 
 ```bash
-PROJECT_SLUG="auth-system"
-mkdir -p ".hyper/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
+# Use CLI to create project with validated frontmatter
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+  --slug "auth-system" \
+  --title "User Authentication System" \
+  --priority "high" \
+  --summary "Implement OAuth-based authentication with Google and GitHub"
 
-cat > ".hyper/projects/${PROJECT_SLUG}/_project.mdx" << 'EOF'
----
-id: proj-auth-system
-title: User Authentication System
-type: project
-status: planned
-priority: high
-summary: Implement OAuth-based authentication with Google and GitHub providers
-created: 2025-12-28
-updated: 2025-12-28
-tags:
-  - auth
-  - oauth
-  - security
----
-
-# User Authentication System
-
-[Project description here]
-EOF
+# Then use Write tool to add spec content to _project.mdx body
 ```
 
-### Creating a Task
+### Creating a Task (CLI)
 
 ```bash
-PROJECT_SLUG="auth-system"
-TASK_NUM="001"
+# Use CLI to create task with validated frontmatter
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+  --project "auth-system" \
+  --id "as-001" \
+  --title "Phase 1: OAuth Provider Setup" \
+  --priority "high"
 
-cat > ".hyper/projects/${PROJECT_SLUG}/tasks/task-${TASK_NUM}.mdx" << 'EOF'
----
-id: task-auth-system-001
-title: "Phase 1: OAuth Provider Setup"
-type: task
-status: todo
-priority: high
-parent: proj-auth-system
-created: 2025-12-28
-updated: 2025-12-28
-tags:
-  - oauth
-  - setup
----
-
-# Phase 1: OAuth Provider Setup
-
-[Task description here]
-EOF
+# Then use Write tool to add task content to task-001.mdx body
 ```
 
-### Updating Status
+### Updating Status (CLI)
 
 ```bash
-# Using Edit tool to update frontmatter
-# Change: status: todo → status: in-progress
-# Update: updated: [today's date]
+# Use CLI to update status (validates status values)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+  --id "as-001" \
+  --project "auth-system" \
+  --status "in-progress"
+
+# Or for projects:
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
+  --slug "auth-system" \
+  --status "in-progress"
+```
+
+### Activity Tracking (Automatic)
+
+```bash
+# Activity is automatically tracked via PostToolUse hook
+# No manual logging needed - just use Write/Edit tools normally
+
+# For manual comments (user actions):
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
+  --file ".hyper/projects/auth-system/tasks/task-001.mdx" \
+  --actor-type user \
+  --actor-id "user-uuid" \
+  --actor-name "Juan Bermudez" \
+  "This is ready for review"
 ```
 
 ### Reading Task Details
@@ -516,13 +539,12 @@ Agent:
    - Session storage approach? (JWT, cookies)
    - Protected routes scope?
 4. Launches research sub-agents
-5. Creates project directory with:
-   - `_project.mdx` (status: planned)
-   - `resources/specification.md` (detailed spec)
+5. Creates project using CLI and writes:
+   - `_project.mdx` (status: planned, with inline spec)
    - `resources/research/*.md` (research findings)
 6. Updates project status to "review"
 7. Waits for human approval
-8. Creates task files after approval (status: todo)
+8. Creates task files via CLI after approval (status: todo)
 </example>
 
 <example name="implementing_task">
@@ -531,8 +553,8 @@ User: Implement auth-system/task-001
 Agent:
 1. Runs `/hyper-implement auth-system/task-001`
 2. Reads task file from `.hyper/projects/auth-system/tasks/task-001.mdx`
-3. Reads project spec from resources/specification.md
-4. Updates task status: `todo` → `in-progress`
+3. Reads project spec from `_project.mdx` (inline)
+4. Updates task status via CLI: `todo` → `in-progress`
 5. Implements code following patterns
 6. Runs verification:
    - `pnpm lint` ✓
@@ -540,7 +562,8 @@ Agent:
    - `pnpm test` ✓
    - `pnpm build` ✓
 7. Manual verification (web-app-debugger agent if UI changes)
-8. Updates task status: `in-progress` → `complete`
+8. Updates task status via CLI: `in-progress` → `complete`
+9. Activity automatically logged by PostToolUse hook
 </example>
 </examples>
 

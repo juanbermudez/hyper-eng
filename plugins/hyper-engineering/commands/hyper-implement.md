@@ -71,9 +71,10 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
     </skills>
     <hyper_integration>
       Reads tasks from .hyper/projects/{project}/tasks/
-      Updates status by editing frontmatter (todo → in-progress → complete)
-      Adds implementation log comments to task files
+      Updates status using CLI: `${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update --status`
+      Adds implementation log comments to task files via Edit tool
       Updates task with verification results and git information
+      Activity tracking happens automatically via PostToolUse hook
       Compatible with Hyper Control UI for visual management
     </hyper_integration>
     <verification_philosophy>
@@ -164,7 +165,8 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
 
         5. Read project spec for context:
            ```bash
-           cat ".hyper/projects/${PROJECT_SLUG}/resources/specification.md"
+           # Spec is inline in _project.mdx
+           cat ".hyper/projects/${PROJECT_SLUG}/_project.mdx"
            ```
 
         6. Check dependencies are complete:
@@ -209,23 +211,25 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
 
     <phase name="status_update" required="true">
       <instructions>
-        Update task status to in-progress:
+        Update task status to in-progress using the Hyper CLI:
 
-        1. Edit the task file frontmatter:
-           ```yaml
-           # EXACT VALUES - use these strings:
-           # Change: status: todo → status: in-progress
-           # Update: updated: [today's date YYYY-MM-DD]
+        1. Update task status:
+           ```bash
+           # Use CLI for status update (validates status values automatically)
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+             --id "${TASK_ID}" \
+             --project "${PROJECT_SLUG}" \
+             --status "in-progress"
            ```
 
         2. If this is the first task being started, also update project status:
-           ```yaml
-           # In _project.mdx frontmatter:
-           # Change: status: todo → status: in-progress
-           # Update: updated: [today's date YYYY-MM-DD]
+           ```bash
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
+             --slug "${PROJECT_SLUG}" \
+             --status "in-progress"
            ```
 
-        3. Append to task content to document start:
+        3. Use the Edit tool to append progress log to task content:
            ```markdown
            ## Progress Log
 
@@ -235,7 +239,10 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
            - Status: in-progress
            ```
 
-        **IMPORTANT**: Use exact status values:
+        **Note**: The CLI automatically validates status values and updates timestamps.
+        Activity tracking happens automatically via PostToolUse hook.
+
+        **Valid status values (CLI enforces these)**:
         - `in-progress` (with hyphen, not `in_progress` or `inprogress`)
         - `qa` (for quality assurance phase, not `review` or `testing`)
         - `complete` (not `completed` or `done`)
@@ -320,7 +327,7 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
         - Task ID: ${TASK_ID}
         - Project: ${PROJECT_SLUG}
         - Task File: .hyper/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx
-        - Spec: .hyper/projects/${PROJECT_SLUG}/specification.md
+        - Project/Spec: .hyper/projects/${PROJECT_SLUG}/_project.mdx (spec is inline)
         - Research: .hyper/projects/${PROJECT_SLUG}/resources/research/
 
         **Your Job:**
@@ -575,8 +582,8 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
       Run `/hyper-status [project]` to see available tasks."
     </scenario>
 
-    <scenario condition="No spec document found">
-      Warning: "No specification document found at resources/specification.md.
+    <scenario condition="No spec found in project file">
+      Warning: "Project file (_project.mdx) exists but has no specification content.
       Proceeding with task description only.
       Consider running /hyper-plan first for complex features."
     </scenario>

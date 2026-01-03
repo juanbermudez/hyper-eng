@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-2.6.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-2.7.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering Plugin
@@ -38,11 +38,10 @@ The hyper-engineering workflow uses local `.hyper/` directory as the source of t
 │   └── {slug}.mdx
 ├── projects/                # Active projects
 │   └── {slug}/
-│       ├── _project.mdx     # Project definition (IMPORTANT: underscore prefix!)
+│       ├── _project.mdx     # Project definition + spec (inline)
 │       ├── tasks/           # Task files
 │       │   └── task-NNN.mdx # Tasks with 3-digit numbering
 │       └── resources/       # Supporting docs
-│           ├── specification.md
 │           └── research/    # Research findings
 ├── docs/                    # Standalone documentation
 │   └── {slug}.mdx
@@ -233,6 +232,50 @@ Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, 
 
 > **Tauri Testing:** For Tauri v2 app testing, install the separate [tauri-testing plugin](https://github.com/Hyper-Builders/tauri-testing-plugin).
 
+## CLI & Activity Tracking
+
+The plugin includes a bundled CLI binary (`hyper`) for creating projects, tasks, and tracking activity.
+
+### CLI Commands
+
+```bash
+# Create project with validated frontmatter
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+  --slug "auth-system" \
+  --title "User Auth" \
+  --priority "high"
+
+# Create task
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+  --project "auth-system" \
+  --id "as-001" \
+  --title "Phase 1: OAuth Setup"
+
+# Update status
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+  --id "as-001" \
+  --project "auth-system" \
+  --status "in-progress"
+```
+
+### Automatic Activity Tracking
+
+Activity is tracked automatically via PostToolUse hook:
+
+1. Agent writes to `.hyper/*.mdx` file
+2. PostToolUse hook captures session ID
+3. CLI appends activity entry to frontmatter
+
+```yaml
+activity:
+  - timestamp: "2026-01-02T10:30:00Z"
+    actor:
+      type: session
+      id: "abc-123-def"
+    action: modified
+```
+
+See `skills/hyper-local/references/frontmatter-schema.md` for full activity format.
 
 ## Installation
 

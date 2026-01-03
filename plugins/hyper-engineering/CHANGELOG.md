@@ -5,6 +5,47 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2026-01-03
+
+### Added
+
+**CLI Integration**
+- Bundled Hyper CLI binary (`binaries/hyper`) for project and task management
+- CLI commands: `project create`, `task create`, `task update`, `project update`
+- CLI validates frontmatter schema and handles file creation consistently
+- CLI handles activity tracking with `activity add` and `activity comment` commands
+
+**Automatic Activity Tracking**
+- New `track-activity.sh` PostToolUse hook script
+- Automatically logs session ID when agents modify `.hyper/*.mdx` files
+- Activity entries support session (agent) and user (human) actors
+- Action types: created, modified, commented, status_changed, assigned
+
+**Updated Schema**
+- Added `activity` field to frontmatter schema in `frontmatter-schema.md`
+- Added Actor types: session (with parent_id for sub-agents) and user (with name)
+- Added TypeScript interfaces for ActivityEntry and Actor
+
+### Changed
+
+- `/hyper-plan` now uses CLI for project and task creation (replaces bash heredocs)
+- `/hyper-plan` writes spec inline in `_project.mdx` (removed separate `resources/specification.md`)
+- `/hyper-implement` now uses CLI for status updates
+- Implementation orchestrator uses CLI for status transitions
+- Research orchestrator documents automatic activity tracking
+- Updated all documentation to reference CLI commands
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 9 |
+| Skills | 3 |
+| MCP Servers | 1 |
+
+---
+
 ## [2.6.0] - 2026-01-02
 
 ### Removed

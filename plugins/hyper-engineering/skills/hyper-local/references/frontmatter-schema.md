@@ -318,9 +318,111 @@ reviewer: "@johndoe"
 7. **depends_on** references must exist
 8. **tags** must be an array of strings
 
+## Activity Tracking
+
+The `activity` field tracks who modified a document and when. Activity entries are
+automatically added by the PostToolUse hook (for agent sessions) or manually (for
+users via UI or CLI).
+
+### Activity Field Structure
+
+```yaml
+activity:
+  # Agent session example
+  - timestamp: "2026-01-02T10:30:00Z"   # ISO 8601 with timezone
+    actor:
+      type: session                      # Claude Code session
+      id: "abc-123-def"                  # Session UUID
+      parent_id: "parent-456"            # Optional - for sub-agent sessions
+    action: modified                     # See action types below
+    content: "Updated implementation"    # Optional description
+
+  # User comment example
+  - timestamp: "2026-01-02T11:00:00Z"
+    actor:
+      type: user                         # Human user
+      id: "user-uuid-789"                # User UUID (from Supabase)
+      name: "Juan Bermudez"              # Display name (required for users)
+    action: commented
+    content: "Looks good, ready for review!"  # Required for comments
+
+  # User status change example
+  - timestamp: "2026-01-02T11:30:00Z"
+    actor:
+      type: user
+      id: "user-uuid-789"
+      name: "Juan Bermudez"
+    action: status_changed
+    content: "Moving to QA after final review"
+```
+
+### Actor Types
+
+| Type | Fields | Use Case |
+|------|--------|----------|
+| `session` | id, name?, parent_id? | Claude Code agent sessions |
+| `user` | id, name | Human users via UI |
+
+### Action Types
+
+| Action | Description | Content |
+|--------|-------------|---------|
+| `created` | Initial creation | Optional |
+| `modified` | File content changed | Optional |
+| `commented` | Added a comment | Required |
+| `status_changed` | Status transition | Optional |
+| `assigned` | Task assigned (future) | Optional |
+
+### Automatic Activity Tracking
+
+For Claude Code sessions, activity is tracked automatically:
+
+1. **PostToolUse hook** triggers on Write/Edit operations to `.hyper/` files
+2. **Hook script** (`track-activity.sh`) extracts session_id from hook payload
+3. **Hyper CLI** appends activity entry to frontmatter
+
+Agents do NOT need to manually log activity - just use Write/Edit tools normally.
+
+### Manual Activity (CLI)
+
+For user-initiated activities (comments, status changes from UI):
+
+```bash
+# Add a comment
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
+  --file ".hyper/projects/my-project/tasks/task-001.mdx" \
+  --actor-type user \
+  --actor-id "user-uuid" \
+  --actor-name "Juan Bermudez" \
+  "This looks ready for review"
+
+# Add an activity entry
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity add \
+  --file ".hyper/projects/my-project/tasks/task-001.mdx" \
+  --actor-type user \
+  --actor-id "user-uuid" \
+  --actor-name "Juan Bermudez" \
+  --action status_changed \
+  --content "Moving to QA"
+```
+
 ## TypeScript Schema (Hyper Control)
 
 ```typescript
+interface Actor {
+  type: 'session' | 'user';
+  id: string;
+  name?: string;
+  parent_id?: string;
+}
+
+interface ActivityEntry {
+  timestamp: string;
+  actor: Actor;
+  action: 'created' | 'modified' | 'commented' | 'status_changed' | 'assigned';
+  content?: string;
+}
+
 interface Frontmatter {
   id: string;
   title: string;
@@ -336,6 +438,7 @@ interface Frontmatter {
   created: string;
   updated: string;
   summary?: string;
+  activity?: ActivityEntry[];
   // Additional fields allowed
   [key: string]: unknown;
 }

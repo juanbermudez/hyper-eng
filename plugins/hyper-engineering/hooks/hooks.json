@@ -1,5 +1,5 @@
 {
-  "description": "Hyper Engineering - Format validation and workflow hooks",
+  "description": "Hyper Engineering - Format validation, activity tracking, and workflow hooks",
   "hooks": {
     "SessionStart": [
       {
@@ -30,6 +30,11 @@
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/validate-hyper-file.py",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/track-activity.sh",
+            "timeout": 10
           }
         ]
       }

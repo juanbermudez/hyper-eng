@@ -247,39 +247,29 @@ argument-hint: "[feature or requirement description]"
 
     <phase name="project_directory_creation" required="true">
       <instructions>
-        Create the project directory structure:
+        Create the project directory structure and project file using the Hyper CLI:
 
         ```bash
         PROJECT_SLUG="[generated-slug]"
         mkdir -p ".hyper/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
         ```
 
-        Create initial project file with status: planned:
+        Create initial project file using CLI:
 
         ```bash
-        cat > ".hyper/projects/${PROJECT_SLUG}/_project.mdx" << 'EOF'
-        ---
-        id: proj-[SLUG]
-        title: "[TITLE]"
-        type: project
-        status: planned
-        priority: [PRIORITY]
-        summary: "[BRIEF_SUMMARY]"
-        created: [DATE]
-        updated: [DATE]
-        tags:
-          - [relevant-tags]
-        ---
-
-        # [TITLE]
-
-        [Initial description based on user request]
-
-        ## Research Phase
-
-        Gathering information from specialized research agents...
-        EOF
+        # Use CLI to create project with validated frontmatter
+        ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+          --slug "${PROJECT_SLUG}" \
+          --title "[TITLE]" \
+          --priority "[PRIORITY]" \
+          --summary "[BRIEF_SUMMARY]"
         ```
+
+        **Note**: The CLI creates the `_project.mdx` file with proper frontmatter.
+        The specification will be added inline to this file during the spec_creation phase.
+
+        **Activity Tracking**: The PostToolUse hook automatically tracks modifications
+        to `.hyper/` files with session ID - no manual logging needed.
       </instructions>
     </phase>
 
@@ -484,24 +474,25 @@ argument-hint: "[feature or requirement description]"
 
     <phase name="spec_creation" required="true">
       <instructions>
-        Create a comprehensive specification document - a technical PRD that provides
-        complete implementation guidance. The spec should be detailed enough that an
-        engineer can implement without needing to ask clarifying questions.
+        Create a comprehensive specification as inline content in the `_project.mdx` file.
+        The spec is a technical PRD that provides complete implementation guidance.
+        It should be detailed enough that an engineer can implement without asking questions.
 
         **SPEC PHILOSOPHY**: This is a technical PRD, not a vague requirements doc.
         Every section should include concrete details, file references, and examples.
 
-        ```bash
-        cat > ".hyper/projects/${PROJECT_SLUG}/resources/specification.md" << 'EOF'
+        **IMPORTANT**: Write the specification as body content AFTER the frontmatter in
+        `_project.mdx`. Do NOT create a separate `resources/specification.md` file.
+
+        Use the Write tool to update the `_project.mdx` file, adding the specification
+        content below the frontmatter (the CLI already created the frontmatter):
+
+        ```markdown
         ---
-        id: resource-[PROJECT_SLUG]-spec
-        title: "[TITLE] - Technical Specification"
-        type: resource
-        created: [DATE]
-        updated: [DATE]
-        tags:
-          - specification
-          - [feature-tags]
+        # Existing frontmatter (created by CLI)
+        id: proj-[PROJECT_SLUG]
+        title: "[TITLE]"
+        ...
         ---
 
         # [TITLE] - Technical Specification
@@ -840,8 +831,11 @@ argument-hint: "[feature or requirement description]"
         | 2 | [Specific question] | Pending/Resolved | [Answer if resolved] |
 
         **NOTE**: All questions must be resolved before task creation.
-        EOF
         ```
+
+        **Note on format**: The specification is written directly in `_project.mdx` as body
+        content, keeping everything in one file. Research documents remain in
+        `resources/research/` for reference.
 
         **SPEC QUALITY CHECKLIST** (verify before presenting for review):
         - [ ] All file references include actual paths from codebase research
@@ -871,13 +865,12 @@ argument-hint: "[feature or requirement description]"
         ## Specification Ready for Review
 
         **Project**: `.hyper/projects/${PROJECT_SLUG}/`
-        **Spec**: `.hyper/projects/${PROJECT_SLUG}/resources/specification.md`
+        **Spec**: `.hyper/projects/${PROJECT_SLUG}/_project.mdx`
 
         **Review in Hyper Control**: Open the Hyper Control app to view the project and specification in a visual interface.
 
         **Or review files directly**:
-        - `_project.mdx` - Project overview
-        - `resources/specification.md` - Detailed specification
+        - `_project.mdx` - Project overview and specification (inline)
         - `resources/research/` - Research findings
 
         **Please review the specification and provide feedback on**:
@@ -933,27 +926,27 @@ argument-hint: "[feature or requirement description]"
            # Examples: user-auth → ua, workspace-settings → ws
            ```
 
-        3. For each implementation phase in the spec, create a task file:
+        3. For each implementation phase in the spec, create a task using CLI:
 
            ```bash
            TASK_NUM=1
            TASK_FILE_NUM=$(printf "%03d" $TASK_NUM)
            TASK_ID="${INITIALS}-${TASK_FILE_NUM}"
 
-           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/task-${TASK_FILE_NUM}.mdx" << 'EOF'
+           # Use CLI to create task with validated frontmatter
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+             --project "${PROJECT_SLUG}" \
+             --id "${TASK_ID}" \
+             --title "Phase ${TASK_NUM}: [Phase Name]" \
+             --priority "[PRIORITY]" \
+             --depends-on "[comma-separated task IDs if any]"
+           ```
+
+           Then use the Write tool to add body content to the task file:
+
+           ```markdown
            ---
-           id: [TASK_ID]
-           title: "Phase [N]: [Phase Name]"
-           type: task
-           status: todo
-           priority: [PRIORITY]
-           parent: proj-[PROJECT_SLUG]
-           depends_on: []
-           created: [DATE]
-           updated: [DATE]
-           tags:
-             - phase-[N]
-             - [feature-tags]
+           # Frontmatter created by CLI
            ---
 
            # Phase [N]: [Phase Name]
@@ -989,7 +982,6 @@ argument-hint: "[feature or requirement description]"
            ## Dependencies
 
            [List any dependencies on other tasks]
-           EOF
            ```
 
         4. For tasks with dependencies, use the initials-based IDs:
@@ -1000,27 +992,27 @@ argument-hint: "[feature or requirement description]"
              - ua-002
            ```
 
-        5. Create verification sub-tasks for each main task:
+        5. Create verification sub-tasks for each main task using CLI:
            ```bash
            VERIFY_NUM=$((TASK_NUM + 100))  # Verification tasks start at 101
            VERIFY_FILE_NUM=$(printf "%03d" $VERIFY_NUM)
            VERIFY_ID="${INITIALS}-${VERIFY_FILE_NUM}"
 
-           cat > ".hyper/projects/${PROJECT_SLUG}/tasks/task-${VERIFY_FILE_NUM}.mdx" << 'EOF'
+           # Use CLI to create verification task with validated frontmatter
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+             --project "${PROJECT_SLUG}" \
+             --id "${VERIFY_ID}" \
+             --title "Verify: Phase ${TASK_NUM} - [Phase Name]" \
+             --priority "[PRIORITY]" \
+             --depends-on "${TASK_ID}" \
+             --tags "verification,phase-${TASK_NUM}"
+           ```
+
+           Then use the Write tool to add body content:
+
+           ```markdown
            ---
-           id: [VERIFY_ID]
-           title: "Verify: Phase [N] - [Phase Name]"
-           type: task
-           status: todo
-           priority: [PRIORITY]
-           parent: proj-[PROJECT_SLUG]
-           depends_on:
-             - [TASK_ID]
-           created: [DATE]
-           updated: [DATE]
-           tags:
-             - verification
-             - phase-[N]
+           # Frontmatter created by CLI
            ---
 
            # Verify: Phase [N] - [Phase Name]
@@ -1041,7 +1033,6 @@ argument-hint: "[feature or requirement description]"
            2. If any fail → create fix task → re-run
            3. Run manual verification
            4. Only mark complete when ALL checks pass
-           EOF
            ```
 
         6. Return summary:
