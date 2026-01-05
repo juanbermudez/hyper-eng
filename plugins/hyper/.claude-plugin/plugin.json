@@ -1,0 +1,18 @@
+{
+  "name": "hyper",
+  "description": "Spec-driven development with local .hyper/ planning. 7 agents, 10 commands, 3 skills.",
+  "version": "3.1.0",
+  "author": {
+    "name": "Juan Bermudez"
+  },
+  "homepage": "https://github.com/juanbermudez/hyper-eng",
+  "repository": "https://github.com/juanbermudez/hyper-eng",
+  "license": "MIT",
+  "keywords": [
+    "hyper-engineering",
+    "spec-driven",
+    "planning",
+    "workflow-automation",
+    "ai-powered"
+  ]
+}

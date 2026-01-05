@@ -1034,7 +1034,81 @@ argument-hint: "[feature or requirement description]"
            4. Only mark complete when ALL checks pass
            ```
 
-        6. Return summary:
+        6. Create FINAL project completion verification task:
+           ```bash
+           FINAL_ID="${INITIALS}-999"
+
+           # Collect all verification task IDs for depends_on
+           VERIFY_DEPS=$(for i in $(seq 101 $((100 + PHASE_COUNT))); do
+             printf "${INITIALS}-%03d," $i
+           done | sed 's/,$//')
+
+           # Use CLI to create final verification task
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+             --project "${PROJECT_SLUG}" \
+             --id "${FINAL_ID}" \
+             --title "Final: Project Completion Verification" \
+             --priority "high" \
+             --depends-on "${VERIFY_DEPS}" \
+             --tags "verification,final,project-qa"
+           ```
+
+           Then use the Write tool to add body content:
+
+           ```markdown
+           ---
+           # Frontmatter created by CLI
+           ---
+
+           # Final: Project Completion Verification
+
+           This is the final verification task that runs after ALL phase verifications pass.
+           Only mark this complete when the entire project is ready to ship.
+
+           ## Project-Level Verification
+
+           ### Integration Testing
+           - [ ] All features work together (cross-phase integration)
+           - [ ] No regressions in existing functionality
+           - [ ] Full user workflow tested end-to-end
+
+           ### Final Automated Checks
+           - [ ] Full test suite passes (unit + integration + e2e)
+           - [ ] Lint/typecheck pass on entire codebase
+           - [ ] Production build succeeds
+           - [ ] No security warnings or vulnerabilities
+
+           ### Documentation Review
+           - [ ] README updated if needed
+           - [ ] API documentation current
+           - [ ] CHANGELOG entry added
+           - [ ] Breaking changes documented
+
+           ### Code Quality
+           - [ ] No TODO comments left unresolved
+           - [ ] No debugging code (console.log, debugger)
+           - [ ] Code follows project conventions
+
+           ### Browser/UI Testing (if applicable)
+           - [ ] Visual inspection in target browsers
+           - [ ] Mobile/responsive testing
+           - [ ] Accessibility check
+           - [ ] No console errors
+
+           ## Process
+           1. Wait for ALL phase verification tasks to complete
+           2. Run project-wide integration tests
+           3. Perform final manual review
+           4. Update project status to `completed` only when ALL checks pass
+
+           ## On Completion
+           When this task is marked complete:
+           - Project status should change from `qa` to `completed`
+           - All tasks should be in `complete` status
+           - Code is ready for merge/deploy
+           ```
+
+        7. Return summary:
 
         ---
 
@@ -1057,6 +1131,14 @@ argument-hint: "[feature or requirement description]"
         | `task-101.mdx` | `${INITIALS}-101` | Verify Phase 1 |
         | `task-102.mdx` | `${INITIALS}-102` | Verify Phase 2 |
         | `task-103.mdx` | `${INITIALS}-103` | Verify Phase 3 |
+
+        ### Final Project Verification
+        | File | ID | Title |
+        |------|-----|-------|
+        | `task-999.mdx` | `${INITIALS}-999` | Final: Project Completion Verification |
+
+        **Note**: The final verification task (`${INITIALS}-999`) depends on ALL phase verification tasks.
+        Only mark it complete when the entire project passes project-level QA.
 
         **View in Hyper Control** for visual task management.
 

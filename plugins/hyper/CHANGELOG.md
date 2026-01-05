@@ -5,6 +5,72 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-01-05
+
+### Added
+
+**Final Project Verification Task**
+- `/hyper:plan` now creates a final verification task (`task-999.mdx`) for every project
+- Final task depends on ALL phase verification tasks (101, 102, 103, etc.)
+- Ensures project-level QA before marking project as `completed`
+- Includes comprehensive checklist: integration testing, documentation review, code quality, browser testing
+
+**Project Completion Workflow**
+- Final verification task must complete before project can move to `completed` status
+- Checklist includes: cross-phase integration, no regressions, full e2e testing
+- Documentation review: README, API docs, CHANGELOG, breaking changes
+- Code quality: no unresolved TODOs, no debug code, convention compliance
+
+### Changed
+
+- Task breakdown phase now includes step 6 for creating final verification task
+- Summary output includes "Final Project Verification" section with `task-999.mdx`
+
+### Fixed
+
+**Plugin Installation**
+- Added missing `.claude-plugin/plugin.json` manifest to enable marketplace installation
+- Plugin now passes `claude plugin validate` checks
+- Fixes "plugin not found" errors when installing via `/plugin install hyper@hyper-eng-marketplace`
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 10 |
+| Skills | 3 |
+| MCP Servers | 1 |
+
+---
+
+## [3.0.0] - 2026-01-05
+
+### Breaking Changes
+
+**Plugin Renamed**
+- Plugin renamed from `hyper-engineering` to `hyper`
+- Namespace changed from `/hyper-engineering:hyper-*` to `/hyper:*`
+- Command files renamed: `hyper-plan.md` → `plan.md`, etc.
+- Shorter, cleaner command names: `/hyper:init`, `/hyper:plan`, `/hyper:implement`
+
+### Changed
+
+- All 10 command files renamed (removed `hyper-` prefix)
+- Marketplace source path updated to `./plugins/hyper`
+- Plugin directory renamed from `hyper-engineering` to `hyper`
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 10 |
+| Skills | 3 |
+| MCP Servers | 1 |
+
+---
+
 ## [2.8.0] - 2026-01-04
 
 ### Added
