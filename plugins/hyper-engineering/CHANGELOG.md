@@ -5,6 +5,47 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.0] - 2026-01-04
+
+### Added
+
+**Standalone Research Command**
+- New `/hyper-research` command for standalone research workflows
+- Two depth modes: Comprehensive (default) and Deep
+- Creates research projects with `project_type: research`
+- Research projects use `ready-for-review` status for completion
+
+**New Status and Fields**
+- Added `ready-for-review` project status with pulsing badge
+- Added `project_type` field (feature, research, spike)
+- Added `archived` field for hiding completed projects
+
+**CLI Archive Command**
+- `hyper project archive --slug <slug>` to archive a project
+- `hyper project archive --slug <slug> --unarchive` to restore
+
+**UI Enhancements**
+- Archive filter toggle in project list
+- Pulsing lime/green badge for ready-for-review status
+- Deep mode research with PROGRESS.md checkpoints
+
+### Changed
+
+- Enhanced research-orchestrator for standalone operation
+- Updated frontmatter-schema.md with new fields and statuses
+- Updated ProjectList UI with archive filtering
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 10 |
+| Skills | 3 |
+| MCP Servers | 1 |
+
+---
+
 ## [2.7.0] - 2026-01-03
 
 ### Added

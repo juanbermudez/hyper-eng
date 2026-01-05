@@ -137,12 +137,15 @@ Valid values for `type`:
 |--------|-------------|-------------|
 | `planned` | In backlog, spec phase | todo, canceled |
 | `todo` | Spec approved, ready for work | in-progress, canceled |
-| `in-progress` | Active development | qa, canceled |
+| `in-progress` | Active development | ready-for-review, qa, canceled |
+| `ready-for-review` | Research complete, awaiting review | completed, in-progress |
 | `qa` | All tasks done, project-level QA | completed, in-progress |
 | `completed` | Successfully finished | (terminal) |
 | `canceled` | Won't do | (terminal) |
 
 **QA Status**: Projects enter QA when all tasks are complete. This is for project-level verification: integration testing, final review, documentation check.
+
+**Ready for Review Status**: Used primarily for research projects. Indicates research is complete and awaiting human review before archiving or follow-up planning.
 
 ### Initiative Statuses
 
@@ -195,9 +198,34 @@ tags:
 ```yaml
 ---
 # ... common fields ...
-summary: string      # Brief description for project cards
+summary: string              # Brief description for project cards
+project_type: string         # Optional: feature, research, or spike
+archived: boolean            # Optional: hide from default views (default: false)
 ---
 ```
+
+### Project Types
+
+| Type | Description | Typical Status Flow |
+|------|-------------|---------------------|
+| `feature` | New functionality (default) | planned → todo → in-progress → qa → completed |
+| `research` | Investigation, exploration | planned → in-progress → ready-for-review → completed |
+| `spike` | Time-boxed investigation | planned → in-progress → completed |
+
+### Archiving Projects
+
+Set `archived: true` to hide a project from default views. Useful for completed research or old projects.
+
+```yaml
+---
+id: proj-old-research
+archived: true    # Hidden from project list
+status: completed
+---
+```
+
+To archive via CLI: `hyper project archive --slug old-research`
+To unarchive: `hyper project archive --slug old-research --unarchive`
 
 ### Example Project
 
