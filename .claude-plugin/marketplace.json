@@ -1,8 +1,7 @@
 {
   "name": "hyper-eng-marketplace",
   "owner": {
-    "name": "Juan Bermudez",
-    "url": "https://github.com/juanbermudez"
+    "name": "Juan Bermudez"
   },
   "metadata": {
     "description": "Hyper-Engineering plugin marketplace for Claude Code",
@@ -14,11 +13,11 @@
       "description": "Spec-driven development with local .hyper/ planning. Includes /hyper-research for standalone research, CLI archive command, and new ready-for-review status. 7 agents, 10 commands, 3 skills, 1 MCP server.",
       "version": "2.8.0",
       "author": {
-        "name": "Juan Bermudez",
-        "url": "https://github.com/juanbermudez"
+        "name": "Juan Bermudez"
       },
       "homepage": "https://github.com/juanbermudez/hyper-eng",
-      "tags": [
+      "repository": "https://github.com/juanbermudez/hyper-eng",
+      "keywords": [
         "spec-driven",
         "local-first",
         "hyper-control",
