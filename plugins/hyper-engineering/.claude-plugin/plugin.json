@@ -1,31 +1,11 @@
 {
   "name": "hyper-engineering",
-  "version": "2.8.0",
-  "description": "Spec-driven development with local .hyper/ planning. Includes /hyper-research for standalone research, CLI archive command, and new ready-for-review status. 7 agents, 10 commands, 3 skills, 1 MCP server.",
+  "version": "2.9.0",
+  "description": "Spec-driven development with local .hyper/ planning. 7 agents, 10 commands, 3 skills.",
   "author": {
-    "name": "Juan Bermudez",
-    "email": "juan@example.com",
-    "url": "https://github.com/juanbermudez"
+    "name": "Juan Bermudez"
   },
   "homepage": "https://github.com/juanbermudez/hyper-eng",
   "repository": "https://github.com/juanbermudez/hyper-eng",
-  "license": "MIT",
-  "keywords": [
-    "ai-powered",
-    "hyper-engineering",
-    "local-first",
-    "spec-driven",
-    "workflow-automation",
-    "code-review",
-    "verification",
-    "chrome-extension",
-    "web-debugging",
-    "hyper-control"
-  ],
-  "mcpServers": {
-    "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp"
-    }
-  }
+  "license": "MIT"
 }
