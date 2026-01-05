@@ -5,6 +5,27 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2026-01-05
+
+### Removed
+
+**Statusline Commands**
+- `/hyper:statusline-setup` - Removed (utility bloat)
+- `/hyper:statusline-optout` - Removed (utility bloat)
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 6 |
+| Skills | 3 |
+| MCP Servers | 1 |
+
+**Final command set**: `plan`, `implement`, `implement-worktree`, `verify`, `status`, `research`
+
+---
+
 ## [3.3.0] - 2026-01-05
 
 ### Added
