@@ -1,6 +1,6 @@
 ---
-description: Implement tasks from .hyper/ using an orchestrator pattern that coordinates sub-agents, enforces verification gates, and updates task status with implementation logs
-argument-hint: "[project-slug/task-id] or [project-slug]"
+description: Implement tasks from .hyper/ - pass project-slug for FULL project implementation, or project-slug/task-id for single task
+argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single task)"
 ---
 
 <agent name="hyper-implementation-agent">
@@ -125,32 +125,40 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
            If NO_HYPER, stop and suggest:
            "Run `/hyper-init` first to initialize the workspace."
 
-        2. Parse input to determine project and task:
+        2. Parse input to determine scope:
 
            **If format is `project-slug/task-NNN`:**
+           Single task mode - implement just that task.
            ```bash
            PROJECT_SLUG="[extracted-project]"
            TASK_ID="[extracted-task]"
            TASK_FILE=".hyper/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx"
+           MODE="single-task"
            ```
 
            **If only project slug provided:**
-           List available tasks and ask which to implement:
+           Full project mode - implement ALL tasks in dependency order.
            ```bash
            PROJECT_SLUG="[provided-slug]"
-           echo "Available tasks in ${PROJECT_SLUG}:"
+           MODE="full-project"
+
+           # Get all incomplete tasks in order
+           echo "## Full Project Implementation: ${PROJECT_SLUG}"
+           echo ""
+           echo "Will implement all incomplete tasks in dependency order:"
            for f in .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx; do
              if [ -f "$f" ]; then
-               task_name=$(basename "$f" .mdx)
-               status=$(grep "^status:" "$f" | head -1 | sed 's/status: *//')
-               title=$(grep "^title:" "$f" | head -1 | sed 's/title: *"\{0,1\}\([^"]*\)"\{0,1\}/\1/')
-               echo "- ${task_name} [${status}]: ${title}"
+               task_status=$(grep "^status:" "$f" | head -1 | sed 's/status: *//')
+               if [ "$task_status" != "complete" ]; then
+                 task_name=$(basename "$f" .mdx)
+                 title=$(grep "^title:" "$f" | head -1 | sed 's/title: *"\{0,1\}\([^"]*\)"\{0,1\}/\1/')
+                 echo "- ${task_name}: ${title} [${task_status}]"
+               fi
              fi
            done
            ```
-           Ask user which task to implement.
 
-        3. Verify task file exists:
+        3. Verify project/task exists:
            ```bash
            if [ ! -f "$TASK_FILE" ]; then
              echo "Task file not found: $TASK_FILE"
@@ -315,9 +323,15 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
 
     <phase name="spawn_orchestrator" required="true">
       <instructions>
-        Spawn the implementation-orchestrator to coordinate the implementation:
+        Spawn the implementation-orchestrator based on MODE:
 
         **Use the Task tool with subagent_type: "general-purpose"**
+
+        ---
+
+        ## MODE: single-task
+
+        Implement one specific task:
 
         ```
         Prompt: "You are the implementation-orchestrator coordinating task implementation.
@@ -340,58 +354,89 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
         8. Mark task complete only after ALL gates pass
         9. Perform git commit with conventional format
 
-        **Sub-Agent Coordination:**
+        Return JSON with status, implementation details, verification results."
+        ```
+
+        ---
+
+        ## MODE: full-project
+
+        Implement ALL incomplete tasks in the project, in dependency order:
+
+        ```
+        Prompt: "You are the implementation-orchestrator coordinating FULL PROJECT implementation.
+
+        **Project Information:**
+        - Project: ${PROJECT_SLUG}
+        - Project/Spec: .hyper/projects/${PROJECT_SLUG}/_project.mdx (spec is inline)
+        - Tasks Directory: .hyper/projects/${PROJECT_SLUG}/tasks/
+        - Research: .hyper/projects/${PROJECT_SLUG}/resources/research/
+
+        **Your Job - Implement ALL Tasks:**
+        1. Read project spec to understand the full scope
+        2. List all tasks and their dependencies (depends_on field)
+        3. Build dependency graph and determine execution order
+        4. For EACH incomplete task (status != 'complete'), in order:
+           a. Check dependencies are complete first
+           b. Update task status to 'in-progress'
+           c. Read task requirements
+           d. Spawn sub-agents as needed (backend, frontend, test)
+           e. Implement the task
+           f. Run verification gates
+           g. Mark task complete
+           h. Commit changes
+           i. Move to next task
+        5. After all tasks complete, mark project as 'qa' for final verification
+
+        **Dependency Resolution:**
+        - Tasks with depends_on must wait for those tasks to complete
+        - If a dependency is blocked/failed, skip dependent tasks
+        - Report any circular dependencies
+
+        **Sub-Agent Coordination (per task):**
         - Backend Engineer: API, database, services changes
         - Frontend Engineer: UI, components, state changes
         - Test Engineer: unit and integration tests
 
-        **Task Comment Format:**
-        Update the task file with an Implementation Log section:
-        - Started: date, approach, dependencies verified
-        - Progress: updates as work progresses
-        - Completed: changes made, verification results, git info
-
-        **Verification Gates (from task):**
-        - Lint: must pass
-        - Typecheck: must pass
-        - Tests: must pass
-        - Build: must succeed
-        - Browser: if UI changes, use web-app-debugger
+        **Progress Reporting:**
+        After each task, report:
+        - Task completed: [task-id]
+        - Tasks remaining: [count]
+        - Any blockers encountered
 
         **Git Workflow:**
-        - Branch: feat/${PROJECT_SLUG}/${TASK_ID}
+        - Branch: feat/${PROJECT_SLUG}
+        - One commit per task OR squash at end
         - Commit format: {type}({scope}): {description}
-        - Include Task: ${TASK_ID} in commit body
 
         Return JSON:
         {
-          'status': 'complete' | 'blocked' | 'failed',
-          'task_id': '...',
-          'implementation': {
-            'files_modified': [...],
-            'files_created': [...],
-            'tests_added': [...]
-          },
+          'status': 'complete' | 'partial' | 'blocked',
+          'project': '${PROJECT_SLUG}',
+          'tasks_completed': [...],
+          'tasks_remaining': [...],
+          'tasks_blocked': [...],
           'verification': {
             'lint': 'pass/fail',
             'typecheck': 'pass/fail',
             'test': 'pass/fail',
-            'build': 'pass/fail',
-            'browser': 'pass/skipped'
+            'build': 'pass/fail'
           },
           'git': {
             'branch': '...',
             'commits': [...]
           },
-          'task_updated': true/false,
-          'issues': [...] // any problems encountered
+          'issues': [...]
         }"
         ```
+
+        ---
 
         **IMPORTANT**:
         - The orchestrator handles all sub-agent coordination
         - Wait for the orchestrator to complete before proceeding
         - Do NOT implement directly - delegate to orchestrator
+        - For full-project mode, the orchestrator loops through ALL tasks
       </instructions>
     </phase>
 

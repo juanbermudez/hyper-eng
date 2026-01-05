@@ -1,6 +1,6 @@
 ---
-description: Implement tasks in an isolated git worktree for safe parallel development
-argument-hint: "[project-slug/task-id] or [project-slug]"
+description: Implement in isolated git worktree - pass project-slug for FULL project, or project-slug/task-id for single task
+argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single task)"
 ---
 
 <agent name="hyper-implementation-worktree-agent">
@@ -61,19 +61,40 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
            ```
            If NO_HYPER, stop: "Run `/hyper:plan` first to initialize."
 
-        2. Parse input to determine project and task:
+        2. Parse input to determine scope:
 
            **If format is `project-slug/task-NNN`:**
+           Single task mode - implement just that task.
            ```bash
            PROJECT_SLUG="[extracted-project]"
            TASK_ID="[extracted-task]"
            TASK_FILE=".hyper/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx"
+           MODE="single-task"
            ```
 
            **If only project slug provided:**
-           List available tasks and ask which to implement.
+           Full project mode - implement ALL tasks in dependency order.
+           ```bash
+           PROJECT_SLUG="[provided-slug]"
+           MODE="full-project"
 
-        3. Verify task file exists and read it:
+           # Get all incomplete tasks
+           echo "## Full Project Implementation (Worktree): ${PROJECT_SLUG}"
+           echo ""
+           echo "Will implement all incomplete tasks in dependency order:"
+           for f in .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx; do
+             if [ -f "$f" ]; then
+               task_status=$(grep "^status:" "$f" | head -1 | sed 's/status: *//')
+               if [ "$task_status" != "complete" ]; then
+                 task_name=$(basename "$f" .mdx)
+                 title=$(grep "^title:" "$f" | head -1 | sed 's/title: *"\{0,1\}\([^"]*\)"\{0,1\}/\1/')
+                 echo "- ${task_name}: ${title} [${task_status}]"
+               fi
+             fi
+           done
+           ```
+
+        3. Verify project/task exists and read:
            - Parse frontmatter for status, dependencies
            - Read content for implementation details
            - Check `depends_on` for blocking tasks
