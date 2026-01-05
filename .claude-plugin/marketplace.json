@@ -9,13 +9,13 @@
   },
   "plugins": [
     {
-      "name": "hyper-engineering",
+      "name": "hyper",
       "description": "Spec-driven development with local .hyper/ planning. 7 agents, 10 commands, 3 skills.",
-      "version": "2.9.0",
+      "version": "3.0.0",
       "author": {
         "name": "Juan Bermudez"
       },
-      "source": "./plugins/hyper-engineering",
+      "source": "./plugins/hyper",
       "homepage": "https://github.com/juanbermudez/hyper-eng"
     }
   ]
