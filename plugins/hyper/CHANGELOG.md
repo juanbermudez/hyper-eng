@@ -5,6 +5,28 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2026-01-05
+
+### Added
+
+**Worktree-Enforced Implementation Command**
+- New `/hyper:implement-worktree` command for mandatory worktree isolation
+- Always creates isolated worktree before implementation (no option to skip)
+- Safe for parallel development and experimentation
+- Main checkout stays untouched on main branch
+- Use when you want guaranteed isolation; use `/hyper:implement` for optional worktree
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 8 |
+| Skills | 3 |
+| MCP Servers | 1 |
+
+---
+
 ## [3.2.0] - 2026-01-05
 
 ### Added
