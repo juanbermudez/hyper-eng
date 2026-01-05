@@ -1,5 +1,4 @@
 ---
-name: hyper-implement
 description: Implement tasks from .hyper/ using an orchestrator pattern that coordinates sub-agents, enforces verification gates, and updates task status with implementation logs
 argument-hint: "[project-slug/task-id] or [project-slug]"
 ---

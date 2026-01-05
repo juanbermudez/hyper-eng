@@ -1,5 +1,4 @@
 ---
-name: hyper-status
 description: View status of all projects and tasks in .hyper/ directory
 argument-hint: "[project-slug]"
 ---

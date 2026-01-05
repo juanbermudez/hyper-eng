@@ -1,5 +1,4 @@
 ---
-name: hyper-statusline:setup
 description: Install the Dracula-themed statusline with visual context bar
 ---
 

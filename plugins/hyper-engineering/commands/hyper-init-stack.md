@@ -1,3 +1,8 @@
+---
+description: Initialize stack template for the current project with stack-specific verification commands and patterns
+argument-hint: "[stack-name]"
+---
+
 # /hyper-init-stack - Initialize Stack Template
 
 Initialize a stack template for the current project, configuring hyper-engineering with stack-specific verification commands and patterns.

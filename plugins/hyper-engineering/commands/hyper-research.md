@@ -1,5 +1,4 @@
 ---
-name: hyper-research
 description: Conduct comprehensive or deep research on a topic and produce structured findings. Creates research projects with project_type research.
 argument-hint: "[topic or question] [--depth comprehensive|deep]"
 ---

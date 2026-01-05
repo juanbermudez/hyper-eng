@@ -1,5 +1,4 @@
 ---
-name: hyper-init
 description: Initialize .hyper/ directory structure in the current workspace for local file-based project management
 argument-hint: "[workspace-name]"
 ---

@@ -1,5 +1,4 @@
 ---
-name: hyper-verify
 description: Run comprehensive automated and manual verification, creating fix tasks in .hyper/ for failures and looping until all checks pass
 argument-hint: "[project-slug/task-id]"
 ---

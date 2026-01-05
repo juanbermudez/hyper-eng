@@ -1,5 +1,4 @@
 ---
-name: hyper-review
 description: Orchestrate comprehensive code review using specialized domain sub-agents (security, architecture, performance, code quality)
 argument-hint: "[ISSUE_ID or file/directory path]"
 ---

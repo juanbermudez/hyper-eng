@@ -1,5 +1,4 @@
 ---
-name: hyper-plan
 description: Create a comprehensive specification with two approval gates - first validating direction after research, then approving the full spec before task creation. Uses local .hyper/ directory for all artifacts.
 argument-hint: "[feature or requirement description]"
 ---

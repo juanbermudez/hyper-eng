@@ -1,5 +1,4 @@
 ---
-name: hyper-statusline:optout
 description: Opt out of the hyper-statusline setup prompt
 ---
 
