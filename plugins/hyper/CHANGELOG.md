@@ -5,6 +5,57 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-01-05
+
+### Added
+
+**Auto-Compounding in Verification**
+- `/hyper:verify` now includes a **compound phase** after successful verification
+- Automatically captures learnings from completed work:
+  - Bug fixes with root cause analysis
+  - Patterns and reusable approaches
+  - Gotchas that blocked progress
+- Creates solution docs in `.hyper/docs/solutions/{category}/`
+- Detects recurring patterns and creates `.hyper/docs/patterns/` docs
+- Philosophy: "Each unit of work should make subsequent units easier"
+
+**Solution Documentation Schema**
+- New YAML frontmatter for solution docs: `problem_type`, `component`, `root_cause`, `severity`, `tags`, `task_ref`
+- Pattern docs with ❌ WRONG vs ✅ CORRECT examples
+- Links back to originating task for context
+
+### Removed
+
+**Command Cleanup (3 commands removed)**
+- `/hyper:init` - Removed. `/hyper:plan` now auto-creates `.hyper/` directory when needed.
+- `/hyper:init-stack` - Removed. Project scaffolding is out of scope; use standard generators.
+- `/hyper:review` - Removed. Code review concepts merged into verification workflow.
+
+### Changed
+
+- Verification loop now includes compounding principle in documentation
+- Command count reduced from 10 to 7 for simpler workflow
+- Core workflow is now: `plan` → `implement` → `verify` (with auto-compound)
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 7 |
+| Skills | 3 |
+| MCP Servers | 1 |
+
+### Philosophy
+
+This release embraces the **Compound Engineering** philosophy:
+> "Each unit of work should make subsequent units easier."
+
+By auto-capturing learnings at the verification step, knowledge compounds over time.
+The simplified command set keeps the workflow focused: plan → implement → verify.
+
+---
+
 ## [3.1.0] - 2026-01-05
 
 ### Added

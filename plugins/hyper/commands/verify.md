@@ -547,9 +547,176 @@ argument-hint: "[project-slug/task-id]"
         - ✓ [Step 1]
         - ✓ [Step 2]
 
-        **Next Steps**:
-        - Mark parent task complete: Edit `${TASK_ID}.mdx` status to `complete`
-        - Or run code review: `/hyper-review ${PROJECT_SLUG}`
+        **Proceeding to compound phase...**
+
+        ---
+      </instructions>
+    </phase>
+
+    <phase name="compound" required="true">
+      <instructions>
+        **Auto-run after successful verification to capture learnings**
+
+        This phase implements the compounding loop - each completed task
+        potentially contributes knowledge for future work.
+
+        **1. Assess if work is worth documenting**
+
+        SKIP compounding if:
+        - Trivial change (< 20 lines total across files)
+        - Pure config/dependency update
+        - Simple boilerplate or copy/paste
+
+        DOCUMENT if any of:
+        - Fixed a non-obvious bug (problem → root cause → solution)
+        - Learned how to do something in this stack
+        - Hit a gotcha that blocked progress
+        - Created a reusable pattern
+
+        **2. Extract learnings from the work**
+
+        Review the task history and conversation for:
+        - "The issue was..." → Root cause identification
+        - "Fixed by..." / "The solution was..." → Working approach
+        - "Had to..." / "Needed to..." → Required steps
+        - Error messages that led to the solution
+        - Unexpected behavior that was resolved
+
+        **3. Create solution doc** (if worth documenting)
+
+        ```bash
+        # Determine category based on problem type
+        CATEGORY="bugs"  # or: patterns, gotchas, recipes
+        SLUG="[descriptive-slug]"
+
+        mkdir -p ".hyper/docs/solutions/${CATEGORY}"
+        ```
+
+        Write to `.hyper/docs/solutions/${CATEGORY}/${SLUG}.md`:
+
+        ```markdown
+        ---
+        problem_type: bug-fix|pattern|gotcha|recipe
+        component: [affected component/module]
+        root_cause: [brief root cause if applicable]
+        severity: low|medium|high
+        tags:
+          - [searchable tag]
+          - [technology]
+        task_ref: [PROJECT_SLUG]/[TASK_ID]
+        created: [DATE]
+        ---
+
+        # [Title: Concise description of learning]
+
+        ## Context
+
+        Task: `.hyper/projects/[PROJECT_SLUG]/tasks/[TASK_ID].mdx`
+
+        [1-2 sentences on what we were trying to do]
+
+        ## Problem
+
+        [What wasn't working or what we needed to figure out]
+
+        [Include error message if relevant]:
+        ```
+        [error output]
+        ```
+
+        ## Solution
+
+        [What worked - be specific]
+
+        ```[language]
+        [Code snippet if applicable]
+        ```
+
+        ## Key Insight
+
+        [The "aha" moment - WHY this works, not just WHAT works]
+        [This is the most valuable part for future reference]
+        ```
+
+        **4. Check for recurring patterns**
+
+        ```bash
+        # Search for related solutions
+        grep -l "[similar keywords]" .hyper/docs/solutions/**/*.md 2>/dev/null
+        ```
+
+        If 2+ related solutions exist, consider creating a pattern doc:
+
+        ```bash
+        mkdir -p ".hyper/docs/patterns"
+        ```
+
+        Write to `.hyper/docs/patterns/${PATTERN_SLUG}.md`:
+
+        ```markdown
+        ---
+        pattern: [pattern-name]
+        applies_to: [component/area]
+        created: [DATE]
+        related_solutions:
+          - solutions/[category]/[slug1].md
+          - solutions/[category]/[slug2].md
+        ---
+
+        # Pattern: [Name]
+
+        ## The Problem
+
+        [What keeps going wrong]
+
+        ## ❌ WRONG (causes [problem])
+
+        ```[language]
+        [Bad pattern - what NOT to do]
+        ```
+
+        ## ✅ CORRECT
+
+        ```[language]
+        [Good pattern - what TO do]
+        ```
+
+        ## Why
+
+        [Explanation of why the correct approach works]
+        ```
+
+        **5. Report to user**
+
+        If learning was captured:
+
+        ---
+
+        ## ✓ Verification Complete + Compounded
+
+        **Task**: ${PROJECT_SLUG}/${TASK_ID} → `complete`
+
+        **Learning Captured**:
+        - `.hyper/docs/solutions/${CATEGORY}/${SLUG}.md`
+
+        [If pattern created]:
+        - `.hyper/docs/patterns/${PATTERN_SLUG}.md` (recurring issue detected)
+
+        **Next**: Mark parent task complete or continue with next task.
+
+        ---
+
+        If no significant learning:
+
+        ---
+
+        ## ✓ Verification Complete
+
+        **Task**: ${PROJECT_SLUG}/${TASK_ID} → `complete`
+
+        No significant learnings to capture from this task.
+
+        **Next**: Mark parent task complete or continue with next task.
 
         ---
       </instructions>
@@ -560,6 +727,7 @@ argument-hint: "[project-slug/task-id]"
     <principle>
       Never mark complete until ALL checks pass.
       Each failure creates a fix task and loops back to the beginning.
+      Successful verification triggers automatic compounding.
     </principle>
 
     <loop_flow>
@@ -569,8 +737,18 @@ argument-hint: "[project-slug/task-id]"
       4. If any fail → Create fix tasks → STOP
       5. If all pass → Run manual verification (via web-app-debugger)
       6. If any fail → Create fix tasks → STOP
-      7. If all pass → Mark complete
+      7. If all pass → Mark complete → Run compound phase
+      8. Compound: Extract learnings → Document in .hyper/docs/solutions/
     </loop_flow>
+
+    <compounding_principle>
+      Each unit of work should make subsequent units easier.
+      The compound phase captures:
+      - Bug fixes (problem → root cause → solution)
+      - Patterns (reusable approaches)
+      - Gotchas (things that blocked progress)
+      This knowledge compounds over time, making future work faster.
+    </compounding_principle>
 
     <fix_loop_behavior>
       When user re-runs `/hyper-verify [project]/[task]` after fixes:
