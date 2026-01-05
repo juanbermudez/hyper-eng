@@ -10,22 +10,13 @@
   "plugins": [
     {
       "name": "hyper-engineering",
-      "description": "Spec-driven development with local .hyper/ planning. Includes /hyper-research for standalone research, CLI archive command, and new ready-for-review status. 7 agents, 10 commands, 3 skills, 1 MCP server.",
+      "description": "Spec-driven development with local .hyper/ planning. 7 agents, 10 commands, 3 skills.",
       "version": "2.9.0",
       "author": {
         "name": "Juan Bermudez"
       },
-      "homepage": "https://github.com/juanbermudez/hyper-eng",
-      "repository": "https://github.com/juanbermudez/hyper-eng",
-      "keywords": [
-        "spec-driven",
-        "local-first",
-        "hyper-control",
-        "verification",
-        "code-review",
-        "workflow"
-      ],
-      "source": "./plugins/hyper-engineering"
+      "source": "./plugins/hyper-engineering",
+      "homepage": "https://github.com/juanbermudez/hyper-eng"
     }
   ]
 }
