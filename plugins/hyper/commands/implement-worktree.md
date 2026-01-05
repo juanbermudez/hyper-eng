@@ -180,10 +180,15 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
 
     <phase name="spawn_orchestrator" required="true">
       <instructions>
-        Spawn the implementation-orchestrator to coordinate:
+        Spawn the implementation-orchestrator based on MODE:
+
+        **Use the Task tool with subagent_type: "general-purpose"**
+
+        ---
+
+        ## MODE: single-task
 
         ```
-        Task tool with subagent_type: "general-purpose"
         Prompt: "You are the implementation-orchestrator coordinating task implementation.
 
         **IMPORTANT: You are working in a git worktree**
@@ -205,13 +210,66 @@ argument-hint: "[project-slug/task-id] or [project-slug]"
         5. Commit with conventional format
         6. Mark task complete only after ALL gates pass
 
-        **Git Workflow (in worktree):**
-        - Branch: ${BRANCH_NAME} (already checked out)
-        - Commit format: {type}({scope}): {description}
-        - Include Task: ${TASK_ID} in commit body
-
         Return JSON with status, implementation details, verification results, git info."
         ```
+
+        ---
+
+        ## MODE: full-project
+
+        Implement ALL incomplete tasks in the project:
+
+        ```
+        Prompt: "You are the implementation-orchestrator coordinating FULL PROJECT implementation.
+
+        **IMPORTANT: You are working in a git worktree**
+        - Worktree path: .worktrees/${BRANCH_NAME}
+        - All file operations happen here, NOT in main repo
+        - Commits go to branch: ${BRANCH_NAME}
+
+        **Project Information:**
+        - Project: ${PROJECT_SLUG}
+        - Spec: .hyper/projects/${PROJECT_SLUG}/_project.mdx
+        - Tasks Directory: .hyper/projects/${PROJECT_SLUG}/tasks/
+        - Research: .hyper/projects/${PROJECT_SLUG}/resources/research/
+
+        **Your Job - Implement ALL Tasks:**
+        1. Read project spec to understand the full scope
+        2. List all tasks and their dependencies (depends_on field)
+        3. Build dependency graph and determine execution order
+        4. For EACH incomplete task (status != 'complete'), in order:
+           a. Check dependencies are complete first
+           b. Update task status to 'in-progress'
+           c. Read task requirements
+           d. Spawn sub-agents as needed (backend, frontend, test)
+           e. Implement the task
+           f. Run verification gates
+           g. Mark task complete
+           h. Commit changes
+           i. Move to next task
+        5. After all tasks complete, mark project as 'qa' for final verification
+
+        **Dependency Resolution:**
+        - Tasks with depends_on must wait for those tasks to complete
+        - If a dependency is blocked/failed, skip dependent tasks
+
+        **Git Workflow (in worktree):**
+        - Branch: ${BRANCH_NAME} (already checked out)
+        - One commit per task OR squash at end
+        - Commit format: {type}({scope}): {description}
+
+        Return JSON:
+        {
+          'status': 'complete' | 'partial' | 'blocked',
+          'project': '${PROJECT_SLUG}',
+          'tasks_completed': [...],
+          'tasks_remaining': [...],
+          'verification': {...},
+          'git': {...}
+        }"
+        ```
+
+        ---
 
         Wait for orchestrator to complete before proceeding.
       </instructions>
