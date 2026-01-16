@@ -90,7 +90,7 @@
             <h3><i class="fa-solid fa-triangle-exclamation"></i> Breaking Changes</h3>
             <h4>Local-First Architecture</h4>
             <ul>
-              <li>Default backend changed from Linear CLI to local <code>.hyper/</code> directory</li>
+              <li>Default backend changed from Linear CLI to local <code>$HYPER_WORKSPACE_ROOT/</code> directory</li>
               <li>All planning, implementation, and verification now writes to local files</li>
               <li>Linear integration is no longer the default (plugin works standalone)</li>
             </ul>
@@ -101,7 +101,7 @@
 
             <h4>New Skill: hyper-local</h4>
             <ul>
-              <li>Complete guidance for <code>.hyper/</code> directory operations</li>
+              <li>Complete guidance for <code>$HYPER_WORKSPACE_ROOT/</code> directory operations</li>
               <li>Intake routing for different request types</li>
               <li>File operations reference with examples</li>
               <li>Template system documentation</li>
@@ -110,7 +110,7 @@
 
             <h4>New Commands (2)</h4>
             <ul>
-              <li><strong><code>/hyper-init</code></strong> - Initialize <code>.hyper/</code> workspace structure with templates</li>
+              <li><strong><code>/hyper-init</code></strong> - Initialize <code>$HYPER_WORKSPACE_ROOT/</code> workspace structure with templates</li>
               <li><strong><code>/hyper-status</code></strong> - View project and task status from CLI</li>
             </ul>
 
@@ -126,8 +126,8 @@
 
             <h4>Validation Hooks</h4>
             <ul>
-              <li>PostToolUse hook validates <code>.hyper/</code> file frontmatter on Write/Edit</li>
-              <li>SessionStart hook checks for <code>.hyper/</code> existence and structure</li>
+              <li>PostToolUse hook validates <code>$HYPER_WORKSPACE_ROOT/</code> file frontmatter on Write/Edit</li>
+              <li>SessionStart hook checks for <code>$HYPER_WORKSPACE_ROOT/</code> existence and structure</li>
               <li><code>validate-hyper-file.py</code> - Python validation script for frontmatter schema</li>
             </ul>
           </div>
@@ -137,7 +137,7 @@
 
             <h4>hyper-plan: Local File Operations</h4>
             <ul>
-              <li>Creates project directory in <code>.hyper/projects/{slug}/</code></li>
+              <li>Creates project directory in <code>$HYPER_WORKSPACE_ROOT/projects/{slug}/</code></li>
               <li>Writes research findings to <code>resources/research/</code></li>
               <li>Creates <code>specification.md</code> with full spec</li>
               <li>Creates task files in <code>tasks/</code> after approval</li>
@@ -145,7 +145,7 @@
 
             <h4>hyper-implement: Local File Operations</h4>
             <ul>
-              <li>Reads tasks from <code>.hyper/projects/{project}/tasks/</code></li>
+              <li>Reads tasks from <code>$HYPER_WORKSPACE_ROOT/projects/{project}/tasks/</code></li>
               <li>Updates task status by editing frontmatter</li>
               <li>Tracks implementation progress in task content</li>
               <li>Creates fix tasks as new files when verification fails</li>
@@ -155,7 +155,7 @@
             <ul>
               <li>All research agents now include HYPER INTEGRATION section</li>
               <li>Agents return structured JSON for parent agent synthesis</li>
-              <li>Output written to <code>.hyper/projects/{slug}/resources/research/</code></li>
+              <li>Output written to <code>$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/</code></li>
             </ul>
           </div>
 
@@ -164,8 +164,8 @@
             <h4>Hyper Control UI</h4>
             <ul>
               <li>Compatible with Hyper Control desktop app (optional)</li>
-              <li>Hyper Control watches <code>.hyper/</code> via file watcher</li>
-              <li>TanStack DB syncs from <code>.hyper/</code> files</li>
+              <li>Hyper Control watches <code>$HYPER_WORKSPACE_ROOT/</code> via file watcher</li>
+              <li>TanStack DB syncs from <code>$HYPER_WORKSPACE_ROOT/</code> files</li>
               <li>Plugin works standalone without Hyper Control</li>
             </ul>
           </div>
@@ -194,7 +194,7 @@
             <h4>linear-cli-expert Skill</h4>
             <ul>
               <li>Removed Linear CLI integration skill - plugin is now fully local-first</li>
-              <li>All workflow operations use <code>.hyper/</code> directory instead of Linear</li>
+              <li>All workflow operations use <code>$HYPER_WORKSPACE_ROOT/</code> directory instead of Linear</li>
             </ul>
           </div>
         </section>

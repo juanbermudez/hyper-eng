@@ -79,7 +79,7 @@
           <div class="callout-content">
             <h4>Local-First with Optional Linear Integration</h4>
             <p>
-              These commands use the local <code>.hyper/</code> directory for project management by default. Run <code>/hyper-init</code> to set up your workspace. Optionally, you can still use Linear CLI for integration if you have it installed and authenticated.
+              These commands use the local <code>$HYPER_WORKSPACE_ROOT/</code> directory for project management by default. Run <code>/hyper-init</code> to set up your workspace. Optionally, you can still use Linear CLI for integration if you have it installed and authenticated.
             </p>
           </div>
         </div>
@@ -95,20 +95,20 @@
               <span class="command-type-badge">setup</span>
             </div>
             <p class="command-detail-description">
-              Initialize the <code>.hyper/</code> workspace structure in your project. Creates the directory layout, workspace.json, and optionally copies templates.
+              Initialize the <code>$HYPER_WORKSPACE_ROOT/</code> workspace structure in your project. Creates the directory layout, workspace.json, and optionally copies templates.
             </p>
             <h4>Directory Structure Created</h4>
-            <pre><code>.hyper/
+            <pre><code>$HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace configuration
 ├── initiatives/             # Strategic groupings
 ├── projects/                # Active projects
 └── docs/                    # Standalone documentation</code></pre>
             <h4>Workflow</h4>
             <ol>
-              <li><strong>Check Existing</strong> - Verify if .hyper/ already exists</li>
+              <li><strong>Check Existing</strong> - Verify if $HYPER_WORKSPACE_ROOT/ already exists</li>
               <li><strong>Create Structure</strong> - Create directories and workspace.json</li>
               <li><strong>Optional Templates</strong> - Ask if user wants to copy templates for customization</li>
-              <li><strong>Gitignore</strong> - Suggest adding .hyper/ to .gitignore if not tracking</li>
+              <li><strong>Gitignore</strong> - Suggest adding $HYPER_WORKSPACE_ROOT/ to .gitignore if not tracking</li>
             </ol>
             <div class="card-code-block">
               <pre><code>/hyper-init</code></pre>
@@ -180,10 +180,10 @@
                   <li><strong>Open Questions</strong> - Must ALL be resolved before approval</li>
                 </ul>
               </li>
-              <li><strong>Project Creation</strong> - Create project in <code>.hyper/projects/{slug}/</code> with specification.md</li>
+              <li><strong>Project Creation</strong> - Create project in <code>$HYPER_WORKSPACE_ROOT/projects/{slug}/</code> with specification.md</li>
               <li><strong>🚦 Gate 2: Spec Approval</strong> - Set status to "review" and STOP. Wait for human approval. Do NOT create tasks yet.</li>
               <li><strong>Iteration (Optional)</strong> - Update spec based on feedback, return to review gate</li>
-              <li><strong>Task Breakdown (After Approval)</strong> - Create task files in <code>.hyper/projects/{slug}/tasks/</code></li>
+              <li><strong>Task Breakdown (After Approval)</strong> - Create task files in <code>$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/</code></li>
             </ol>
             <div class="card-code-block">
               <pre><code>/hyper-plan "Add user authentication with OAuth"</code></pre>
@@ -211,7 +211,7 @@
             <p><code>[task-id or project-slug]</code></p>
             <h4>Workflow</h4>
             <ol>
-              <li><strong>Initialization</strong> - Retrieve task details and project spec from <code>.hyper/</code></li>
+              <li><strong>Initialization</strong> - Retrieve task details and project spec from <code>$HYPER_WORKSPACE_ROOT/</code></li>
               <li><strong>Branch Setup</strong> - Optionally use git-worktree for isolated work or create branch normally</li>
               <li><strong>Status Update</strong> - Update task frontmatter status to "in-progress"</li>
               <li><strong>Codebase Understanding</strong> - Read all mentioned files completely, identify verification commands</li>

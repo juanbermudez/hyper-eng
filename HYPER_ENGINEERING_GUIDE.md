@@ -26,7 +26,7 @@ The hyper-engineering workflow inverts traditional development:
 1. **Research First** - 4 specialized agents explore codebase, docs, and best practices in parallel
 2. **Spec Before Code** - Human approval required before any tasks are created
 3. **Verification Always** - Every implementation goes through automated + manual verification
-4. **Local-First** - All state lives in `.hyper/` directory (works offline, no external dependencies)
+4. **Local-First** - All state lives in `$HYPER_WORKSPACE_ROOT/` directory (works offline, no external dependencies)
 
 ---
 
@@ -53,7 +53,7 @@ claude /plugin install hyper-engineering
 After running `/hyper-init`, your project will have:
 
 ```
-.hyper/
+$HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace configuration
 ├── initiatives/             # Strategic groupings
 │   └── {slug}.mdx
@@ -94,10 +94,10 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 ### `/hyper-init`
 
-**Purpose:** Initialize `.hyper/` workspace structure with templates.
+**Purpose:** Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure with templates.
 
 **What it does:**
-1. Creates `.hyper/` directory structure
+1. Creates `$HYPER_WORKSPACE_ROOT/` directory structure
 2. Copies template files for projects, tasks, initiatives
 3. Creates `workspace.json` configuration
 4. Sets up resource directories
@@ -116,7 +116,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 **Purpose:** View project and task status from CLI.
 
 **What it does:**
-1. Reads all projects from `.hyper/projects/`
+1. Reads all projects from `$HYPER_WORKSPACE_ROOT/projects/`
 2. Parses frontmatter to get status, priority, dates
 3. Displays overview or detailed project view
 4. Shows task progress and blockers
@@ -164,7 +164,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 3. **Approval Gate** - Presents spec for human approval
 
-4. **Task Creation** - After approval, creates task files in `.hyper/projects/{slug}/tasks/`
+4. **Task Creation** - After approval, creates task files in `$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/`
 
 **Usage:**
 ```bash
@@ -172,10 +172,10 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 ```
 
 **Output:**
-- `.hyper/projects/user-auth/project.mdx`
-- `.hyper/projects/user-auth/specification.md`
-- `.hyper/projects/user-auth/resources/research/*.md`
-- `.hyper/projects/user-auth/tasks/*.mdx` (after approval)
+- `$HYPER_WORKSPACE_ROOT/projects/user-auth/project.mdx`
+- `$HYPER_WORKSPACE_ROOT/projects/user-auth/specification.md`
+- `$HYPER_WORKSPACE_ROOT/projects/user-auth/resources/research/*.md`
+- `$HYPER_WORKSPACE_ROOT/projects/user-auth/tasks/*.mdx` (after approval)
 
 ---
 
@@ -184,7 +184,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 **Purpose:** Implement a task with verification loop.
 
 **What it does:**
-1. Reads task from `.hyper/projects/{project}/tasks/{task}.mdx`
+1. Reads task from `$HYPER_WORKSPACE_ROOT/projects/{project}/tasks/{task}.mdx`
 2. Reads project spec and codebase patterns
 3. Implements following existing conventions
 4. Uses `git-worktree` skill for isolated development (optional)
@@ -467,7 +467,7 @@ claude agent web-app-debugger "Login button not responding when clicked"
 
 ### `hyper-local`
 
-**Purpose:** Expert guidance for `.hyper/` directory operations.
+**Purpose:** Expert guidance for `$HYPER_WORKSPACE_ROOT/` directory operations.
 
 **What it provides:**
 - Directory structure documentation
@@ -602,6 +602,6 @@ claude agent best-practices-researcher "Form validation best practices"
 ## Version History
 
 - **2.1.0** (2025-12-29): Added web-app-debugger agent, removed Playwright MCP, added AskUserQuestion protocol, added framework doc URLs
-- **2.0.0** (2025-12-28): Local-first architecture with .hyper/ directory
+- **2.0.0** (2025-12-28): Local-first architecture with $HYPER_WORKSPACE_ROOT/ directory
 - **1.1.0** (2025-12-23): Added Dracula statusline, two-gate approval
 - **1.0.0** (2025-12-22): Initial release

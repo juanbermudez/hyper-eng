@@ -52,7 +52,7 @@ In Claude Code, run these slash commands:
                           │                   │                  │
                           ▼                   ▼                  ▼
                     ┌─────────────────────────────────────────────────┐
-                    │               .hyper/ DIRECTORY                  │
+                    │               $HYPER_WORKSPACE_ROOT/ DIRECTORY                  │
                     │    Projects • Specs • Tasks • Status Updates     │
                     └─────────────────────────────────────────────────┘
 ```
@@ -61,7 +61,7 @@ In Claude Code, run these slash commands:
 
 | Command | Description |
 |---------|-------------|
-| `/hyper-init` | Initialize `.hyper/` workspace structure |
+| `/hyper-init` | Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure |
 | `/hyper-plan` | Research → Spec → Approval → Tasks |
 | `/hyper-implement` | Execute a task with verification loops |
 | `/hyper-verify` | Run slop detection + automated checks + manual verification |
@@ -113,7 +113,7 @@ Tasks and projects include a `qa` status for quality assurance:
 
 Code is disposable. It can be regenerated, refactored, rewritten. Specifications capture intent, decisions, and rationale. They're the permanent artifact.
 
-Hyper-Engineering treats specs as the source of truth. The local `.hyper/` directory holds everything—projects, documents, tasks, status. Code is just an implementation detail.
+Hyper-Engineering treats specs as the source of truth. The local `$HYPER_WORKSPACE_ROOT/` directory holds everything—projects, documents, tasks, status. Code is just an implementation detail.
 
 ## Contributing
 

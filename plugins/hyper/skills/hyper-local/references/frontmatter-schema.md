@@ -1,6 +1,6 @@
 # Frontmatter Schema Reference
 
-All `.hyper/` documents use YAML frontmatter with specific fields. This schema is compatible with Hyper Control's TanStack DB collections.
+All `$HYPER_WORKSPACE_ROOT/` documents use YAML frontmatter with specific fields. This schema is compatible with Hyper Control's TanStack DB collections.
 
 ## ID Naming Convention
 
@@ -36,7 +36,7 @@ Format: `{project-initials}-{3-digit-number}`
 **Finding the next task number:**
 ```bash
 # Get highest task number for a project
-PROJECT_DIR=".hyper/projects/${PROJECT_SLUG}"
+PROJECT_DIR="$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}"
 INITIALS="[derived-initials]"
 
 # Find existing task files and extract numbers
@@ -63,14 +63,14 @@ This keeps filenames short while IDs remain unique across projects.
 ### Examples
 
 ```yaml
-# Project: .hyper/projects/user-auth/_project.mdx
+# Project: $HYPER_WORKSPACE_ROOT/projects/user-auth/_project.mdx
 ---
 id: proj-user-auth
 title: "User Authentication"
 type: project
 ---
 
-# Task: .hyper/projects/user-auth/tasks/task-001.mdx
+# Task: $HYPER_WORKSPACE_ROOT/projects/user-auth/tasks/task-001.mdx
 ---
 id: ua-001
 title: "Phase 1: OAuth Setup"
@@ -78,7 +78,7 @@ type: task
 parent: proj-user-auth
 ---
 
-# Task: .hyper/projects/user-auth/tasks/task-002.mdx
+# Task: $HYPER_WORKSPACE_ROOT/projects/user-auth/tasks/task-002.mdx
 ---
 id: ua-002
 title: "Phase 2: Session Management"
@@ -405,7 +405,7 @@ activity:
 
 For Claude Code sessions, activity is tracked automatically:
 
-1. **PostToolUse hook** triggers on Write/Edit operations to `.hyper/` files
+1. **PostToolUse hook** triggers on Write/Edit operations to `$HYPER_WORKSPACE_ROOT/` files
 2. **Hook script** (`track-activity.sh`) extracts session_id from hook payload
 3. **Hyper CLI** appends activity entry to frontmatter
 
@@ -418,7 +418,7 @@ For user-initiated activities (comments, status changes from UI):
 ```bash
 # Add a comment
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
-  --file ".hyper/projects/my-project/tasks/task-001.mdx" \
+  --file "$HYPER_WORKSPACE_ROOT/projects/my-project/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \
   --actor-name "Juan Bermudez" \
@@ -426,7 +426,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
 
 # Add an activity entry
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity add \
-  --file ".hyper/projects/my-project/tasks/task-001.mdx" \
+  --file "$HYPER_WORKSPACE_ROOT/projects/my-project/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \
   --actor-name "Juan Bermudez" \

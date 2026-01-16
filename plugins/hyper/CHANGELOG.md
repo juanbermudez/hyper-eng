@@ -81,8 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Bug fixes with root cause analysis
   - Patterns and reusable approaches
   - Gotchas that blocked progress
-- Creates solution docs in `.hyper/docs/solutions/{category}/`
-- Detects recurring patterns and creates `.hyper/docs/patterns/` docs
+- Creates solution docs in `$HYPER_WORKSPACE_ROOT/docs/solutions/{category}/`
+- Detects recurring patterns and creates `$HYPER_WORKSPACE_ROOT/docs/patterns/` docs
 - Philosophy: "Each unit of work should make subsequent units easier"
 
 **Solution Documentation Schema**
@@ -93,7 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 **Command Cleanup (3 commands removed)**
-- `/hyper:init` - Removed. `/hyper:plan` now auto-creates `.hyper/` directory when needed.
+- `/hyper:init` - Removed. `/hyper:plan` now auto-creates `$HYPER_WORKSPACE_ROOT/` directory when needed.
 - `/hyper:init-stack` - Removed. Project scaffolding is out of scope; use standard generators.
 - `/hyper:review` - Removed. Code review concepts merged into verification workflow.
 
@@ -241,7 +241,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 
 **Automatic Activity Tracking**
 - New `track-activity.sh` PostToolUse hook script
-- Automatically logs session ID when agents modify `.hyper/*.mdx` files
+- Automatically logs session ID when agents modify `$HYPER_WORKSPACE_ROOT/*.mdx` files
 - Activity entries support session (agent) and user (human) actors
 - Action types: created, modified, commented, status_changed, assigned
 
@@ -393,7 +393,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 ### Added
 
 **Settings & Customization System**
-- New `.hyper/settings/` directory for workflow and agent/command customization
+- New `$HYPER_WORKSPACE_ROOT/settings/` directory for workflow and agent/command customization
 - `workflows.yaml` - Configure project/task workflow stages, quality gates, and tags
 - Agent customization templates (7 YAML files) for all agents
 - Command customization templates (5 YAML files) for major commands
@@ -422,7 +422,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 ### Changed
 
 **hyper-init**
-- Now creates `.hyper/settings/` directory structure
+- Now creates `$HYPER_WORKSPACE_ROOT/settings/` directory structure
 - Creates `workflows.yaml` with default configuration
 - Creates `agents/` and `commands/` subdirectories with README files
 - Optional phase to copy full customization templates
@@ -451,7 +451,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 ### Added
 
 **New Orchestrator Agents (2)**
-- `research-orchestrator` - Coordinates research sub-agents in parallel, synthesizes findings, writes to `.hyper/projects/{slug}/resources/research/`
+- `research-orchestrator` - Coordinates research sub-agents in parallel, synthesizes findings, writes to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
 - `implementation-orchestrator` - Coordinates engineering sub-agents (backend, frontend, test), enforces verification gates, updates task status and implementation logs
 
 **Verification Requirements in Tasks**
@@ -478,7 +478,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 **hyper-plan: Orchestrator Pattern**
 - Now spawns `research-orchestrator` instead of 4 agents directly
 - Orchestrator coordinates parallel research and synthesizes findings
-- Research output explicitly written to `.hyper/projects/{slug}/resources/research/`
+- Research output explicitly written to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
 
 **hyper-implement: Orchestrator Pattern**
 - Now spawns `implementation-orchestrator` for task implementation
@@ -551,21 +551,21 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 ### Breaking Changes
 
 **Local-First Architecture**
-- Default backend changed from Linear CLI to local `.hyper/` directory
+- Default backend changed from Linear CLI to local `$HYPER_WORKSPACE_ROOT/` directory
 - All planning, implementation, and verification now writes to local files
 - Linear integration is no longer the default (plugin works standalone)
 
 ### Added
 
 **New Skill: hyper-local**
-- Complete guidance for `.hyper/` directory operations
+- Complete guidance for `$HYPER_WORKSPACE_ROOT/` directory operations
 - Intake routing for different request types
 - File operations reference with examples
 - Template system documentation
 - Directory structure: `initiatives/`, `projects/{slug}/`, `docs/`, `workspace.json`
 
 **New Commands (2)**
-- `/hyper-init` - Initialize `.hyper/` workspace structure with templates
+- `/hyper-init` - Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure with templates
 - `/hyper-status` - View project and task status from CLI
 
 **Template System (6 templates)**
@@ -577,12 +577,12 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 - `doc.mdx.template` - Standalone documentation
 
 **Validation Hooks**
-- PostToolUse hook validates `.hyper/` file frontmatter on Write/Edit
-- SessionStart hook checks for `.hyper/` existence and structure
+- PostToolUse hook validates `$HYPER_WORKSPACE_ROOT/` file frontmatter on Write/Edit
+- SessionStart hook checks for `$HYPER_WORKSPACE_ROOT/` existence and structure
 - `validate-hyper-file.py` - Python validation script for frontmatter schema
 
 **Skill References (4)**
-- `directory-structure.md` - Complete `.hyper/` layout documentation
+- `directory-structure.md` - Complete `$HYPER_WORKSPACE_ROOT/` layout documentation
 - `frontmatter-schema.md` - Full YAML frontmatter schema reference
 - `template-guide.md` - Template customization guide
 - `workflow-guide.md` - Local mode workflow documentation
@@ -590,35 +590,35 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 ### Changed
 
 **hyper-plan: Local File Operations**
-- Creates project directory in `.hyper/projects/{slug}/`
+- Creates project directory in `$HYPER_WORKSPACE_ROOT/projects/{slug}/`
 - Writes research findings to `resources/research/`
 - Creates `specification.md` with full spec
 - Creates task files in `tasks/` after approval
 - Updates frontmatter status at each workflow transition
 
 **hyper-implement: Local File Operations**
-- Reads tasks from `.hyper/projects/{project}/tasks/`
+- Reads tasks from `$HYPER_WORKSPACE_ROOT/projects/{project}/tasks/`
 - Updates task status by editing frontmatter
 - Tracks implementation progress in task content
 - Creates fix tasks as new files when verification fails
 
 **hyper-verify: Local File Operations**
-- Creates verification tasks in `.hyper/projects/{project}/tasks/`
+- Creates verification tasks in `$HYPER_WORKSPACE_ROOT/projects/{project}/tasks/`
 - Tracks verification results in task content
 - Creates fix tasks for failed verifications
 
 **Research Agents (4)**
 - All research agents now include HYPER INTEGRATION section
 - Agents return structured JSON for parent agent synthesis
-- Output written to `.hyper/projects/{slug}/resources/research/`
+- Output written to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
 - Updated: repo-research-analyst, best-practices-researcher, framework-docs-researcher, git-history-analyzer
 
 ### Compatibility
 
 **Hyper Control UI**
 - Compatible with Hyper Control desktop app (optional)
-- Hyper Control watches `.hyper/` via file watcher
-- TanStack DB syncs from `.hyper/` files
+- Hyper Control watches `$HYPER_WORKSPACE_ROOT/` via file watcher
+- TanStack DB syncs from `$HYPER_WORKSPACE_ROOT/` files
 - Plugin works standalone without Hyper Control
 
 ### Summary
@@ -635,7 +635,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 
 **linear-cli-expert Skill**
 - Removed Linear CLI integration skill - plugin is now fully local-first
-- All workflow operations use `.hyper/` directory instead of Linear
+- All workflow operations use `$HYPER_WORKSPACE_ROOT/` directory instead of Linear
 
 ---
 

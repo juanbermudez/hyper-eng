@@ -1,11 +1,11 @@
-# .hyper/ Directory Structure
+# $HYPER_WORKSPACE_ROOT/ Directory Structure
 
-The `.hyper/` directory is a local file-based project management system compatible with Hyper Control UI.
+The `$HYPER_WORKSPACE_ROOT/` directory is a local file-based project management system compatible with Hyper Control UI.
 
 ## Complete Structure
 
 ```
-.hyper/
+$HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace metadata
 ├── templates/               # Custom templates (optional)
 │   └── *.template
@@ -193,32 +193,32 @@ tags:
 ### Initialize Workspace
 
 ```bash
-mkdir -p .hyper/{initiatives,projects,docs}
-echo '{"workspacePath": "'$(pwd)'", "name": "Project", "created": "'$(date +%Y-%m-%d)'"}' > .hyper/workspace.json
+mkdir -p $HYPER_WORKSPACE_ROOT/{initiatives,projects,docs}
+echo '{"workspacePath": "'$(pwd)'", "name": "Project", "created": "'$(date +%Y-%m-%d)'"}' > $HYPER_WORKSPACE_ROOT/workspace.json
 ```
 
 ### Create Project
 
 ```bash
 PROJECT_SLUG="auth-system"
-mkdir -p ".hyper/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
+mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
 ```
 
 ### List Projects
 
 ```bash
-ls -d .hyper/projects/*/
+ls -d $HYPER_WORKSPACE_ROOT/projects/*/
 ```
 
 ### List Tasks
 
 ```bash
-ls .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx
+ls $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/task-*.mdx
 ```
 
 ### Get Next Task Number
 
 ```bash
-TASK_COUNT=$(ls .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx 2>/dev/null | wc -l)
+TASK_COUNT=$(ls $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/task-*.mdx 2>/dev/null | wc -l)
 NEXT_NUM=$(printf "%03d" $((TASK_COUNT + 1)))
 ```

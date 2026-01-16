@@ -1,12 +1,12 @@
 # Hyper-Engineering Workflow Guide (Local Mode)
 
-The hyper-engineering workflow uses local `.hyper/` files as the source of truth, with optional Hyper Control UI for visual project management.
+The hyper-engineering workflow uses local `$HYPER_WORKSPACE_ROOT/` files as the source of truth, with optional Hyper Control UI for visual project management.
 
 ## Philosophy
 
 **Specs matter more than code. Code is disposable; specifications are the source of truth.**
 
-All planning artifacts are stored locally in `.hyper/`:
+All planning artifacts are stored locally in `$HYPER_WORKSPACE_ROOT/`:
 - Version controllable via git
 - Works offline without external services
 - Real-time sync with Hyper Control UI (when running)
@@ -30,7 +30,7 @@ planned → todo → in-progress → qa → complete/completed
 
 | Command | Purpose |
 |---------|---------|
-| `/hyper-init` | Initialize .hyper/ directory structure |
+| `/hyper-init` | Initialize $HYPER_WORKSPACE_ROOT/ directory structure |
 | `/hyper-plan` | Research → create spec → approval → create tasks |
 | `/hyper-implement` | Implement task with verification loop |
 | `/hyper-verify` | Run comprehensive verification |
@@ -47,7 +47,7 @@ planned → todo → in-progress → qa → complete/completed
 
 Creates:
 ```
-.hyper/
+$HYPER_WORKSPACE_ROOT/
 ├── workspace.json
 ├── initiatives/
 ├── projects/
@@ -70,7 +70,7 @@ Creates:
   - best-practices-researcher
   - framework-docs-researcher
   - git-history-analyzer
-- Writes findings to `.hyper/projects/{slug}/resources/research/`
+- Writes findings to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
 
 **Phase 3: Direction Check (Gate 1)**
 - Presents brief summary for early validation
@@ -99,7 +99,7 @@ Creates:
 ```
 
 **Initialization**
-- Reads task from `.hyper/projects/{project}/tasks/task-001.mdx`
+- Reads task from `$HYPER_WORKSPACE_ROOT/projects/{project}/tasks/task-001.mdx`
 - Reads project spec for context
 - Checks dependencies are complete
 
@@ -174,7 +174,7 @@ Creates:
 
 ```bash
 PROJECT_SLUG="auth-system"
-mkdir -p ".hyper/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
+mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
 # Write _project.mdx with project template
 ```
 
@@ -204,7 +204,7 @@ TASK_NUM=$(printf "%03d" $(($(ls tasks/task-*.mdx 2>/dev/null | wc -l) + 1)))
 
 When Hyper Control is running:
 
-1. **Automatic sync** - File watcher monitors `.hyper/`
+1. **Automatic sync** - File watcher monitors `$HYPER_WORKSPACE_ROOT/`
 2. **Real-time UI** - Changes appear immediately
 3. **Visual management** - Browse projects, tasks, docs
 4. **Search & filter** - Find documents quickly
@@ -214,7 +214,7 @@ When Hyper Control is running:
 
 Works without Hyper Control:
 
-1. **Local files** - All artifacts in `.hyper/`
+1. **Local files** - All artifacts in `$HYPER_WORKSPACE_ROOT/`
 2. **Git tracked** - Version control everything
 3. **Offline** - No network required
 4. **Any editor** - View/edit with any tool
@@ -229,7 +229,7 @@ Works without Hyper Control:
 
 ## Troubleshooting
 
-### No .hyper/ directory
+### No $HYPER_WORKSPACE_ROOT/ directory
 
 ```bash
 /hyper-init
@@ -253,5 +253,5 @@ After 3 attempts:
 ### Hyper Control not syncing
 
 - Check file watcher is running
-- Verify `.hyper/` path is correct
+- Verify `$HYPER_WORKSPACE_ROOT/` path is correct
 - Restart Hyper Control

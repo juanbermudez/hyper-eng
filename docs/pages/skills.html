@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Skill Reference - Hyper-Engineering</title>
-  <meta content="Complete reference for all 3 skills in the Hyper-Engineering plugin. Includes hyper-local for .hyper/ operations." name="description" />
+  <meta content="Complete reference for all 3 skills in the Hyper-Engineering plugin. Includes hyper-local for $HYPER_WORKSPACE_ROOT/ operations." name="description" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -71,7 +71,7 @@
       <article class="docs-article">
         <h1><i class="fa-solid fa-wand-magic-sparkles color-accent"></i> Skill Reference</h1>
         <p class="lead">
-          Skills are specialized knowledge that commands and agents can tap into. The 3 core skills provide essential expertise for the hyper-engineering workflow: .hyper/ directory operations, git worktree management, and problem documentation. They're invoked automatically when needed or called explicitly.
+          Skills are specialized knowledge that commands and agents can tap into. The 3 core skills provide essential expertise for the hyper-engineering workflow: $HYPER_WORKSPACE_ROOT/ directory operations, git worktree management, and problem documentation. They're invoked automatically when needed or called explicitly.
         </p>
 
         <div class="usage-box">
@@ -109,11 +109,11 @@ skill: compound-docs</code></pre>
               <span class="skill-badge">Workflow</span>
             </div>
             <p class="skill-detail-description">
-              Expert guidance for .hyper/ directory operations and local-first development. This skill provides templates, frontmatter schemas, workflow guidance, and file operations reference for the local workspace.
+              Expert guidance for $HYPER_WORKSPACE_ROOT/ directory operations and local-first development. This skill provides templates, frontmatter schemas, workflow guidance, and file operations reference for the local workspace.
             </p>
             <h4>What This Skill Provides</h4>
             <ul>
-              <li><strong>Directory Structure</strong> - Complete reference for .hyper/ layout (initiatives, projects, docs)</li>
+              <li><strong>Directory Structure</strong> - Complete reference for $HYPER_WORKSPACE_ROOT/ layout (initiatives, projects, docs)</li>
               <li><strong>Frontmatter Schema</strong> - Full YAML frontmatter schema for all document types</li>
               <li><strong>Template System</strong> - Customizable templates for projects, tasks, initiatives, resources, docs</li>
               <li><strong>Workflow Guidance</strong> - Intake routing, status transitions, and file operations</li>
@@ -131,14 +131,14 @@ skill: compound-docs</code></pre>
             <h4>Example Operations</h4>
             <div class="card-code-block">
               <pre><code># Create project directory
-mkdir -p .hyper/projects/auth-feature/tasks
-mkdir -p .hyper/projects/auth-feature/resources/research
+mkdir -p $HYPER_WORKSPACE_ROOT/projects/auth-feature/tasks
+mkdir -p $HYPER_WORKSPACE_ROOT/projects/auth-feature/resources/research
 
 # Write project file with frontmatter
-Write .hyper/projects/auth-feature/project.mdx
+Write $HYPER_WORKSPACE_ROOT/projects/auth-feature/project.mdx
 
 # Read all tasks for a project
-Glob .hyper/projects/auth-feature/tasks/*.mdx</code></pre>
+Glob $HYPER_WORKSPACE_ROOT/projects/auth-feature/tasks/*.mdx</code></pre>
             </div>
           </div>
 
@@ -264,7 +264,7 @@ tags: [n-plus-one, eager-loading, performance]
           <div class="callout-content">
             <h4>Skills Power the Hyper Workflow</h4>
             <p>
-              These 3 skills work together across the hyper commands: <strong>hyper-local</strong> guides .hyper/ directory operations, <strong>git-worktree</strong> enables parallel development, and <strong>compound-docs</strong> captures knowledge as you solve problems. They're the foundation that makes spec-driven development systematic and repeatable.
+              These 3 skills work together across the hyper commands: <strong>hyper-local</strong> guides $HYPER_WORKSPACE_ROOT/ directory operations, <strong>git-worktree</strong> enables parallel development, and <strong>compound-docs</strong> captures knowledge as you solve problems. They're the foundation that makes spec-driven development systematic and repeatable.
             </p>
           </div>
         </div>

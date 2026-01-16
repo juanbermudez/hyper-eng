@@ -47,9 +47,9 @@ stacks:
     additional_templates:
       # Example:
       # - source: "templates/component.tsx.template"
-      #   destination: ".hyper/templates/component.tsx"
+      #   destination: "$HYPER_WORKSPACE_ROOT/templates/component.tsx"
       # - source: "templates/hook.ts.template"
-      #   destination: ".hyper/templates/hook.ts"
+      #   destination: "$HYPER_WORKSPACE_ROOT/templates/hook.ts"
 
   python:
     # Override default commands

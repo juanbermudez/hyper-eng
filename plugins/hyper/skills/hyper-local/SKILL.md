@@ -1,6 +1,6 @@
 ---
 name: hyper-local
-description: This skill provides expert guidance for spec-driven development using local .hyper/ directory structure. Use when orchestrating research, planning, and implementation workflows with local files as the source of truth. Compatible with Hyper Control UI.
+description: This skill provides expert guidance for spec-driven development using local $HYPER_WORKSPACE_ROOT/ directory structure. Use when orchestrating research, planning, and implementation workflows with local files as the source of truth. Compatible with Hyper Control UI.
 model: sonnet
 allowed-tools:
   - Read
@@ -16,7 +16,7 @@ allowed-tools:
 <skill name="hyper-local">
 
 <description>
-Expert guidance for spec-driven development with local file-based project management. Uses the .hyper/ directory structure compatible with Hyper Control UI. Orchestrates research, planning, and implementation workflows using specialized sub-agents with local files as the single source of truth.
+Expert guidance for spec-driven development with local file-based project management. Uses the $HYPER_WORKSPACE_ROOT/ directory structure compatible with Hyper Control UI. Orchestrates research, planning, and implementation workflows using specialized sub-agents with local files as the single source of truth.
 </description>
 
 <intake>
@@ -48,7 +48,7 @@ Please select an option or describe what you need.
 
 <context>
 <hyper_directory_reference>
-The .hyper/ directory is the local file-based alternative to Linear CLI.
+The $HYPER_WORKSPACE_ROOT/ directory is the local file-based alternative to Linear CLI.
 
 **Full documentation:**
 - [directory-structure.md](./references/directory-structure.md) - Complete directory layout
@@ -59,7 +59,7 @@ The .hyper/ directory is the local file-based alternative to Linear CLI.
 ## Directory Structure
 
 ```
-.hyper/
+$HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace metadata
 ├── initiatives/             # High-level strategic groupings
 │   └── *.mdx
@@ -96,8 +96,8 @@ The .hyper/ directory is the local file-based alternative to Linear CLI.
 
 ```bash
 # Initialize workspace
-mkdir -p .hyper/{initiatives,projects,docs}
-echo '{"workspacePath": "'$(pwd)'", "name": "My Project", "created": "'$(date +%Y-%m-%d)'"}' > .hyper/workspace.json
+mkdir -p $HYPER_WORKSPACE_ROOT/{initiatives,projects,docs}
+echo '{"workspacePath": "'$(pwd)'", "name": "My Project", "created": "'$(date +%Y-%m-%d)'"}' > $HYPER_WORKSPACE_ROOT/workspace.json
 
 # Create project (using CLI)
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
@@ -122,11 +122,11 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
 
 ## Activity Tracking
 
-Activity is automatically tracked via PostToolUse hook when agents write to `.hyper/` files.
+Activity is automatically tracked via PostToolUse hook when agents write to `$HYPER_WORKSPACE_ROOT/` files.
 Session IDs are captured and logged in the `activity` array in frontmatter.
 
 **Automatic (agent sessions)**:
-- PostToolUse hook detects Write/Edit to `.hyper/*.mdx`
+- PostToolUse hook detects Write/Edit to `$HYPER_WORKSPACE_ROOT/*.mdx`
 - Hook script calls CLI to append activity entry
 - Session ID and parent session tracked
 
@@ -134,7 +134,7 @@ Session IDs are captured and logged in the `activity` array in frontmatter.
 ```bash
 # Add a comment
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
-  --file ".hyper/projects/auth-system/tasks/task-001.mdx" \
+  --file "$HYPER_WORKSPACE_ROOT/projects/auth-system/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \
   --actor-name "Juan Bermudez" \
@@ -175,7 +175,7 @@ The `qa` status is where quality checks and verification happen:
 ### 1. Research Phase
 - Agent asks clarifying questions (5-7 questions)
 - Parallel sub-agents explore codebase
-- Creates .hyper project directory with research documents
+- Creates $HYPER_WORKSPACE_ROOT project directory with research documents
 - Project status: **planned**
 
 ### 2. Planning Phase
@@ -267,7 +267,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
 
 # For manual comments (user actions):
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
-  --file ".hyper/projects/auth-system/tasks/task-001.mdx" \
+  --file "$HYPER_WORKSPACE_ROOT/projects/auth-system/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \
   --actor-name "Juan Bermudez" \
@@ -278,10 +278,10 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
 
 ```bash
 # Get full task content
-cat ".hyper/projects/${PROJECT_SLUG}/tasks/task-001.mdx"
+cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/task-001.mdx"
 
 # List all tasks with status
-for f in .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx; do
+for f in $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/task-*.mdx; do
   echo "$(basename $f)"
   grep "^status:" "$f"
 done
@@ -292,7 +292,7 @@ done
 ## Template Loading Priority
 
 Templates are loaded in this order:
-1. Workspace templates: `.hyper/templates/*.template`
+1. Workspace templates: `$HYPER_WORKSPACE_ROOT/templates/*.template`
 2. Plugin templates: `templates/hyper/*.template`
 
 ## Available Templates
@@ -322,11 +322,11 @@ Use `{{VARIABLE_NAME}}` for substitution:
 <settings_system>
 ## Settings & Customization
 
-The `.hyper/settings/` directory allows customization of workflows, agents, and commands without modifying plugin files.
+The `$HYPER_WORKSPACE_ROOT/settings/` directory allows customization of workflows, agents, and commands without modifying plugin files.
 
 ### Workflows Configuration
 
-**File:** `.hyper/settings/workflows.yaml`
+**File:** `$HYPER_WORKSPACE_ROOT/settings/workflows.yaml`
 
 Defines project and task workflow stages:
 
@@ -395,12 +395,12 @@ quality_gates:
 
 ### Agent Customization
 
-**Directory:** `.hyper/settings/agents/`
+**Directory:** `$HYPER_WORKSPACE_ROOT/settings/agents/`
 
 Each agent can be customized via YAML file:
 
 ```yaml
-# .hyper/settings/agents/research-orchestrator.yaml
+# $HYPER_WORKSPACE_ROOT/settings/agents/research-orchestrator.yaml
 
 context_additions: |
   - This is a monorepo with packages/ directory
@@ -437,12 +437,12 @@ skip_sub_agents:
 
 ### Command Customization
 
-**Directory:** `.hyper/settings/commands/`
+**Directory:** `$HYPER_WORKSPACE_ROOT/settings/commands/`
 
 Each command can be customized via YAML file:
 
 ```yaml
-# .hyper/settings/commands/hyper-plan.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-plan.yaml
 
 context_additions: |
   - This project follows Domain-Driven Design
@@ -485,7 +485,7 @@ interview:
 
 ### Loading Priority
 
-1. **Workspace settings**: `.hyper/settings/*.yaml` (highest priority)
+1. **Workspace settings**: `$HYPER_WORKSPACE_ROOT/settings/*.yaml` (highest priority)
 2. **Plugin defaults**: Built-in defaults (fallback)
 
 Only specified options are overridden; defaults are preserved for everything else.
@@ -494,7 +494,7 @@ Only specified options are overridden; defaults are preserved for everything els
 
 1. **Start minimal** - Only add customizations you need
 2. **Test changes** - Run a command after customizing
-3. **Version control** - Commit `.hyper/settings/` to share with team
+3. **Version control** - Commit `$HYPER_WORKSPACE_ROOT/settings/` to share with team
 4. **Reset to defaults** - Delete a file to reset that component
 </settings_system>
 </context>
@@ -533,7 +533,7 @@ User: I want to add user authentication with OAuth
 
 Agent:
 1. Runs `/hyper-plan "Add user authentication with OAuth"`
-2. Checks if .hyper/ exists, creates if not
+2. Checks if $HYPER_WORKSPACE_ROOT/ exists, creates if not
 3. Asks clarifying questions:
    - Which OAuth providers? (Google, GitHub, etc.)
    - Session storage approach? (JWT, cookies)
@@ -552,7 +552,7 @@ User: Implement auth-system/task-001
 
 Agent:
 1. Runs `/hyper-implement auth-system/task-001`
-2. Reads task file from `.hyper/projects/auth-system/tasks/task-001.mdx`
+2. Reads task file from `$HYPER_WORKSPACE_ROOT/projects/auth-system/tasks/task-001.mdx`
 3. Reads project spec from `_project.mdx` (inline)
 4. Updates task status via CLI: `todo` → `in-progress`
 5. Implements code following patterns
@@ -572,7 +572,7 @@ Agent:
 
 When Hyper Control (Tauri desktop app) is running:
 
-1. **Automatic sync** - File watcher monitors `.hyper/` for changes
+1. **Automatic sync** - File watcher monitors `$HYPER_WORKSPACE_ROOT/` for changes
 2. **Real-time updates** - All file operations immediately reflected in UI
 3. **No API needed** - Filesystem IS the API
 4. **Search & filter** - Browse projects, tasks, and docs visually
@@ -580,7 +580,7 @@ When Hyper Control (Tauri desktop app) is running:
 
 ## Works Standalone
 
-The .hyper/ workflow works completely without Hyper Control:
+The $HYPER_WORKSPACE_ROOT/ workflow works completely without Hyper Control:
 
 - All planning artifacts are local files
 - Git tracks all changes

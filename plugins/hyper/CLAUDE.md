@@ -1,6 +1,6 @@
 # Hyper-Engineering Plugin Development
 
-A Claude Code plugin for spec-driven development workflows with local `.hyper/` directory management.
+A Claude Code plugin for spec-driven development workflows with local `$HYPER_WORKSPACE_ROOT/` directory management.
 
 ## Claude Code Documentation
 
@@ -38,12 +38,12 @@ plugins/hyper-engineering/
 │   ├── hyper-verify.md          # /hyper-verify - Verification loop
 │   ├── hyper-review.md          # /hyper-review - Code review
 │   ├── hyper-status.md          # /hyper-status - Project status
-│   ├── hyper-init.md            # /hyper-init - Initialize .hyper/
+│   ├── hyper-init.md            # /hyper-init - Initialize $HYPER_WORKSPACE_ROOT/
 │   ├── hyper-init-stack.md      # /hyper-init-stack - Project scaffolding
 │   ├── hyper-statusline-setup.md
 │   └── hyper-statusline-optout.md
 ├── skills/                      # Model-invoked skills (3 skills)
-│   ├── hyper-local/             # .hyper/ directory operations
+│   ├── hyper-local/             # $HYPER_WORKSPACE_ROOT/ directory operations
 │   │   ├── SKILL.md             # Main skill definition
 │   │   └── references/          # Supporting documentation
 │   │       ├── directory-structure.md
@@ -54,7 +54,7 @@ plugins/hyper-engineering/
 │   ├── compound-docs/           # Pattern documentation
 │   └── git-worktree/            # Git worktree management
 ├── templates/                   # Scaffolding templates
-│   ├── hyper/                   # .hyper/ templates
+│   ├── hyper/                   # $HYPER_WORKSPACE_ROOT/ templates
 │   └── stacks/                  # Project stack templates
 ├── CLAUDE.md                    # This file
 ├── README.md                    # User documentation
@@ -276,9 +276,9 @@ Agent system prompt goes here. Include:
 
 ## Integration with Hyper Control
 
-This plugin creates `.hyper/` directory structures that are visualized by the Hyper Control desktop app:
+This plugin creates `$HYPER_WORKSPACE_ROOT/` directory structures that are visualized by the Hyper Control desktop app:
 
-- **Plugin creates**: Projects, tasks, specs, research docs in `.hyper/`
+- **Plugin creates**: Projects, tasks, specs, research docs in `$HYPER_WORKSPACE_ROOT/`
 - **Hyper Control reads**: Displays projects, tasks, status in UI
 - **File system is the API**: No sync needed, changes are immediate
 

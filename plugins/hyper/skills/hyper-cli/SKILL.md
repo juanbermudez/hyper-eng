@@ -1,6 +1,6 @@
 ---
 name: hyper-cli
-description: This skill provides guidance on using the Hyper CLI for programmatic file operations. This skill should be used when agents need to create, read, update, delete, or search files in the .hyper/ directory structure, handle validation errors, or self-correct from structured error responses.
+description: This skill provides guidance on using the Hyper CLI for programmatic file operations. This skill should be used when agents need to create, read, update, delete, or search files in the $HYPER_WORKSPACE_ROOT/ directory structure, handle validation errors, or self-correct from structured error responses.
 model: sonnet
 allowed-tools:
   - Read
@@ -12,7 +12,7 @@ allowed-tools:
 <skill name="hyper-cli">
 
 <description>
-This skill teaches AI agents how to work with the Hyper CLI for programmatic manipulation of `.hyper/` planning documents. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
+This skill teaches AI agents how to work with the Hyper CLI for programmatic manipulation of `$HYPER_WORKSPACE_ROOT/` planning documents. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
 </description>
 
 <context>
@@ -23,11 +23,11 @@ This skill teaches AI agents how to work with the Hyper CLI for programmatic man
 
 | Operation | Resource API (Porcelain) | File API (Plumbing) |
 |-----------|-------------------------|---------------------|
-| List projects | `hyper project list --json` | `hyper file list --path .hyper/projects --file-type project --json` |
-| Create project | `hyper project create --slug x --title "X"` | `hyper file write .hyper/projects/x/_project.mdx --frontmatter "..."` |
-| Update status | `hyper project update x --status in-progress` | `hyper file write .hyper/projects/x/_project.mdx --frontmatter "status=in-progress"` |
-| Read project | `hyper project get x --json` | `hyper file read .hyper/projects/x/_project.mdx --json` |
-| Delete project | `hyper project delete x --force --json` | `hyper file delete .hyper/projects/x --force --json` |
+| List projects | `hyper project list --json` | `hyper file list --path $HYPER_WORKSPACE_ROOT/projects --file-type project --json` |
+| Create project | `hyper project create --slug x --title "X"` | `hyper file write $HYPER_WORKSPACE_ROOT/projects/x/_project.mdx --frontmatter "..."` |
+| Update status | `hyper project update x --status in-progress` | `hyper file write $HYPER_WORKSPACE_ROOT/projects/x/_project.mdx --frontmatter "status=in-progress"` |
+| Read project | `hyper project get x --json` | `hyper file read $HYPER_WORKSPACE_ROOT/projects/x/_project.mdx --json` |
+| Delete project | `hyper project delete x --force --json` | `hyper file delete $HYPER_WORKSPACE_ROOT/projects/x --force --json` |
 | Search | `hyper search "query" --json` | `hyper file search "query" --json` |
 | Task operations | `hyper task list/get/create/update/delete` | `hyper file ...` on task files |
 
@@ -47,7 +47,7 @@ This skill teaches AI agents how to work with the Hyper CLI for programmatic man
 ## Directory Structure
 
 ```
-.hyper/
+$HYPER_WORKSPACE_ROOT/
 ├── workspace.json         # Workspace metadata (PROTECTED - read-only)
 ├── projects/              # Feature projects (PROTECTED - directory itself)
 │   └── {slug}/
@@ -132,7 +132,7 @@ All CLI commands with `--json` flag return structured responses:
 | Code | Exit | Meaning | Action |
 |------|------|---------|--------|
 | `SUCCESS` | 0 | Operation completed | Continue |
-| `WORKSPACE_NOT_FOUND` | 1 | No .hyper/ directory | Run `hyper init` |
+| `WORKSPACE_NOT_FOUND` | 1 | No $HYPER_WORKSPACE_ROOT/ directory | Run `hyper init` |
 | `PROJECT_NOT_FOUND` | 66 | Project doesn't exist | Check slug, create if needed |
 | `TASK_NOT_FOUND` | 66 | Task doesn't exist | Check ID |
 | `FILE_NOT_FOUND` | 66 | File doesn't exist | Check path |
@@ -148,7 +148,7 @@ When receiving a validation error, extract correct values from the error respons
 
 ```bash
 # Step 1: Attempt with invalid status
-hyper file write .hyper/projects/foo/_project.mdx \
+hyper file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
   --frontmatter "id=proj-foo" \
   --frontmatter "title=Foo" \
   --frontmatter "type=project" \
@@ -160,7 +160,7 @@ hyper file write .hyper/projects/foo/_project.mdx \
 # { "error": { "context": { "allowed": ["planning", "todo", ...] } } }
 
 # Step 2: Self-correct using the allowed value
-hyper file write .hyper/projects/foo/_project.mdx \
+hyper file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
   --frontmatter "id=proj-foo" \
   --frontmatter "title=Foo" \
   --frontmatter "type=project" \
@@ -172,20 +172,20 @@ hyper file write .hyper/projects/foo/_project.mdx \
 ## Protected Paths
 
 **CANNOT modify:**
-- `.hyper/workspace.json` (core structure)
-- `.hyper/projects` (directory itself)
-- `.hyper/initiatives` (directory itself)
-- `.hyper/settings` (directory itself)
+- `$HYPER_WORKSPACE_ROOT/workspace.json` (core structure)
+- `$HYPER_WORKSPACE_ROOT/projects` (directory itself)
+- `$HYPER_WORKSPACE_ROOT/initiatives` (directory itself)
+- `$HYPER_WORKSPACE_ROOT/settings` (directory itself)
 
 **CAN create/edit/delete:**
-- `.hyper/projects/{slug}/` (project directories)
-- `.hyper/projects/{slug}/_project.mdx` (project files)
-- `.hyper/projects/{slug}/tasks/*.mdx` (task files)
-- `.hyper/projects/{slug}/resources/**` (resource files)
-- `.hyper/docs/**/*.md` (documentation)
-- `.hyper/settings/workflows.yaml` (workflow config)
-- `.hyper/settings/agents/*.yaml` (agent configs)
-- `.hyper/settings/commands/*.md` (command customizations)
+- `$HYPER_WORKSPACE_ROOT/projects/{slug}/` (project directories)
+- `$HYPER_WORKSPACE_ROOT/projects/{slug}/_project.mdx` (project files)
+- `$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/*.mdx` (task files)
+- `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/**` (resource files)
+- `$HYPER_WORKSPACE_ROOT/docs/**/*.md` (documentation)
+- `$HYPER_WORKSPACE_ROOT/settings/workflows.yaml` (workflow config)
+- `$HYPER_WORKSPACE_ROOT/settings/agents/*.yaml` (agent configs)
+- `$HYPER_WORKSPACE_ROOT/settings/commands/*.md` (command customizations)
 
 ## Common Workflows
 
@@ -201,7 +201,7 @@ hyper project create \
   --json
 
 # Option 2: File API (for full control)
-hyper file write .hyper/projects/my-feature/_project.mdx \
+hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
   --frontmatter "id=proj-my-feature" \
   --frontmatter "title=My Feature" \
   --frontmatter "type=project" \
@@ -219,7 +219,7 @@ hyper file write .hyper/projects/my-feature/_project.mdx \
 hyper project update my-feature --status in-progress
 
 # File API (preserves existing body content)
-hyper file write .hyper/projects/my-feature/_project.mdx \
+hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
   --frontmatter "status=in-progress" \
   --json
 ```
@@ -235,7 +235,7 @@ hyper task create \
   --json
 
 # File API (full control)
-hyper file write .hyper/projects/my-feature/tasks/task-001.mdx \
+hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
   --frontmatter "id=mf-001" \
   --frontmatter "title=Phase 1: Foundation" \
   --frontmatter "type=task" \
@@ -253,7 +253,7 @@ hyper file write .hyper/projects/my-feature/tasks/task-001.mdx \
 hyper task update mf-001 --status in-progress
 
 # File API
-hyper file write .hyper/projects/my-feature/tasks/task-001.mdx \
+hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
   --frontmatter "status=in-progress" \
   --json
 ```
@@ -265,7 +265,7 @@ hyper file write .hyper/projects/my-feature/tasks/task-001.mdx \
 hyper project delete my-feature --force --json
 
 # File API (deletes specific path)
-hyper file delete .hyper/projects/my-feature --force --json
+hyper file delete $HYPER_WORKSPACE_ROOT/projects/my-feature --force --json
 ```
 
 ### Deleting a Task
@@ -275,7 +275,7 @@ hyper file delete .hyper/projects/my-feature --force --json
 hyper task delete mf-001 --force --json
 
 # File API
-hyper file delete .hyper/projects/my-feature/tasks/task-001.mdx --force --json
+hyper file delete $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx --force --json
 ```
 
 ### Searching for Content
@@ -311,16 +311,16 @@ hyper settings workflow set project.stages '["planning", "todo", "in-progress", 
 
 ```bash
 # List files in a directory
-hyper file list --path .hyper/projects --file-type project --recursive --json
+hyper file list --path $HYPER_WORKSPACE_ROOT/projects --file-type project --recursive --json
 
 # Read a file
-hyper file read .hyper/projects/my-feature/_project.mdx --json
+hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --json
 
 # Read only frontmatter
-hyper file read .hyper/projects/my-feature/_project.mdx --frontmatter-only --json
+hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --frontmatter-only --json
 
 # Read only body
-hyper file read .hyper/projects/my-feature/_project.mdx --body-only --json
+hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --body-only --json
 ```
 
 ## Best Practices

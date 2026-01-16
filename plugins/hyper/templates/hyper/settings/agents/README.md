@@ -73,7 +73,7 @@ reason: "Using custom research process"
 ## Example: Customizing the Research Orchestrator
 
 ```yaml
-# .hyper/settings/agents/research-orchestrator.yaml
+# $HYPER_WORKSPACE_ROOT/settings/agents/research-orchestrator.yaml
 
 context_additions: |
   - This is a Ruby on Rails monolith
@@ -95,7 +95,7 @@ skip_sub_agents:
 ## Example: Customizing the Implementation Orchestrator
 
 ```yaml
-# .hyper/settings/agents/implementation-orchestrator.yaml
+# $HYPER_WORKSPACE_ROOT/settings/agents/implementation-orchestrator.yaml
 
 context_additions: |
   - All new code must include JSDoc comments

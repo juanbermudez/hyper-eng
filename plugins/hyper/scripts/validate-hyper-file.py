@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Hyper File Validator
-Validates MDX files in .hyper/ directory for correct frontmatter schema.
+Validates MDX files in the workspace data root for correct frontmatter schema.
 Runs as a PostToolUse hook after Write/Edit operations.
 """
 
@@ -79,20 +79,52 @@ def parse_frontmatter(content: str) -> tuple:
     return frontmatter, body
 
 
+def normalize_path(file_path: str) -> str:
+    return file_path.replace('\\', '/').rstrip('/')
+
+
+def resolve_workspace_root() -> str:
+    root = os.environ.get('HYPER_WORKSPACE_ROOT', '').strip()
+    if not root:
+        return ''
+    return normalize_path(root)
+
+
+WORKSPACE_ROOT = resolve_workspace_root()
+
+
+def is_workspace_file(file_path: str) -> bool:
+    path = normalize_path(file_path)
+    if WORKSPACE_ROOT:
+        return path == WORKSPACE_ROOT or path.startswith(f"{WORKSPACE_ROOT}/")
+    return '/.hyper/' in path
+
+
 def infer_type_from_path(file_path: str) -> str:
     """Derive expected document type from file path."""
-    path = file_path.replace('\\', '/').lower()
+    path = normalize_path(file_path).lower()
+    rel_path = path
 
-    if '/.hyper/initiatives/' in path:
+    if WORKSPACE_ROOT and path.startswith(f"{WORKSPACE_ROOT}/"):
+        rel_path = path[len(WORKSPACE_ROOT) + 1 :]
+    elif '/workspaces/' in path:
+        tail = path.split('/workspaces/', 1)[1]
+        parts = tail.split('/', 1)
+        if len(parts) == 2:
+            rel_path = parts[1]
+    elif '/.hyper/' in path:
+        rel_path = path.split('/.hyper/', 1)[1]
+
+    if rel_path.startswith('initiatives/'):
         return 'initiative'
-    elif '/.hyper/projects/' in path:
-        if path.endswith('/_project.mdx'):
+    elif rel_path.startswith('projects/'):
+        if rel_path.endswith('/_project.mdx'):
             return 'project'
-        elif '/tasks/' in path:
+        elif '/tasks/' in rel_path:
             return 'task'
-        elif '/resources/' in path:
+        elif '/resources/' in rel_path:
             return 'resource'
-    elif '/.hyper/docs/' in path:
+    elif rel_path.startswith('docs/'):
         return 'doc'
 
     return None
@@ -170,9 +202,9 @@ def main():
     tool_input = input_data.get("tool_input", {})
     file_path = tool_input.get("file_path", "")
 
-    # Only validate .hyper/ files
-    if '/.hyper/' not in file_path:
-        sys.exit(0)  # Not a .hyper file, skip
+    # Only validate workspace data files
+    if not is_workspace_file(file_path):
+        sys.exit(0)  # Not a workspace data file, skip
 
     # Only validate MDX/MD files
     if not file_path.endswith(('.mdx', '.md')):

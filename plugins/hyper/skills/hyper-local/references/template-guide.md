@@ -6,7 +6,7 @@ The hyper-local workflow uses templates to generate consistent document structur
 
 Templates are loaded in this order:
 
-1. **Workspace templates**: `.hyper/templates/*.template`
+1. **Workspace templates**: `$HYPER_WORKSPACE_ROOT/templates/*.template`
 2. **Plugin templates**: `templates/hyper/*.template`
 
 This allows project-specific customization while falling back to plugin defaults.
@@ -63,13 +63,13 @@ This allows project-specific customization while falling back to plugin defaults
 ### Step 1: Copy Templates
 
 ```bash
-mkdir -p .hyper/templates
-cp templates/hyper/*.template .hyper/templates/
+mkdir -p $HYPER_WORKSPACE_ROOT/templates
+cp templates/hyper/*.template $HYPER_WORKSPACE_ROOT/templates/
 ```
 
 ### Step 2: Edit Templates
 
-Modify templates in `.hyper/templates/` to match your project's conventions.
+Modify templates in `$HYPER_WORKSPACE_ROOT/templates/` to match your project's conventions.
 
 ### Step 3: Use Custom Templates
 

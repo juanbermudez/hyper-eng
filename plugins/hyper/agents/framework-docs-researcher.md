@@ -194,7 +194,7 @@ When returning results, use this JSON structure:
 
 **HYPER INTEGRATION**
 
-**Output Location:** `.hyper/projects/{slug}/resources/research/framework-docs.md`
+**Output Location:** `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/framework-docs.md`
 
 When called by the research-orchestrator during `/hyper-plan`:
 1. The orchestrator provides you with the project slug and frameworks to research
@@ -204,7 +204,7 @@ When called by the research-orchestrator during `/hyper-plan`:
 
 **When called directly (not via orchestrator):**
 - Ask for the project slug using AskUserQuestion
-- Write directly to `.hyper/projects/{slug}/resources/research/framework-docs.md`
+- Write directly to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/framework-docs.md`
 - Include YAML frontmatter:
   ```yaml
   ---

@@ -27,12 +27,12 @@ Works standalone or with [Hyper Control](https://github.com/juanbermudez/hyper-c
 
 **Specs matter more than code. Code is disposable; specifications are the source of truth.**
 
-The hyper-engineering workflow uses local `.hyper/` directory as the source of truth, with mandatory human review gates and verification loops.
+The hyper-engineering workflow uses local `$HYPER_WORKSPACE_ROOT/` directory as the source of truth, with mandatory human review gates and verification loops.
 
 ### Directory Structure
 
 ```
-.hyper/
+$HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace configuration
 ├── initiatives/             # Strategic groupings
 │   └── {slug}.mdx
@@ -59,10 +59,10 @@ The hyper-engineering workflow uses local `.hyper/` directory as the source of t
 
 | File Type | Filename | Example |
 |-----------|----------|---------|
-| Project | `_project.mdx` | `.hyper/projects/auth-system/_project.mdx` |
-| Task | `task-NNN.mdx` | `.hyper/projects/auth-system/tasks/task-001.mdx` |
-| Initiative | `{slug}.mdx` | `.hyper/initiatives/q1-goals.mdx` |
-| Doc | `{slug}.mdx` | `.hyper/docs/architecture.mdx` |
+| Project | `_project.mdx` | `$HYPER_WORKSPACE_ROOT/projects/auth-system/_project.mdx` |
+| Task | `task-NNN.mdx` | `$HYPER_WORKSPACE_ROOT/projects/auth-system/tasks/task-001.mdx` |
+| Initiative | `{slug}.mdx` | `$HYPER_WORKSPACE_ROOT/initiatives/q1-goals.mdx` |
+| Doc | `{slug}.mdx` | `$HYPER_WORKSPACE_ROOT/docs/architecture.mdx` |
 
 ### Workflow Stages
 
@@ -83,7 +83,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 | Command | Description |
 |---------|-------------|
-| `/hyper-init` | Initialize `.hyper/` workspace structure |
+| `/hyper-init` | Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure |
 | `/hyper-status` | View project and task status from CLI |
 | `/hyper-plan` | Spawn research agents → create spec → wait for approval → create tasks |
 | `/hyper-implement` | Implement task with verification loop |
@@ -113,7 +113,7 @@ The workflow leverages 3 core skills:
 
 | Skill | Used By | Purpose |
 |-------|---------|---------|
-| `hyper-local` | All hyper-* commands | Guidance on `.hyper/` directory operations |
+| `hyper-local` | All hyper-* commands | Guidance on `$HYPER_WORKSPACE_ROOT/` directory operations |
 | `git-worktree` | hyper-implement | Isolated parallel development with Git worktrees |
 | `compound-docs` | hyper-review, hyper-plan | Document recurring patterns and learnings |
 
@@ -138,7 +138,7 @@ The workflow leverages 3 core skills:
 
 ### Settings & Customization
 
-Customize workflows, agents, and commands via `.hyper/settings/`:
+Customize workflows, agents, and commands via `$HYPER_WORKSPACE_ROOT/settings/`:
 
 **Workflows** (`workflows.yaml`):
 ```yaml
@@ -196,7 +196,7 @@ Orchestrators (2), Research agents (4), and Testing agent (1):
 
 | Command | Description |
 |---------|-------------|
-| `/hyper-init` | Initialize `.hyper/` workspace structure with templates |
+| `/hyper-init` | Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure with templates |
 | `/hyper-status` | View project and task status from CLI |
 | `/hyper-plan` | Spawn research agents → create spec → wait for approval → create tasks |
 | `/hyper-implement` | Implement task with verification loop |
@@ -212,7 +212,7 @@ Core skills for the hyper-engineering workflow:
 
 | Skill | Description |
 |-------|-------------|
-| `hyper-local` | Expert guidance for `.hyper/` directory operations and local-first development |
+| `hyper-local` | Expert guidance for `$HYPER_WORKSPACE_ROOT/` directory operations and local-first development |
 | `git-worktree` | Manage Git worktrees for parallel development |
 | `compound-docs` | Capture solved problems as categorized documentation |
 
@@ -262,7 +262,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
 
 Activity is tracked automatically via PostToolUse hook:
 
-1. Agent writes to `.hyper/*.mdx` file
+1. Agent writes to `$HYPER_WORKSPACE_ROOT/*.mdx` file
 2. PostToolUse hook captures session ID
 3. CLI appends activity entry to frontmatter
 
@@ -293,8 +293,8 @@ Then initialize a workspace:
 
 This plugin works standalone, but optionally integrates with [Hyper Control](https://github.com/juanbermudez/hyper-control) desktop app:
 
-- Hyper Control watches `.hyper/` via file watcher
-- TanStack DB syncs from `.hyper/` files
+- Hyper Control watches `$HYPER_WORKSPACE_ROOT/` via file watcher
+- TanStack DB syncs from `$HYPER_WORKSPACE_ROOT/` files
 - Visual project management UI
 - Real-time status updates
 

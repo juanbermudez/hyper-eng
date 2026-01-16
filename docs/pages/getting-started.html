@@ -109,11 +109,11 @@
           </div>
 
           <h3>Step 3: Initialize Workspace</h3>
-          <p>Set up your local <code>.hyper/</code> workspace:</p>
+          <p>Set up your local <code>$HYPER_WORKSPACE_ROOT/</code> workspace:</p>
           <div class="card-code-block">
             <pre><code>/hyper-init</code></pre>
           </div>
-          <p>This creates the <code>.hyper/</code> directory structure where all your specs, tasks, and project docs will live.</p>
+          <p>This creates the <code>$HYPER_WORKSPACE_ROOT/</code> directory structure where all your specs, tasks, and project docs will live.</p>
 
           <h3>Step 4: Verify Installation</h3>
           <p>Check that it worked:</p>
@@ -162,9 +162,9 @@
 # - git-history-analyzer (code evolution)
 
 # Creates:
-# - .hyper/projects/user-auth/project.mdx
-# - .hyper/projects/user-auth/specification.md
-# - .hyper/projects/user-auth/tasks/*.mdx (after approval)</code></pre>
+# - $HYPER_WORKSPACE_ROOT/projects/user-auth/project.mdx
+# - $HYPER_WORKSPACE_ROOT/projects/user-auth/specification.md
+# - $HYPER_WORKSPACE_ROOT/projects/user-auth/tasks/*.mdx (after approval)</code></pre>
           </div>
 
           <h3>Implement a Task</h3>
@@ -176,7 +176,7 @@
 # Uses git-worktree for isolated development
 # Follows patterns from the approved spec
 # Runs verification when complete
-# Updates task status in .hyper/</code></pre>
+# Updates task status in $HYPER_WORKSPACE_ROOT/</code></pre>
           </div>
 
           <h3>Run Parallel Code Review</h3>
@@ -195,7 +195,7 @@ claude agent best-practices-researcher "Find pagination patterns for Rails"</cod
           <h3>Invoke a Skill</h3>
           <p>Skills are like loading a reference book into Claude's brain. When you need deep knowledge in a specific domain:</p>
           <div class="card-code-block">
-            <pre><code># Get guidance on .hyper/ operations
+            <pre><code># Get guidance on $HYPER_WORKSPACE_ROOT/ operations
 skill: hyper-local
 
 # Manage git worktrees for parallel development

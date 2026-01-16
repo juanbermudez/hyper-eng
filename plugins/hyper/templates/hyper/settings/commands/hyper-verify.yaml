@@ -21,7 +21,7 @@ phase_overrides:
       # 3. API server (npm run dev:api)
     instructions_append: |
       # Example:
-      # Save all verification logs to .hyper/logs/verify-{date}.log
+      # Save all verification logs to $HYPER_WORKSPACE_ROOT/logs/verify-{date}.log
 
   # Browser verification phase
   browser_verification:
@@ -190,7 +190,7 @@ on_failure:
 output:
   # Save detailed logs
   save_logs: true
-  log_directory: ".hyper/logs/verification"
+  log_directory: "$HYPER_WORKSPACE_ROOT/logs/verification"
   # Include timing information
   include_timing: true
   # Generate verification report

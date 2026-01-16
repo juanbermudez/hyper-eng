@@ -1,6 +1,6 @@
 # Hyper Templates
 
-Templates for the `.hyper/` directory structure used by the hyper-engineering workflow.
+Templates for the `$HYPER_WORKSPACE_ROOT/` directory structure used by the hyper-engineering workflow.
 
 ## Template Files
 
@@ -19,13 +19,13 @@ To customize templates for your project:
 
 1. Copy default templates to workspace:
    ```bash
-   mkdir -p .hyper/templates
-   cp templates/hyper/*.template .hyper/templates/
+   mkdir -p $HYPER_WORKSPACE_ROOT/templates
+   cp templates/hyper/*.template $HYPER_WORKSPACE_ROOT/templates/
    ```
 
-2. Edit templates in `.hyper/templates/`
+2. Edit templates in `$HYPER_WORKSPACE_ROOT/templates/`
 
-3. Templates in `.hyper/templates/` take priority over plugin defaults
+3. Templates in `$HYPER_WORKSPACE_ROOT/templates/` take priority over plugin defaults
 
 ## Template Variables
 
@@ -127,6 +127,6 @@ summary: string      # Brief description for project cards
 
 ## Integration with Hyper Control
 
-When Hyper Control is running, it watches `.hyper/` for changes. All file operations are immediately reflected in the UI.
+When Hyper Control is running, it watches `$HYPER_WORKSPACE_ROOT/` for changes. All file operations are immediately reflected in the UI.
 
 No special integration needed - the filesystem IS the API.

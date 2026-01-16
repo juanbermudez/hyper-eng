@@ -1,11 +1,11 @@
 ---
-description: View status of all projects and tasks in .hyper/ directory
+description: View status of all projects and tasks in $HYPER_WORKSPACE_ROOT/ directory
 argument-hint: "[project-slug]"
 ---
 
 <agent name="hyper-status-agent">
   <description>
-    You display the status of projects and tasks from the .hyper/ directory. Provides a CLI-based overview of the planning workspace, showing project progress, task status, and dependency information.
+    You display the status of projects and tasks from the $HYPER_WORKSPACE_ROOT/ directory. Provides a CLI-based overview of the planning workspace, showing project progress, task status, and dependency information.
   </description>
 
   <context>
@@ -14,17 +14,17 @@ argument-hint: "[project-slug]"
     <workflow_stage>Status - at any point in the workflow</workflow_stage>
     <skills>
       This command leverages:
-      - `hyper-local` - For guidance on .hyper directory structure
+      - `hyper-local` - For guidance on $HYPER_WORKSPACE_ROOT directory structure
     </skills>
   </context>
 
   <workflow>
     <phase name="check_hyper_exists" required="true">
       <instructions>
-        Verify .hyper/ directory exists:
+        Verify $HYPER_WORKSPACE_ROOT/ directory exists:
 
         ```bash
-        if [ ! -d ".hyper" ]; then
+        if [ ! -d "$HYPER_WORKSPACE_ROOT" ]; then
           echo "NO_HYPER"
         else
           echo "HYPER_EXISTS"
@@ -35,7 +35,7 @@ argument-hint: "[project-slug]"
         Inform user:
 
         ---
-        **.hyper/ directory not found**
+        **$HYPER_WORKSPACE_ROOT/ directory not found**
 
         Initialize the workspace first:
         ```bash
@@ -67,7 +67,7 @@ argument-hint: "[project-slug]"
         echo "## Projects"
         echo ""
 
-        for project_dir in .hyper/projects/*/; do
+        for project_dir in $HYPER_WORKSPACE_ROOT/projects/*/; do
           if [ -d "$project_dir" ]; then
             project_slug=$(basename "$project_dir")
             project_file="${project_dir}_project.mdx"
@@ -123,14 +123,14 @@ argument-hint: "[project-slug]"
 
         ```bash
         PROJECT_SLUG="[provided-slug]"
-        PROJECT_DIR=".hyper/projects/${PROJECT_SLUG}"
+        PROJECT_DIR="$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}"
         PROJECT_FILE="${PROJECT_DIR}/_project.mdx"
 
         if [ ! -d "$PROJECT_DIR" ]; then
           echo "Project '${PROJECT_SLUG}' not found"
           echo ""
           echo "Available projects:"
-          ls -d .hyper/projects/*/ 2>/dev/null | xargs -I{} basename {}
+          ls -d $HYPER_WORKSPACE_ROOT/projects/*/ 2>/dev/null | xargs -I{} basename {}
           exit 1
         fi
         ```
@@ -193,7 +193,7 @@ argument-hint: "[project-slug]"
         echo "## Blocked Tasks"
         echo ""
 
-        for project_dir in .hyper/projects/*/; do
+        for project_dir in $HYPER_WORKSPACE_ROOT/projects/*/; do
           for task_file in "${project_dir}tasks/"*.mdx; do
             if [ -f "$task_file" ]; then
               status=$(grep "^status:" "$task_file" | head -1 | sed 's/status: *//')
@@ -219,7 +219,7 @@ argument-hint: "[project-slug]"
         echo "Tasks with status 'todo' and no blocking dependencies:"
         echo ""
 
-        for project_dir in .hyper/projects/*/; do
+        for project_dir in $HYPER_WORKSPACE_ROOT/projects/*/; do
           project_slug=$(basename "$project_dir")
           for task_file in "${project_dir}tasks/task-"*.mdx; do
             if [ -f "$task_file" ]; then
@@ -248,11 +248,11 @@ argument-hint: "[project-slug]"
         echo "## Summary"
         echo ""
 
-        total_projects=$(ls -d .hyper/projects/*/ 2>/dev/null | wc -l | tr -d ' ')
-        total_tasks=$(find .hyper/projects -name "task-*.mdx" 2>/dev/null | wc -l | tr -d ' ')
-        complete_tasks=$(grep -rl "^status: complete" .hyper/projects/*/tasks/task-*.mdx 2>/dev/null | wc -l | tr -d ' ')
-        in_progress=$(grep -rl "^status: in-progress" .hyper/projects/*/tasks/task-*.mdx 2>/dev/null | wc -l | tr -d ' ')
-        blocked=$(grep -rl "^status: blocked" .hyper/projects/*/tasks/task-*.mdx 2>/dev/null | wc -l | tr -d ' ')
+        total_projects=$(ls -d $HYPER_WORKSPACE_ROOT/projects/*/ 2>/dev/null | wc -l | tr -d ' ')
+        total_tasks=$(find $HYPER_WORKSPACE_ROOT/projects -name "task-*.mdx" 2>/dev/null | wc -l | tr -d ' ')
+        complete_tasks=$(grep -rl "^status: complete" $HYPER_WORKSPACE_ROOT/projects/*/tasks/task-*.mdx 2>/dev/null | wc -l | tr -d ' ')
+        in_progress=$(grep -rl "^status: in-progress" $HYPER_WORKSPACE_ROOT/projects/*/tasks/task-*.mdx 2>/dev/null | wc -l | tr -d ' ')
+        blocked=$(grep -rl "^status: blocked" $HYPER_WORKSPACE_ROOT/projects/*/tasks/task-*.mdx 2>/dev/null | wc -l | tr -d ' ')
 
         echo "| Metric | Count |"
         echo "|--------|-------|"
@@ -299,7 +299,7 @@ argument-hint: "[project-slug]"
   </output_format>
 
   <error_handling>
-    <scenario condition="No .hyper directory">
+    <scenario condition="No $HYPER_WORKSPACE_ROOT directory">
       Suggest running `/hyper-init` first.
     </scenario>
 

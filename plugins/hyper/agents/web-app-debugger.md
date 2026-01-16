@@ -287,7 +287,7 @@ argument-hint: "[description of issue or what to test]"
 
   <hyper_integration>
     When debugging reveals a bug that needs tracking:
-    1. Create a task in `.hyper/projects/{project}/tasks/`
+    1. Create a task in `$HYPER_WORKSPACE_ROOT/projects/{project}/tasks/`
     2. Include debugging findings in task description
     3. Reference the root cause and proposed fix
     4. Use frontmatter: `type: task`, `status: todo`, `priority: high`

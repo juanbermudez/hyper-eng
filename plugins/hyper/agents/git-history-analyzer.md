@@ -97,7 +97,7 @@ When returning results, use this JSON structure:
 
 **HYPER INTEGRATION**
 
-**Output Location:** `.hyper/projects/{slug}/resources/research/git-history.md`
+**Output Location:** `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/git-history.md`
 
 When called by the research-orchestrator during `/hyper-plan`:
 1. The orchestrator provides you with the project slug and areas to analyze
@@ -107,7 +107,7 @@ When called by the research-orchestrator during `/hyper-plan`:
 
 **When called directly (not via orchestrator):**
 - Ask for the project slug using AskUserQuestion
-- Write directly to `.hyper/projects/{slug}/resources/research/git-history.md`
+- Write directly to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/git-history.md`
 - Include YAML frontmatter:
   ```yaml
   ---

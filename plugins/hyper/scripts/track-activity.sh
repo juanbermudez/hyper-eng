@@ -1,5 +1,5 @@
 #!/bin/bash
-# Track activity on .hyper/ file modifications
+# Track activity on workspace data root file modifications
 # Called by PostToolUse hook after Write|Edit operations
 
 # Read PostToolUse JSON from stdin
@@ -10,9 +10,43 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
 PARENT_SESSION=$(echo "$INPUT" | jq -r '.parent_session_id // empty')
 
-# Skip if not a .hyper/ file
-if [[ "$FILE_PATH" != *".hyper/"* ]]; then
-  exit 0
+resolve_workspace_root() {
+  if [[ -n "$HYPER_WORKSPACE_ROOT" ]]; then
+    echo "$HYPER_WORKSPACE_ROOT"
+    return
+  fi
+
+  local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+  if [[ -x "$hyper_bin" ]]; then
+    local resolved
+    resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)
+    if [[ -n "$resolved" && "$resolved" != "null" ]]; then
+      echo "$resolved"
+      return
+    fi
+  fi
+
+  if [[ -d ".hyper" ]]; then
+    echo "$PWD/.hyper"
+    return
+  fi
+
+  echo ""
+}
+
+WORKSPACE_ROOT="$(resolve_workspace_root)"
+WORKSPACE_ROOT="${WORKSPACE_ROOT%/}"
+
+# Skip if not a workspace data file
+if [[ -n "$WORKSPACE_ROOT" ]]; then
+  case "$FILE_PATH" in
+    "$WORKSPACE_ROOT"/*) ;;
+    *) exit 0 ;;
+  esac
+else
+  if [[ "$FILE_PATH" != *".hyper/"* ]]; then
+    exit 0
+  fi
 fi
 
 # Skip if not an .mdx file

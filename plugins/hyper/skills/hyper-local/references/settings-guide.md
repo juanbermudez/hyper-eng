@@ -1,11 +1,11 @@
 # Settings & Customization Guide
 
-The `.hyper/settings/` directory allows customization of workflows, agents, and commands without modifying plugin files. All settings use YAML format for easy editing.
+The `$HYPER_WORKSPACE_ROOT/settings/` directory allows customization of workflows, agents, and commands without modifying plugin files. All settings use YAML format for easy editing.
 
 ## Directory Structure
 
 ```
-.hyper/settings/
+$HYPER_WORKSPACE_ROOT/settings/
 ├── workflows.yaml           # Project/task workflow stages & quality gates
 ├── agents/                  # Agent customization
 │   ├── README.md            # Documentation
@@ -27,7 +27,7 @@ The `.hyper/settings/` directory allows customization of workflows, agents, and 
 
 ## Workflows Configuration
 
-**File:** `.hyper/settings/workflows.yaml`
+**File:** `$HYPER_WORKSPACE_ROOT/settings/workflows.yaml`
 
 This file defines the workflow stages for projects and tasks.
 
@@ -133,7 +133,7 @@ tags:
 
 ## Agent Customization
 
-**Directory:** `.hyper/settings/agents/`
+**Directory:** `$HYPER_WORKSPACE_ROOT/settings/agents/`
 
 Customize agent behavior without modifying plugin files.
 
@@ -214,7 +214,7 @@ reason: "Using custom research process during migration"
 ### Example: Customizing Research Orchestrator
 
 ```yaml
-# .hyper/settings/agents/research-orchestrator.yaml
+# $HYPER_WORKSPACE_ROOT/settings/agents/research-orchestrator.yaml
 
 context_additions: |
   - Ruby on Rails monolith with RSpec tests
@@ -233,7 +233,7 @@ skip_sub_agents:
 
 ## Command Customization
 
-**Directory:** `.hyper/settings/commands/`
+**Directory:** `$HYPER_WORKSPACE_ROOT/settings/commands/`
 
 Customize command workflow and phases.
 
@@ -302,7 +302,7 @@ quality_gates:
 ### Example: Customizing hyper-plan
 
 ```yaml
-# .hyper/settings/commands/hyper-plan.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-plan.yaml
 
 context_additions: |
   - This project follows Domain-Driven Design
@@ -332,7 +332,7 @@ interview:
 ### Example: Customizing hyper-implement
 
 ```yaml
-# .hyper/settings/commands/hyper-implement.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-implement.yaml
 
 context_additions: |
   - Use conventional commit messages
@@ -362,7 +362,7 @@ git:
 
 Settings are merged with plugin defaults:
 
-1. **Workspace settings** (`.hyper/settings/*.yaml`) - Highest priority
+1. **Workspace settings** (`$HYPER_WORKSPACE_ROOT/settings/*.yaml`) - Highest priority
 2. **Plugin defaults** - Fallback for unspecified options
 
 Only specified options are overridden; everything else uses defaults.
@@ -379,7 +379,7 @@ Only specified options are overridden; everything else uses defaults.
 
 ### Team Collaboration
 
-1. **Version control** - Commit `.hyper/settings/` to share with team
+1. **Version control** - Commit `$HYPER_WORKSPACE_ROOT/settings/` to share with team
 2. **Document reasons** - Use comments to explain why customizations exist
 3. **Review together** - Discuss settings changes in code review
 

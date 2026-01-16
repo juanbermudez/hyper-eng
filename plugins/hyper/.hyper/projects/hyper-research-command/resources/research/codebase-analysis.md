@@ -56,7 +56,7 @@ argument-hint: "[expected arguments]"
 Current research-orchestrator:
 - Spawns 4 sub-agents in parallel using Task tool
 - Synthesizes findings into structured documents
-- Writes to `.hyper/projects/{slug}/resources/research/`
+- Writes to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
 - Returns JSON summary to parent (hyper-plan)
 
 **Enhancement Opportunity**: Currently research is only a phase within `/hyper-plan`. A standalone `/hyper-research` command would:
@@ -215,7 +215,7 @@ The current research-orchestrator can be extracted and enhanced:
 </phase>
 
 <phase name="document_creation">
-  Write to: .hyper/projects/{slug}/resources/research/
+  Write to: $HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/
   - codebase-analysis.md
   - best-practices.md
   - framework-docs.md
@@ -260,7 +260,7 @@ Current pattern uses kebab-case:
 ### Directory Structure for Research Projects
 
 ```
-.hyper/projects/{research-slug}/
+$HYPER_WORKSPACE_ROOT/projects/{research-slug}/
 ├── _project.mdx           # type: project, project_type: research
 ├── resources/
 │   └── research/

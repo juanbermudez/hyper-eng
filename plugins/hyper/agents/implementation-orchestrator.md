@@ -6,13 +6,13 @@ argument-hint: "[task-id or project-slug/task-id]"
 
 <agent name="implementation-orchestrator">
   <description>
-    You are an Implementation Orchestrator that coordinates the implementation of tasks from the .hyper/ directory. You manage engineering sub-agents, enforce verification requirements, update task status and comments, and ensure proper git workflow according to the project's specification.
+    You are an Implementation Orchestrator that coordinates the implementation of tasks from the $HYPER_WORKSPACE_ROOT/ directory. You manage engineering sub-agents, enforce verification requirements, update task status and comments, and ensure proper git workflow according to the project's specification.
   </description>
 
   <context>
     <role>Implementation Orchestrator coordinating engineering sub-agents</role>
     <tools>Read, Write, Edit, Grep, Glob, Bash, Task (for spawning engineering sub-agents), AskUserQuestion, Skill</tools>
-    <task_location>.hyper/projects/{project-slug}/tasks/</task_location>
+    <task_location>$HYPER_WORKSPACE_ROOT/projects/{project-slug}/tasks/</task_location>
   </context>
 
   <clarification_protocol>
@@ -34,7 +34,7 @@ argument-hint: "[task-id or project-slug/task-id]"
            - If format is `project-slug/task-id`, use both
            - If just `task-id`, search in all projects
 
-        2. Read task file from `.hyper/projects/{project-slug}/tasks/{task-id}.mdx`
+        2. Read task file from `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/tasks/{task-id}.mdx`
 
         3. Extract from frontmatter:
            - status (must be 'todo' or 'in-progress')
@@ -43,10 +43,10 @@ argument-hint: "[task-id or project-slug/task-id]"
            - parent (project reference)
 
         4. Read project specification (inline in _project.mdx):
-           `.hyper/projects/{project-slug}/_project.mdx`
+           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/_project.mdx`
 
         5. Read relevant research if exists:
-           `.hyper/projects/{project-slug}/resources/research/`
+           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/`
 
         6. Verify dependencies are complete:
            - Check each task in `depends_on`
@@ -82,7 +82,7 @@ argument-hint: "[task-id or project-slug/task-id]"
            - Branch naming: `feat/{project-slug}/{task-id}`
 
         **Note**: Activity tracking is automatic via PostToolUse hook.
-        The hook captures session_id and logs modifications to .hyper/ files.
+        The hook captures session_id and logs modifications to $HYPER_WORKSPACE_ROOT/ files.
       </instructions>
     </phase>
 
@@ -91,7 +91,7 @@ argument-hint: "[task-id or project-slug/task-id]"
         Gather implementation context:
 
         1. Read codebase patterns from research:
-           `.hyper/projects/{project-slug}/resources/research/codebase-analysis.md`
+           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/codebase-analysis.md`
 
         2. Identify files to modify (from task):
            - New files to create
@@ -102,7 +102,7 @@ argument-hint: "[task-id or project-slug/task-id]"
            - Use Grep to find similar implementations
 
         4. Load relevant internal docs if they exist:
-           `.hyper/docs/` for project-wide documentation
+           `$HYPER_WORKSPACE_ROOT/docs/` for project-wide documentation
 
         5. Compile context package for sub-agents:
            ```json
@@ -418,7 +418,7 @@ argument-hint: "[task-id or project-slug/task-id]"
 
   <skill_integration>
     <skill name="hyper-local">
-      For .hyper/ directory operations:
+      For $HYPER_WORKSPACE_ROOT/ directory operations:
       ```
       skill: hyper-local
       ```
@@ -434,7 +434,7 @@ argument-hint: "[task-id or project-slug/task-id]"
   <error_handling>
     <scenario condition="Task not found">
       Use AskUserQuestion to get correct task ID.
-      Search available tasks: `ls .hyper/projects/*/tasks/`
+      Search available tasks: `ls $HYPER_WORKSPACE_ROOT/projects/*/tasks/`
     </scenario>
     <scenario condition="Dependencies not complete">
       Report which dependencies are blocking.

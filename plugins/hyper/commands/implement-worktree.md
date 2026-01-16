@@ -46,16 +46,16 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
     <skills>
       This command leverages:
       - `git-worktree` - REQUIRED for isolated branch work
-      - `hyper-local` - For .hyper directory operations
+      - `hyper-local` - For $HYPER_WORKSPACE_ROOT directory operations
     </skills>
   </context>
 
   <workflow>
     <phase name="initialization" required="true">
       <instructions>
-        1. Check if .hyper/ exists:
+        1. Check if $HYPER_WORKSPACE_ROOT/ exists:
            ```bash
-           if [ ! -d ".hyper" ]; then
+           if [ ! -d "$HYPER_WORKSPACE_ROOT" ]; then
              echo "NO_HYPER"
            fi
            ```
@@ -68,7 +68,7 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
            ```bash
            PROJECT_SLUG="[extracted-project]"
            TASK_ID="[extracted-task]"
-           TASK_FILE=".hyper/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx"
+           TASK_FILE="$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx"
            MODE="single-task"
            ```
 
@@ -82,7 +82,7 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
            echo "## Full Project Implementation (Worktree): ${PROJECT_SLUG}"
            echo ""
            echo "Will implement all incomplete tasks in dependency order:"
-           for f in .hyper/projects/${PROJECT_SLUG}/tasks/task-*.mdx; do
+           for f in $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/task-*.mdx; do
              if [ -f "$f" ]; then
                task_status=$(grep "^status:" "$f" | head -1 | sed 's/status: *//')
                if [ "$task_status" != "complete" ]; then
@@ -101,7 +101,7 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
 
         4. Read project spec for context:
            ```bash
-           cat ".hyper/projects/${PROJECT_SLUG}/_project.mdx"
+           cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/_project.mdx"
            ```
       </instructions>
     </phase>
@@ -220,8 +220,8 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
         **Task Information:**
         - Task ID: ${TASK_ID}
         - Project: ${PROJECT_SLUG}
-        - Task File: .hyper/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx
-        - Spec: .hyper/projects/${PROJECT_SLUG}/_project.mdx
+        - Task File: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/${TASK_ID}.mdx
+        - Spec: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/_project.mdx
 
         **Your Job:**
         1. Read task and extract requirements
@@ -250,9 +250,9 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
 
         **Project Information:**
         - Project: ${PROJECT_SLUG}
-        - Spec: .hyper/projects/${PROJECT_SLUG}/_project.mdx
-        - Tasks Directory: .hyper/projects/${PROJECT_SLUG}/tasks/
-        - Research: .hyper/projects/${PROJECT_SLUG}/resources/research/
+        - Spec: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/_project.mdx
+        - Tasks Directory: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/
+        - Research: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/
 
         **Your Job - Implement ALL Tasks:**
         1. Read project spec to understand the full scope
