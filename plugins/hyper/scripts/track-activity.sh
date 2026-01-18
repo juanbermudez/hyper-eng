@@ -2,13 +2,45 @@
 # Track activity on workspace data root file modifications
 # Called by PostToolUse hook after Write|Edit operations
 
+# Debug logging (remove after testing)
+DEBUG_LOG="/tmp/hyper-hook-debug.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] track-activity.sh triggered" >> "$DEBUG_LOG"
+
 # Read PostToolUse JSON from stdin
 INPUT=$(cat)
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] INPUT: $INPUT" >> "$DEBUG_LOG"
 
 # Extract fields using jq
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
 PARENT_SESSION=$(echo "$INPUT" | jq -r '.parent_session_id // empty')
+CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
+
+# Build transcript path: ~/.claude/projects/{encoded-cwd}/{session_id}.jsonl
+build_transcript_path() {
+  local session_id="$1"
+  local cwd="$2"
+
+  if [[ -z "$session_id" || -z "$cwd" ]]; then
+    echo ""
+    return
+  fi
+
+  # Encode CWD: replace / with - and remove leading dash
+  local encoded_cwd="${cwd//\//-}"
+  encoded_cwd="${encoded_cwd#-}"  # Remove leading dash
+
+  local transcript_path="$HOME/.claude/projects/${encoded_cwd}/${session_id}.jsonl"
+
+  # Only return if the file exists (session is active)
+  if [[ -f "$transcript_path" ]]; then
+    echo "$transcript_path"
+  else
+    echo ""
+  fi
+}
+
+TRANSCRIPT_PATH=$(build_transcript_path "$SESSION_ID" "$CWD")
 
 resolve_workspace_root() {
   if [[ -n "$HYPER_WORKSPACE_ROOT" ]]; then
@@ -37,25 +69,46 @@ resolve_workspace_root() {
 WORKSPACE_ROOT="$(resolve_workspace_root)"
 WORKSPACE_ROOT="${WORKSPACE_ROOT%/}"
 
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] FILE_PATH: $FILE_PATH" >> "$DEBUG_LOG"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] SESSION_ID: $SESSION_ID" >> "$DEBUG_LOG"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] CWD: $CWD" >> "$DEBUG_LOG"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] TRANSCRIPT_PATH: $TRANSCRIPT_PATH" >> "$DEBUG_LOG"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] WORKSPACE_ROOT: $WORKSPACE_ROOT" >> "$DEBUG_LOG"
+
+# Check if file is in HyperHome (global ~/.hyper/accounts/...)
+# This takes priority over local .hyper folders
+HYPER_HOME="$HOME/.hyper"
+IS_HYPER_HOME_FILE=false
+if [[ "$FILE_PATH" == "$HYPER_HOME/accounts/"* ]]; then
+  IS_HYPER_HOME_FILE=true
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] File is in HyperHome" >> "$DEBUG_LOG"
+fi
+
 # Skip if not a workspace data file
-if [[ -n "$WORKSPACE_ROOT" ]]; then
+if [[ "$IS_HYPER_HOME_FILE" == "true" ]]; then
+  # HyperHome files are always valid for activity tracking
+  :
+elif [[ -n "$WORKSPACE_ROOT" ]]; then
   case "$FILE_PATH" in
     "$WORKSPACE_ROOT"/*) ;;
-    *) exit 0 ;;
+    *) echo "[$(date '+%Y-%m-%d %H:%M:%S')] SKIP: file not in workspace root" >> "$DEBUG_LOG"; exit 0 ;;
   esac
 else
   if [[ "$FILE_PATH" != *".hyper/"* ]]; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] SKIP: no workspace root and file not in .hyper/" >> "$DEBUG_LOG"
     exit 0
   fi
 fi
 
 # Skip if not an .mdx file
 if [[ "$FILE_PATH" != *.mdx ]]; then
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] SKIP: not an .mdx file" >> "$DEBUG_LOG"
   exit 0
 fi
 
 # Skip if no session ID
 if [[ -z "$SESSION_ID" ]]; then
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] SKIP: no session ID" >> "$DEBUG_LOG"
   exit 0
 fi
 
@@ -70,9 +123,17 @@ if [[ -n "$PARENT_SESSION" && "$PARENT_SESSION" != "null" ]]; then
   CMD="$CMD --parent-id \"$PARENT_SESSION\""
 fi
 
+# Add transcript path if available
+if [[ -n "$TRANSCRIPT_PATH" ]]; then
+  CMD="$CMD --transcript \"$TRANSCRIPT_PATH\""
+fi
+
 # Action is always "modified" for automatic tracking
 CMD="$CMD --action modified"
 
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] EXECUTING: $CMD" >> "$DEBUG_LOG"
+
 # Execute (silently fail - don't block agent)
-eval $CMD 2>/dev/null || true
+RESULT=$(eval $CMD 2>&1) || true
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] RESULT: $RESULT" >> "$DEBUG_LOG"
 exit 0

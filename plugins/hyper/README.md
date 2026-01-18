@@ -17,8 +17,8 @@ Works standalone or with [Hyper Control](https://github.com/juanbermudez/hyper-c
 | Component | Count |
 |-----------|-------|
 | Agents | 7 |
-| Commands | 9 |
-| Skills | 3 |
+| Commands | 7 |
+| Skills | 10 |
 | MCP Servers | 1 |
 
 ---
@@ -83,15 +83,13 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 | Command | Description |
 |---------|-------------|
-| `/hyper-init` | Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure |
-| `/hyper-status` | View project and task status from CLI |
-| `/hyper-plan` | Spawn research agents → create spec → wait for approval → create tasks |
-| `/hyper-implement` | Implement task with verification loop |
-| `/hyper-review` | Orchestrate parallel domain reviewers |
-| `/hyper-verify` | Run comprehensive automated and manual verification |
-| `/hyper-init-stack` | Initialize stack-specific templates |
-| `/hyper-statusline:setup` | Install Dracula statusline |
-| `/hyper-statusline:optout` | Opt out of statusline prompt |
+| `/hyper:init` | Initialize or repair workspace structure in HyperHome |
+| `/hyper:status` | View project and task status from CLI |
+| `/hyper:plan` | Spawn research agents → create spec → wait for approval → create tasks |
+| `/hyper:implement` | Implement task with verification loop |
+| `/hyper:implement-worktree` | Implement task in isolated worktree (mandatory isolation) |
+| `/hyper:verify` | Run comprehensive automated and manual verification |
+| `/hyper:research` | Standalone research workflow with comprehensive or deep modes |
 
 ### Agents
 
@@ -109,11 +107,18 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 ### Skills
 
-The workflow leverages 3 core skills:
+The workflow leverages 10 skills for comprehensive development support:
 
 | Skill | Used By | Purpose |
 |-------|---------|---------|
+| `hyper-cli` | All commands | CLI command reference for workspace operations |
 | `hyper-local` | All hyper-* commands | Guidance on `$HYPER_WORKSPACE_ROOT/` directory operations |
+| `hyper-planning` | hyper-plan | Spec-driven planning with research and approval gates |
+| `hyper-research` | hyper-plan | Orchestrate comprehensive codebase research |
+| `hyper-implementation` | hyper-implement | Task execution with verification gates |
+| `hyper-verification` | hyper-verify | Automated and manual verification workflows |
+| `hyper-workflow-enforcement` | All commands | Status transitions and gate requirements |
+| `hyper-activity-tracking` | All commands | Activity tracking for file modifications |
 | `git-worktree` | hyper-implement | Isolated parallel development with Git worktrees |
 | `compound-docs` | hyper-review, hyper-plan | Document recurring patterns and learnings |
 
@@ -192,27 +197,32 @@ Orchestrators (2), Research agents (4), and Testing agent (1):
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
 | `web-app-debugger` | Testing | Debug and test web apps using Claude Code Chrome extension |
 
-### Commands (9)
+### Commands (7)
 
 | Command | Description |
 |---------|-------------|
-| `/hyper-init` | Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure with templates |
-| `/hyper-status` | View project and task status from CLI |
-| `/hyper-plan` | Spawn research agents → create spec → wait for approval → create tasks |
-| `/hyper-implement` | Implement task with verification loop |
-| `/hyper-review` | Orchestrate parallel domain reviewers |
-| `/hyper-verify` | Run comprehensive automated and manual verification |
-| `/hyper-init-stack` | Initialize stack-specific templates (node-typescript, python, go) |
-| `/hyper-statusline:setup` | One-command installation of Dracula statusline |
-| `/hyper-statusline:optout` | Opt out of statusline setup prompt |
+| `/hyper:init` | Initialize or repair workspace structure in HyperHome |
+| `/hyper:status` | View project and task status from CLI |
+| `/hyper:plan` | Spawn research agents → create spec → wait for approval → create tasks |
+| `/hyper:implement` | Implement task with verification loop |
+| `/hyper:implement-worktree` | Implement task in isolated worktree (mandatory isolation) |
+| `/hyper:verify` | Run comprehensive automated and manual verification |
+| `/hyper:research` | Standalone research workflow with comprehensive or deep modes |
 
-### Skills (3)
+### Skills (10)
 
 Core skills for the hyper-engineering workflow:
 
 | Skill | Description |
 |-------|-------------|
+| `hyper-cli` | Complete CLI command reference for programmatic file operations |
 | `hyper-local` | Expert guidance for `$HYPER_WORKSPACE_ROOT/` directory operations and local-first development |
+| `hyper-planning` | Spec-driven planning with research and approval gates |
+| `hyper-research` | Orchestrate comprehensive codebase research |
+| `hyper-implementation` | Task execution with verification gates |
+| `hyper-verification` | Automated and manual verification workflows |
+| `hyper-workflow-enforcement` | Status transitions and gate requirements |
+| `hyper-activity-tracking` | Activity tracking for file modifications |
 | `git-worktree` | Manage Git worktrees for parallel development |
 | `compound-docs` | Capture solved problems as categorized documentation |
 
@@ -234,28 +244,65 @@ Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, 
 
 ## CLI & Activity Tracking
 
-The plugin includes a bundled CLI binary (`hyper`) for creating projects, tasks, and tracking activity.
+The plugin includes a bundled CLI binary (`hyper`) for managing workspace files, Drive notes, and activity tracking.
 
-### CLI Commands
+### CLI Overview
+
+```
+hyper <COMMAND>
+
+Commands:
+  init      Initialize a new workspace
+  worktree  Manage git worktrees for isolated development
+  project   Manage workspace projects (list, get, create, update)
+  task      Manage workspace tasks (list, get, create, update)
+  drive     Manage HyperHome drive items/notes (list, create, show, delete)
+  config    Get/set configuration (get, set, list)
+  activity  Track activity on projects and tasks (add, comment)
+  file      Low-level file operations (list, read, write, search, delete)
+  settings  Manage workspace settings (workflow, stage, gate, tag)
+  search    Search across all resources (projects, tasks, initiatives)
+  vfs       Virtual filesystem operations (list, resolve, search)
+```
+
+### Essential CLI Commands
 
 ```bash
+# Initialize workspace
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper init --name "My Project"
+
 # Create project with validated frontmatter
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
   --slug "auth-system" \
   --title "User Auth" \
-  --priority "high"
+  --priority "high" \
+  --json
 
-# Create task
+# Create task (ID auto-generated)
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
   --project "auth-system" \
-  --id "as-001" \
-  --title "Phase 1: OAuth Setup"
+  --title "Phase 1: OAuth Setup" \
+  --priority "high" \
+  --json
 
-# Update status
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
-  --id "as-001" \
-  --project "auth-system" \
-  --status "in-progress"
+# Update task status (ID is positional argument)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update as-001 --status "in-progress"
+
+# Update project status (slug is positional argument)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update auth-system --status "in-progress"
+
+# List projects
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project list --json
+
+# Search across all resources
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "OAuth" --json
+
+# Create Drive note
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper drive create "Research Notes" --folder "research" --json
+
+# Low-level file operations
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read projects/auth-system/_project.mdx --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write projects/auth-system/_project.mdx --body "New content" --json
 ```
 
 ### Automatic Activity Tracking
@@ -275,7 +322,12 @@ activity:
     action: modified
 ```
 
-See `skills/hyper-local/references/frontmatter-schema.md` for full activity format.
+### Skills Documentation
+
+For comprehensive CLI documentation, see:
+- `hyper-cli` skill — Complete CLI command reference with all APIs
+- `hyper-local` skill — Workspace directory operations and workflows
+- `skills/hyper-local/references/frontmatter-schema.md` — Full frontmatter and activity format
 
 ## Installation
 

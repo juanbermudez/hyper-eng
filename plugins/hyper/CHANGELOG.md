@@ -5,6 +5,61 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.0] - 2026-01-17
+
+### Added
+
+**New Command: /hyper:init**
+- New `/hyper:init` command for easy workspace initialization
+- Wraps the CLI `hyper init --repair` command for convenience
+- Verifies CLI binary availability before running
+- Shows clear success/error messages with next steps
+- Validates workspace structure after initialization
+- Safe to run on existing workspaces (repair mode)
+
+**Session Start Integration**
+- `hyper-init-check.sh` hook warns if workspace is missing
+- Suggests running `/hyper:init` if workspace not found
+- Provides helpful guidance on first session in a new project
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 7 |
+| Skills | 10 |
+| MCP Servers | 1 |
+
+---
+
+## [3.6.0] - 2026-01-05
+
+### Added
+
+**CLI Command Reference Skill**
+- New `hyper-cli` skill provides complete CLI command reference
+- Documents all subcommands: init, project, task, drive, config, activity, file, settings, search, vfs
+- Includes parameter formats, JSON output schemas, and common workflows
+- Auto-invoked when agents need to interact with workspace files programmatically
+
+### Changed
+
+- Updated skill count from 3 to 10 (added 7 workflow skills)
+- Plugin description now shows accurate skill count
+- All workflow commands reference appropriate skills
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 6 |
+| Skills | 10 |
+| MCP Servers | 1 |
+
+---
+
 ## [3.5.0] - 2026-01-05
 
 ### Changed

@@ -1,6 +1,6 @@
 ---
 name: hyper-cli
-description: This skill provides guidance on using the Hyper CLI for programmatic file operations. This skill should be used when agents need to create, read, update, delete, or search files in the $HYPER_WORKSPACE_ROOT/ directory structure, handle validation errors, or self-correct from structured error responses.
+description: This skill provides guidance on using the Hyper CLI for programmatic file operations. This skill should be used when agents need to create, read, update, delete, or search files in the $HYPER_WORKSPACE_ROOT/ directory structure, manage Drive notes, track activity, handle validation errors, or self-correct from structured error responses.
 model: sonnet
 allowed-tools:
   - Read
@@ -12,10 +12,32 @@ allowed-tools:
 <skill name="hyper-cli">
 
 <description>
-This skill teaches AI agents how to work with the Hyper CLI for programmatic manipulation of `$HYPER_WORKSPACE_ROOT/` planning documents. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
+This skill teaches AI agents how to work with the Hyper CLI for programmatic manipulation of `$HYPER_WORKSPACE_ROOT/` planning documents and HyperHome Drive notes. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
 </description>
 
 <context>
+
+## CLI Overview
+
+The Hyper CLI provides commands for managing workspace projects, tasks, Drive notes, and configuration.
+
+```
+hyper <COMMAND>
+
+Commands:
+  init      Initialize a new workspace
+  worktree  Manage git worktrees for isolated development
+  project   Manage workspace projects (list, get, create, update)
+  task      Manage workspace tasks (list, get, create, update)
+  drive     Manage HyperHome drive items/notes (list, create, show, delete, mkdir)
+  agents    Manage Claude/Codex primitives (config, skill)
+  config    Get/set configuration (get, set, list)
+  activity  Track activity on projects and tasks (add, comment)
+  file      Low-level file operations (list, read, write, search, delete)
+  settings  Manage workspace settings (workflow, stage, gate, tag)
+  search    Search across all resources (projects, tasks, initiatives)
+  vfs       Virtual filesystem operations (list, resolve, search)
+```
 
 ## Quick Reference
 
@@ -23,13 +45,16 @@ This skill teaches AI agents how to work with the Hyper CLI for programmatic man
 
 | Operation | Resource API (Porcelain) | File API (Plumbing) |
 |-----------|-------------------------|---------------------|
-| List projects | `hyper project list --json` | `hyper file list --path $HYPER_WORKSPACE_ROOT/projects --file-type project --json` |
-| Create project | `hyper project create --slug x --title "X"` | `hyper file write $HYPER_WORKSPACE_ROOT/projects/x/_project.mdx --frontmatter "..."` |
-| Update status | `hyper project update x --status in-progress` | `hyper file write $HYPER_WORKSPACE_ROOT/projects/x/_project.mdx --frontmatter "status=in-progress"` |
-| Read project | `hyper project get x --json` | `hyper file read $HYPER_WORKSPACE_ROOT/projects/x/_project.mdx --json` |
-| Delete project | `hyper project delete x --force --json` | `hyper file delete $HYPER_WORKSPACE_ROOT/projects/x --force --json` |
+| Initialize workspace | `hyper init --name "My Project"` | N/A |
+| List projects | `hyper project list --json` | `hyper file list projects --json` |
+| Create project | `hyper project create --slug x --title "X"` | `hyper file write projects/x/_project.mdx --frontmatter "..."` |
+| Update status | `hyper project update x --status in-progress` | `hyper file write projects/x/_project.mdx --frontmatter "status=in-progress"` |
+| Read project | `hyper project get x --json` | `hyper file read projects/x/_project.mdx --json` |
+| Delete file | N/A (use file API) | `hyper file delete projects/x/_project.mdx --force --json` |
 | Search | `hyper search "query" --json` | `hyper file search "query" --json` |
-| Task operations | `hyper task list/get/create/update/delete` | `hyper file ...` on task files |
+| Task operations | `hyper task list/get/create/update` | `hyper file ...` on task files |
+| Drive notes | `hyper drive list/create/show/delete` | N/A |
+| Activity tracking | `hyper activity add/comment` | N/A |
 
 ### When to Use Each API
 
@@ -258,24 +283,16 @@ hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
   --json
 ```
 
-### Deleting a Project
+### Deleting Files
 
 ```bash
-# Resource API (deletes project and all tasks)
-hyper project delete my-feature --force --json
+# Delete a task file
+hyper file delete projects/my-feature/tasks/task-001.mdx --force --json
 
-# File API (deletes specific path)
-hyper file delete $HYPER_WORKSPACE_ROOT/projects/my-feature --force --json
-```
+# Delete a project directory (removes all tasks too)
+hyper file delete projects/my-feature --force --json
 
-### Deleting a Task
-
-```bash
-# Resource API
-hyper task delete mf-001 --force --json
-
-# File API
-hyper file delete $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx --force --json
+# Note: Resource API (project/task) does not have delete - use file API
 ```
 
 ### Searching for Content
@@ -323,6 +340,150 @@ hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --frontma
 hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --body-only --json
 ```
 
+## Settings API
+
+The settings API allows reading and modifying workflow configuration:
+
+```bash
+# Full workflow config
+hyper settings workflow list --json
+
+# Get specific setting
+hyper settings workflow get project.stages --json
+
+# Set a value
+hyper settings workflow set project.stages '["planning", "todo", "in-progress", "completed"]' --json
+
+# Manage workflow stages
+hyper settings stage list --json
+hyper settings gate list --json
+hyper settings tag list --json
+```
+
+## Drive API
+
+Manage HyperHome Drive items (wiki-style notes):
+
+```bash
+# List all drive items
+hyper drive list --json
+
+# Create a new note
+hyper drive create "My Note Title" --folder "research" --icon "book" --json
+
+# Show note content
+hyper drive show <id> --json
+
+# Delete a note
+hyper drive delete <id> --force --json
+
+# Create a folder
+hyper drive mkdir "research/experiments" --json
+```
+
+Drive notes support scopes:
+- `--scope personal` (default) - User's personal notes
+- `--scope org:<id>` - Organization-scoped notes
+- `--scope ws:<id>` - Workspace-scoped notes
+
+## Activity Tracking API
+
+Track activity on projects and tasks:
+
+```bash
+# Add activity entry (automatic via hooks, but can be manual)
+hyper activity add \
+  --file "projects/my-feature/_project.mdx" \
+  --actor-id "$SESSION_ID" \
+  --actor-type session \
+  --action modified \
+  --json
+
+# Add a comment (convenience wrapper)
+hyper activity comment \
+  --file "projects/my-feature/tasks/task-001.mdx" \
+  --actor-id "user-uuid" \
+  --actor-type user \
+  --actor-name "Juan Bermudez" \
+  "This is ready for review"
+```
+
+Activity actions:
+- `created` - Initial creation
+- `modified` - Content changed
+- `commented` - Comment added
+- `status_changed` - Status transition
+- `assigned` - Assignment changed
+
+## Worktree API
+
+Manage git worktrees for isolated development:
+
+```bash
+# Create worktree for a project
+hyper worktree create --project my-feature --json
+
+# List all worktrees
+hyper worktree list --json
+
+# Show current worktree status
+hyper worktree status --json
+
+# Remove a worktree
+hyper worktree remove my-feature --json
+```
+
+## Search API
+
+Search across all workspace resources:
+
+```bash
+# Full-text search
+hyper search "authentication" --json
+
+# Filter by resource type
+hyper search "auth" --resource-type project --json
+hyper search "login" --resource-type task --json
+
+# Filter by status
+hyper search "OAuth" --status in-progress --json
+
+# Filter by priority
+hyper search "security" --priority high --json
+```
+
+## VFS (Virtual Filesystem) API
+
+Unified access across workspace and Drive:
+
+```bash
+# List files at virtual path
+hyper vfs list /projects --json
+
+# Resolve virtual path to physical
+hyper vfs resolve /projects/my-feature --json
+
+# Search across all sources
+hyper vfs search "authentication" --json
+```
+
+## Configuration API
+
+Manage workspace and global configuration:
+
+```bash
+# Get a config value
+hyper config get globalPath --json
+hyper config get worktree.enabled --json
+
+# Set a config value
+hyper config set worktree.enabled true --json
+hyper config set globalPath ~/.hyper --global --json
+
+# List all config
+hyper config list --json
+```
+
 ## Best Practices
 
 1. **Always use `--json`** for programmatic operations
@@ -333,32 +494,8 @@ hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --body-on
 6. **Never hardcode** enum values - read from errors or settings
 7. **Always include `--force`** flag when automating delete operations
 8. **Check project exists** before creating tasks
-
-## Settings API
-
-The settings API allows reading and modifying workflow configuration:
-
-```bash
-# Full workflow config
-hyper settings workflow list --json
-
-# Returns:
-{
-  "success": true,
-  "data": {
-    "settings": {
-      "project": {
-        "stages": ["planning", "todo", "in-progress", "verifying", "completed"],
-        "priorities": ["urgent", "high", "medium", "low"]
-      },
-      "task": {
-        "statuses": ["draft", "todo", "in-progress", "verifying", "complete", "blocked"],
-        "priorities": ["urgent", "high", "medium", "low"]
-      }
-    }
-  }
-}
-```
+9. **Use activity tracking** to maintain audit trail on modifications
+10. **Prefer Drive API** for notes over direct file manipulation
 
 </context>
 

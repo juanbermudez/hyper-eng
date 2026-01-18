@@ -100,7 +100,7 @@ ls commands/*.md | wc -l
 ls -d skills/*/ 2>/dev/null | wc -l
 ```
 
-Current counts: **7 agents, 9 commands, 3 skills, 1 MCP server**
+Current counts: **7 agents, 7 commands, 10 skills, 1 MCP server**
 
 ---
 

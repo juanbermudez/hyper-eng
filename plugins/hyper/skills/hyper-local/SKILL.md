@@ -94,30 +94,41 @@ $HYPER_WORKSPACE_ROOT/
 
 ## Quick Reference
 
+**IMPORTANT**: Always use the Hyper CLI for workspace operations. The CLI handles validation, activity tracking, and maintains data integrity.
+
 ```bash
 # Initialize workspace
-mkdir -p $HYPER_WORKSPACE_ROOT/{initiatives,projects,docs}
-echo '{"workspacePath": "'$(pwd)'", "name": "My Project", "created": "'$(date +%Y-%m-%d)'"}' > $HYPER_WORKSPACE_ROOT/workspace.json
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper init --name "My Project"
 
-# Create project (using CLI)
+# Create project
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
   --slug "auth-system" \
   --title "User Authentication System" \
   --priority "high" \
-  --summary "OAuth-based authentication with Google and GitHub providers"
+  --summary "OAuth-based authentication with Google and GitHub providers" \
+  --json
 
-# Create task (using CLI)
+# Create task (ID is auto-generated)
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
   --project "auth-system" \
-  --id "as-001" \
   --title "Phase 1: OAuth Provider Setup" \
-  --priority "high"
+  --priority "high" \
+  --json
 
-# Update status (using CLI)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
-  --id "as-001" \
-  --project "auth-system" \
-  --status "in-progress"
+# Update task status (ID is positional arg)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update as-001 --status "in-progress"
+
+# Update project status
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update auth-system --status "in-progress"
+
+# List projects
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project list --json
+
+# List tasks for a project
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project auth-system --json
+
+# Search across all resources
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "OAuth" --json
 ```
 
 ## Activity Tracking
@@ -218,73 +229,105 @@ The `qa` status is where quality checks and verification happen:
 <file_operations>
 ## Common File Operations
 
+**CLI-First Approach**: Always prefer CLI commands over direct Write/Edit tools for workspace operations. The CLI provides validation, consistent formatting, and automatic activity tracking.
+
 ### Creating a Project (CLI)
 
 ```bash
-# Use CLI to create project with validated frontmatter
+# Create project with validated frontmatter (returns JSON with created file info)
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
   --slug "auth-system" \
   --title "User Authentication System" \
   --priority "high" \
-  --summary "Implement OAuth-based authentication with Google and GitHub"
+  --summary "Implement OAuth-based authentication with Google and GitHub" \
+  --json
 
-# Then use Write tool to add spec content to _project.mdx body
+# For spec content, use file API to add body while preserving frontmatter
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \
+  projects/auth-system/_project.mdx \
+  --body "# User Authentication System\n\n## Overview\n..." \
+  --json
 ```
 
 ### Creating a Task (CLI)
 
 ```bash
-# Use CLI to create task with validated frontmatter
+# Create task with auto-generated ID
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
   --project "auth-system" \
-  --id "as-001" \
   --title "Phase 1: OAuth Provider Setup" \
-  --priority "high"
+  --priority "high" \
+  --json
 
-# Then use Write tool to add task content to task-001.mdx body
+# Add task content via file API
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \
+  projects/auth-system/tasks/task-001.mdx \
+  --body "# Phase 1: OAuth Provider Setup\n\n## Objectives\n..." \
+  --json
 ```
 
 ### Updating Status (CLI)
 
 ```bash
-# Use CLI to update status (validates status values)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
-  --id "as-001" \
-  --project "auth-system" \
-  --status "in-progress"
+# Update task status (ID is positional argument)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update as-001 --status "in-progress"
 
-# Or for projects:
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
-  --slug "auth-system" \
-  --status "in-progress"
+# Update project status (slug is positional argument)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update auth-system --status "in-progress"
 ```
 
-### Activity Tracking (Automatic)
+### Reading Data (CLI)
 
 ```bash
-# Activity is automatically tracked via PostToolUse hook
-# No manual logging needed - just use Write/Edit tools normally
+# Get project details
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project get auth-system --json
 
-# For manual comments (user actions):
+# Get task details
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task get as-001 --json
+
+# List all tasks for a project
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project auth-system --json
+
+# Read file with frontmatter parsed
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read projects/auth-system/_project.mdx --json
+
+# Read only frontmatter
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read projects/auth-system/_project.mdx --frontmatter-only --json
+```
+
+### Searching (CLI)
+
+```bash
+# Search across all resources
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "OAuth" --json
+
+# Search with filters
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "authentication" --resource-type project --status in-progress --json
+
+# File-level search
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper file search "OAuth" --json
+```
+
+### Activity Tracking
+
+Activity is automatically tracked via PostToolUse hook when agents write to `$HYPER_WORKSPACE_ROOT/*.mdx` files.
+
+```bash
+# Manual activity entry (for programmatic updates)
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity add \
+  --file "projects/auth-system/tasks/task-001.mdx" \
+  --actor-type session \
+  --actor-id "$SESSION_ID" \
+  --action modified \
+  --json
+
+# Add a comment (convenience wrapper)
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
-  --file "$HYPER_WORKSPACE_ROOT/projects/auth-system/tasks/task-001.mdx" \
+  --file "projects/auth-system/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \
   --actor-name "Juan Bermudez" \
   "This is ready for review"
-```
-
-### Reading Task Details
-
-```bash
-# Get full task content
-cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/task-001.mdx"
-
-# List all tasks with status
-for f in $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/task-*.mdx; do
-  echo "$(basename $f)"
-  grep "^status:" "$f"
-done
 ```
 </file_operations>
 
