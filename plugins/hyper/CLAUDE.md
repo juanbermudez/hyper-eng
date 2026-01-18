@@ -181,6 +181,43 @@ See `skills/hyper-local/references/frontmatter-schema.md` for complete schema.
 
 ---
 
+## Drive/Notes MDX Format
+
+**CRITICAL**: When creating Drive notes (artifacts), you MUST use the correct ID format or files will not appear in Hyper Control UI.
+
+### Drive Note Frontmatter
+
+```yaml
+---
+id: "personal:my-note-slug"        # REQUIRED: Scope-prefixed ID
+title: "My Note Title"             # REQUIRED: Human-readable title
+icon: FileText                     # OPTIONAL: Lucide icon name
+created: 2026-01-18                # REQUIRED: ISO date
+updated: 2026-01-18                # OPTIONAL: ISO date
+sortPosition: a0                   # OPTIONAL: Ordering position
+---
+```
+
+### Drive ID Format (CRITICAL)
+
+The `id` field MUST include a scope prefix followed by a colon:
+
+| Scope | ID Format | Example |
+|-------|-----------|---------|
+| Personal | `personal:{slug}` | `id: "personal:research-notes"` |
+| Organization | `org-{orgId}:{slug}` | `id: "org-abc123:team-docs"` |
+| Workspace | `ws-{wsId}:{slug}` | `id: "ws-proj-123:notes"` |
+
+**Always prefer the CLI** for creating drive files:
+
+```bash
+hyper drive create "My Note Title" --icon "FileText" --json
+```
+
+See `skills/hyper-cli/SKILL.md` for full Drive API documentation.
+
+---
+
 ## Command Naming Convention
 
 **Workflow commands** use `hyper-` prefix to identify them as Hyper Engineering commands:

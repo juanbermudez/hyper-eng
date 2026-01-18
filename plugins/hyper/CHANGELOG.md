@@ -5,6 +5,35 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.1] - 2026-01-18
+
+### Added
+
+**Drive File Format Documentation**
+- Added comprehensive drive/notes MDX frontmatter documentation to `hyper-cli` skill
+- Added drive format section to plugin `CLAUDE.md`
+- Documents required scope-prefixed ID format: `personal:slug`, `org-{id}:slug`, `ws-{id}:slug`
+- Common mistakes table to prevent malformed frontmatter
+- Recommendation to use CLI instead of direct file creation
+
+### Fixed
+
+**Drive File Validation Warning**
+- DriveSyncHandler now logs warnings when drive files have incorrect ID format
+- Helps developers understand why files may not appear in Hyper Control UI
+- Warning message includes expected format and actual value
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 7 |
+| Commands | 7 |
+| Skills | 10 |
+| MCP Servers | 1 |
+
+---
+
 ## [3.7.0] - 2026-01-17
 
 ### Added

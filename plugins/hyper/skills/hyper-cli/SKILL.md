@@ -386,6 +386,61 @@ Drive notes support scopes:
 - `--scope org:<id>` - Organization-scoped notes
 - `--scope ws:<id>` - Workspace-scoped notes
 
+### Drive File Frontmatter Format
+
+**CRITICAL**: When creating drive files directly (without CLI), you MUST follow this exact format or files will not appear in the Hyper Control UI.
+
+```yaml
+---
+id: "personal:my-note-slug"        # REQUIRED: Scope-prefixed ID (see below)
+title: "My Note Title"             # REQUIRED: Human-readable title
+icon: FileText                     # OPTIONAL: Lucide icon name (default: "box")
+created: 2026-01-18                # REQUIRED: ISO date (YYYY-MM-DD)
+updated: 2026-01-18                # OPTIONAL: ISO date
+sortPosition: a0                   # OPTIONAL: Fractional index for ordering
+tags:                              # OPTIONAL: Searchable tags
+  - tag1
+  - tag2
+---
+```
+
+### ID Format (CRITICAL)
+
+The `id` field MUST include a scope prefix followed by a colon:
+
+| Scope | ID Format | Example |
+|-------|-----------|---------|
+| Personal | `personal:{slug}` | `id: "personal:my-research-notes"` |
+| Organization | `org-{orgId}:{slug}` | `id: "org-abc123:team-docs"` |
+| Workspace | `ws-{wsId}:{slug}` | `id: "ws-proj-123:feature-notes"` |
+| Project | `proj-{projId}:{slug}` | `id: "proj-auth:design-doc"` |
+
+**Common Mistakes to Avoid:**
+
+| Mistake | Correct |
+|---------|---------|
+| `id: my-note` | `id: "personal:my-note"` (missing scope prefix) |
+| `id: personal/my-note` | `id: "personal:my-note"` (use colon, not slash) |
+| `id: PERSONAL:my-note` | `id: "personal:my-note"` (lowercase scope) |
+| Missing quotes | `id: "personal:my-note"` (quote if contains colons) |
+
+### Recommended: Use CLI Instead
+
+**Always prefer the CLI** for creating drive files:
+
+```bash
+# CLI handles ID generation, validation, and formatting automatically
+hyper drive create "My Note Title" --icon "FileText" --json
+```
+
+The CLI:
+- Generates correct scope-prefixed IDs
+- Sets required fields with defaults
+- Validates frontmatter format
+- Tracks activity automatically
+
+Only write files directly when the CLI is not available.
+
 ## Activity Tracking API
 
 Track activity on projects and tasks:

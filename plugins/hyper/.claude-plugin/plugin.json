@@ -1,7 +1,7 @@
 {
   "name": "hyper",
   "description": "Spec-driven development with local .hyper/ planning. 7 agents, 7 commands, 10 skills.",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "author": {
     "name": "Juan Bermudez"
   },
