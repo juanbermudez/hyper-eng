@@ -17,6 +17,8 @@ PARENT_SESSION=$(echo "$INPUT" | jq -r '.parent_session_id // empty')
 CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
 
 # Build transcript path: ~/.claude/projects/{encoded-cwd}/{session_id}.jsonl
+# NOTE: Claude Code encodes CWD by replacing / with - but KEEPS the leading dash
+# e.g. /Users/juan/project → -Users-juan-project
 build_transcript_path() {
   local session_id="$1"
   local cwd="$2"
@@ -26,9 +28,8 @@ build_transcript_path() {
     return
   fi
 
-  # Encode CWD: replace / with - and remove leading dash
+  # Encode CWD: replace / with - (keep leading dash!)
   local encoded_cwd="${cwd//\//-}"
-  encoded_cwd="${encoded_cwd#-}"  # Remove leading dash
 
   local transcript_path="$HOME/.claude/projects/${encoded_cwd}/${session_id}.jsonl"
 
