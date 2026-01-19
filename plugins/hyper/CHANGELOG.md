@@ -5,6 +5,74 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.13.0] - 2026-01-19
+
+### Added
+
+**Guided Installation & Import System**
+
+Transform `/hyper:init` into an intelligent setup wizard that:
+- Detects existing CLAUDE.md steering docs and prior workflows
+- Backs up and migrates steering docs while preserving user's project-specific details
+- Detects prior task tracking systems (Linear, GitHub Issues, TODO files, etc.)
+- Offers import via new `/hyper:import-external` command
+- Uses AskUserQuestion throughout for a guided experience
+
+**New Command: /hyper:import-external**
+- Interactive import wizard for external task systems
+- Supported sources: TODO.md files, GitHub Issues (via `gh` CLI), Linear (manual mapping)
+- Parses markdown task files and converts to Hyper projects/tasks
+- Shows preview before creating items, allows selective import
+- Preserves original references in task descriptions
+
+**New Agent: prior-system-detector**
+- Detects existing task tracking systems and steering documents
+- Analyzes CLAUDE.md content using three-tier classification:
+  - Tier 1: Project-specific content (tech stack, architecture) - PRESERVE
+  - Tier 2: Task tracking references (Linear, GitHub Issues) - OFFER IMPORT
+  - Tier 3: AI instructions (development rules) - MERGE
+- Returns structured JSON report for guided migration decisions
+
+**New Scripts**
+- `detect-prior-systems.sh` - Quick detection for session startup
+- `migrate-claude-md.sh` - CLAUDE.md section parsing and classification
+
+**New Template**
+- `CLAUDE-snippet.md` - Hyper workflow section template for CLAUDE.md integration
+
+### Changed
+
+**Enhanced /hyper:init**
+- Converted from simple init to multi-phase guided wizard
+- Phase 1: CLI check and welcome message
+- Phase 2: Detection of existing configurations
+- Phase 3: Workspace decision (create/verify/reset)
+- Phase 4: CLAUDE.md handling with intelligent merge options
+- Phase 5: Prior system import offers
+- Phase 6: Workspace naming
+- Phase 7: Confirmation before execution
+- Phase 8: Execute setup with backups
+- Phase 9: Run requested imports
+- Phase 10: Verification and next steps
+
+**Enhanced SessionStart Hook**
+- `hyper-init-check.sh` now detects:
+  - Existing CLAUDE.md with non-Hyper workflow
+  - Common task tracking files (TODO.md, TASKS.md, ROADMAP.md)
+  - Legacy local `.hyper/` directories needing migration
+- Provides actionable suggestions for each detection
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 10 |
+| Commands | 8 |
+| Prose Workflows | 4 |
+| Skills | 11 |
+
+---
+
 ## [3.12.2] - 2026-01-19
 
 ### Changed

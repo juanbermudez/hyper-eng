@@ -21,7 +21,7 @@ This plugin uses core Claude Code concepts. Reference these docs when modifying 
 plugins/hyper-engineering/
 ├── .claude-plugin/
 │   └── plugin.json              # Plugin manifest (name, version, description)
-├── agents/                      # Sub-agent definitions (7 agents)
+├── agents/                      # Sub-agent definitions (10 agents)
 │   ├── orchestrators/           # Workflow coordinators
 │   │   ├── research-orchestrator.md
 │   │   └── implementation-orchestrator.md
@@ -32,7 +32,7 @@ plugins/hyper-engineering/
 │   │   └── git-history-analyzer.md
 │   └── testing/
 │       └── web-app-debugger.md
-├── commands/                    # Slash commands (9 commands)
+├── commands/                    # Slash commands (8 commands)
 │   ├── hyper-plan.md            # /hyper-plan - Research → Spec → Tasks
 │   ├── hyper-implement.md       # /hyper-implement - Execute tasks
 │   ├── hyper-verify.md          # /hyper-verify - Verification loop
@@ -100,7 +100,7 @@ ls commands/*.md | wc -l
 ls -d skills/*/ 2>/dev/null | wc -l
 ```
 
-Current counts: **7 agents, 7 commands, 10 skills, 1 MCP server**
+Current counts: **10 agents, 8 commands, 11 skills, 1 MCP server**
 
 ---
 

@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-3.9.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-3.13.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering Plugin
@@ -18,8 +18,8 @@ Works standalone or with [Hyper Control](https://github.com/juanbermudez/hyper-c
 
 | Component | Count |
 |-----------|-------|
-| Agents | 9 |
-| Commands | 7 |
+| Agents | 10 |
+| Commands | 8 |
 | Prose Workflows | 4 |
 | Skills | 11 |
 | MCP Servers | 1 |
@@ -86,7 +86,8 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 | Command | Description |
 |---------|-------------|
-| `/hyper:init` | Initialize or repair workspace structure in HyperHome |
+| `/hyper:init` | Guided setup wizard - detects existing configs, migrates CLAUDE.md, offers imports |
+| `/hyper:import-external` | Import from external systems (TODO.md, GitHub Issues, Linear) |
 | `/hyper:status` | View project and task status from CLI |
 | `/hyper:plan` | Spawn research agents → create spec → wait for approval → create tasks |
 | `/hyper:implement` | Implement task with verification loop |
@@ -96,7 +97,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 ### Agents
 
-9 specialized agents for orchestration, research, testing, and verification:
+10 specialized agents for orchestration, research, testing, detection, and verification:
 
 | Agent | Category | Purpose |
 |-------|----------|---------|
