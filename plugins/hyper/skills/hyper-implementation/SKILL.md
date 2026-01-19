@@ -44,19 +44,36 @@ This skill guides implementation through:
 
 <hyper-embed file="references/task-loading.md" />
 
-### Step 2: Update Status to In-Progress
+### Step 2: Update Status to In-Progress (CRITICAL)
+
+> **MANDATORY**: You MUST update BOTH project AND task status before beginning implementation.
+> Failing to update project status causes visibility issues in Hyper Control.
+
+#### Step 2a: Update PROJECT Status First
+
+Check if project needs status update:
+
+```bash
+# Get project info
+PROJECT_STATUS=$(grep "^status:" "$PROJECT_DIR/_project.mdx" | awk '{print $2}')
+
+# MUST update project to in-progress if currently planned or todo
+if [ "$PROJECT_STATUS" = "planned" ] || [ "$PROJECT_STATUS" = "todo" ]; then
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
+    "${PROJECT_SLUG}" --status "in-progress"
+fi
+```
+
+#### Step 2b: Update TASK Status
 
 ```bash
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
   "${TASK_ID}" --status "in-progress"
 ```
 
-If this is the first task started, also update project:
-
-```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
-  "${PROJECT_SLUG}" --status "in-progress"
-```
+> **Why project status matters**: The project status determines visibility in Hyper Control.
+> A project in "planned" or "todo" status appears dormant even if tasks are being worked on.
+> Always ensure the project is "in-progress" when any task is being implemented.
 
 ### Step 3: Understand Codebase
 

@@ -141,11 +141,17 @@ fi
 
 # Build sidecar JSON
 # Uses camelCase to match TypeScript conventions in the app
+# Note: Use proper conditional JSON values - if set, wrap in quotes; if not, use null
+PARENT_JSON="${PARENT_SESSION:+\"$PARENT_SESSION\"}"
+PARENT_JSON="${PARENT_JSON:-null}"
+WORKSPACE_JSON="${WORKSPACE_ROOT:+\"$WORKSPACE_ROOT\"}"
+WORKSPACE_JSON="${WORKSPACE_JSON:-null}"
+
 cat > "$SIDECAR_PATH" << EOF
 {
   "sessionId": "${SESSION_ID}",
-  "parentId": ${PARENT_SESSION:+\"$PARENT_SESSION\"}${PARENT_SESSION:-null},
-  "workspaceRoot": ${WORKSPACE_ROOT:+\"$WORKSPACE_ROOT\"}${WORKSPACE_ROOT:-null},
+  "parentId": ${PARENT_JSON},
+  "workspaceRoot": ${WORKSPACE_JSON},
   "currentTarget": ${CURRENT_TARGET},
   "recentTargets": ${UPDATED_TARGETS},
   "startedAt": "${STARTED_AT}",

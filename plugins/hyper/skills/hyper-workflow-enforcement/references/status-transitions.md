@@ -26,10 +26,34 @@ planned ─────► todo ─────► in-progress ─────�
 ### Project Transition Rules
 
 1. **planned → todo**: Requires spec approval and task creation
-2. **todo → in-progress**: Automatically when first task starts
+2. **todo → in-progress**: **MANDATORY** when first task starts (see enforcement below)
 3. **in-progress → qa**: When ALL tasks are `complete`
 4. **qa → completed**: When project-level verification passes
 5. **qa → in-progress**: When issues found in project QA
+
+### CRITICAL: Project Status Enforcement
+
+> **MANDATORY REQUIREMENT**: When starting implementation of ANY task, you MUST check and update
+> the project status. This is NOT optional and NOT automatic - it must be done explicitly.
+
+**Why this matters**:
+- Project status controls visibility in Hyper Control UI
+- A project in "planned" or "todo" appears dormant even with active tasks
+- Users cannot see progress without proper project status
+
+**Enforcement pattern** (MUST be done in /hyper-implement):
+
+```bash
+# Before starting ANY task, check project status
+PROJECT_STATUS=$(grep "^status:" "$PROJECT_DIR/_project.mdx" | awk '{print $2}')
+
+# Update to in-progress if not already there
+if [ "$PROJECT_STATUS" = "planned" ] || [ "$PROJECT_STATUS" = "todo" ]; then
+  hyper project update "$PROJECT_SLUG" --status "in-progress"
+fi
+```
+
+**Failure to update project status is a workflow violation.**
 
 ## Task Status Flow
 

@@ -122,21 +122,47 @@ Report task details and readiness."""
   context: { task_id, project_slug, init }
 
 # ============================================================================
-# Phase 2: Update Status and Analyze
+# Phase 2: Update Status (CRITICAL: Both Project AND Task)
 # ============================================================================
 
 session: impl-captain
-  prompt: """Update task status to in-progress.
+  prompt: """CRITICAL: Update BOTH project AND task status.
+
+## Step 1: Update PROJECT status to in-progress
+
+IMPORTANT: You MUST update the project status first. Check current status and update:
+
+```bash
+# Get project slug from task file
+PROJECT_DIR=$(dirname $(dirname "$TASK_FILE"))
+PROJECT_SLUG=$(basename "$PROJECT_DIR")
+
+# Check current project status
+PROJECT_STATUS=$(grep "^status:" "$PROJECT_DIR/_project.mdx" | awk '{print $2}')
+
+# If project is planned or todo, update to in-progress
+if [ "$PROJECT_STATUS" = "planned" ] || [ "$PROJECT_STATUS" = "todo" ]; then
+  echo "🔄 Updating project '$PROJECT_SLUG' status: $PROJECT_STATUS → in-progress"
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update "$PROJECT_SLUG" --status "in-progress"
+else
+  echo "✓ Project already in-progress or later stage: $PROJECT_STATUS"
+fi
+```
+
+## Step 2: Update TASK status to in-progress
 
 ```bash
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{task_id}" --status "in-progress"
 ```
 
-Create git branch:
+## Step 3: Create git branch
+
 ```bash
 git checkout main && git pull origin main
 git checkout -b feat/{task_id}
-```"""
+```
+
+VERIFY both statuses were updated before proceeding."""
   context: task_spec
 
 let analysis = session: impl-captain

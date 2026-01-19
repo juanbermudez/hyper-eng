@@ -5,6 +5,54 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.12.2] - 2026-01-19
+
+### Changed
+
+**Enforce Project Status Update in /hyper-implement**
+- Added mandatory project status check/update in Phase 2 of hyper-implement.prose
+- Project MUST be updated from "planned"/"todo" to "in-progress" when first task starts
+- Updated hyper-implementation skill with explicit "CRITICAL" step 2a/2b breakdown
+- Updated status-transitions.md with enforcement section and rationale
+- This fixes the issue where project remained in "planned" status during implementation
+
+**Why this matters**:
+- Project status controls visibility in Hyper Control UI
+- A project in "planned" or "todo" appears dormant even with active tasks
+- Users couldn't see progress without proper project status update
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 9 |
+| Commands | 7 |
+| Prose Workflows | 4 |
+| Skills | 11 |
+
+---
+
+## [3.12.1] - 2026-01-19
+
+### Fixed
+
+**Session Activity Tracking JSON Bug**
+- Fixed malformed JSON in `.hyper.json` sidecar files
+- `workspaceRoot` and `parentId` fields now properly formatted
+- Root cause: Shell parameter expansion in heredoc caused duplicate values
+- Fix: Pre-compute JSON-formatted values before heredoc construction
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 9 |
+| Commands | 7 |
+| Prose Workflows | 4 |
+| Skills | 11 |
+
+---
+
 ## [3.12.0] - 2026-01-18
 
 ### Changed
