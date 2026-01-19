@@ -5,6 +5,38 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.12.0] - 2026-01-18
+
+### Changed
+
+**hyper-plan.prose: 3-Gate HITL Pattern**
+- Added Gate 1: Pre-research clarification (confirm understanding before research)
+- Enforced Gate 2: Post-research direction approval (read & display artifacts)
+- Enforced Gate 3: Spec approval before task creation (read & display artifacts)
+
+**Artifact vs Binding Separation**
+- Bindings (`.prose/runs/`) now contain summaries + pointers to artifacts
+- Artifacts (`projects/`) created via CLI with full content
+- Research findings written to `projects/{slug}/resources/research-summary.md`
+- At approval gates, agent reads and displays actual artifact content (not binding)
+
+**CLI Integration for Content**
+- Added `hyper file write` for research summary, spec content, and task bodies
+- Added `hyper file read` for approval gates to display actual content
+- Project and task creation followed by explicit content writes
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 9 |
+| Commands | 7 |
+| Prose Workflows | 4 |
+| Skills | 11 |
+| MCP Servers | 1 |
+
+---
+
 ## [3.11.0] - 2026-01-18
 
 ### Added

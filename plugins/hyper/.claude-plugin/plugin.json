@@ -1,7 +1,7 @@
 {
   "name": "hyper",
   "description": "Spec-driven development with local .hyper/ planning. 9 agents, 7 commands, 4 prose workflows, 11 skills (includes Hyper-Prose VM).",
-  "version": "3.11.0",
+  "version": "3.12.0",
   "author": {
     "name": "Juan Bermudez"
   },
