@@ -1,0 +1,275 @@
+# Hyper Implementation Workflow
+#
+# Executes a task from the approved specification with verification gates.
+# This workflow takes a task through: todo → in-progress → qa → complete
+#
+# Usage: prose run hyper-implement.prose task="ua-001"
+#        prose run hyper-implement.prose project="user-auth" task="001"
+#
+# PATH RESOLUTION:
+# $HYPER_WORKSPACE_ROOT = ~/.hyper/accounts/{userId}/hyper/workspaces/{workspaceId}/
+#
+# STATUS FLOW:
+# Task: todo → in-progress → qa → complete
+# Project: todo → in-progress → qa → completed (when all tasks done)
+
+input task_id: "Task ID to implement (e.g., ua-001)"
+input project_slug: "Project slug (optional if task ID is fully qualified)"
+
+# Import verification block
+use "blocks/verification.prose"
+
+# ============================================================================
+# Agent Definitions
+# ============================================================================
+
+agent impl-captain:
+  model: opus
+  persist: true
+  prompt: """You are the Implementation Captain - you coordinate task execution.
+
+Your role:
+1. Load and understand the task specification
+2. Coordinate with executor agents to implement changes
+3. Run verification gates after implementation
+4. Ensure all quality checks pass before marking complete
+
+Key principles:
+- Read files COMPLETELY - never use limit/offset
+- Follow existing codebase patterns
+- Run verification frequently during implementation
+- Never mark complete until ALL gates pass
+
+Status transitions:
+- todo → in-progress (starting work)
+- in-progress → qa (implementation done, verification starting)
+- qa → complete (all gates pass)
+- qa → in-progress (gates fail, fix needed)"""
+
+agent executor:
+  model: opus
+  prompt: """You are a skilled code implementer. Your job is to:
+
+1. Write clean, well-structured code following the spec
+2. Follow existing patterns in the codebase
+3. Add appropriate tests for new functionality
+4. Handle errors gracefully
+5. Add only necessary comments
+
+Implementation rules:
+- Read target files COMPLETELY before editing
+- Match existing code style and patterns
+- Include TypeScript types where applicable
+- Write tests for new functionality
+- Don't over-engineer - keep it simple"""
+
+agent reviewer:
+  model: sonnet
+  prompt: """You are a code reviewer. Review implementation for:
+
+1. Does it match the task specification?
+2. Does it follow codebase patterns?
+3. Are there any obvious bugs or issues?
+4. Are edge cases handled?
+5. Are there appropriate tests?
+
+Output: APPROVE or REQUEST_CHANGES with specific feedback."""
+
+# ============================================================================
+# Phase 1: Initialize and Load Task
+# ============================================================================
+
+let init = session "Initialize implementation"
+  prompt: """Initialize the implementation workflow.
+
+1. Resolve workspace:
+```bash
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper workspace path)
+export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
+```
+
+2. Generate run ID:
+```bash
+RUN_ID="impl-$(date +%Y%m%d-%H%M%S)-$(uuidgen | cut -c1-8)"
+```
+
+3. Initialize prose state:
+```bash
+mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/runs/$RUN_ID/bindings"
+mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/agents/impl-captain"
+```
+
+Report the workspace path and run ID."""
+
+let task_spec = session: impl-captain
+  prompt: """Load the task specification for: {task_id}
+
+1. Find and read task file:
+```bash
+TASK_FILE=$(find "$HYPER_WORKSPACE_ROOT/projects" -name "task-*.mdx" -exec grep -l "id: {task_id}" {} \; | head -1)
+cat "$TASK_FILE"
+```
+
+2. Read project spec for context:
+```bash
+PROJECT_DIR=$(dirname $(dirname "$TASK_FILE"))
+cat "$PROJECT_DIR/_project.mdx"
+```
+
+3. Verify task status is 'todo' or 'in-progress'
+
+Report task details and readiness."""
+  context: { task_id, project_slug, init }
+
+# ============================================================================
+# Phase 2: Update Status and Analyze
+# ============================================================================
+
+session: impl-captain
+  prompt: """Update task status to in-progress.
+
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{task_id}" --status "in-progress"
+```
+
+Create git branch:
+```bash
+git checkout main && git pull origin main
+git checkout -b feat/{task_id}
+```"""
+  context: task_spec
+
+let analysis = session: impl-captain
+  prompt: """Analyze codebase before implementing.
+
+For each file mentioned in the task:
+- Read the entire file (no limit/offset)
+- Note the patterns used
+- Understand the data flow
+
+Document:
+- Patterns to follow
+- Utilities to reuse
+- Naming conventions"""
+  context: task_spec
+
+# ============================================================================
+# Phase 3: Implementation Loop
+# ============================================================================
+
+let implementation_approved = false
+let impl_attempt = 1
+
+loop until **implementation_approved** (max: 3):
+  let impl_result = session: executor
+    prompt: """Implement the changes specified in the task.
+
+    Task Spec: {task_spec}
+    Codebase Patterns: {analysis}
+
+    For each change:
+    - Read target files COMPLETELY
+    - Make the changes
+    - Add tests if applicable"""
+    context: { task_spec, analysis }
+
+  let review = session: reviewer
+    prompt: """Review the implementation.
+
+    Does it match spec? Follow patterns? Handle edge cases?
+
+    Output: APPROVE or REQUEST_CHANGES"""
+    context: { task_spec, impl_result }
+
+  if **review approves**:
+    implementation_approved = true
+  else:
+    session: executor
+      prompt: """Fix review feedback: {review}"""
+      context: { review, impl_result }
+    impl_attempt = impl_attempt + 1
+
+# ============================================================================
+# Phase 4: Enter QA and Verify
+# ============================================================================
+
+session: impl-captain
+  prompt: """Enter QA phase.
+
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{task_id}" --status "qa"
+```"""
+
+do verify-with-retry(
+  entity_id: task_id,
+  entity_type: "task",
+  expected_status: "qa",
+  run_id: init.RUN_ID,
+  max_attempts: 3
+)
+
+# ============================================================================
+# Phase 5: Complete Task
+# ============================================================================
+
+if **verification passed**:
+  session: impl-captain
+    prompt: """Mark task complete.
+
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{task_id}" --status "complete"
+```
+
+Commit changes:
+```bash
+git add -A
+git commit -m "feat: {task_title}
+
+Task: {task_id}
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+Check if all project tasks are complete:
+```bash
+INCOMPLETE=$(find "$PROJECT_DIR/tasks" -name "*.mdx" -exec grep -l "status: todo\|status: in-progress\|status: qa" {} \; | wc -l)
+if [ "$INCOMPLETE" -eq 0 ]; then
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update "$PROJECT_SLUG" --status "qa"
+fi
+```"""
+
+else:
+  session: impl-captain
+    prompt: """Verification failed. Status reverted to in-progress.
+
+Report failures and suggest fixes."""
+
+# ============================================================================
+# Output Summary
+# ============================================================================
+
+output summary = session: impl-captain
+  prompt: """Generate implementation summary.
+
+## Implementation Summary
+
+**Task**: {task_id}
+**Result**: {PASS or FAIL}
+
+### Verification
+| Gate | Result |
+|------|--------|
+| Lint | {result} |
+| Typecheck | {result} |
+| Tests | {result} |
+| Build | {result} |
+| UI | {result} |
+
+### Git
+Branch: feat/{task_id}
+
+### Next Steps
+{If complete: next task}
+{If failed: what to fix}
+"""
+  context: { task_spec, init }

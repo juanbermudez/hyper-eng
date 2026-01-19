@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-2.7.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-3.9.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering Plugin
@@ -12,13 +12,16 @@ Local-first, spec-driven development workflow. Specs matter more than code—spe
 
 Works standalone or with [Hyper Control](https://github.com/juanbermudez/hyper-control) desktop app.
 
+**Now with Hyper-Prose** (our fork of [OpenProse](https://github.com/openprose/prose)) for executable, resumable workflows. Slash commands automatically use the Hyper-Prose VM.
+
 ## Components
 
 | Component | Count |
 |-----------|-------|
-| Agents | 7 |
+| Agents | 9 |
 | Commands | 7 |
-| Skills | 10 |
+| Prose Workflows | 4 |
+| Skills | 11 |
 | MCP Servers | 1 |
 
 ---
@@ -93,7 +96,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 ### Agents
 
-7 specialized agents for orchestration, research, and debugging:
+9 specialized agents for orchestration, research, testing, and verification:
 
 | Agent | Category | Purpose |
 |-------|----------|---------|
@@ -104,10 +107,35 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
 | `web-app-debugger` | Testing | Debug web apps using Chrome extension for browser inspection |
+| `tauri-ui-verifier` | Verification | Verify Hyper Control UI state via Tauri MCP tools |
+| `workflow-observer` | Verification | Log workflow events to Sentry for observability |
+
+### Prose Workflows
+
+Executable workflows using [OpenProse](https://github.com/openprose/prose) for structured, resumable execution:
+
+| Workflow | Description |
+|----------|-------------|
+| `hyper-plan.prose` | Full planning: research → direction gate → spec → approval → tasks |
+| `hyper-implement.prose` | Implementation: load task → analyze → implement → review → verify → complete |
+| `hyper-verify.prose` | Verification: automated checks → prose state → UI verification via Tauri |
+| `hyper-status.prose` | Status reporting: project/task overview with progress metrics |
+
+**Running Workflows:**
+```bash
+# In Claude Code, load the OpenProse skill then run:
+prose run hyper-plan.prose feature="Add user authentication"
+prose run hyper-implement.prose task="ua-001"
+prose run hyper-verify.prose project="user-auth"
+```
+
+**State Management:**
+- Execution state: `$HYPER_WORKSPACE_ROOT/.prose/runs/{run-id}/`
+- Agent memory: `$HYPER_WORKSPACE_ROOT/.prose/agents/{name}/memory.md`
 
 ### Skills
 
-The workflow leverages 10 skills for comprehensive development support:
+The workflow leverages 11 skills including the bundled OpenProse VM:
 
 | Skill | Used By | Purpose |
 |-------|---------|---------|
@@ -121,6 +149,7 @@ The workflow leverages 10 skills for comprehensive development support:
 | `hyper-activity-tracking` | All commands | Activity tracking for file modifications |
 | `git-worktree` | hyper-implement | Isolated parallel development with Git worktrees |
 | `compound-docs` | hyper-review, hyper-plan | Document recurring patterns and learnings |
+| `hyper-prose` | All .prose workflows | Hyper-Prose VM for executing workflow files (fork of OpenProse) |
 
 ### Quick Start
 
@@ -183,9 +212,9 @@ skip_phases:
 
 ## Reference
 
-### Agents (7)
+### Agents (9)
 
-Orchestrators (2), Research agents (4), and Testing agent (1):
+Orchestrators (2), Research agents (4), Testing agent (1), and Verification agents (2):
 
 | Agent | Category | Description |
 |-------|----------|-------------|
@@ -196,6 +225,8 @@ Orchestrators (2), Research agents (4), and Testing agent (1):
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
 | `web-app-debugger` | Testing | Debug and test web apps using Claude Code Chrome extension |
+| `tauri-ui-verifier` | Verification | Verify Hyper Control UI state using Tauri MCP tools |
+| `workflow-observer` | Verification | Log workflow events to Sentry for observability tracking |
 
 ### Commands (7)
 
@@ -209,9 +240,20 @@ Orchestrators (2), Research agents (4), and Testing agent (1):
 | `/hyper:verify` | Run comprehensive automated and manual verification |
 | `/hyper:research` | Standalone research workflow with comprehensive or deep modes |
 
-### Skills (10)
+### Prose Workflows (4)
 
-Core skills for the hyper-engineering workflow:
+Executable workflows using [OpenProse](https://github.com/openprose/prose):
+
+| Workflow | Description |
+|----------|-------------|
+| `hyper-plan.prose` | Full planning: research → direction gate → spec → approval → tasks |
+| `hyper-implement.prose` | Implementation: load task → analyze → implement → review → verify |
+| `hyper-verify.prose` | Verification: automated checks → prose state → UI verification |
+| `hyper-status.prose` | Status reporting: project/task overview with progress metrics |
+
+### Skills (11)
+
+Core skills including bundled OpenProse VM:
 
 | Skill | Description |
 |-------|-------------|
@@ -225,6 +267,7 @@ Core skills for the hyper-engineering workflow:
 | `hyper-activity-tracking` | Activity tracking for file modifications |
 | `git-worktree` | Manage Git worktrees for parallel development |
 | `compound-docs` | Capture solved problems as categorized documentation |
+| `hyper-prose` | Hyper-Prose VM for executing .prose workflow files (fork of OpenProse) |
 
 ## MCP Servers
 

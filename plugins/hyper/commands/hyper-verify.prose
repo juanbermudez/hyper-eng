@@ -1,0 +1,192 @@
+# Hyper Verification Workflow
+#
+# Standalone verification workflow for running quality gates on a task or project.
+# Can be used independently or as part of the implementation workflow.
+#
+# Usage: prose run hyper-verify.prose task="ua-001"
+#        prose run hyper-verify.prose project="user-auth"
+#
+# VERIFICATION LAYERS:
+# 1. Automated checks (lint, typecheck, test, build)
+# 2. Prose state validation (state.md, bindings, memory)
+# 3. Tauri UI verification (connect, screenshot, verify state)
+# 4. Sentry observability (log all results)
+#
+# STATUS FLOW:
+# in-progress → qa → complete (if pass)
+# qa → in-progress (if fail, to fix)
+
+input target_id: "Task ID (e.g., ua-001) or Project slug (e.g., user-auth)"
+input target_type: "Type: 'task' or 'project' (default: auto-detect)"
+input full_verification: "Include UI verification (default: true)"
+
+# Import verification block
+use "blocks/verification.prose"
+
+# ============================================================================
+# Agent Definitions
+# ============================================================================
+
+agent verify-captain:
+  model: sonnet
+  prompt: """You are the Verification Captain. Your job is to run comprehensive quality gates.
+
+Verification layers:
+1. **Automated checks**: lint, typecheck, test, build
+2. **Prose state**: Validate framework state files
+3. **UI verification**: Use Tauri MCP to verify UI state
+4. **Sentry logging**: Track all results
+
+Rules:
+- Run all checks even if some fail
+- Document all results with specific details
+- Never mark complete if any check fails
+- Retry failed checks after fixes"""
+
+# ============================================================================
+# Phase 1: Initialize
+# ============================================================================
+
+let init = session "Initialize verification"
+  prompt: """Initialize verification workflow.
+
+1. Resolve workspace:
+```bash
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper workspace path)
+export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
+```
+
+2. Generate run ID:
+```bash
+RUN_ID="verify-$(date +%Y%m%d-%H%M%S)-$(uuidgen | cut -c1-8)"
+```
+
+3. Auto-detect target type:
+```bash
+TARGET="{target_id}"
+if [[ "$TARGET" =~ ^[a-z]+-[0-9]+$ ]]; then
+  TYPE="task"
+else
+  TYPE="project"
+fi
+```
+
+4. Find target file:
+```bash
+if [ "$TYPE" = "task" ]; then
+  TARGET_FILE=$(find "$HYPER_WORKSPACE_ROOT/projects" -name "*.mdx" -exec grep -l "id: $TARGET" {} \; | head -1)
+else
+  TARGET_FILE="$HYPER_WORKSPACE_ROOT/projects/$TARGET/_project.mdx"
+fi
+```
+
+Report: WORKSPACE_ROOT, RUN_ID, TYPE, TARGET_FILE."""
+
+# ============================================================================
+# Phase 2: Load Target
+# ============================================================================
+
+let target_info = session: verify-captain
+  prompt: """Load target information.
+
+1. Read target file:
+```bash
+cat "$TARGET_FILE"
+```
+
+2. Extract current status:
+```bash
+STATUS=$(grep "^status:" "$TARGET_FILE" | cut -d: -f2 | tr -d ' ')
+echo "Current status: $STATUS"
+```
+
+Report current status and verification plan."""
+  context: init
+
+# ============================================================================
+# Phase 3: Run Verification
+# ============================================================================
+
+if **target_type is task and status is in-progress**:
+  session "Update status to qa"
+    prompt: """Update task status to qa before verification:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{target_id}" --status "qa"
+```"""
+    context: target_info
+
+# Run full verification
+do verify-with-retry(
+  entity_id: target_id,
+  entity_type: target_type,
+  expected_status: "qa",
+  run_id: init.RUN_ID,
+  max_attempts: 3
+)
+
+# ============================================================================
+# Phase 4: Update Status Based on Results
+# ============================================================================
+
+if **verification passed**:
+  session "Mark complete"
+    prompt: """All verification passed! Update status.
+
+For task:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{target_id}" --status "complete"
+```
+
+For project (if all tasks complete):
+```bash
+INCOMPLETE=$(find "$PROJECT_DIR/tasks" -name "*.mdx" -exec grep -l "status: todo\|status: in-progress\|status: qa" {} \; | wc -l)
+if [ "$INCOMPLETE" -eq 0 ]; then
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update "{target_id}" --status "completed"
+fi
+```"""
+
+else:
+  session "Handle failure"
+    prompt: """Verification failed. Revert status:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{target_id}" --status "in-progress"
+```
+
+Report failures and suggest fixes."""
+
+# ============================================================================
+# Output Report
+# ============================================================================
+
+output report = session: verify-captain
+  prompt: """Generate verification report.
+
+## Verification Report
+
+**Target**: {target_id} ({target_type})
+**Run ID**: {run_id}
+
+### Overall Result
+**{PASS or FAIL}**
+
+### Automated Checks
+| Check | Result |
+|-------|--------|
+| Lint | {result} |
+| Typecheck | {result} |
+| Tests | {result} |
+| Build | {result} |
+
+### UI Verification
+| Check | Result |
+|-------|--------|
+| App Connected | {result} |
+| Element Found | {result} |
+| Status Correct | {result} |
+| No Errors | {result} |
+
+### Status
+- Before: {before_status}
+- After: {after_status}
+"""
+  context: { init, target_info }

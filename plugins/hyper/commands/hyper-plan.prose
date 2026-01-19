@@ -1,0 +1,225 @@
+# Hyper Planning Workflow
+#
+# Full planning workflow: research → direction gate → spec → approval → tasks
+#
+# Usage: prose run hyper-plan.prose feature="Add user authentication"
+#
+# PATH RESOLUTION:
+# $HYPER_WORKSPACE_ROOT = ~/.hyper/accounts/{userId}/hyper/workspaces/{workspaceId}/
+#
+# STATUS FLOW:
+# Project: planned → todo → in-progress → qa → completed
+# Task: todo → in-progress → qa → complete
+
+input feature: "Feature description to plan"
+input depth: "Research depth: comprehensive (default) or deep"
+
+# ============================================================================
+# Agent Definitions
+# ============================================================================
+
+agent hyper-captain:
+  model: opus
+  persist: true
+  prompt: """You are the Hyper Captain - the orchestrator for planning workflows.
+
+Your role:
+1. Coordinate research sub-agents
+2. Synthesize findings into specifications
+3. Present plans for human approval
+4. Create tasks from approved specs
+
+Key principles:
+- Specs matter more than code
+- Always wait for human approval at gates
+- Write to $HYPER_WORKSPACE_ROOT/ using the CLI
+- Update MDX frontmatter for status changes"""
+
+agent researcher:
+  model: sonnet
+  prompt: """You are a research specialist. Gather comprehensive information about:
+- Codebase patterns and conventions
+- Best practices from official documentation
+- Similar implementations in the project
+- Potential challenges and edge cases
+
+Return structured findings."""
+
+# ============================================================================
+# Phase 1: Initialize
+# ============================================================================
+
+let init = session "Initialize planning workflow"
+  prompt: """Initialize the planning workflow.
+
+1. Resolve workspace:
+```bash
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper workspace path)
+export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
+echo "WORKSPACE_ROOT=$WORKSPACE_ROOT"
+```
+
+2. Generate run ID and project slug:
+```bash
+RUN_ID="plan-$(date +%Y%m%d-%H%M%S)-$(uuidgen | cut -c1-8)"
+PROJECT_SLUG=$(echo "{feature}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed 's/[^a-z0-9-]//g')
+echo "RUN_ID=$RUN_ID"
+echo "PROJECT_SLUG=$PROJECT_SLUG"
+```
+
+3. Create prose state directory:
+```bash
+mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/runs/$RUN_ID/bindings"
+mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/agents/hyper-captain"
+```
+
+Report: WORKSPACE_ROOT, RUN_ID, PROJECT_SLUG"""
+
+# ============================================================================
+# Phase 2: Research
+# ============================================================================
+
+let research = session: hyper-captain
+  prompt: """Spawn research sub-agents in parallel.
+
+Use the Task tool to spawn these agents:
+1. repo-research-analyst - Analyze repository structure
+2. best-practices-researcher - Gather external best practices
+3. framework-docs-researcher - Get framework documentation
+4. git-history-analyzer - Understand code evolution
+
+Feature to research: {feature}
+
+Synthesize all findings into a research summary."""
+  context: { feature, init }
+
+# ============================================================================
+# Phase 3: Direction Gate (Human Approval)
+# ============================================================================
+
+let direction = session: hyper-captain
+  prompt: """Present research findings and proposed direction for approval.
+
+## Direction Check
+
+**Feature**: {feature}
+
+### Research Summary
+{research}
+
+### Proposed Approach
+[Based on research, outline the high-level approach]
+
+### Key Decisions
+1. [Decision point 1]
+2. [Decision point 2]
+
+### Open Questions
+- [Any questions that need human input]
+
+---
+
+**GATE: Direction Approval Required**
+
+Use AskUserQuestion to present this direction check and get approval before proceeding to detailed specification."""
+  context: { feature, research, init }
+
+# ============================================================================
+# Phase 4: Detailed Specification
+# ============================================================================
+
+if **direction approved**:
+  let spec = session: hyper-captain
+    prompt: """Create detailed specification based on approved direction.
+
+Create project in workspace:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+  --slug "$PROJECT_SLUG" \
+  --title "{feature}" \
+  --priority "high" \
+  --status "planned" \
+  --json
+```
+
+Write specification to _project.mdx with:
+- Overview and goals
+- Technical approach
+- Implementation phases
+- Acceptance criteria
+- Out of scope items
+
+The spec should be comprehensive enough to generate tasks."""
+    context: { feature, research, direction, init }
+
+# ============================================================================
+# Phase 5: Spec Approval Gate
+# ============================================================================
+
+let spec_approval = session: hyper-captain
+  prompt: """Present complete specification for final approval.
+
+## Specification Review
+
+{spec}
+
+---
+
+**GATE: Specification Approval Required**
+
+Use AskUserQuestion to present the full spec and get approval before creating tasks."""
+  context: { spec, init }
+
+# ============================================================================
+# Phase 6: Task Breakdown
+# ============================================================================
+
+if **spec approved**:
+  let tasks = session: hyper-captain
+    prompt: """Create tasks from approved specification.
+
+For each phase in the spec, create a task:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+  --project "$PROJECT_SLUG" \
+  --title "Phase N: Task Title" \
+  --priority "high" \
+  --json
+```
+
+Include in each task:
+- Clear objectives
+- Implementation steps
+- Acceptance criteria
+- Dependencies on other tasks
+
+Update project status:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update "$PROJECT_SLUG" --status "todo"
+```"""
+    context: { spec, init }
+
+# ============================================================================
+# Output Summary
+# ============================================================================
+
+output summary = session: hyper-captain
+  prompt: """Generate planning summary.
+
+## Planning Complete
+
+**Project**: {feature}
+**Slug**: {project_slug}
+**Status**: todo
+
+### Tasks Created
+[List all tasks with IDs]
+
+### Next Steps
+1. Run `/hyper:implement {project_slug}` to start implementation
+2. Or implement individual tasks: `/hyper:implement {project_slug}/{task_id}`
+
+### Workspace Location
+`$HYPER_WORKSPACE_ROOT/projects/{project_slug}/`
+"""
+  context: { feature, init, spec, tasks }

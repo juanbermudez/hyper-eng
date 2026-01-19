@@ -5,6 +5,161 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.11.0] - 2026-01-18
+
+### Added
+
+**PostToolUse Hooks in plugin.json**
+- Plugin now auto-registers PostToolUse hooks for activity tracking
+- Hooks call `track-activity.sh` after Write|Edit operations
+- No manual hook configuration required - just enable the plugin
+
+### Changed
+
+- Plugin hooks now defined in `.claude-plugin/plugin.json` (portable)
+- Uses `$CLAUDE_PLUGIN_ROOT` env var for script paths
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 9 |
+| Commands | 7 |
+| Prose Workflows | 4 |
+| Skills | 11 |
+| MCP Servers | 1 |
+
+---
+
+## [3.10.0] - 2026-01-18
+
+### Added
+
+**Session Workspace Metadata (Sidecar Files)**
+- Creates `.hyper.json` sidecar files next to Claude Code session transcripts
+- Location: `~/.claude/projects/{path}/{session-id}.hyper.json`
+- Tracks current target (task, project, resource, etc.) being worked on
+- Includes session chain (parentId for sub-agents)
+- Maintains recent targets history (last 10)
+
+**Session Tracking Script**
+- `scripts/update-session.sh` - Creates/updates sidecar files
+- Automatically called from `track-activity.sh` PostToolUse hook
+- Integrates with existing session system (same directory app watches)
+- No TTL needed - sidecar persists with parent session JSONL
+
+**Session Registry Schema Reference**
+- New `references/session-registry-schema.md` in hyper-activity-tracking skill
+- Documents sidecar file format, target types, app integration
+- Includes TanStack DB query examples and UI display patterns
+
+### Changed
+
+- `track-activity.sh` now also calls `update-session.sh` for session metadata
+- `hyper-activity-tracking` skill updated with sidecar documentation
+- Skill now has two reference docs: tracking-schema.md and session-registry-schema.md
+
+### Design Rationale
+
+Sidecar file approach chosen over separate registry:
+1. **Integrates with existing sessions** - Same directory app already watches
+2. **Natural association** - Session ID matches JSONL filename
+3. **No new directories** - Leverages `~/.claude/projects/` structure
+4. **Easy to merge** - Combine JSONL + sidecar at load time
+5. **No TTL needed** - Persists with parent session
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 9 |
+| Commands | 7 |
+| Prose Workflows | 4 |
+| Skills | 11 |
+| MCP Servers | 1 |
+
+---
+
+## [3.9.0] - 2026-01-18
+
+### Added
+
+**Hyper-Prose Integration**
+- Renamed OpenProse to Hyper-Prose (our fork for extending the VM)
+- Slash commands now automatically use hyper-prose skill
+- Users invoke `/hyper:plan` → command loads hyper-prose skill → executes workflow
+
+### Changed
+
+- `skills/open-prose/` → `skills/hyper-prose/`
+- SKILL.md updated with hyper-prose name and triggers
+- All slash commands (plan, implement, verify, status) rewritten to use hyper-prose
+- Package.json sync scripts renamed from `openprose:*` to `hyper-prose:*`
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 9 |
+| Commands | 7 |
+| Prose Workflows | 4 |
+| Skills | 11 |
+| MCP Servers | 1 |
+
+---
+
+## [3.8.0] - 2026-01-18
+
+### Added
+
+**OpenProse Integration**
+- Bundled OpenProse VM as git subtree in `vendor/openprose/`
+- OpenProse skill symlinked into skills directory for automatic loading
+- Enables executable `.prose` workflow files with state management
+- Run workflows with: `prose run hyper-plan.prose feature="Add auth"`
+
+**New Prose Workflows (4)**
+- `hyper-plan.prose` - Full planning: research → direction gate → spec → approval → tasks
+- `hyper-implement.prose` - Implementation: load task → analyze → implement → review → verify → complete
+- `hyper-verify.prose` - Verification: automated checks → prose state → UI verification via Tauri
+- `hyper-status.prose` - Status reporting: project/task overview with Sentry traces
+
+**New Prose Blocks (1)**
+- `prose/blocks/verification.prose` - Reusable verification block with retry logic
+
+**New Agents (2)**
+- `tauri-ui-verifier.md` - Verifies Hyper Control UI state using Tauri MCP tools
+- `workflow-observer.md` - Logs workflow events to Sentry for observability
+
+**Verification System**
+- Three-layer verification: Automated checks → Prose state → Tauri UI verification
+- Sentry observability for workflow tracking
+- Status flows: Task `todo → in-progress → qa → complete`
+
+**State Synchronization**
+- Project State: MDX frontmatter (UI reads via file watcher)
+- Execution State: `.prose/runs/{run-id}/state.md` (Prose VM internal)
+- Workflows update MDX frontmatter via CLI at each transition
+
+### Changed
+
+- Agent count: 7 → 9
+- Skill count: 10 → 11 (added open-prose)
+- Added prose workflows as new component type
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 9 |
+| Commands | 7 |
+| Prose Workflows | 4 |
+| Prose Blocks | 1 |
+| Skills | 11 |
+| MCP Servers | 1 |
+
+---
+
 ## [3.7.1] - 2026-01-18
 
 ### Added

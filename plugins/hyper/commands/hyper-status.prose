@@ -1,0 +1,192 @@
+# Hyper Status Workflow
+#
+# Reports status of projects and tasks in the workspace.
+# Provides overview of workflow progress with Sentry trace links.
+#
+# Usage: prose run hyper-status.prose
+#        prose run hyper-status.prose project="user-auth"
+#        prose run hyper-status.prose verbose=true
+
+input project_slug: "Specific project to check (optional, default: all)"
+input verbose: "Include detailed task breakdown (default: false)"
+
+# ============================================================================
+# Agent Definitions
+# ============================================================================
+
+agent status-reporter:
+  model: haiku
+  prompt: """You report status of projects and tasks in the workspace.
+
+Your job:
+1. Scan workspace for projects and tasks
+2. Calculate progress metrics
+3. Identify blockers or issues
+4. Format clear status report
+
+Use the Hyper CLI for queries:
+- ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project list --json
+- ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project {slug} --json
+- ${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "{query}" --json
+
+Output clean, scannable reports."""
+
+# ============================================================================
+# Phase 1: Initialize
+# ============================================================================
+
+let init = session "Initialize status check"
+  prompt: """Initialize status workflow.
+
+1. Resolve workspace:
+```bash
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper workspace path)
+export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
+echo "Workspace: $WORKSPACE_ROOT"
+```
+
+2. Check workspace exists:
+```bash
+if [ ! -d "$HYPER_WORKSPACE_ROOT/projects" ]; then
+  echo "NO_PROJECTS_DIR"
+  exit 1
+fi
+```
+
+Report workspace path."""
+
+# ============================================================================
+# Phase 2: Gather Project Status
+# ============================================================================
+
+if **project_slug provided**:
+  let project_status = session: status-reporter
+    prompt: """Get detailed status for project: {project_slug}
+
+1. Get project info:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project get {project_slug} --json
+```
+
+2. List all tasks:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project {project_slug} --json
+```
+
+3. Calculate metrics:
+```bash
+TOTAL=$(ls "$HYPER_WORKSPACE_ROOT/projects/{project_slug}/tasks/"*.mdx 2>/dev/null | wc -l)
+COMPLETE=$(grep -l "status: complete" "$HYPER_WORKSPACE_ROOT/projects/{project_slug}/tasks/"*.mdx 2>/dev/null | wc -l)
+echo "Progress: $COMPLETE / $TOTAL"
+```
+
+Report detailed project status."""
+    context: init
+
+else:
+  let project_status = session: status-reporter
+    prompt: """Get status for all projects in workspace.
+
+1. List all projects:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hyper project list --json
+```
+
+2. For each project, get task counts:
+```bash
+for d in "$HYPER_WORKSPACE_ROOT/projects/"*/; do
+  if [ -d "$d" ]; then
+    PROJECT=$(basename "$d")
+    TOTAL=$(ls "$d/tasks/"*.mdx 2>/dev/null | wc -l)
+    COMPLETE=$(grep -l "status: complete" "$d/tasks/"*.mdx 2>/dev/null | wc -l)
+    echo "$PROJECT: $COMPLETE/$TOTAL complete"
+  fi
+done
+```
+
+Report workspace status."""
+    context: init
+
+# ============================================================================
+# Phase 3: Check Prose State
+# ============================================================================
+
+let prose_state = session: status-reporter
+  prompt: """Check prose execution state.
+
+1. List recent runs:
+```bash
+ls -lt "$HYPER_WORKSPACE_ROOT/.prose/runs/" 2>/dev/null | head -5
+```
+
+2. Check agent memory:
+```bash
+for d in "$HYPER_WORKSPACE_ROOT/.prose/agents/"*/; do
+  if [ -d "$d" ]; then
+    AGENT=$(basename "$d")
+    if [ -f "$d/memory.md" ]; then
+      echo "$AGENT: $(wc -l < "$d/memory.md") lines"
+    fi
+  fi
+done
+```
+
+Report prose state."""
+  context: init
+
+# ============================================================================
+# Output Report
+# ============================================================================
+
+output report = session: status-reporter
+  prompt: """Generate comprehensive status report.
+
+## Workspace Status Report
+
+**Workspace**: {workspace_path}
+**Generated**: $(date)
+
+---
+
+### Project Overview
+
+{If single project:}
+## {project_title}
+
+**Status**: {status}
+**Priority**: {priority}
+
+#### Progress
+```
+[████████░░░░░░░░] 50% (4/8 tasks complete)
+```
+
+| Status | Count |
+|--------|-------|
+| Complete | N |
+| QA | N |
+| In Progress | N |
+| Todo | N |
+
+{If all projects:}
+### All Projects
+
+| Project | Status | Progress | Priority |
+|---------|--------|----------|----------|
+| project-1 | in-progress | 4/8 | high |
+| project-2 | todo | 0/5 | medium |
+
+---
+
+### Prose Execution State
+
+**Recent Runs**: {count}
+**Agent Memory**: {agents with memory}
+
+---
+
+### Next Actions
+
+{Based on status, suggest next actions}
+"""
+  context: { init, project_status, prose_state, verbose }

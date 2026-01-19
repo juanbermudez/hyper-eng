@@ -136,4 +136,20 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] EXECUTING: $CMD" >> "$DEBUG_LOG"
 # Execute (silently fail - don't block agent)
 RESULT=$(eval $CMD 2>&1) || true
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] RESULT: $RESULT" >> "$DEBUG_LOG"
+
+# Also update the session registry for active session tracking
+# This creates/updates $HYPER_WORKSPACE_ROOT/.sessions/{session-id}.json
+# for the desktop app to display which sessions are active on which projects/tasks
+SESSION_SCRIPT="${CLAUDE_PLUGIN_ROOT}/scripts/update-session.sh"
+if [[ -x "$SESSION_SCRIPT" ]]; then
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Calling update-session.sh" >> "$DEBUG_LOG"
+  export SESSION_ID
+  export PARENT_SESSION
+  export CWD
+  export TRANSCRIPT_PATH
+  export FILE_PATH
+  export WORKSPACE_ROOT="$WORKSPACE_ROOT"
+  "$SESSION_SCRIPT" 2>&1 || true
+fi
+
 exit 0

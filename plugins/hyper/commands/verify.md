@@ -3,74 +3,51 @@ description: Run comprehensive automated and manual verification, creating fix t
 argument-hint: "[project-slug/task-id]"
 ---
 
-Use the **hyper-verification** skill to run verification for:
+Use the **hyper-prose** skill to execute the verification workflow.
 
-$ARGUMENTS
+## Execute Workflow
 
-## Verification Process
-
-1. **Slop Detection** - AI-specific quality checks (hallucinated imports, secrets, debug statements)
-2. **Automated Checks** - Lint, typecheck, test, build
-3. **Manual Verification** - Browser testing via web-app-debugger agent
-4. **Compound Phase** - Capture learnings in docs/solutions/
-
-## Verification Loop
+Load the VM specification from `skills/hyper-prose/prose.md` and execute the workflow at `commands/hyper-verify.prose` with:
 
 ```
-slop detection
-    ↓ (if fail → create fix task → STOP)
-automated checks (lint, typecheck, test, build)
-    ↓ (if fail → create fix task → STOP)
-manual verification (browser testing)
-    ↓ (if fail → create fix task → STOP)
-completion → compound phase
+input target_id: "$ARGUMENTS"
 ```
 
-## Automated Checks
+The workflow will guide you through:
 
-| Check | Command | Required |
-|-------|---------|----------|
-| Lint | `npm run lint` / `cargo clippy` / `ruff check` | Yes |
-| Typecheck | `tsc --noEmit` / `cargo check` / `mypy` | Yes |
-| Test | `npm test` / `cargo test` / `pytest` | Yes |
-| Build | `npm run build` / `cargo build` | Yes |
+1. **Initialize** - Detect target type (task or project), set up run ID
+2. **Load Target** - Read task/project file, check current status
+3. **Update Status** - Move to QA phase
+4. **Run Verification** - Execute verification block with retry logic
+5. **Handle Results** - Mark complete or revert to in-progress
 
-## Browser Testing
+## Verification Layers
 
-Uses web-app-debugger agent with Claude Code Chrome extension for:
-- Screenshots at each step
-- DOM inspection
-- Console log verification
-- UI interaction testing
+| Layer | Description |
+|-------|-------------|
+| **Automated Checks** | Lint, typecheck, test, build |
+| **Prose State** | Validate framework state files |
+| **UI Verification** | Tauri MCP tools (connect, screenshot, verify) |
+| **Sentry Logging** | Track all results for observability |
 
-## Fix Task Creation
+## Verification Block
 
-When checks fail, creates fix tasks automatically:
-- Includes error output and root cause analysis
-- Sets priority to urgent
-- Links to parent task
-- Includes re-verification instructions
+Uses reusable block from `prose/blocks/verification.prose`:
+- `verify-implementation` - Single verification pass
+- `verify-with-retry` - Up to 3 attempts with fixes
 
-## Completion Criteria
+## State Management
 
-**Only mark complete when ALL checks pass:**
-- ✓ Slop detection passed
-- ✓ All automated checks passed
-- ✓ All manual verification steps passed
-
-## CLI Integration
-
-```bash
-# Update task status
-hyper task update "task-id" --status "qa"
-hyper task update "task-id" --status "complete"
+```
+$HYPER_WORKSPACE_ROOT/.prose/runs/{run-id}/
+├── state.md
+└── bindings/
+    └── verification_result.md
 ```
 
-## Compound Phase
+## Status Flow
 
-After successful verification, extracts learnings:
-- Bug fixes → `docs/solutions/bugs/`
-- Patterns → `docs/solutions/patterns/`
-- Gotchas → `docs/solutions/gotchas/`
-
-**Activity tracking**: Session ID automatically captured on all $HYPER_WORKSPACE_ROOT/ modifications.
+```
+in-progress → qa → complete (if pass)
+              qa → in-progress (if fail, to fix)
+```

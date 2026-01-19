@@ -1,7 +1,7 @@
 {
   "name": "hyper",
-  "description": "Spec-driven development with local .hyper/ planning. 7 agents, 7 commands, 10 skills.",
-  "version": "3.7.1",
+  "description": "Spec-driven development with local .hyper/ planning. 9 agents, 7 commands, 4 prose workflows, 11 skills (includes Hyper-Prose VM).",
+  "version": "3.11.0",
   "author": {
     "name": "Juan Bermudez"
   },
@@ -13,6 +13,20 @@
     "spec-driven",
     "planning",
     "workflow-automation",
-    "ai-powered"
-  ]
+    "ai-powered",
+    "hyper-prose"
+  ],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PLUGIN_ROOT/scripts/track-activity.sh"
+          }
+        ]
+      }
+    ]
+  }
 }

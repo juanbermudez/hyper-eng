@@ -3,41 +3,50 @@ description: Implement tasks from $HYPER_WORKSPACE_ROOT/ - pass project-slug for
 argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single task)"
 ---
 
-Use the **hyper-implementation** skill to implement:
+Use the **hyper-prose** skill to execute the implementation workflow.
 
-$ARGUMENTS
+## Execute Workflow
+
+Load the VM specification from `skills/hyper-prose/prose.md` and execute the workflow at `commands/hyper-implement.prose` with:
+
+```
+input task_id: "$ARGUMENTS"
+```
+
+The workflow will guide you through:
+
+1. **Initialize** - Set up workspace, run ID, and git branch
+2. **Load Task** - Read task spec and project context
+3. **Analysis** - Understand codebase patterns before implementing
+4. **Implementation Loop** - Write code with review cycles (max 3 attempts)
+5. **QA Phase** - Run automated and manual verification
+6. **Completion** - Mark complete and commit changes
 
 ## Modes
 
 **Single Task Mode** (`project-slug/task-id`):
 - Implements one specific task
 - Updates task status through workflow
-- Runs verification gates
-- Commits on completion
 
 **Full Project Mode** (`project-slug`):
 - Implements ALL incomplete tasks in dependency order
-- Resolves task dependencies automatically
 - Reports progress after each task
-- Moves project to QA when all tasks complete
 
-## Workflow Summary
+## State Management
 
-1. **Read task/project** - Understand requirements from $HYPER_WORKSPACE_ROOT/ files
-2. **Check dependencies** - Ensure blocking tasks are complete
-3. **Update status** - Mark task `in-progress`
-4. **Implement** - Make code changes following spec
-5. **Verify** - Run lint, typecheck, test, build gates
-6. **Complete** - Mark `complete` only when ALL gates pass
-7. **Commit** - Git commit with conventional format
+Execution state persists in:
+```
+$HYPER_WORKSPACE_ROOT/.prose/runs/{run-id}/
+├── state.md           # Execution position
+├── bindings/          # Variable values (task_spec, analysis, etc.)
+└── agents/            # Agent memory (impl-captain, executor, reviewer)
+```
 
 ## Verification Gates
 
 All must pass before marking complete:
-- Lint: `npm run lint` / `cargo clippy` / `ruff check`
-- Typecheck: `tsc --noEmit` / `cargo check` / `mypy`
-- Tests: `npm test` / `cargo test` / `pytest`
-- Build: `npm run build` / `cargo build`
+- Lint, Typecheck, Tests, Build
+- UI verification via Tauri MCP (if applicable)
 
 ## Status Flow
 
@@ -46,18 +55,3 @@ todo → in-progress → qa → complete
                       ↓
               (if fail) → in-progress (fix) → qa
 ```
-
-## CLI Integration
-
-```bash
-hyper task update "task-id" --status "in-progress"
-hyper task update "task-id" --status "complete"
-```
-
-## Git Workflow
-
-- Branch: `feat/{project-slug}` or `feat/{project-slug}/{task-id}`
-- Commit format: `{type}({scope}): {description}`
-- Include `Task: {task-id}` in commit body
-
-**Activity tracking**: Session ID automatically captured on all $HYPER_WORKSPACE_ROOT/ modifications.

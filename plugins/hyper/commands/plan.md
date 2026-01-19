@@ -3,53 +3,43 @@ description: Create a comprehensive specification with two approval gates - firs
 argument-hint: "[feature or requirement description]"
 ---
 
-Use the **hyper-planning** skill to create a comprehensive specification for:
+Use the **hyper-prose** skill to execute the planning workflow.
 
-$ARGUMENTS
+## Execute Workflow
 
-## Workflow Summary
+Load the VM specification from `skills/hyper-prose/prose.md` and execute the workflow at `commands/hyper-plan.prose` with:
 
-The skill guides you through the complete hyper-engineering workflow:
+```
+input feature: "$ARGUMENTS"
+```
 
-1. **Initial Interview** - Use AskUserQuestion to deeply understand requirements
-2. **Research Phase** - Spawn research-orchestrator with 4 parallel sub-agents
-3. **Post-Research Interview** - Clarify decisions surfaced by research
-4. **Direction Validation (Gate 1)** - Get early approval before detailed spec
-5. **Specification Creation** - Detailed technical PRD with file:line references
-6. **Specification Review (Gate 2)** - Wait for human approval
-7. **Task Breakdown** - Create task files only after approval
+The workflow will guide you through:
 
-## Key Principles
+1. **Initialize** - Set up workspace and run ID
+2. **Research Phase** - Spawn 4 parallel research sub-agents
+3. **Direction Gate** - Get early approval before detailed spec
+4. **Specification** - Create detailed technical PRD
+5. **Approval Gate** - Wait for human approval
+6. **Task Breakdown** - Create task files after approval
 
-- **Don't assume - ASK**: Use AskUserQuestion liberally for every clarification
-- **Research first**: Always run research before writing spec
-- **Two gates**: Direction check + full spec approval saves rework
-- **Specs are detailed**: Include file:line references, before/after examples, diagrams
+## State Management
+
+Execution state persists in:
+```
+$HYPER_WORKSPACE_ROOT/.prose/runs/{run-id}/
+├── state.md           # Execution position
+├── bindings/          # Variable values
+└── agents/            # Agent memory
+```
+
+This enables resumption if interrupted.
 
 ## CLI Integration
 
-Use `hyper` CLI for all $HYPER_WORKSPACE_ROOT/ file operations:
-- `hyper project create` - Create project with validated frontmatter
-- `hyper task create` - Create tasks with proper schema
-- `hyper task update --status` - Update status (validates transitions)
-
-## Activity Tracking
-
-Session ID automatically tracked on all file modifications via PostToolUse hook.
-
-## Output Location
-
-```
-$HYPER_WORKSPACE_ROOT/projects/{slug}/
-├── _project.mdx           # Spec inline in project file
-├── tasks/task-*.mdx       # Task breakdown
-└── resources/research/    # Research findings
-```
+The workflow uses `${CLAUDE_PLUGIN_ROOT}/binaries/hyper` for all file operations.
 
 ## Status Flow
 
 ```
 planned → todo → in-progress → qa → completed
 ```
-
-**Strict Methodology**: Follow every phase. Do not skip phases regardless of perceived task simplicity.

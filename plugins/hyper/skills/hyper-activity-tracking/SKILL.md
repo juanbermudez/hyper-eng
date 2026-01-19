@@ -28,6 +28,7 @@ This enables:
 ## Reference Documents
 
 - [Tracking Schema](./references/tracking-schema.md) - Activity entry format
+- [Session Registry Schema](./references/session-registry-schema.md) - Per-session file format
 
 ## Activity Schema
 
@@ -97,9 +98,66 @@ activity:
 - Use CLI for activity queries
 - Parent chain enables sub-agent tracing
 
+## Session Workspace Metadata (Sidecar Files)
+
+In addition to per-file activity tracking, the system creates sidecar files next to Claude Code session transcripts:
+
+```
+~/.claude/projects/{encoded-path}/
+├── abc-123-def.jsonl        ← Claude Code transcript (existing)
+├── abc-123-def.hyper.json   ← Workspace metadata (our sidecar)
+└── ...
+```
+
+### Sidecar File Format
+
+```json
+{
+  "sessionId": "abc-123-def",
+  "parentId": "xyz-789",
+  "workspaceRoot": "~/.hyper/accounts/user/hyper/workspaces/ws-123",
+  "currentTarget": {
+    "type": "task",
+    "taskId": "task-001",
+    "projectSlug": "auth-system",
+    "filePath": "$HYPER_WORKSPACE_ROOT/projects/auth/tasks/task-001.mdx"
+  },
+  "recentTargets": [...],
+  "startedAt": "2026-01-18T10:00:00Z",
+  "lastActivity": "2026-01-18T10:05:00Z"
+}
+```
+
+### Target Types
+
+| Type | Fields | Example |
+|------|--------|---------|
+| `task` | `taskId`, `projectSlug`, `filePath` | Working on a specific task |
+| `project` | `projectSlug`, `filePath` | Working on project spec |
+| `resource` | `projectSlug`, `resourcePath`, `filePath` | Writing research docs |
+| `initiative` | `initiativeSlug`, `filePath` | Working on initiative |
+| `doc` | `docSlug`, `filePath` | Writing documentation |
+| `other` | `filePath` | Other workspace files |
+
+### Design Rationale
+
+1. **Integrates with existing sessions** - Same directory app already watches
+2. **Natural association** - Session ID matches JSONL filename
+3. **No new directories** - Leverages `~/.claude/projects/` structure
+4. **Easy to merge** - Combine JSONL + sidecar at load time
+5. **No TTL needed** - Persists with parent session
+
 ## Integration with Desktop
 
-The Hyperbench desktop app uses activity to:
-- Show active session indicators
+The Hyperbench desktop app uses:
+
+### Activity (per-file)
 - Display modification history
 - Link sessions to changes
+- Audit trail for files
+
+### Session Sidecar (per-session)
+- Extend existing session metadata with workspace context
+- Show which project/task a session is working on
+- Query sessions by project via TanStack DB
+- Display workspace activity badges on session list
