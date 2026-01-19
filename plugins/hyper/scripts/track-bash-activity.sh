@@ -363,4 +363,78 @@ EOF
 
 log_debug "Sidecar file created/updated: $SIDECAR_PATH"
 
+# For file write commands, extract path from tool_result and call hyper activity add
+# This tracks file modifications in the activity log for audit/history purposes
+if [[ "$SUBCOMMAND" == "file" ]]; then
+  # Try to extract written path from JSON tool result
+  # The CLI returns: {"success":true,"data":{"path":"..."}}
+  WRITTEN_PATH=""
+  if echo "$TOOL_RESULT" | grep -q '"path"'; then
+    WRITTEN_PATH=$(echo "$TOOL_RESULT" | jq -r '.data.path // .path // empty' 2>/dev/null || true)
+  fi
+
+  if [[ -n "$WRITTEN_PATH" && -n "$SESSION_ID" ]]; then
+    log_debug "Tracking file write activity: $WRITTEN_PATH"
+
+    # Determine action based on command (write vs create)
+    ACTION="modified"
+    if echo "$FIRST_CMD" | grep -qE 'file\s+create'; then
+      ACTION="created"
+    fi
+
+    # Get hyper binary path
+    HYPER_BIN="${CLAUDE_PLUGIN_ROOT:-}/binaries/hyper"
+    if [[ ! -x "$HYPER_BIN" ]]; then
+      HYPER_BIN="hyper"  # Fall back to PATH
+    fi
+
+    # Call activity add (async, don't block on failure)
+    "$HYPER_BIN" activity add \
+      --file "$WRITTEN_PATH" \
+      --actor-type session \
+      --actor-id "$SESSION_ID" \
+      --action "$ACTION" \
+      2>/dev/null &
+
+    log_debug "Activity tracking initiated for $WRITTEN_PATH ($ACTION)"
+  fi
+fi
+
+# For drive commands (move, create), also track activity
+if [[ "$SUBCOMMAND" == "drive" ]]; then
+  # Extract path from drive command result
+  DRIVE_PATH=""
+  if echo "$TOOL_RESULT" | grep -q '"path"'; then
+    DRIVE_PATH=$(echo "$TOOL_RESULT" | jq -r '.data.path // .data.new_path // .path // empty' 2>/dev/null || true)
+  fi
+
+  if [[ -n "$DRIVE_PATH" && -n "$SESSION_ID" ]]; then
+    log_debug "Tracking drive activity: $DRIVE_PATH"
+
+    # Determine action based on command
+    ACTION="modified"
+    if echo "$FIRST_CMD" | grep -qE 'drive\s+create'; then
+      ACTION="created"
+    elif echo "$FIRST_CMD" | grep -qE 'drive\s+move'; then
+      ACTION="moved"
+    fi
+
+    # Get hyper binary path
+    HYPER_BIN="${CLAUDE_PLUGIN_ROOT:-}/binaries/hyper"
+    if [[ ! -x "$HYPER_BIN" ]]; then
+      HYPER_BIN="hyper"
+    fi
+
+    # Call activity add (async, don't block on failure)
+    "$HYPER_BIN" activity add \
+      --file "$DRIVE_PATH" \
+      --actor-type session \
+      --actor-id "$SESSION_ID" \
+      --action "$ACTION" \
+      2>/dev/null &
+
+    log_debug "Activity tracking initiated for $DRIVE_PATH ($ACTION)"
+  fi
+fi
+
 exit 0

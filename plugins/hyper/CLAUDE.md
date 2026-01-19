@@ -216,6 +216,33 @@ hyper drive create "My Note Title" --icon "FileText" --json
 
 See `skills/hyper-cli/SKILL.md` for full Drive API documentation.
 
+### Choosing the Right Scope
+
+| Artifact Type | Recommended Scope | Rationale |
+|---------------|-------------------|-----------|
+| Personal notes | `personal:` | Private learning, research, drafts |
+| Workspace artifacts | `ws:{workspaceId}:` | Shared context for workspace projects |
+| Project diagrams | `proj:{projectId}:` | Project-specific design docs |
+| Team templates | `org:{orgId}:` | Cross-workspace org standards |
+
+**Rule of thumb**:
+- Personal notes → Personal Drive (global `/drive`)
+- Project artifacts → Workspace Drive (per-workspace)
+- Planning docs → `$HYPER_WORKSPACE_ROOT/projects/{slug}/` (git-tracked)
+
+### Creating Workspace-Scoped Artifacts
+
+```bash
+# Create in personal drive (default)
+hyper drive create "My Personal Note" --icon "FileText"
+
+# Create in workspace drive
+hyper drive create "Design Doc" --scope ws:my-workspace --icon "Layout"
+
+# Create in project scope
+hyper drive create "Architecture" --scope proj:my-project --icon "Box"
+```
+
 ---
 
 ## Command Naming Convention

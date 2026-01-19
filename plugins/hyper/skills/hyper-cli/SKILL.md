@@ -164,7 +164,16 @@ All CLI commands with `--json` flag return structured responses:
 | `PROTECTED_PATH` | 65 | Cannot modify location | Use allowed path |
 | `PATH_OUTSIDE_WORKSPACE` | 65 | Path not in workspace | Use workspace-relative path |
 | `INVALID_FIELD_VALUE` | 65 | Value not in enum | Check `allowed` array in error |
+| `INVALID_ENUM_VALUE` | 65 | Enum field has invalid value | Check `allowed` array in error |
 | `MISSING_FIELD` | 65 | Required field missing | Add required field |
+| `MISSING_REQUIRED_FIELD` | 65 | Required field missing | Add required field |
+| `YAML_PARSE_ERROR` | 65 | YAML frontmatter syntax error | Check suggestion for fix |
+| `INVALID_PARENT_REFERENCE` | 65 | Task's parent project doesn't exist | Check project ID |
+| `INVALID_DEPENDENCY_REFERENCE` | 65 | depends_on references non-existent task | Check task ID |
+| `SELF_DEPENDENCY` | 65 | Task depends on itself | Remove self-reference |
+| `CIRCULAR_DEPENDENCY` | 65 | Dependency cycle detected | Break the cycle |
+| `MALFORMED_ID` | 65 | ID format incorrect | Check ID pattern |
+| `INVALID_DATE_FORMAT` | 65 | Date not in YYYY-MM-DD format | Use ISO format |
 | `IO_ERROR` | 74 | Filesystem error | Retry or check permissions |
 
 ### Self-Correction Pattern
@@ -207,6 +216,11 @@ hyper file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/_project.mdx` (project files)
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/*.mdx` (task files)
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/**` (resource files)
+- `$HYPER_WORKSPACE_ROOT/initiatives/{slug}/_initiative.mdx` (initiative files)
+- `$HYPER_WORKSPACE_ROOT/initiatives/{slug}/tasks/*.mdx` (initiative tasks)
+- `$HYPER_WORKSPACE_ROOT/initiatives/{slug}/resources/**` (initiative resources)
+- `$HYPER_WORKSPACE_ROOT/notes/*.mdx` (personal drive notes)
+- `$HYPER_WORKSPACE_ROOT/notes/**/*.mdx` (nested notes in subfolders)
 - `$HYPER_WORKSPACE_ROOT/docs/**/*.md` (documentation)
 - `$HYPER_WORKSPACE_ROOT/settings/workflows.yaml` (workflow config)
 - `$HYPER_WORKSPACE_ROOT/settings/agents/*.yaml` (agent configs)
@@ -379,12 +393,72 @@ hyper drive delete <id> --force --json
 
 # Create a folder
 hyper drive mkdir "research/experiments" --json
+
+# Move a note to a different folder or scope
+hyper drive move <id> --to-folder "archive" --json
+hyper drive move <id> --to-scope "ws:my-workspace" --json
+hyper drive move <id> --to-scope "personal" --to-folder "notes" --keep-redirect --json
 ```
 
+### Moving Drive Items
+
+The `hyper drive move` command moves notes between folders and/or scopes:
+
+```bash
+# Move to a different folder (same scope)
+hyper drive move "personal:my-note" --to-folder "archive" --json
+
+# Move to a different scope (note gets new ID)
+hyper drive move "personal:my-note" --to-scope "ws:workspace-id" --json
+
+# Move with redirect (leaves pointer at old location)
+hyper drive move "personal:my-note" --to-scope "ws:workspace-id" --keep-redirect --json
+```
+
+**Cross-scope moves**:
+- Generate a new ID with the target scope prefix
+- Optionally create a redirect file at the old location (with `--keep-redirect`)
+- Update all file references automatically
+
+**Same-scope moves**:
+- Update the `folder` field in frontmatter
+- Preserve the same ID
+
 Drive notes support scopes:
-- `--scope personal` (default) - User's personal notes
+- `--scope personal` (default) - User's personal notes in global `/drive`
 - `--scope org:<id>` - Organization-scoped notes
-- `--scope ws:<id>` - Workspace-scoped notes
+- `--scope ws:<id>` - Workspace-scoped notes (shown in workspace Drive view)
+- `--scope proj:<id>` - Project-scoped notes in project resources
+
+### Choosing the Right Scope
+
+| Artifact Type | Recommended Scope | Rationale |
+|---------------|-------------------|-----------|
+| Personal notes | `personal:` | Private learning, research, drafts |
+| Workspace artifacts | `ws:{workspaceId}:` | Shared context for workspace projects |
+| Project diagrams | `proj:{projectId}:` | Project-specific design docs |
+| Team templates | `org:{orgId}:` | Cross-workspace org standards |
+
+**Rule of thumb**:
+- Personal notes → Personal Drive (`hyper drive create "..." --scope personal`)
+- Project artifacts → Workspace Drive (`hyper drive create "..." --scope ws:{id}`)
+- Planning docs → `$HYPER_WORKSPACE_ROOT/projects/{slug}/` (git-tracked)
+
+### Workspace-Scoped Drive Examples
+
+```bash
+# Create in personal drive (default)
+hyper drive create "My Personal Note" --icon "FileText"
+
+# Create in workspace drive (visible in workspace Drive view)
+hyper drive create "Design Doc" --scope ws:my-workspace --icon "Layout"
+
+# Create in project scope
+hyper drive create "Architecture" --scope proj:my-project --icon "Box"
+
+# List workspace drive items
+hyper drive list --scope ws:my-workspace --json
+```
 
 ### Drive File Frontmatter Format
 

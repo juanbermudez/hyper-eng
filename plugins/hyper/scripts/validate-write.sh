@@ -83,7 +83,58 @@ if [[ -z "$CONTENT" ]]; then
   exit 0
 fi
 
-# Try to use hyper CLI for validation if available
+# Get the script directory for locating Python validator
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON_VALIDATOR="${SCRIPT_DIR}/validate-hyper-file.py"
+
+# Try Python validator first (has PyYAML for robust parsing)
+if [[ -x "$PYTHON_VALIDATOR" ]] || command -v python3 &>/dev/null; then
+  # Write content to temp file for Python to read
+  TEMP_FILE=$(mktemp)
+  echo "$CONTENT" > "$TEMP_FILE"
+
+  # Run Python validator in PreToolUse mode
+  RESULT=$(python3 "$PYTHON_VALIDATOR" --pre-validate --path "$FILE_PATH" < "$TEMP_FILE" 2>&1)
+  EXIT_CODE=$?
+  rm -f "$TEMP_FILE"
+
+  if [[ $EXIT_CODE -eq 0 ]]; then
+    # Check if it was skipped (non-workspace file)
+    SKIPPED=$(echo "$RESULT" | jq -r '.skipped // false' 2>/dev/null)
+    if [[ "$SKIPPED" == "true" ]]; then
+      echo '{"decision": "allow"}'
+      exit 0
+    fi
+    echo '{"decision": "allow"}'
+    exit 0
+  else
+    # Extract structured error for agent feedback
+    ERROR_MSG=$(echo "$RESULT" | jq -r '.error.message // "Validation failed"' 2>/dev/null || echo "Validation failed")
+    SUGGESTION=$(echo "$RESULT" | jq -r '.error.suggestion // ""' 2>/dev/null || echo "")
+    FIRST_ERROR=$(echo "$RESULT" | jq -r '.error.context.errors[0].message // ""' 2>/dev/null || echo "")
+    FIRST_FIX=$(echo "$RESULT" | jq -r '.error.context.errors[0].suggestion // ""' 2>/dev/null || echo "")
+
+    # Build helpful error message
+    if [[ -n "$FIRST_ERROR" ]]; then
+      FULL_MSG="$FIRST_ERROR"
+      if [[ -n "$FIRST_FIX" ]]; then
+        FULL_MSG="$FULL_MSG. Fix: $FIRST_FIX"
+      fi
+    else
+      FULL_MSG="$ERROR_MSG"
+      if [[ -n "$SUGGESTION" ]]; then
+        FULL_MSG="$FULL_MSG. Fix: $SUGGESTION"
+      fi
+    fi
+
+    # Escape for JSON
+    FULL_MSG=$(echo "$FULL_MSG" | sed 's/"/\\"/g')
+    echo "{\"decision\": \"block\", \"reason\": \"$FULL_MSG\"}"
+    exit 2
+  fi
+fi
+
+# Fallback: Try hyper CLI validation if Python not available
 HYPER_BIN="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
 if [[ -x "$HYPER_BIN" ]]; then
   # Use CLI validation
@@ -101,7 +152,7 @@ if [[ -x "$HYPER_BIN" ]]; then
   fi
 fi
 
-# Fallback: basic frontmatter validation without CLI
+# Last resort fallback: basic frontmatter validation
 # Check if content starts with frontmatter
 if [[ "$CONTENT" != "---"* ]]; then
   # MDX files in the workspace data root should have frontmatter
@@ -126,34 +177,34 @@ FRONTMATTER=$(echo "$CONTENT" | sed -n '/^---$/,/^---$/p' | sed '1d;$d')
 if [[ "$FILE_PATH" == *"/projects/"*"/_project.mdx" ]]; then
   # Project files need: id, title, type, status
   if ! echo "$FRONTMATTER" | grep -q "^id:"; then
-    echo '{"decision": "block", "reason": "Project file missing required field: id"}'
+    echo '{"decision": "block", "reason": "Project file missing required field: id. Fix: Add id: proj-your-project"}'
     exit 2
   fi
   if ! echo "$FRONTMATTER" | grep -q "^title:"; then
-    echo '{"decision": "block", "reason": "Project file missing required field: title"}'
+    echo '{"decision": "block", "reason": "Project file missing required field: title. Fix: Add title: Your Project Title"}'
     exit 2
   fi
   if ! echo "$FRONTMATTER" | grep -q "^type:"; then
-    echo '{"decision": "block", "reason": "Project file missing required field: type"}'
+    echo '{"decision": "block", "reason": "Project file missing required field: type. Fix: Add type: project"}'
     exit 2
   fi
 
 elif [[ "$FILE_PATH" == *"/tasks/"*.mdx ]]; then
   # Task files need: id, title, type, parent
   if ! echo "$FRONTMATTER" | grep -q "^id:"; then
-    echo '{"decision": "block", "reason": "Task file missing required field: id"}'
+    echo '{"decision": "block", "reason": "Task file missing required field: id. Fix: Add id: task-001"}'
     exit 2
   fi
   if ! echo "$FRONTMATTER" | grep -q "^title:"; then
-    echo '{"decision": "block", "reason": "Task file missing required field: title"}'
+    echo '{"decision": "block", "reason": "Task file missing required field: title. Fix: Add title: Task Title"}'
     exit 2
   fi
   if ! echo "$FRONTMATTER" | grep -q "^type:"; then
-    echo '{"decision": "block", "reason": "Task file missing required field: type"}'
+    echo '{"decision": "block", "reason": "Task file missing required field: type. Fix: Add type: task"}'
     exit 2
   fi
   if ! echo "$FRONTMATTER" | grep -q "^parent:"; then
-    echo '{"decision": "block", "reason": "Task file missing required field: parent"}'
+    echo '{"decision": "block", "reason": "Task file missing required field: parent. Fix: Add parent: proj-your-project"}'
     exit 2
   fi
 fi

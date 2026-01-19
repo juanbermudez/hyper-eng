@@ -91,12 +91,56 @@ activity:
     action: modified
 ```
 
+## CLI Command Activity Tracking
+
+The `track-bash-activity.sh` PostToolUse hook also tracks activity for CLI commands:
+
+### Supported Commands
+
+| Command | Activity Action | Tracked Data |
+|---------|-----------------|--------------|
+| `hyper file write` | `created` / `modified` | File path from result |
+| `hyper file create` | `created` | File path from result |
+| `hyper drive create` | `created` | Note path from result |
+| `hyper drive move` | `moved` | New path from result |
+| `hyper project create/update` | Session sidecar | Project slug |
+| `hyper task create/update` | Session sidecar | Task ID + project |
+
+### How CLI Tracking Works
+
+1. **PostToolUse hook** detects `hyper` CLI commands in Bash
+2. **Parses tool result** to extract created/modified paths
+3. **Calls `hyper activity add`** asynchronously with:
+   - `--file <path>` - The affected file
+   - `--actor-type session` - Session context
+   - `--actor-id <session-id>` - Current session
+   - `--action <created|modified|moved>` - Operation type
+
+### Example Flow
+
+```bash
+# Agent runs this command:
+hyper drive create "Research Notes" --icon "FileText" --json
+
+# Hook detects:
+# - Subcommand: drive
+# - Result: {"success":true,"data":{"path":"notes/research-notes.mdx"}}
+
+# Hook calls (async):
+hyper activity add \
+  --file "notes/research-notes.mdx" \
+  --actor-type session \
+  --actor-id "$SESSION_ID" \
+  --action created
+```
+
 ## Best Practices
 
 - Activity tracking is automatic via hooks
 - Don't manually add activity entries
 - Use CLI for activity queries
 - Parent chain enables sub-agent tracing
+- CLI file/drive operations are tracked automatically
 
 ## Session Workspace Metadata (Sidecar Files)
 

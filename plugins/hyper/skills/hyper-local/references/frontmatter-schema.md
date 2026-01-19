@@ -115,6 +115,39 @@ Valid values for `type`:
 | `task` | Implementation unit | draft, todo, in-progress, qa, complete, blocked |
 | `resource` | Supporting documentation | (none) |
 | `doc` | Standalone documentation | (none) |
+| `note` | Personal drive note | (none) |
+
+## Note Schema
+
+Notes are personal drive items stored in `$HYPER_WORKSPACE_ROOT/notes/`:
+
+```yaml
+---
+id: "personal:my-note-slug"        # Required: Scope-prefixed ID
+title: "My Note Title"             # Required: Human-readable title
+icon: FileText                     # Optional: Lucide icon name (default: "box")
+folder: "research"                 # Optional: Subfolder path
+created: 2026-01-18                # Required: ISO date (YYYY-MM-DD)
+updated: 2026-01-18                # Optional: ISO date
+sortPosition: a0                   # Optional: Fractional index for ordering
+tags:                              # Optional: Searchable tags
+  - tag1
+  - tag2
+---
+```
+
+### Note ID Format
+
+The `id` field MUST include a scope prefix:
+
+| Scope | ID Format | Example |
+|-------|-----------|---------|
+| Personal | `personal:{slug}` | `id: "personal:my-research-notes"` |
+| Organization | `org-{orgId}:{slug}` | `id: "org-abc123:team-docs"` |
+| Workspace | `ws-{wsId}:{slug}` | `id: "ws-proj-123:feature-notes"` |
+| Project | `proj-{projId}:{slug}` | `id: "proj-auth:design-doc"` |
+
+**Note**: IDs with colons MUST be quoted in YAML to avoid parsing errors.
 
 ## Status Values
 
@@ -337,14 +370,54 @@ reviewer: "@johndoe"
 
 ## Validation Rules
 
+### Basic Validation
+
 1. **id** must be unique across the workspace
 2. **type** must be a valid document type
 3. **status** must be valid for the document type
 4. **priority** must be a valid priority value
-5. **created** and **updated** must be valid ISO dates
+5. **created** and **updated** must be valid ISO dates (YYYY-MM-DD)
 6. **parent** is required for tasks, must reference existing project
 7. **depends_on** references must exist
 8. **tags** must be an array of strings
+
+### Relationship Validation
+
+For tasks, the validator checks:
+
+1. **Parent Reference**: The `parent` field must reference an existing project ID
+   - Error: `INVALID_PARENT_REFERENCE`
+   - Suggestion: Check project exists with `hyper project list --json`
+
+2. **Dependency References**: All IDs in `depends_on` must reference existing tasks
+   - Error: `INVALID_DEPENDENCY_REFERENCE`
+   - Suggestion: Check task exists with `hyper task list --project <slug> --json`
+
+3. **Self-Dependency**: A task cannot depend on itself
+   - Error: `SELF_DEPENDENCY`
+   - Suggestion: Remove the self-reference from depends_on
+
+4. **Circular Dependencies**: No dependency cycles allowed (A→B→C→A)
+   - Error: `CIRCULAR_DEPENDENCY`
+   - The error includes the cycle path for debugging
+   - Suggestion: Break the cycle by removing one dependency
+
+### YAML Parsing
+
+Frontmatter is validated using PyYAML for robust error detection:
+
+1. **Colon in Values**: Values containing colons followed by spaces require quotes
+   - Error: `YAML_PARSE_ERROR`
+   - Bad: `id: foo: bar` (colon-space in value)
+   - Good: `id: "foo: bar"` or `id: foo:bar` (no space after colon)
+
+2. **Special Characters**: Values with special YAML characters need quoting
+   - Bad: `title: My [Special] Title`
+   - Good: `title: "My [Special] Title"`
+
+3. **Malformed ID Detection**: IDs that appear truncated (e.g., missing scope suffix)
+   - Error: `MALFORMED_ID`
+   - Often caused by unquoted colons
 
 ## Activity Tracking
 
