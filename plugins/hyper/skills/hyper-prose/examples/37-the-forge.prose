@@ -1456,7 +1456,7 @@ cargo run --release -- https://example.com
 [What doesn't work yet]
 
 ## Forged in The Forge
-This browser was created by AI agents coordinating through OpenProse.
+This browser was created by AI agents coordinating through Hyper-Prose.
 """
 
 session: smith

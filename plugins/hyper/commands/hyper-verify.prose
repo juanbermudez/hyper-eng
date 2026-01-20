@@ -3,8 +3,8 @@
 # Standalone verification workflow for running quality gates on a task or project.
 # Can be used independently or as part of the implementation workflow.
 #
-# Usage: prose run hyper-verify.prose task="ua-001"
-#        prose run hyper-verify.prose project="user-auth"
+# Usage: hypercraft run hyper-verify.prose task="ua-001"
+#        hypercraft run hyper-verify.prose project="user-auth"
 #
 # VERIFICATION LAYERS:
 # 1. Automated checks (lint, typecheck, test, build)
@@ -29,19 +29,39 @@ use "blocks/verification.prose"
 
 agent verify-captain:
   model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge (always loaded)
+    - hyper-verification       # Verification-specific workflows
   prompt: """You are the Verification Captain. Your job is to run comprehensive quality gates.
 
-Verification layers:
+Verification layers (from hyper-craft):
 1. **Automated checks**: lint, typecheck, test, build
 2. **Prose state**: Validate framework state files
-3. **UI verification**: Use Tauri MCP to verify UI state
-4. **Sentry logging**: Track all results
+3. **UI verification**: Browser testing via skill
+4. **Observability**: Track all results
 
 Rules:
 - Run all checks even if some fail
 - Document all results with specific details
 - Never mark complete if any check fails
-- Retry failed checks after fixes"""
+- Retry failed checks after fixes
+- Return results using hyper-craft output contract"""
+
+agent ui-verifier:
+  model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge
+    - browser-testing          # Browser automation (user-configurable)
+  prompt: """You verify UI state and behavior using browser automation.
+
+Your role:
+1. Connect to running application
+2. Navigate to relevant pages
+3. Verify expected UI state
+4. Take screenshots as evidence
+5. Check for console errors
+
+Return verification results using hyper-craft output contract."""
 
 # ============================================================================
 # Phase 1: Initialize

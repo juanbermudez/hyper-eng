@@ -5,7 +5,7 @@ summary: |
   spawns sessions via the Task tool, manages state, and coordinates parallel execution.
   Read this file to run .prose programs.
 see-also:
-  - SKILL.md: Activation triggers, onboarding, telemetry
+  - SKILL.md: Activation triggers, onboarding
   - compiler.md: Full syntax grammar, validation rules, compilation
   - state/filesystem.md: File-system state management (default)
   - state/in-context.md: In-context state management (on request)
@@ -20,16 +20,16 @@ This document defines how to execute OpenProse programs. You are the OpenProse V
 
 ## CLI Commands
 
-OpenProse is invoked via `prose` commands:
+OpenProse is invoked via `hypercraft` commands:
 
 | Command | Action |
 |---------|--------|
-| `prose run <file.prose>` | Execute a local `.prose` program |
-| `prose run @handle/slug` | Fetch from registry and execute |
-| `prose compile <file>` | Validate syntax without executing |
-| `prose help` | Show help and examples |
-| `prose examples` | List or run bundled examples |
-| `prose update` | Migrate legacy workspace files |
+| `hypercraft run <file.prose>` | Execute a local `.prose` program |
+| `hypercraft run @handle/slug` | Fetch from registry and execute |
+| `hypercraft compile <file>` | Validate syntax without executing |
+| `hypercraft help` | Show help and examples |
+| `hypercraft examples` | List or run bundled examples |
+| `hypercraft update` | Migrate legacy workspace files |
 
 ### Remote Programs
 
@@ -37,11 +37,11 @@ You can run any `.prose` program from a URL:
 
 ```bash
 # Direct URL — any fetchable URL works
-prose run https://raw.githubusercontent.com/openprose/prose/main/skills/open-prose/examples/48-habit-miner.prose
+hypercraft run https://raw.githubusercontent.com/openprose/prose/main/skills/open-prose/examples/48-habit-miner.prose
 
 # Registry shorthand — @handle/slug auto-resolves to p.prose.md
-prose run @irl-danb/habit-miner    # Fetches https://p.prose.md/@irl-danb/habit-miner
-prose run @alice/code-review       # Fetches https://p.prose.md/@alice/code-review
+hypercraft run @irl-danb/habit-miner    # Fetches https://p.prose.md/@irl-danb/habit-miner
+hypercraft run @alice/code-review       # Fetches https://p.prose.md/@alice/code-review
 ```
 
 **Resolution rules:**
@@ -141,13 +141,25 @@ The OpenProse VM follows the program structure **strictly** but uses **intellige
 
 ---
 
+## State Root
+
+If `HYPER_WORKSPACE_ROOT` is set, the state root is:
+
+```
+$HYPER_WORKSPACE_ROOT/.prose/
+```
+
+Otherwise, use `.prose/` in the current working directory. All paths below are relative to the state root.
+
+---
+
 ## Directory Structure
 
 All execution state lives in `.prose/`:
 
 ```
 .prose/
-├── .env                              # Config/telemetry (simple key=value format)
+├── .env                              # Config (simple key=value format)
 ├── runs/
 │   └── {YYYYMMDD}-{HHMMSS}-{random}/
 │       ├── program.prose             # Copy of running program

@@ -1,6 +1,6 @@
 # Frontmatter Schema Reference
 
-All `$HYPER_WORKSPACE_ROOT/` documents use YAML frontmatter with specific fields. This schema is compatible with Hyper Control's TanStack DB collections.
+All `$HYPER_WORKSPACE_ROOT/` documents use YAML frontmatter with specific fields. This schema is compatible with Hypercraft's TanStack DB collections.
 
 ## ID Naming Convention
 
@@ -353,7 +353,7 @@ tags:
 
 ## Custom Fields
 
-Additional fields are allowed and will be displayed in Hyper Control:
+Additional fields are allowed and will be displayed in Hypercraft:
 
 ```yaml
 ---
@@ -507,7 +507,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity add \
   --content "Moving to QA"
 ```
 
-## TypeScript Schema (Hyper Control)
+## TypeScript Schema (Hypercraft)
 
 ```typescript
 interface Actor {

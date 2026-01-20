@@ -37,7 +37,7 @@ The hyper-engineering workflow inverts traditional development:
 claude /plugin marketplace add https://github.com/juanbermudez/hyper-eng
 
 # Step 2: Install the plugin
-claude /plugin install hyper-engineering
+claude /plugin install hyper
 
 # Step 3: Initialize your workspace
 /hyper-init

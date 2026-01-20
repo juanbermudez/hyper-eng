@@ -1,220 +1,121 @@
 ---
 name: hyper-planning
-description: This skill should be used when the user asks to "plan a feature", "create a specification", "break down a project", or mentions planning, specs, PRDs, or project setup. Guides multi-phase planning with research, interviews, and approval gates.
-version: 1.0.0
+description: This skill provides planning-specific knowledge for the planning orchestrator including HITL gate patterns, research coordination, and specification writing guidelines.
 model: sonnet
 allowed-tools:
   - Read
   - Write
   - Edit
-  - Bash
   - Grep
   - Glob
+  - Bash
   - Task
-  - WebFetch
-  - WebSearch
   - AskUserQuestion
-  - Skill
-includes:
-  - hyper-workflow-enforcement
-  - hyper-cli
-  - hyper-local
 ---
 
 # Hyper Planning Skill
 
-Expert guidance for creating comprehensive project specifications with research-backed decisions and approval gates.
+Planning-specific knowledge for the hyper-captain during `/hyper:plan` workflows.
 
-## Overview
+## Planning Workflow Overview
 
-This skill guides you through a rigorous planning workflow:
+The planning workflow has 3 HITL (Human-In-The-Loop) gates:
 
-1. **Initial Interview** - Use AskUserQuestion to deeply understand requirements
-2. **Research Phase** - Spawn parallel research sub-agents
-3. **Post-Research Interview** - Clarify decisions surfaced by research
-4. **Direction Validation (Gate 1)** - Get early approval before detailed spec
-5. **Specification Creation** - Write comprehensive technical PRD
-6. **Specification Review (Gate 2)** - Wait for human approval
-7. **Task Breakdown** - Create task files only after approval
+1. **Gate 1: Pre-Research Clarification** - Confirm understanding before research
+2. **Gate 2: Post-Research Direction** - Approve approach after research
+3. **Gate 3: Spec Approval** - Approve specification before task creation
 
-**Philosophy**: Don't assume - ASK. Use AskUserQuestion liberally. Each answer informs the next question. Complex features may require 10+ questions.
+## HITL Gate Pattern
 
-## Reference Documents
-
-- [Interview Guide](./references/interview-guide.md) - Interview methodology and question patterns
-- [Spec Template](./references/spec-template.md) - Comprehensive specification template
-- [Task Template](./references/task-template.md) - Task file structure and patterns
-- [Initialization Steps](./references/initialization-steps.md) - Workspace setup procedures
-- [Post-Research Interview](./references/post-research-interview.md) - Post-research clarification patterns
-
-## Workflow Phases
-
-### Phase 1: Initialization
-
-<hyper-embed file="references/initialization-steps.md" />
-
-### Phase 2: Initial Interview
-
-<hyper-embed file="references/interview-guide.md" />
-
-### Phase 3: Research
-
-Spawn the research orchestrator to coordinate comprehensive research:
+At each gate, follow this pattern:
 
 ```
-Task tool with subagent_type: "hyper:research-orchestrator"
-
-Prompt: "Coordinate comprehensive research for:
-Feature: [feature description]
-Project Slug: ${PROJECT_SLUG}
-Frameworks: [list from clarification]
-Focus Areas: [from user priorities]
-
-Spawn 4 research sub-agents in parallel:
-- repo-research-analyst: Codebase patterns
-- best-practices-researcher: External best practices
-- framework-docs-researcher: Framework docs via Context7
-- git-history-analyzer: Code evolution
-
-Write findings to: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/
-Return JSON summary with key findings."
+1. READ the relevant artifact (research summary, spec, etc.)
+2. DISPLAY the FULL content to the user (never summarize)
+3. ASK for explicit approval using AskUserQuestion
+4. WAIT for user response before proceeding
+5. RECORD the decision in the binding
 ```
 
-### Phase 4: Post-Research Interview
+## Research Coordination
 
-<hyper-embed file="references/post-research-interview.md" />
+### Spawning Research Agents
 
-### Phase 5: Direction Check (Gate 1)
+Use the Task tool to spawn these research agents in parallel:
 
-Present a brief summary for early validation:
+| Agent | Skills | Focus |
+|-------|--------|-------|
+| `repo-analyst` | hyper-craft, code-search | Codebase patterns, existing implementations |
+| `best-practices` | hyper-craft, doc-lookup | External best practices, industry standards |
+| `framework-docs` | hyper-craft, doc-lookup | Framework/library documentation |
+| `git-analyzer` | hyper-craft, code-search | Code evolution, historical context |
 
-```markdown
-## Direction Check
+### Research Output Location
 
-**Problem**: [2-3 sentence summary]
-
-**Proposed Approach**:
-- [Key approach point 1]
-- [Key approach point 2]
-
-**Key Technical Decisions**:
-- [Decision]: [Rationale]
-
-**Estimated Phases**: [Phase 1] → [Phase 2] → [Phase 3]
-
-**Research Summary**:
-- Codebase: [Key finding]
-- Best Practices: [Key finding]
-
-Does this direction look right before I write the detailed spec?
+All research artifacts go to:
+```
+$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/
+├── codebase-analysis.md     # From repo-analyst
+├── best-practices.md        # From best-practices
+├── framework-docs.md        # From framework-docs
+├── git-history.md           # From git-analyzer
+└── research-summary.md      # Synthesized by captain
 ```
 
-**Wait for approval before proceeding to detailed spec.**
+## Specification Writing
 
-### Phase 6: Specification Creation
+### Required Sections
 
-<hyper-embed file="references/spec-template.md" />
+Every project specification MUST include:
 
-### Phase 7: Review Gate (Gate 2)
+- **Overview**: Problem statement and proposed solution
+- **Goals**: Numbered list of objectives
+- **Technical Approach**: Architecture, key components, integration points
+- **Implementation Phases**: Numbered phases for task breakdown
+- **Acceptance Criteria**: Testable success conditions
+- **Out of Scope**: Explicit exclusions
+- **Dependencies**: External and internal dependencies
+- **Risks**: Risk assessment with mitigations
 
-**STOP - Do NOT create tasks yet**
+### Spec Quality Checklist
 
-Update project frontmatter:
-- Change: `status: planned` (unchanged, awaiting approval)
-- Update: `updated: [today's date]`
+Before presenting spec for approval:
 
-Inform user:
-```
-## Specification Ready for Review
+- [ ] All required sections present
+- [ ] Goals are specific and measurable
+- [ ] Implementation phases map to tasks
+- [ ] Acceptance criteria are testable
+- [ ] Out of scope is explicitly defined
+- [ ] Technical approach references research findings
 
-**Project**: `$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/`
-**Spec**: `$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/_project.mdx`
+## Task Creation Guidelines
 
-Please review and provide feedback. Reply "approved" to create task breakdown.
+### Task Sizing
 
-**I will NOT create tasks until you approve this specification.**
-```
+- Each task should represent ~1-4 hours of work
+- Tasks should be independently completable
+- Include a final "documentation and testing" task
+- Include quality gate verification task
 
-### Phase 8: Task Breakdown (After Approval Only)
+### Task Dependencies
 
-<hyper-embed file="references/task-template.md" />
+Set `depends_on` to establish order:
+- Phase 2 depends on Phase 1
+- Documentation task depends on all implementation tasks
+- QA task depends on all tasks
 
-## Status Reference
+## Project Creation Flow
 
-**Project Status Values**:
-- `planned` - Initial state, research/spec phase
-- `todo` - Spec approved, tasks created, ready for work
-- `in-progress` - Implementation underway
-- `qa` - All tasks done, project-level QA
-- `completed` - All quality gates passed
-- `canceled` - Project abandoned
-
-**Status Transitions**:
-1. Create project → `planned`
-2. Spec ready for review → `planned` (awaiting Gate 2)
-3. Spec approved → `todo` + create tasks
-
-## ID Conventions
-
-**Project ID**: `proj-{kebab-case-slug}`
-- Example: `proj-user-auth`, `proj-workspace-settings`
-
-**Task ID**: `{project-initials}-{3-digit-number}`
-- Derive initials from project slug (first letter of each word)
-- Example: `user-auth` → `ua`, tasks are `ua-001`, `ua-002`
-
-## CLI Integration
-
-Use the Hyper CLI for file operations:
+**CRITICAL**: Create project skeleton BEFORE research:
 
 ```bash
-# Create project with validated frontmatter
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
-  --slug "${PROJECT_SLUG}" \
-  --title "[TITLE]" \
-  --priority "[PRIORITY]" \
-  --summary "[BRIEF_SUMMARY]"
-
-# Create task with validated frontmatter
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
-  --project "${PROJECT_SLUG}" \
-  --id "${TASK_ID}" \
-  --title "[TITLE]" \
-  --priority "[PRIORITY]"
-
-# Update status
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
-  "${PROJECT_SLUG}" --status "todo"
+# Create project via CLI (visible in Hyperbench immediately)
+hyper project create \
+  --slug "$PROJECT_SLUG" \
+  --title "{feature}" \
+  --priority "high" \
+  --status "planned" \
+  --json
 ```
 
-## Activity Tracking
-
-Activity is automatically tracked via PostToolUse hook when writing to `$HYPER_WORKSPACE_ROOT/` files. Session IDs are captured in the `activity` array in frontmatter.
-
-## Best Practices
-
-- Use AskUserQuestion for EVERY clarifying question - don't batch
-- Conduct initial interview BEFORE research
-- Read ALL research documents in full after orchestrator returns
-- Get direction approval at Gate 1 BEFORE writing detailed spec
-- Resolve ALL open questions before approval - none can remain pending
-- NEVER create tasks before human approval of full specification
-- Include file:line references to actual codebase locations
-- All diagrams must be grounded in real component hierarchy
-
-## Error Handling
-
-| Condition | Action |
-|-----------|--------|
-| Unclear requirements | Ask additional targeted questions |
-| Research insufficient | Launch focused research tasks |
-| User provides feedback | Update spec and return to review gate |
-| Project already exists | Ask: continue existing or create new? |
-
-## Includes
-
-This skill depends on:
-
-- **hyper-workflow-enforcement** - Status transition validation
-- **hyper-cli** - CLI command patterns
-- **hyper-local** - Directory structure guidance
+This ensures the project appears in Hyperbench immediately, even before research completes.

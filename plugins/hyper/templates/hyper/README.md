@@ -64,7 +64,7 @@ Use `{{VARIABLE_NAME}}` for substitution. Available variables:
 
 ## Adding Custom Fields
 
-You can add custom frontmatter fields to templates. Hyper Control will display them in the document details panel.
+You can add custom frontmatter fields to templates. Hypercraft will display them in the document details panel.
 
 Example:
 ```yaml
@@ -101,7 +101,7 @@ Standalone documentation not tied to a project
 
 ## Frontmatter Schema
 
-All documents follow this schema (compatible with Hyper Control):
+All documents follow this schema (compatible with Hypercraft):
 
 ```yaml
 ---
@@ -125,8 +125,8 @@ summary: string      # Brief description for project cards
 ---
 ```
 
-## Integration with Hyper Control
+## Integration with Hypercraft
 
-When Hyper Control is running, it watches `$HYPER_WORKSPACE_ROOT/` for changes. All file operations are immediately reflected in the UI.
+When Hypercraft is running, it watches `$HYPER_WORKSPACE_ROOT/` for changes. All file operations are immediately reflected in the UI.
 
 No special integration needed - the filesystem IS the API.

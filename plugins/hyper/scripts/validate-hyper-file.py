@@ -19,7 +19,7 @@ try:
 except ImportError:
     HAS_PYYAML = False
 
-# Valid enum values (must match Hyper Control schemas)
+# Valid enum values (must match Hypercraft schemas)
 VALID_TYPES = ['initiative', 'project', 'task', 'resource', 'doc']
 VALID_STATUSES = [
     # Task statuses

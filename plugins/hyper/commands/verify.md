@@ -3,11 +3,11 @@ description: Run comprehensive automated and manual verification, creating fix t
 argument-hint: "[project-slug/task-id]"
 ---
 
-Use the **hyper-prose** skill to execute the verification workflow.
+Use the **hypercraft** skill to execute the verification workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper-prose/prose.md` and execute the workflow at `commands/hyper-verify.prose` with:
+Load the VM specification from `skills/hypercraft/prose.md` and execute the workflow at `commands/hyper-verify.prose` with:
 
 ```
 input target_id: "$ARGUMENTS"

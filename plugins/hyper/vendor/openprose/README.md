@@ -258,7 +258,6 @@ Traditional IoC containers (Spring, Guice) wire up dependencies from configurati
 
 OpenProse is in **beta**. This means:
 
-- **Telemetry is on by default** — We collect anonymous usage data to improve the project. See our [Privacy Policy](PRIVACY.md) for details and how to opt out.
 - **Expect bugs** — The software may behave unexpectedly. Please report issues at [github.com/openprose/prose/issues](https://github.com/openprose/prose/issues).
 - **Not for production** — Do not use OpenProse for critical or production workflows yet.
 - **We want feedback** — Your input shapes the project. Open issues, suggest features, report problems. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.

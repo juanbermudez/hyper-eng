@@ -1,15 +1,15 @@
 ---
 role: experimental
 summary: |
-  Borges-inspired alternative keywords for OpenProse. A "what if" exploration drawing
+  Borges-inspired alternative keywords for Hyper-Prose. A "what if" exploration drawing
   from The Library of Babel, Garden of Forking Paths, Circular Ruins, and other works.
   Not for implementation—just capturing ideas.
 status: draft
 ---
 
-# OpenProse Borges Alternative
+# Hyper-Prose Borges Alternative
 
-A potential alternative register for OpenProse that draws from Jorge Luis Borges's literary universe: infinite libraries, forking paths, circular dreams, and metaphysical labyrinths. Preserved for future benchmarking against the functional language.
+A potential alternative register for Hyper-Prose that draws from Jorge Luis Borges's literary universe: infinite libraries, forking paths, circular dreams, and metaphysical labyrinths. Preserved for future benchmarking against the functional language.
 
 ## Keyword Translations
 

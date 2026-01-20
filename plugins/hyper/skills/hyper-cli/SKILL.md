@@ -22,21 +22,23 @@ This skill teaches AI agents how to work with the Hyper CLI for programmatic man
 The Hyper CLI provides commands for managing workspace projects, tasks, Drive notes, and configuration.
 
 ```
-hyper <COMMAND>
+hypercraft <COMMAND>
 
 Commands:
-  init      Initialize a new workspace
-  worktree  Manage git worktrees for isolated development
-  project   Manage workspace projects (list, get, create, update)
-  task      Manage workspace tasks (list, get, create, update)
-  drive     Manage HyperHome drive items/notes (list, create, show, delete, mkdir)
-  agents    Manage Claude/Codex primitives (config, skill)
-  config    Get/set configuration (get, set, list)
-  activity  Track activity on projects and tasks (add, comment)
-  file      Low-level file operations (list, read, write, search, delete)
-  settings  Manage workspace settings (workflow, stage, gate, tag)
-  search    Search across all resources (projects, tasks, initiatives)
-  vfs       Virtual filesystem operations (list, resolve, search)
+  init        Initialize a new workspace
+  add-skill   Install skills across multiple agents
+  add-plugin  Install plugins (Claude + emulated Codex)
+  worktree    Manage git worktrees for isolated development
+  project     Manage workspace projects (list, get, create, update)
+  task        Manage workspace tasks (list, get, create, update)
+  drive       Manage HyperHome drive items/notes (list, create, show, delete, mkdir)
+  agents      Manage Claude/Codex primitives (config, skill, agent)
+  config      Get/set configuration (get, set, list)
+  activity    Track activity on projects and tasks (add, comment)
+  file        Low-level file operations (list, read, write, search, delete)
+  settings    Manage workspace settings (workflow, stage, gate, tag)
+  search      Search across all resources (projects, tasks, initiatives)
+  vfs         Virtual filesystem operations (list, resolve, search)
 ```
 
 ## Quick Reference
@@ -45,16 +47,16 @@ Commands:
 
 | Operation | Resource API (Porcelain) | File API (Plumbing) |
 |-----------|-------------------------|---------------------|
-| Initialize workspace | `hyper init --name "My Project"` | N/A |
-| List projects | `hyper project list --json` | `hyper file list projects --json` |
-| Create project | `hyper project create --slug x --title "X"` | `hyper file write projects/x/_project.mdx --frontmatter "..."` |
-| Update status | `hyper project update x --status in-progress` | `hyper file write projects/x/_project.mdx --frontmatter "status=in-progress"` |
-| Read project | `hyper project get x --json` | `hyper file read projects/x/_project.mdx --json` |
-| Delete file | N/A (use file API) | `hyper file delete projects/x/_project.mdx --force --json` |
-| Search | `hyper search "query" --json` | `hyper file search "query" --json` |
-| Task operations | `hyper task list/get/create/update` | `hyper file ...` on task files |
-| Drive notes | `hyper drive list/create/show/delete` | N/A |
-| Activity tracking | `hyper activity add/comment` | N/A |
+| Initialize workspace | `hypercraft init --name "My Project"` | N/A |
+| List projects | `hypercraft project list --json` | `hypercraft file list projects --json` |
+| Create project | `hypercraft project create --slug x --title "X"` | `hypercraft file write projects/x/_project.mdx --frontmatter "..."` |
+| Update status | `hypercraft project update x --status in-progress` | `hypercraft file write projects/x/_project.mdx --frontmatter "status=in-progress"` |
+| Read project | `hypercraft project get x --json` | `hypercraft file read projects/x/_project.mdx --json` |
+| Delete file | N/A (use file API) | `hypercraft file delete projects/x/_project.mdx --force --json` |
+| Search | `hypercraft search "query" --json` | `hypercraft file search "query" --json` |
+| Task operations | `hypercraft task list/get/create/update` | `hypercraft file ...` on task files |
+| Drive notes | `hypercraft drive list/create/show/delete` | N/A |
+| Activity tracking | `hypercraft activity add/comment` | N/A |
 
 ### When to Use Each API
 
@@ -68,6 +70,30 @@ Commands:
 - Direct file manipulation with full control
 - Integration with file-based workflows
 - Need to read/write arbitrary fields
+
+## Skills and Plugins
+
+Use these commands to install skills/plugins across multiple agent environments or duplicate existing primitives.
+
+```
+# Install all skills to detected agents in every workspace
+hypercraft add-skill owner/repo --all --all-skills
+
+# Install a specific skill to all workspaces
+hypercraft add-skill owner/repo --skill hyper-local --all
+
+# Install a specific skill to Claude Code and Codex
+hypercraft add-skill owner/repo --skill hyper-local --agent claude-code --agent codex
+
+# Install a Claude/Codex plugin (manifest in .claude-plugin/)
+hypercraft add-plugin owner/repo --all
+
+# Duplicate a skill within Claude or Codex
+hypercraft agents skill duplicate claude my-skill my-skill-custom --force
+
+# Duplicate a Claude subagent
+hypercraft agents agent duplicate claude research-orchestrator research-orchestrator-custom --force
+```
 
 ## Directory Structure
 
@@ -462,7 +488,7 @@ hyper drive list --scope ws:my-workspace --json
 
 ### Drive File Frontmatter Format
 
-**CRITICAL**: When creating drive files directly (without CLI), you MUST follow this exact format or files will not appear in the Hyper Control UI.
+**CRITICAL**: When creating drive files directly (without CLI), you MUST follow this exact format or files will not appear in the Hypercraft UI.
 
 ```yaml
 ---

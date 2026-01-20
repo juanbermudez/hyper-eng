@@ -1,7 +1,7 @@
 # /run Endpoint UX Test
 #
 # A multi-agent observation protocol for qualitative UX testing of the
-# OpenProse /run endpoint. Two concurrent observers watch the execution
+# Hyper-Prose /run endpoint. Two concurrent observers watch the execution
 # from different perspectives and synthesize feedback.
 #
 # Unlike correctness testing, this focuses on user experience quality:
@@ -15,7 +15,7 @@
 # - Loop-based polling with timing control
 # - Final synthesis across multiple observation streams
 
-input test_program: "The OpenProse program to execute for testing"
+input test_program: "The Hyper-Prose program to execute for testing"
 input api_url: "API base URL (e.g., https://api.openprose.com or http://localhost:3001)"
 input auth_token: "Bearer token for authentication"
 
@@ -27,7 +27,7 @@ input auth_token: "Bearer token for authentication"
 agent ws_observer:
   model: opus
   persist: true
-  prompt: """You are a UX researcher observing an OpenProse program execution.
+  prompt: """You are a UX researcher observing an Hyper-Prose program execution.
 
 Your job is to watch the WebSocket execution stream and evaluate the experience
 from a USER's perspective - not as an engineer checking correctness.

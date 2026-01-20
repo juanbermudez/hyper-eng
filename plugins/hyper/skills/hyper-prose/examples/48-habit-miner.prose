@@ -3,7 +3,7 @@
 # Scans .claude, .opencode, .cursor, etc. — discovers patterns, writes .prose programs
 #
 # BACKEND: Run with sqlite+ or postgres for incremental processing across runs
-#   prose run 48-habit-miner.prose --backend sqlite+
+#   hypercraft run 48-habit-miner.prose --backend sqlite+
 #
 # KEY VM FEATURES USED:
 # - persist: true on miner — remembers patterns across runs, watches them mature
@@ -137,7 +137,7 @@ agent author:
     - Add error handling where needed
     - Include user checkpoints at decision points
 
-    Write idiomatic OpenProse. Follow existing example patterns.
+    Write idiomatic Hyper-Prose. Follow existing example patterns.
     Reference the pattern's maturity level in a header comment.
   """
   permissions:

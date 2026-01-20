@@ -1,11 +1,11 @@
 ---
 role: execution-semantics
 summary: |
-  How to execute OpenProse programs. You embody the OpenProse VM—a virtual machine that
+  How to execute Hyper-Prose programs. You embody the Hyper-Prose VM—a virtual machine that
   spawns sessions via the Task tool, manages state, and coordinates parallel execution.
   Read this file to run .prose programs.
 see-also:
-  - SKILL.md: Activation triggers, onboarding, telemetry
+  - SKILL.md: Activation triggers, onboarding
   - compiler.md: Full syntax grammar, validation rules, compilation
   - state/filesystem.md: File-system state management (default)
   - state/in-context.md: In-context state management (on request)
@@ -14,22 +14,22 @@ see-also:
   - primitives/session.md: Session context and compaction guidelines
 ---
 
-# OpenProse VM
+# Hyper-Prose VM
 
-This document defines how to execute OpenProse programs. You are the OpenProse VM—an intelligent virtual machine that spawns subagent sessions according to a structured program.
+This document defines how to execute Hyper-Prose programs. You are the Hyper-Prose VM—an intelligent virtual machine that spawns subagent sessions according to a structured program.
 
 ## CLI Commands
 
-OpenProse is invoked via `prose` commands:
+Hyper-Prose is invoked via `hypercraft` commands:
 
 | Command | Action |
 |---------|--------|
-| `prose run <file.prose>` | Execute a local `.prose` program |
-| `prose run @handle/slug` | Fetch from registry and execute |
-| `prose compile <file>` | Validate syntax without executing |
-| `prose help` | Show help and examples |
-| `prose examples` | List or run bundled examples |
-| `prose update` | Migrate legacy workspace files |
+| `hypercraft run <file.prose>` | Execute a local `.prose` program |
+| `hypercraft run @handle/slug` | Fetch from registry and execute |
+| `hypercraft compile <file>` | Validate syntax without executing |
+| `hypercraft help` | Show help and examples |
+| `hypercraft examples` | List or run bundled examples |
+| `hypercraft update` | Migrate legacy workspace files |
 
 ### Remote Programs
 
@@ -37,11 +37,11 @@ You can run any `.prose` program from a URL:
 
 ```bash
 # Direct URL — any fetchable URL works
-prose run https://raw.githubusercontent.com/openprose/prose/main/skills/open-prose/examples/48-habit-miner.prose
+hypercraft run https://raw.githubusercontent.com/openprose/prose/main/skills/open-prose/examples/48-habit-miner.prose
 
 # Registry shorthand — @handle/slug auto-resolves to p.prose.md
-prose run @irl-danb/habit-miner    # Fetches https://p.prose.md/@irl-danb/habit-miner
-prose run @alice/code-review       # Fetches https://p.prose.md/@alice/code-review
+hypercraft run @irl-danb/habit-miner    # Fetches https://p.prose.md/@irl-danb/habit-miner
+hypercraft run @alice/code-review       # Fetches https://p.prose.md/@alice/code-review
 ```
 
 **Resolution rules:**
@@ -65,9 +65,9 @@ But simulation with sufficient fidelity _is_ implementation. When the simulated 
 
 ### Component Mapping
 
-A traditional VM has concrete components. The OpenProse VM has analogous structures that emerge from the simulation:
+A traditional VM has concrete components. The Hyper-Prose VM has analogous structures that emerge from the simulation:
 
-| Traditional VM      | OpenProse VM           | Substrate                                  |
+| Traditional VM      | Hyper-Prose VM           | Substrate                                  |
 | ------------------- | ---------------------- | ------------------------------------------ |
 | Instructions        | `.prose` statements    | Executed via tool calls (Task)             |
 | Program counter     | Execution position     | Tracked in `state.md` or narration         |
@@ -79,7 +79,7 @@ A traditional VM has concrete components. The OpenProse VM has analogous structu
 
 ### What Makes It Real
 
-The OpenProse VM isn't a metaphor. Each `session` statement triggers a _real_ Task tool call that spawns a _real_ subagent. The outputs are _real_ artifacts. The simulation produces actual computation—it just happens through a different substrate than silicon executing bytecode.
+The Hyper-Prose VM isn't a metaphor. Each `session` statement triggers a _real_ Task tool call that spawns a _real_ subagent. The outputs are _real_ artifacts. The simulation produces actual computation—it just happens through a different substrate than silicon executing bytecode.
 
 ---
 
@@ -124,7 +124,7 @@ You are the container that holds these declarations and wires them together at r
 
 ## The Execution Model
 
-OpenProse treats an AI session as a Turing-complete computer. You are the OpenProse VM:
+Hyper-Prose treats an AI session as a Turing-complete computer. You are the Hyper-Prose VM:
 
 1. **You are the VM** - Parse and execute each statement
 2. **Sessions are function calls** - Each `session` spawns a subagent via the Task tool
@@ -133,11 +133,23 @@ OpenProse treats an AI session as a Turing-complete computer. You are the OpenPr
 
 ### Core Principle
 
-The OpenProse VM follows the program structure **strictly** but uses **intelligence** for:
+The Hyper-Prose VM follows the program structure **strictly** but uses **intelligence** for:
 
 - Evaluating discretion conditions (`**...**`)
 - Determining when a session is "complete"
 - Transforming context between sessions
+
+---
+
+## State Root
+
+If `HYPER_WORKSPACE_ROOT` is set, the state root is:
+
+```
+$HYPER_WORKSPACE_ROOT/.prose/
+```
+
+Otherwise, use `.prose/` in the current working directory. All paths below are relative to the state root.
 
 ---
 
@@ -147,7 +159,7 @@ All execution state lives in `.prose/`:
 
 ```
 .prose/
-├── .env                              # Config/telemetry (simple key=value format)
+├── .env                              # Config (simple key=value format)
 ├── runs/
 │   └── {YYYYMMDD}-{HHMMSS}-{random}/
 │       ├── program.prose             # Copy of running program
@@ -187,10 +199,14 @@ If a program exceeds 999 segments, extend to 4 digits: `captain-1000.md`.
 
 ## State Management
 
-OpenProse supports two state management systems. See the state files for detailed documentation:
+Hyper-Prose supports two state management systems. See the state files for detailed documentation:
 
 - **`state/filesystem.md`** — File-system state using the directory structure above (default)
 - **`state/in-context.md`** — In-context state using the narration protocol
+
+### Artifacts vs State (Hyper-Prose)
+
+Hyper-Prose workflows often write deliverables (artifacts) into `$HYPER_WORKSPACE_ROOT/` while maintaining execution state under the state root. Always keep `state.md` and binding files up to date even when artifacts are stored elsewhere.
 
 ### Who Writes What
 
@@ -409,6 +425,96 @@ comment := "#" TEXT
 
 ---
 
+## Skills
+
+Skills provide domain-specific knowledge and capabilities to agents. The `skills:` property declares which skills an agent should load.
+
+### Skill Declaration
+
+```prose
+agent research-analyst:
+  model: sonnet
+  skills:
+    - hyper-craft              # Core skill (always loaded for hyper agents)
+    - doc-lookup               # Slot-based skill (resolved from settings)
+    - code-search              # Slot-based skill
+  prompt: "You analyze codebases and documentation"
+```
+
+### Skill Types
+
+| Type | Syntax | Resolution |
+|------|--------|------------|
+| Core | `hyper-craft` | Always from plugin skills directory |
+| Slot-based | `doc-lookup`, `code-search` | Resolved from workspace settings or template defaults |
+| Direct | `context7`, `playwright` | Specific skill implementation |
+
+### Skill Resolution Order
+
+For slot-based skills (like `doc-lookup`), resolution follows this priority:
+
+1. **Workspace settings**: `$HYPER_WORKSPACE_ROOT/settings/skills/{slot}.yaml`
+2. **Template defaults**: Plugin templates at `templates/hyper/settings/skills/{slot}.yaml`
+3. **Built-in defaults**: Hard-coded defaults in the skill definition
+
+### Core Skill (hyper-craft)
+
+The `hyper-craft` skill is the foundational skill for all hyper agents. It provides:
+
+- Directory structure (`$HYPER_WORKSPACE_ROOT/` layout)
+- CLI reference
+- Output contracts (sub-agent response format)
+- Lifecycle management (status transitions, gates)
+- Writing guidelines (frontmatter schemas, naming)
+
+**For hyper agents**, `hyper-craft` is automatically prepended to the skills list if not explicitly included.
+
+### Skill Loading Process
+
+When spawning a session with skills:
+
+1. Resolve each skill name to its source
+2. Read skill content (SKILL.md + references)
+3. Inject skill content into the agent's system prompt
+4. Track loaded skills in session state
+
+### Example: Research Agent with Skills
+
+```prose
+agent framework-researcher:
+  model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge
+    - doc-lookup               # Resolves to context7 or web-search
+  prompt: """
+    You research framework documentation and best practices.
+    Use the documentation lookup skill to fetch current docs.
+    """
+
+session: framework-researcher
+  prompt: "Research Next.js App Router patterns"
+```
+
+When executed, the VM:
+1. Loads `hyper-craft` skill content
+2. Resolves `doc-lookup` slot (e.g., to `context7`)
+3. Loads `context7` skill content
+4. Combines all skill content with the agent prompt
+5. Spawns the session with enriched context
+
+### Skill Slots Reference
+
+| Slot | Default | Purpose |
+|------|---------|---------|
+| `doc-lookup` | `context7` | Framework/library documentation |
+| `code-search` | `codebase-search` | Codebase analysis and patterns |
+| `browser-testing` | `playwright` | Browser automation and verification |
+| `error-tracking` | `sentry` | Error monitoring integration |
+
+See the `hyper-craft` skill's [skill-templates.md](./skills/hyper-craft/references/skill-templates.md) for full configuration options.
+
+---
+
 ## Persistent Agents
 
 Agents can maintain memory across invocations using the `persist` property.
@@ -490,7 +596,7 @@ Execute as:
 
 ```
 Task({
-  description: "OpenProse session",
+  description: "Hyper-Prose session",
   prompt: "Analyze the codebase",
   subagent_type: "general-purpose"
 })
@@ -511,7 +617,7 @@ Execute as:
 
 ```
 Task({
-  description: "OpenProse session",
+  description: "Hyper-Prose session",
   prompt: "Research quantum computing\n\nSystem: You are a research expert",
   subagent_type: "general-purpose",
   model: "opus"
@@ -1162,7 +1268,7 @@ Always use Task for session execution:
 
 ```
 Task({
-  description: "OpenProse session",
+  description: "Hyper-Prose session",
   prompt: "<session prompt with context>",
   subagent_type: "general-purpose",
   model: "<optional model override>"
@@ -1193,7 +1299,7 @@ When passing context to sessions:
 
 ## Summary
 
-The OpenProse VM:
+The Hyper-Prose VM:
 
 1. **Imports** programs from `p.prose.md` via `use` statements
 2. **Binds** inputs from caller to program variables

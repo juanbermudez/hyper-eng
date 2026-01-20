@@ -1,6 +1,6 @@
 # Hyper-Engineering Workflow Guide (Local Mode)
 
-The hyper-engineering workflow uses local `$HYPER_WORKSPACE_ROOT/` files as the source of truth, with optional Hyper Control UI for visual project management.
+The hyper-engineering workflow uses local `$HYPER_WORKSPACE_ROOT/` files as the source of truth, with optional Hypercraft UI for visual project management.
 
 ## Philosophy
 
@@ -9,7 +9,7 @@ The hyper-engineering workflow uses local `$HYPER_WORKSPACE_ROOT/` files as the 
 All planning artifacts are stored locally in `$HYPER_WORKSPACE_ROOT/`:
 - Version controllable via git
 - Works offline without external services
-- Real-time sync with Hyper Control UI (when running)
+- Real-time sync with Hypercraft UI (when running)
 - Human-readable markdown format
 
 ## Workflow Stages
@@ -200,9 +200,9 @@ TASK_NUM=$(printf "%03d" $(($(ls tasks/task-*.mdx 2>/dev/null | wc -l) + 1)))
 # Verify each dependency has status: complete
 ```
 
-## Integration with Hyper Control
+## Integration with Hypercraft
 
-When Hyper Control is running:
+When Hypercraft is running:
 
 1. **Automatic sync** - File watcher monitors `$HYPER_WORKSPACE_ROOT/`
 2. **Real-time UI** - Changes appear immediately
@@ -212,7 +212,7 @@ When Hyper Control is running:
 
 ## Standalone Mode
 
-Works without Hyper Control:
+Works without Hypercraft:
 
 1. **Local files** - All artifacts in `$HYPER_WORKSPACE_ROOT/`
 2. **Git tracked** - Version control everything
@@ -250,8 +250,8 @@ After 3 attempts:
 3. Question fundamentals
 4. Try different approach
 
-### Hyper Control not syncing
+### Hypercraft not syncing
 
 - Check file watcher is running
 - Verify `$HYPER_WORKSPACE_ROOT/` path is correct
-- Restart Hyper Control
+- Restart Hypercraft

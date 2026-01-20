@@ -47,7 +47,7 @@ This skill guides implementation through:
 ### Step 2: Update Status to In-Progress (CRITICAL)
 
 > **MANDATORY**: You MUST update BOTH project AND task status before beginning implementation.
-> Failing to update project status causes visibility issues in Hyper Control.
+> Failing to update project status causes visibility issues in Hypercraft.
 
 #### Step 2a: Update PROJECT Status First
 
@@ -71,7 +71,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
   "${TASK_ID}" --status "in-progress"
 ```
 
-> **Why project status matters**: The project status determines visibility in Hyper Control.
+> **Why project status matters**: The project status determines visibility in Hypercraft.
 > A project in "planned" or "todo" status appears dormant even if tasks are being worked on.
 > Always ensure the project is "in-progress" when any task is being implemented.
 

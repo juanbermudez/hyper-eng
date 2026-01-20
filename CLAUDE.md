@@ -267,7 +267,7 @@ python -m http.server 8000
 2. Install the plugin:
 
    ```bash
-   claude /plugin install hyper-engineering
+   claude /plugin install hyper
    ```
 
 3. Test agents and commands:

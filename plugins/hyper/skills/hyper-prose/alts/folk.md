@@ -1,18 +1,18 @@
 ---
 role: experimental
 summary: |
-  Folk register for OpenProse—a literary/folklore alternative keyword set.
+  Folk register for Hyper-Prose—a literary/folklore alternative keyword set.
   Whimsical, theatrical, rooted in fairy tale and myth. For benchmarking
   against the functional register.
 status: draft
 requires: prose.md
 ---
 
-# OpenProse Folk Register
+# Hyper-Prose Folk Register
 
 > **This is a skin layer.** It requires `prose.md` to be loaded first. All execution semantics, state management, and VM behavior are defined there. This file only provides keyword translations.
 
-An alternative register for OpenProse that leans into literary, theatrical, and folklore terminology. The functional register prioritizes utility and clarity; the folk register prioritizes whimsy and narrative flow.
+An alternative register for Hyper-Prose that leans into literary, theatrical, and folklore terminology. The functional register prioritizes utility and clarity; the folk register prioritizes whimsy and narrative flow.
 
 ## How to Use
 
@@ -254,7 +254,7 @@ perform review("quantum computing")
 
 ## The Case For Folk
 
-1. **"OpenProse" is literary.** Prose is a literary form—why not lean in?
+1. **"Hyper-Prose" is literary.** Prose is a literary form—why not lean in?
 2. **Fourth wall is theatrical.** `**...**` already uses theatre terminology.
 3. **Signals difference.** Literary terms say "this is not your typical DSL."
 4. **Internally consistent.** Everything draws from folklore/theatre/narrative.
@@ -264,7 +264,7 @@ perform review("quantum computing")
 ## The Case Against Folk
 
 1. **Cultural knowledge required.** Not everyone knows folklore tropes.
-2. **Harder to Google.** "OpenProse summon" vs "OpenProse import."
+2. **Harder to Google.** "Hyper-Prose summon" vs "Hyper-Prose import."
 3. **May feel precious.** Some users want utilitarian tools.
 4. **Translation overhead.** Mental mapping to familiar concepts.
 

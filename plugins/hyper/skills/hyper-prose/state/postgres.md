@@ -2,7 +2,7 @@
 role: postgres-state-management
 status: experimental
 summary: |
-  PostgreSQL-based state management for OpenProse programs. This approach persists
+  PostgreSQL-based state management for Hyper-Prose programs. This approach persists
   execution state to a PostgreSQL database, enabling true concurrent writes,
   network access, team collaboration, and high-throughput workloads.
 requires: psql CLI tool in PATH, running PostgreSQL server
@@ -16,7 +16,7 @@ see-also:
 
 # PostgreSQL State Management (Experimental)
 
-This document describes how the OpenProse VM tracks execution state using a **PostgreSQL database**. This is an experimental alternative to file-based state (`filesystem.md`), SQLite state (`sqlite.md`), and in-context state (`in-context.md`).
+This document describes how the Hyper-Prose VM tracks execution state using a **PostgreSQL database**. This is an experimental alternative to file-based state (`filesystem.md`), SQLite state (`sqlite.md`), and in-context state (`in-context.md`).
 
 ## Prerequisites
 
@@ -66,7 +66,7 @@ PostgreSQL state provides:
 
 - Database credentials appear in subagent context and may be logged
 - Treat these credentials as **non-sensitive**
-- Use a **dedicated database** for OpenProse, not your production systems
+- Use a **dedicated database** for Hyper-Prose, not your production systems
 - Create a **limited-privilege user** with access only to the `openprose` schema
 
 **Recommended setup:**
@@ -231,7 +231,7 @@ The VM checks in this order:
 ### Security: Add to .gitignore
 
 ```gitignore
-# OpenProse sensitive files
+# Hyper-Prose sensitive files
 .prose/.env
 .prose/runs/
 ```
@@ -311,7 +311,7 @@ The VM tracks locations, not values. This keeps the VM's context lean and enable
 The VM initializes these tables using the `openprose` schema. This is a **minimum viable schema**—extend freely.
 
 ```sql
--- Create dedicated schema for OpenProse state
+-- Create dedicated schema for Hyper-Prose state
 CREATE SCHEMA IF NOT EXISTS openprose;
 
 -- Run metadata

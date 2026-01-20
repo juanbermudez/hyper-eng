@@ -1,9 +1,9 @@
 ---
-description: Validate and compile an OpenProse program
+description: Validate and compile a Hyper-Prose program
 argument-hint: <file.prose>
 ---
 
-Compile and validate the OpenProse program at: $ARGUMENTS
+Compile and validate the Hyper-Prose program at: $ARGUMENTS
 
 Use the compiler.md specification as your compiler and validator:
 

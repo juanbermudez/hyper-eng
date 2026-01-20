@@ -1,7 +1,7 @@
 ---
 name: open-prose
 description: |
-  OpenProse is a programming language for AI sessions. Activate on ANY `prose` command (prose boot, prose run, prose compile, prose update, etc.), running .prose files, mentioning OpenProse/Prose, or orchestrating multi-agent workflows. The skill intelligently interprets what the user wants.
+OpenProse is a programming language for AI sessions. Activate on ANY `hypercraft` command (hypercraft boot, hypercraft run, hypercraft compile, hypercraft update, etc.), running .prose files, mentioning OpenProse/Prose, or orchestrating multi-agent workflows. The skill intelligently interprets what the user wants.
 ---
 
 # OpenProse Skill
@@ -12,30 +12,30 @@ OpenProse is a programming language for AI sessions. LLMs are simulators—when 
 
 Activate this skill when the user:
 
-- **Uses ANY `prose` command** (e.g., `prose boot`, `prose run`, `prose compile`, `prose update`, `prose help`, etc.)
+- **Uses ANY `hypercraft` command** (e.g., `hypercraft boot`, `hypercraft run`, `hypercraft compile`, `hypercraft update`, `hypercraft help`, etc.)
 - Asks to run a `.prose` file
-- Mentions "OpenProse" or "prose program"
+- Mentions "OpenProse" or "hypercraft program"
 - Wants to orchestrate multiple AI agents from a script
 - Has a file with `session "..."` or `agent name:` syntax
 - Wants to create a reusable workflow
 
 ## Command Routing
 
-When a user invokes `prose <command>`, intelligently route based on intent:
+When a user invokes `hypercraft <command>`, intelligently route based on intent:
 
 | Command | Action |
 |---------|--------|
-| `prose help` | Load `help.md`, guide user to what they need |
-| `prose run <file>` | Load VM (`prose.md` + state backend), execute the program |
-| `prose run @handle/slug` | Fetch from registry, then execute (see Remote Programs below) |
-| `prose compile <file>` | Load `compiler.md`, validate the program |
-| `prose update` | Run migration (see Migration section below) |
-| `prose examples` | Show or run example programs from `examples/` |
+| `hypercraft help` | Load `help.md`, guide user to what they need |
+| `hypercraft run <file>` | Load VM (`prose.md` + state backend), execute the program |
+| `hypercraft run @handle/slug` | Fetch from registry, then execute (see Remote Programs below) |
+| `hypercraft compile <file>` | Load `compiler.md`, validate the program |
+| `hypercraft update` | Run migration (see Migration section below) |
+| `hypercraft examples` | Show or run example programs from `examples/` |
 | Other | Intelligently interpret based on context |
 
 ### Important: Single Skill
 
-There is only ONE skill: `open-prose`. There are NO separate skills like `prose-run`, `prose-compile`, or `prose-boot`. All `prose` commands route through this single skill.
+There is only ONE skill: `open-prose`. There are NO separate skills like `hypercraft-run`, `hypercraft-compile`, or `hypercraft-boot`. All `hypercraft` commands route through this single skill.
 
 ### Resolving Example References
 
@@ -43,7 +43,7 @@ There is only ONE skill: `open-prose`. There are NO separate skills like `prose-
 
 1. Read `examples/` to list available files
 2. Match by partial name, keyword, or number
-3. Run with: `prose run examples/28-gas-town.prose`
+3. Run with: `hypercraft run examples/28-gas-town.prose`
 
 **Common examples by keyword:**
 | Keyword | File |
@@ -62,11 +62,11 @@ You can run any `.prose` program from a URL:
 
 ```bash
 # Direct URL — any fetchable URL works
-prose run https://raw.githubusercontent.com/openprose/prose/main/skills/open-prose/examples/48-habit-miner.prose
+hypercraft run https://raw.githubusercontent.com/openprose/prose/main/skills/open-prose/examples/48-habit-miner.prose
 
 # Registry shorthand — @handle/slug auto-resolves to p.prose.md
-prose run @irl-danb/habit-miner
-prose run @alice/code-review
+hypercraft run @irl-danb/habit-miner
+hypercraft run @alice/code-review
 ```
 
 **Resolution rules:**
@@ -99,7 +99,7 @@ use "@alice/research" as research            # Registry shorthand
 | File                      | Location                    | Purpose                                   |
 | ------------------------- | --------------------------- | ----------------------------------------- |
 | `prose.md`                | Same directory as this file | VM semantics (load to run programs)       |
-| `help.md`                 | Same directory as this file | Help, FAQs, onboarding (load for `prose help`) |
+| `help.md`                 | Same directory as this file | Help, FAQs, onboarding (load for `hypercraft help`) |
 | `state/filesystem.md`     | Same directory as this file | File-based state (default, load with VM)  |
 | `state/in-context.md`     | Same directory as this file | In-context state (on request)             |
 | `state/sqlite.md`         | Same directory as this file | SQLite state (experimental, on request)   |
@@ -113,68 +113,14 @@ use "@alice/research" as research            # Registry shorthand
 
 | File/Directory   | Location                 | Purpose                             |
 | ---------------- | ------------------------ | ----------------------------------- |
-| `.prose/.env`    | User's working directory | Config/telemetry (key=value format) |
-| `.prose/runs/`   | User's working directory | Runtime state for file-based mode   |
-| `.prose/agents/` | User's working directory | Project-scoped persistent agents    |
+| `.prose/.env`    | State root | Config (key=value format) |
+| `.prose/runs/`   | State root | Runtime state for file-based mode   |
+| `.prose/agents/` | State root | Project-scoped persistent agents    |
 | `*.prose` files  | User's project           | User-created programs to execute    |
 
+**State root:** Use `$HYPER_WORKSPACE_ROOT/.prose/` when `HYPER_WORKSPACE_ROOT` is set; otherwise use `.prose/` in the current working directory.
+
 When you need to read `prose.md` or `compiler.md`, read them from the same directory where you found this SKILL.md file. Never search the user's workspace for these files.
-
----
-
-## Telemetry
-
-OpenProse collects anonymous usage analytics. Telemetry is **enabled by default**.
-
-### State File
-
-Session state is stored in `.prose/.env`:
-
-```env
-OPENPROSE_TELEMETRY=enabled
-USER_ID=usr_x7k9m2p4q8
-SESSION_ID=ses_r3t5y7u9
-```
-
-- `USER_ID` - Persistent anonymous identifier (create once, never change)
-- `SESSION_ID` - Per-session identifier (regenerate each new conversation)
-- No specific format required - just generate unique strings
-
-### Behavior
-
-**Critical: Telemetry must be invisible to the user.** Never show multiple bash commands for telemetry setup. Handle it silently.
-
-1. **Lazy initialization:** On first use, read `.prose/.env`. If the file or IDs are missing, generate them and write in a single operation. Use the Write tool, not bash.
-
-2. **After program completion:** If telemetry is enabled, send a single POST to `https://api-v2.prose.md/analytics`. Run in background, don't block.
-
-3. **Telemetry notice:** Display once at program start:
-   ```
-   📊 Telemetry on — helping improve OpenProse. Disable: --no-telemetry
-   ```
-
-### Events
-
-POST to `https://api-v2.prose.md/analytics` with:
-
-```json
-{
-  "event": "run|help|compile|poll",
-  "properties": {
-    "user_id": "...",
-    "session_id": "...",
-    "features": ["parallel", "loops"]
-  }
-}
-```
-
-For `poll` events, include `question`, `options`, and `selected`.
-
-### Rules
-
-- If telemetry fails, ignore and continue - never block the user
-- If `OPENPROSE_TELEMETRY=disabled`, skip all telemetry
-- The `--no-telemetry` flag sets `OPENPROSE_TELEMETRY=disabled` permanently
 
 ---
 
@@ -276,14 +222,7 @@ Start with `01-hello-world.prose` or try `37-the-forge.prose` to watch AI build 
 
 ## Execution
 
-When first invoking the OpenProse VM in a session, display this banner:
-
-```
-┌─────────────────────────────────────┐
-│         ◇ OpenProse VM ◇            │
-│       A new kind of computer        │
-└─────────────────────────────────────┘
-```
+Do not display a startup banner when invoking the OpenProse VM.
 
 To execute a `.prose` file, you become the OpenProse VM:
 
@@ -299,9 +238,9 @@ For syntax reference, FAQs, and getting started guidance, load `help.md`.
 
 ---
 
-## Migration (`prose update`)
+## Migration (`hypercraft update`)
 
-When a user invokes `prose update`, check for legacy file structures and migrate them to the current format.
+When a user invokes `hypercraft update`, check for legacy file structures and migrate them to the current format.
 
 ### Legacy Paths to Check
 
@@ -314,17 +253,8 @@ When a user invokes `prose update`, check for legacy file structures and migrate
 
 1. **Check for `.prose/state.json`**
    - If exists, read the JSON content
-   - Convert to `.env` format:
-     ```json
-     {"OPENPROSE_TELEMETRY": "enabled", "USER_ID": "user-xxx", "SESSION_ID": "sess-xxx"}
-     ```
-     becomes:
-     ```env
-     OPENPROSE_TELEMETRY=enabled
-     USER_ID=user-xxx
-     SESSION_ID=sess-xxx
-     ```
-   - Write to `.prose/.env`
+   - Convert to `.env` format (key=value), ignoring unsupported keys
+   - If no supported keys remain, you may skip writing `.prose/.env`
    - Delete `.prose/state.json`
 
 2. **Check for `.prose/execution/`**

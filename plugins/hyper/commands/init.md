@@ -288,6 +288,108 @@ argument-hint: ""
     </phase>
 
     <!-- ============================================================ -->
+    <!-- PHASE 7B: SKILL CONFIGURATION (NEW) -->
+    <!-- ============================================================ -->
+    <phase name="skill_configuration" required="false">
+      <instructions>
+        **Skip if: User chose "Quick setup"**
+
+        Walk user through skill configuration for each configurable slot:
+
+        **Step 1: Introduction**
+        ---
+        ## Skill Configuration
+
+        Hyper Engineering uses skills to provide specialized capabilities to AI agents.
+        Let me help you configure which skills to use for each capability.
+
+        **Skill Slots:**
+        - **doc-lookup** - Documentation retrieval
+        - **code-search** - Codebase analysis
+        - **browser-testing** - UI verification
+        - **error-tracking** - Error monitoring
+
+        ---
+
+        **Step 2: Documentation Lookup**
+        Use AskUserQuestion:
+        ```
+        question: "Which skill should handle documentation lookup?"
+        header: "Docs"
+        options:
+          - label: "Context7 (Recommended)"
+            description: "Query framework docs via Context7 MCP server"
+          - label: "Web Search"
+            description: "Use web search for documentation"
+          - label: "None"
+            description: "Disable documentation lookup"
+        ```
+        Store choice as DOC_LOOKUP_SKILL.
+
+        **Step 3: Code Search**
+        Use AskUserQuestion:
+        ```
+        question: "Which skill should handle code search?"
+        header: "Code"
+        options:
+          - label: "Built-in Search (Recommended)"
+            description: "Use grep/glob for codebase analysis"
+          - label: "Sourcegraph"
+            description: "Use Sourcegraph for semantic search (requires setup)"
+          - label: "None"
+            description: "Use basic file reading only"
+        ```
+        Store choice as CODE_SEARCH_SKILL.
+
+        **Step 4: Browser Testing**
+        Use AskUserQuestion:
+        ```
+        question: "Which skill should handle browser testing?"
+        header: "Browser"
+        options:
+          - label: "Playwright (Recommended)"
+            description: "Use Playwright MCP for browser automation"
+          - label: "Puppeteer"
+            description: "Use Puppeteer for browser automation"
+          - label: "None"
+            description: "Skip browser testing"
+        ```
+        Store choice as BROWSER_TESTING_SKILL.
+
+        **Step 5: Error Tracking**
+        Use AskUserQuestion:
+        ```
+        question: "Which skill should handle error tracking?"
+        header: "Errors"
+        options:
+          - label: "Sentry (Recommended)"
+            description: "Use Sentry MCP for error analysis"
+          - label: "None"
+            description: "Disable error tracking integration"
+        ```
+        Store choice as ERROR_TRACKING_SKILL.
+
+        **Step 6: Custom Skill Option**
+        Use AskUserQuestion:
+        ```
+        question: "Would you like to create a custom skill?"
+        header: "Custom"
+        options:
+          - label: "No, use selected skills"
+            description: "Continue with the skills you've chosen"
+          - label: "Yes, plan a new skill"
+            description: "Launch skill-template-creator to design a custom skill"
+        ```
+
+        If "Yes, plan a new skill" selected:
+        - Inform user: "After setup completes, run `/skill-template-creator` to design your custom skill."
+        - Store CREATE_CUSTOM_SKILL=true
+
+        Store all skill choices for execution phase.
+      </instructions>
+    </phase>
+
+    <!-- ============================================================ -->
     <!-- PHASE 8: CONFIRMATION -->
     <!-- ============================================================ -->
     <phase name="confirmation" required="true">
@@ -301,6 +403,14 @@ argument-hint: ""
 
         **Workspace:**
         - Create/verify workspace at `~/.hyper/accounts/.../workspaces/{name}/`
+
+        **Skill Configuration:** (if configured)
+        | Slot | Selected Skill |
+        |------|----------------|
+        | doc-lookup | {DOC_LOOKUP_SKILL} |
+        | code-search | {CODE_SEARCH_SKILL} |
+        | browser-testing | {BROWSER_TESTING_SKILL} |
+        | error-tracking | {ERROR_TRACKING_SKILL} |
 
         **CLAUDE.md:** (if applicable)
         - Backup: `CLAUDE.md` → `CLAUDE.md.backup-{timestamp}`
@@ -377,6 +487,73 @@ argument-hint: ""
           echo "Please manually review and migrate data from .hyper/ to $HYPER_WORKSPACE_ROOT"
         fi
         ```
+
+        **Step 5: Write skill configurations (if configured)**
+
+        If skill configuration was completed (not Quick setup):
+
+        ```bash
+        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+        WORKSPACE_ROOT=$($HYPER_CLI workspace path)
+
+        # Create skills settings directory
+        mkdir -p "$WORKSPACE_ROOT/settings/skills"
+
+        # Write doc-lookup configuration
+        cat > "$WORKSPACE_ROOT/settings/skills/doc-lookup.yaml" << EOF
+# Documentation Lookup Skill Configuration
+# Selected during /hyper:init setup
+
+selected: ${DOC_LOOKUP_SKILL:-context7}
+
+config:
+  context7:
+    max_tokens: 5000
+    cache_ttl: 3600
+EOF
+
+        # Write code-search configuration
+        cat > "$WORKSPACE_ROOT/settings/skills/code-search.yaml" << EOF
+# Code Search Skill Configuration
+# Selected during /hyper:init setup
+
+selected: ${CODE_SEARCH_SKILL:-codebase-search}
+
+config:
+  codebase-search:
+    exclude_patterns:
+      - node_modules
+      - .git
+      - dist
+      - build
+EOF
+
+        # Write browser-testing configuration
+        cat > "$WORKSPACE_ROOT/settings/skills/browser-testing.yaml" << EOF
+# Browser Testing Skill Configuration
+# Selected during /hyper:init setup
+
+selected: ${BROWSER_TESTING_SKILL:-playwright}
+
+config:
+  playwright:
+    default_browser: chromium
+    headless: true
+EOF
+
+        # Write error-tracking configuration
+        cat > "$WORKSPACE_ROOT/settings/skills/error-tracking.yaml" << EOF
+# Error Tracking Skill Configuration
+# Selected during /hyper:init setup
+
+selected: ${ERROR_TRACKING_SKILL:-sentry}
+
+config:
+  sentry:
+    organization: ""
+    default_project: ""
+EOF
+        ```
       </instructions>
     </phase>
 
@@ -439,6 +616,10 @@ argument-hint: ""
         **Workspace Location:**
         `$HYPER_WORKSPACE_ROOT/`
 
+        **Skill Configuration:**
+        Skills saved to `$HYPER_WORKSPACE_ROOT/settings/skills/`
+        Edit these files to customize skill behavior.
+
         **What's Next:**
 
         | Command | Purpose |
@@ -446,6 +627,7 @@ argument-hint: ""
         | `/hyper:status` | View current projects and tasks |
         | `/hyper:plan "feature"` | Start planning a new feature |
         | `/hyper:import-external` | Import from external systems |
+        | `/skill-template-creator` | Create a custom skill |
 
         **Quick Start:**
         Try `/hyper:plan "Add user authentication"` to create your first project!

@@ -67,7 +67,7 @@
 #   - Deacon → Witness → Polecats/Refinery
 #
 # =============================================================================
-# PERSISTENT STATE (in .prose/gas-town/)
+# PERSISTENT STATE (in state root .prose/gas-town/)
 # =============================================================================
 #
 # Town-level (orchestration):

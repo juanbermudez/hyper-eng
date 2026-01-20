@@ -1,6 +1,6 @@
 # Roadmap Examples
 
-These examples demonstrate **planned** OpenProse syntax that is **not yet implemented**.
+These examples demonstrate **planned** Hyper-Prose syntax that is **not yet implemented**.
 
 They are included to show the direction of the language and gather feedback on the design.
 

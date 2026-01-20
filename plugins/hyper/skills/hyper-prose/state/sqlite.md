@@ -2,7 +2,7 @@
 role: sqlite-state-management
 status: experimental
 summary: |
-  SQLite-based state management for OpenProse programs. This approach persists
+  SQLite-based state management for Hyper-Prose programs. This approach persists
   execution state to a SQLite database, enabling structured queries, atomic
   transactions, and flexible schema evolution.
 requires: sqlite3 CLI tool in PATH
@@ -15,7 +15,7 @@ see-also:
 
 # SQLite State Management (Experimental)
 
-This document describes how the OpenProse VM tracks execution state using a **SQLite database**. This is an experimental alternative to file-based state (`filesystem.md`) and in-context state (`in-context.md`).
+This document describes how the Hyper-Prose VM tracks execution state using a **SQLite database**. This is an experimental alternative to file-based state (`filesystem.md`) and in-context state (`in-context.md`).
 
 ## Prerequisites
 

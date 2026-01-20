@@ -3,11 +3,11 @@ description: View status of all projects and tasks in $HYPER_WORKSPACE_ROOT/ dir
 argument-hint: "[project-slug]"
 ---
 
-Use the **hyper-prose** skill to execute the status workflow.
+Use the **hypercraft** skill to execute the status workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper-prose/prose.md` and execute the workflow at `commands/hyper-status.prose` with:
+Load the VM specification from `skills/hypercraft/prose.md` and execute the workflow at `commands/hyper-status.prose` with:
 
 ```
 input project_slug: "$ARGUMENTS"

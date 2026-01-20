@@ -1,7 +1,7 @@
 ---
 role: best-practices
 summary: |
-  Design patterns for robust, efficient, and maintainable OpenProse programs.
+  Design patterns for robust, efficient, and maintainable Hyper-Prose programs.
   Read this file when authoring new programs or reviewing existing ones.
 see-also:
   - prose.md: Execution semantics, how to run programs
@@ -9,7 +9,7 @@ see-also:
   - antipatterns.md: Patterns to avoid
 ---
 
-# OpenProse Design Patterns
+# Hyper-Prose Design Patterns
 
 This document catalogs proven patterns for orchestrating AI agents effectively. Each pattern addresses specific concerns: robustness, cost efficiency, speed, maintainability, or self-improvement capability.
 
@@ -96,7 +96,7 @@ agent performance-reviewer:
 
 #### reusable-blocks
 
-Extract repeated workflows into parameterized blocks. Blocks are the functions of OpenProse.
+Extract repeated workflows into parameterized blocks. Blocks are the functions of Hyper-Prose.
 
 ```prose
 block review-and-revise(artifact, criteria):
@@ -206,7 +206,7 @@ Match model capability to task complexity:
 | **Opus 4.5** | Hard/difficult work requiring deep reasoning | Complex analysis, strategic decisions, novel problem-solving |
 | **Haiku** | Simple, self-evident tasks (use sparingly) | Classification, summarization, formatting |
 
-**Key insight:** Sonnet 4.5 excels at *orchestrating* agents and managing control flow—it's the ideal model for the OpenProse VM itself and for "captain" agents that coordinate work. Opus 4.5 should be reserved for agents doing genuinely difficult intellectual work. Haiku can handle simple tasks but should generally be avoided where quality matters.
+**Key insight:** Sonnet 4.5 excels at *orchestrating* agents and managing control flow—it's the ideal model for the Hyper-Prose VM itself and for "captain" agents that coordinate work. Opus 4.5 should be reserved for agents doing genuinely difficult intellectual work. Haiku can handle simple tasks but should generally be avoided where quality matters.
 
 **Detailed task-to-model mapping:**
 
@@ -684,7 +684,7 @@ let review = session: structured-reviewer
 
 ## Summary
 
-The most effective OpenProse programs combine these patterns:
+The most effective Hyper-Prose programs combine these patterns:
 
 1. **Structure**: Parallelize independent work, use blocks for reuse
 2. **Robustness**: Bound loops, handle errors, retry transient failures

@@ -1,7 +1,7 @@
 ---
 role: antipatterns
 summary: |
-  Common mistakes and patterns to avoid in OpenProse programs.
+  Common mistakes and patterns to avoid in Hyper-Prose programs.
   Read this file to identify and fix problematic code patterns.
 see-also:
   - prose.md: Execution semantics, how to run programs
@@ -9,7 +9,7 @@ see-also:
   - patterns.md: Recommended design patterns
 ---
 
-# OpenProse Antipatterns
+# Hyper-Prose Antipatterns
 
 This document catalogs patterns that lead to brittle, expensive, slow, or unmaintainable programs. Each antipattern includes recognition criteria and remediation guidance.
 
@@ -938,7 +938,7 @@ Antipatterns emerge from:
 3. **Under-engineering**: No error handling, unbounded loops, vague conditions
 4. **Unclear thinking**: God sessions, mixed concerns, spaghetti context
 
-When reviewing OpenProse programs, ask:
+When reviewing Hyper-Prose programs, ask:
 
 - Can independent work be parallelized?
 - Are loops bounded?

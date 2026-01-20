@@ -1,18 +1,18 @@
 ---
 role: experimental
 summary: |
-  Borges register for OpenProse—a scholarly/metaphysical alternative keyword set.
+  Borges register for Hyper-Prose—a scholarly/metaphysical alternative keyword set.
   Labyrinths, dreamers, forking paths, and infinite libraries. For benchmarking
   against the functional register.
 status: draft
 requires: prose.md
 ---
 
-# OpenProse Borges Register
+# Hyper-Prose Borges Register
 
 > **This is a skin layer.** It requires `prose.md` to be loaded first. All execution semantics, state management, and VM behavior are defined there. This file only provides keyword translations.
 
-An alternative register for OpenProse that draws from the works of Jorge Luis Borges. Where the functional register is utilitarian and the folk register is whimsical, the Borges register is scholarly and metaphysical—everything feels like a citation from a fictional encyclopedia.
+An alternative register for Hyper-Prose that draws from the works of Jorge Luis Borges. Where the functional register is utilitarian and the folk register is whimsical, the Borges register is scholarly and metaphysical—everything feels like a citation from a fictional encyclopedia.
 
 ## How to Use
 

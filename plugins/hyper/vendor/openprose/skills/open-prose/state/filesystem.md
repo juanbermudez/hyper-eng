@@ -29,11 +29,17 @@ File-based state persists all execution artifacts to disk. This enables:
 
 ---
 
+## State Root
+
+If `HYPER_WORKSPACE_ROOT` is set, the state root is `$HYPER_WORKSPACE_ROOT/.prose/`. Otherwise, use `.prose/` in the current working directory. All paths below are relative to the state root.
+
+---
+
 ## Directory Structure
 
 ```
 .prose/
-├── .env                              # Config/telemetry (simple key=value format)
+├── .env                              # Config (simple key=value format)
 ├── runs/
 │   └── {YYYYMMDD}-{HHMMSS}-{random}/
 │       ├── program.prose             # Copy of running program
@@ -76,13 +82,7 @@ If a program exceeds 999 segments, extend to 4 digits: `captain-1000.md`.
 
 ### `.prose/.env`
 
-Simple key=value configuration file:
-
-```env
-OPENPROSE_TELEMETRY=enabled
-USER_ID=user-a7b3c9d4e5f6
-SESSION_ID=sess-1704326400000-x9y8z7
-```
+Simple key=value configuration file.
 
 **Why this format:** Self-evident, no JSON parsing needed, familiar to developers.
 

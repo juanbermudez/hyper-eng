@@ -1,6 +1,6 @@
 ---
 name: hyper-local
-description: This skill provides expert guidance for spec-driven development using local $HYPER_WORKSPACE_ROOT/ directory structure. Use when orchestrating research, planning, and implementation workflows with local files as the source of truth. Compatible with Hyper Control UI.
+description: This skill provides expert guidance for spec-driven development using local $HYPER_WORKSPACE_ROOT/ directory structure. Use when orchestrating research, planning, and implementation workflows with local files as the source of truth. Compatible with Hypercraft UI.
 model: sonnet
 allowed-tools:
   - Read
@@ -16,7 +16,7 @@ allowed-tools:
 <skill name="hyper-local">
 
 <description>
-Expert guidance for spec-driven development with local file-based project management. Uses the $HYPER_WORKSPACE_ROOT/ directory structure compatible with Hyper Control UI. Orchestrates research, planning, and implementation workflows using specialized sub-agents with local files as the single source of truth.
+Expert guidance for spec-driven development with local file-based project management. Uses the $HYPER_WORKSPACE_ROOT/ directory structure compatible with Hypercraft UI. Orchestrates research, planning, and implementation workflows using specialized sub-agents with local files as the single source of truth.
 </description>
 
 <intake>
@@ -87,7 +87,7 @@ $HYPER_WORKSPACE_ROOT/
 
 1. **Files are the API** - No external service needed
 2. **MDX with frontmatter** - Structured metadata + markdown content
-3. **Hyper Control compatible** - UI watches for file changes in real-time
+3. **Hypercraft compatible** - UI watches for file changes in real-time
 4. **Template system** - Customizable per-workspace
 5. **Version controllable** - Everything in git
 6. **Activity tracking** - Session history recorded in frontmatter
@@ -611,9 +611,9 @@ Agent:
 </examples>
 
 <integration_with_hyper_control>
-## Hyper Control Integration
+## Hypercraft Integration
 
-When Hyper Control (Tauri desktop app) is running:
+When Hypercraft (Tauri desktop app) is running:
 
 1. **Automatic sync** - File watcher monitors `$HYPER_WORKSPACE_ROOT/` for changes
 2. **Real-time updates** - All file operations immediately reflected in UI
@@ -623,7 +623,7 @@ When Hyper Control (Tauri desktop app) is running:
 
 ## Works Standalone
 
-The $HYPER_WORKSPACE_ROOT/ workflow works completely without Hyper Control:
+The $HYPER_WORKSPACE_ROOT/ workflow works completely without Hypercraft:
 
 - All planning artifacts are local files
 - Git tracks all changes

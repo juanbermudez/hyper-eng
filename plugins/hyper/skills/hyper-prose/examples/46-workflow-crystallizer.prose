@@ -43,7 +43,7 @@ agent scoper:
 agent author:
   model: opus
   prompt: """
-    Write idiomatic OpenProse. Follow existing example patterns.
+    Write idiomatic Hyper-Prose. Follow existing example patterns.
     Prefer explicit over clever. Use agents for distinct roles.
     Use parallel for independent tasks. Use try/catch for reversible operations.
   """
@@ -52,7 +52,7 @@ agent author:
 
 agent compiler:
   model: sonnet
-  prompt: "Validate OpenProse syntax. Report specific errors with line numbers."
+  prompt: "Validate Hyper-Prose syntax. Report specific errors with line numbers."
   permissions:
     bash: allow
 

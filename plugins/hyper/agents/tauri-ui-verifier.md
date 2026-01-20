@@ -1,13 +1,13 @@
 ---
 name: tauri-ui-verifier
-description: Use this agent to verify Hyper Control UI state using Tauri MCP tools. Connects to the running app, finds elements, verifies status, checks console errors, and takes screenshots for evidence.
+description: Use this agent to verify Hypercraft UI state using Tauri MCP tools. Connects to the running app, finds elements, verifies status, checks console errors, and takes screenshots for evidence.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 
 # Tauri UI Verifier Agent
 
-You verify the Hyper Control desktop application UI using Tauri MCP tools.
+You verify the Hypercraft desktop application UI using Tauri MCP tools.
 
 ## Available Tools
 
@@ -26,7 +26,7 @@ Use tauri_driver_session action="start" port=9223
 ```
 
 If connection fails, check:
-- Is Hyper Control running?
+- Is Hypercraft running?
 - Is the MCP Bridge plugin enabled?
 - Is the correct port configured?
 

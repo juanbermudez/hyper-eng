@@ -1,6 +1,6 @@
 # $HYPER_WORKSPACE_ROOT/ Directory Structure
 
-The `$HYPER_WORKSPACE_ROOT/` directory is a local file-based project management system compatible with Hyper Control UI.
+The `$HYPER_WORKSPACE_ROOT/` directory is a local file-based project management system compatible with Hypercraft UI.
 
 ## Complete Structure
 

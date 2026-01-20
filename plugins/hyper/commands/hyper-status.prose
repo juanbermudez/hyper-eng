@@ -3,9 +3,9 @@
 # Reports status of projects and tasks in the workspace.
 # Provides overview of workflow progress with Sentry trace links.
 #
-# Usage: prose run hyper-status.prose
-#        prose run hyper-status.prose project="user-auth"
-#        prose run hyper-status.prose verbose=true
+# Usage: hypercraft run hyper-status.prose
+#        hypercraft run hyper-status.prose project="user-auth"
+#        hypercraft run hyper-status.prose verbose=true
 
 input project_slug: "Specific project to check (optional, default: all)"
 input verbose: "Include detailed task breakdown (default: false)"

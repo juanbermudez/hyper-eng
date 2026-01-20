@@ -1,17 +1,17 @@
 ---
 role: experimental
 summary: |
-  Arabian Nights register for OpenProse—a narrative/nested alternative keyword set.
+  Arabian Nights register for Hyper-Prose—a narrative/nested alternative keyword set.
   Djinns, tales within tales, wishes, and oaths. For benchmarking against the functional register.
 status: draft
 requires: prose.md
 ---
 
-# OpenProse Arabian Nights Register
+# Hyper-Prose Arabian Nights Register
 
 > **This is a skin layer.** It requires `prose.md` to be loaded first. All execution semantics, state management, and VM behavior are defined there. This file only provides keyword translations.
 
-An alternative register for OpenProse that draws from One Thousand and One Nights. Programs become tales told by Scheherazade. Recursion becomes stories within stories. Agents become djinns bound to serve.
+An alternative register for Hyper-Prose that draws from One Thousand and One Nights. Programs become tales told by Scheherazade. Recursion becomes stories within stories. Agents become djinns bound to serve.
 
 ## How to Use
 

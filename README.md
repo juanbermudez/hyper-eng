@@ -8,7 +8,7 @@
 
 **Specs first. Code second. Verification always.**
 
-A Claude Code plugin for local-first, spec-driven development. Transform vague ideas into comprehensive specifications, implement them systematically, and verify everything before it ships.
+A Claude Code plugin for local-first, spec-driven development. Transform vague ideas into comprehensive specifications, implement them systematically, and verify everything before it ships. Works standalone or with the Hypercraft desktop app.
 
 ## Why Hyper-Engineering?
 
@@ -30,7 +30,7 @@ In Claude Code, run these slash commands:
 /plugin marketplace add juanbermudez/hyper-eng
 
 # Install the plugin
-/plugin install hyper-engineering
+/plugin install hyper
 
 # Initialize workspace
 /hyper-init
@@ -106,6 +106,10 @@ Tasks and projects include a `qa` status for quality assurance:
 | Commands | 9 | Core workflow commands |
 | Skills | 3 | Reusable capabilities |
 | MCP Servers | 1 | Context7 for framework docs |
+
+## OpenProse Credit
+
+Hyper-Prose, the workflow VM used by this plugin, is a full fork of [OpenProse](https://github.com/openprose/prose) adapted for Hypercraft workflows.
 
 ## Philosophy
 

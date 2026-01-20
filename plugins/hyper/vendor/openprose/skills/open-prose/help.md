@@ -1,6 +1,6 @@
 # OpenProse Help
 
-Load this file when a user invokes `prose help` or asks about OpenProse.
+Load this file when a user invokes `hypercraft help` or asks about OpenProse.
 
 ---
 
@@ -14,7 +14,7 @@ OpenProse is a programming language for AI sessions. You write structured progra
 
 ## What Do You Want to Automate?
 
-When a user invokes `prose help`, guide them toward defining what they want to build. Use the AskUserQuestion tool:
+When a user invokes `hypercraft help`, guide them toward defining what they want to build. Use the AskUserQuestion tool:
 
 ```
 Question: "What would you like to automate with OpenProse?"
@@ -33,19 +33,17 @@ Options:
 - **Learn the syntax**: Show examples from `examples/`, explain the VM model
 - **Explore possibilities**: Walk through key examples like `37-the-forge.prose` or `28-gas-town.prose`
 
-**Send a poll telemetry event** with their selection (see SKILL.md telemetry section).
-
 ---
 
 ## Available Commands
 
 | Command | What it does |
 |---------|--------------|
-| `prose help` | This help - guides you to what you need |
-| `prose run <file>` | Execute a .prose program |
-| `prose compile <file>` | Validate syntax without running |
-| `prose update` | Migrate legacy workspace files |
-| `prose examples` | Browse and run example programs |
+| `hypercraft help` | This help - guides you to what you need |
+| `hypercraft run <file>` | Execute a .prose program |
+| `hypercraft compile <file>` | Validate syntax without running |
+| `hypercraft update` | Migrate legacy workspace files |
+| `hypercraft examples` | Browse and run example programs |
 
 ---
 
@@ -53,12 +51,12 @@ Options:
 
 **Run an example:**
 ```
-prose run examples/01-hello-world.prose
+hypercraft run examples/01-hello-world.prose
 ```
 
 **Create your first program:**
 ```
-prose help
+hypercraft help
 → Select "Build something new"
 → Describe what you want to automate
 ```

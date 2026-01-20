@@ -9,7 +9,7 @@ const ANTIPATTERNS_PATH = "prose/skills/open-prose/guidance/antipatterns.md"
 
 agent analyst:
   model: sonnet
-  prompt: """You analyze OpenProse run artifacts to identify issues and classify outcomes.
+  prompt: """You analyze Hyper-Prose run artifacts to identify issues and classify outcomes.
 Checklist-style evaluation: read systematically, identify issues with evidence, classify outcomes.
 
 Classification criteria:

@@ -13,10 +13,10 @@
 # Agent for Tauri UI verification
 agent ui-verifier:
   model: sonnet
-  prompt: """You verify the Hyper Control UI using Tauri MCP tools.
+  prompt: """You verify the Hypercraft UI using Tauri MCP tools.
 
 Your job:
-1. Connect to the running Hyper Control app
+1. Connect to the running Hypercraft app
 2. Find the specified project/task in the UI
 3. Verify the status matches expected
 4. Check for console errors
@@ -132,9 +132,9 @@ block verify-implementation(entity_id, entity_type, expected_status, run_id):
 
   # Step 4: Verify UI updated (Tauri)
   let ui_verification = session: ui-verifier
-    prompt: """Verify Hyper Control UI shows correct state.
+    prompt: """Verify Hypercraft UI shows correct state.
 
-    1. Connect to Hyper Control:
+    1. Connect to Hypercraft:
        Use tauri_driver_session action="start" port=9223
 
     2. Take baseline screenshot:

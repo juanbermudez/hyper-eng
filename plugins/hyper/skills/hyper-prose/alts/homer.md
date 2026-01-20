@@ -1,17 +1,17 @@
 ---
 role: experimental
 summary: |
-  Homeric register for OpenProse—an epic/heroic alternative keyword set.
+  Homeric register for Hyper-Prose—an epic/heroic alternative keyword set.
   Heroes, trials, fates, and glory. For benchmarking against the functional register.
 status: draft
 requires: prose.md
 ---
 
-# OpenProse Homeric Register
+# Hyper-Prose Homeric Register
 
 > **This is a skin layer.** It requires `prose.md` to be loaded first. All execution semantics, state management, and VM behavior are defined there. This file only provides keyword translations.
 
-An alternative register for OpenProse that draws from Greek epic poetry—the Iliad, the Odyssey, and the heroic tradition. Programs become quests. Agents become heroes. Outputs become glory won.
+An alternative register for Hyper-Prose that draws from Greek epic poetry—the Iliad, the Odyssey, and the heroic tradition. Programs become quests. Agents become heroes. Outputs become glory won.
 
 ## How to Use
 

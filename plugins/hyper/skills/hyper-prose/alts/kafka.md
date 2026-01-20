@@ -1,17 +1,17 @@
 ---
 role: experimental
 summary: |
-  Kafka register for OpenProse—a bureaucratic/absurdist alternative keyword set.
+  Kafka register for Hyper-Prose—a bureaucratic/absurdist alternative keyword set.
   Clerks, proceedings, petitions, and statutes. For benchmarking against the functional register.
 status: draft
 requires: prose.md
 ---
 
-# OpenProse Kafka Register
+# Hyper-Prose Kafka Register
 
 > **This is a skin layer.** It requires `prose.md` to be loaded first. All execution semantics, state management, and VM behavior are defined there. This file only provides keyword translations.
 
-An alternative register for OpenProse that draws from the works of Franz Kafka—The Trial, The Castle, "In the Penal Colony." Programs become proceedings. Agents become clerks. Everything is a process, and nobody quite knows the rules.
+An alternative register for Hyper-Prose that draws from the works of Franz Kafka—The Trial, The Castle, "In the Penal Colony." Programs become proceedings. Agents become clerks. Everything is a process, and nobody quite knows the rules.
 
 ## How to Use
 

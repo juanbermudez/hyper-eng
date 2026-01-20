@@ -1,7 +1,7 @@
 # /run Endpoint UX Test with Error Remediation
 #
 # A multi-agent observation protocol for qualitative UX testing of the
-# OpenProse /run endpoint, WITH automated error investigation and remediation.
+# Hyper-Prose /run endpoint, WITH automated error investigation and remediation.
 #
 # This extends the basic UX test with a comprehensive error handling pipeline:
 # - If blocking errors are detected, investigate using logs, database, and code
@@ -44,7 +44,7 @@ Return just the token value (no Bearer prefix)."""
 agent ws_observer:
   model: opus
   persist: true
-  prompt: """You are a UX researcher observing an OpenProse program execution.
+  prompt: """You are a UX researcher observing an Hyper-Prose program execution.
 
 Your job is to watch the WebSocket execution stream and evaluate the experience
 from a USER's perspective - not as an engineer checking correctness.

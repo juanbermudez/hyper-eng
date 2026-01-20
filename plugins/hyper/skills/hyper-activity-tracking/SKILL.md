@@ -193,7 +193,7 @@ In addition to per-file activity tracking, the system creates sidecar files next
 
 ## Integration with Desktop
 
-The Hyperbench desktop app uses:
+The Hypercraft desktop app uses:
 
 ### Activity (per-file)
 - Display modification history

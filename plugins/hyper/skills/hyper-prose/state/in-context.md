@@ -3,7 +3,7 @@ role: in-context-state-management
 summary: |
   In-context state management using the narration protocol with text markers.
   This approach tracks execution state within the conversation history itself.
-  The OpenProse VM "thinks aloud" to persist state—what you say becomes what you remember.
+  The Hyper-Prose VM "thinks aloud" to persist state—what you say becomes what you remember.
 see-also:
   - ../prose.md: VM execution semantics
   - filesystem.md: File-system state management (alternative approach)
@@ -14,7 +14,7 @@ see-also:
 
 # In-Context State Management
 
-This document describes how the OpenProse VM tracks execution state using **structured narration** in the conversation history. This is one of two state management approaches (the other being file-based state in `filesystem.md`).
+This document describes how the Hyper-Prose VM tracks execution state using **structured narration** in the conversation history. This is one of two state management approaches (the other being file-based state in `filesystem.md`).
 
 ## Overview
 
@@ -39,7 +39,7 @@ In-context state is appropriate for:
 Announce your state mode at program start:
 
 ```
-OpenProse Program Start
+Hyper-Prose Program Start
    State mode: in-context (program is small, fits in context)
 ```
 

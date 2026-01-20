@@ -1,6 +1,6 @@
-# OpenProse Examples
+# Hyper-Prose Examples
 
-These examples demonstrate workflows using OpenProse's full feature set.
+These examples demonstrate workflows using Hyper-Prose's full feature set.
 
 ## Available Examples
 
@@ -111,7 +111,7 @@ These examples demonstrate workflows using OpenProse's full feature set.
 | File                              | Description                                            |
 | --------------------------------- | ------------------------------------------------------ |
 | `44-run-endpoint-ux-test.prose`   | Concurrent agents testing the /run API endpoint        |
-| `45-plugin-release.prose`         | OpenProse plugin release workflow (this repo)          |
+| `45-plugin-release.prose`         | Hyper-Prose plugin release workflow (this repo)          |
 | `46-workflow-crystallizer.prose`  | Reflective: observes thread, extracts workflow, writes .prose |
 | `47-language-self-improvement.prose` | Meta-level 2: analyzes .prose corpus to evolve the language itself |
 | `48-habit-miner.prose`            | Mines AI session logs for patterns, generates .prose automations |
@@ -241,7 +241,7 @@ block process(data, depth):
   output session "Synthesize partial results"
 ```
 
-**OpenProse advantages for RLMs:**
+**Hyper-Prose advantages for RLMs:**
 
 - **Scope isolation**: Each recursive call gets its own `execution_id`, preventing variable collisions
 - **Parallel fan-out**: `parallel for` enables concurrent processing at each recursion level
@@ -255,7 +255,7 @@ See examples 40-43 for full implementations.
 Ask Claude to run any example:
 
 ```
-Run the code review example from the OpenProse examples
+Run the code review example from the Hyper-Prose examples
 ```
 
 Or reference the file directly:

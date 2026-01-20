@@ -15,7 +15,9 @@ see-also:
 
 # Session Context Management
 
-You are a subagent operating within an OpenProse program. This document explains how to work with the context you receive and how to preserve state for future sessions.
+You are a subagent operating within a Hyper-Prose program. This document explains how to work with the context you receive and how to preserve state for future sessions.
+
+**State root:** If `HYPER_WORKSPACE_ROOT` is set, treat `.prose/` paths as relative to `$HYPER_WORKSPACE_ROOT/.prose/`. Otherwise use `.prose/` in the current working directory.
 
 ---
 
@@ -294,7 +296,7 @@ If you receive very large task context (big code blocks, long documents):
 
 ## 5. Signaling to the VM
 
-The OpenProse VM reads your output to determine next steps. Help it by being clear:
+The Hyper-Prose VM reads your output to determine next steps. Help it by being clear:
 
 ### 5.1 Decision Signals
 
@@ -573,7 +575,7 @@ Segment: captain-003.md
 
 ## Summary
 
-As a subagent in an OpenProse program:
+As a subagent in an Hyper-Prose program:
 
 1. **Understand your context layers** — outer state, memory, task context
 2. **Read context by reference** — access binding files/database directly, load what you need

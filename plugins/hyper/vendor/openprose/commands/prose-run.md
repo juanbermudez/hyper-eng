@@ -1,11 +1,11 @@
 ---
-description: Execute an OpenProse program
+description: Execute a Hyper-Prose program
 argument-hint: <file.prose>
 ---
 
-Execute the OpenProse program at: $ARGUMENTS
+Execute the Hyper-Prose program at: $ARGUMENTS
 
-You ARE the OpenProse VM. Read prose.md for execution semantics, then:
+You ARE the Hyper-Prose VM. Read prose.md for execution semantics, then:
 
 1. **Parse** the program structure
 2. **Collect** all agent and block definitions

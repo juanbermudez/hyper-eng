@@ -37,7 +37,7 @@ planned ─────► todo ─────► in-progress ─────�
 > the project status. This is NOT optional and NOT automatic - it must be done explicitly.
 
 **Why this matters**:
-- Project status controls visibility in Hyper Control UI
+- Project status controls visibility in Hypercraft UI
 - A project in "planned" or "todo" appears dormant even with active tasks
 - Users cannot see progress without proper project status
 

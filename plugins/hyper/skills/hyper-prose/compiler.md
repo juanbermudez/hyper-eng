@@ -1,19 +1,19 @@
 ---
 role: language-specification
 summary: |
-  Complete syntax grammar, validation rules, and compilation semantics for OpenProse.
+  Complete syntax grammar, validation rules, and compilation semantics for Hyper-Prose.
   Read this file when compiling, validating, or resolving ambiguous syntax. Assumes
   prose.md is already in context for execution semantics.
 see-also:
-  - SKILL.md: Activation triggers, onboarding, telemetry
+  - SKILL.md: Activation triggers, onboarding
   - prose.md: Execution semantics, how to run programs
   - state/filesystem.md: File-system state management (default)
   - state/in-context.md: In-context state management (on request)
 ---
 
-# OpenProse Language Reference
+# Hyper-Prose Language Reference
 
-OpenProse is a programming language for AI sessions. An AI session is a Turing-complete computer; this document provides complete documentation for the language syntax, semantics, and execution model.
+Hyper-Prose is a programming language for AI sessions. An AI session is a Turing-complete computer; this document provides complete documentation for the language syntax, semantics, and execution model.
 
 ---
 
@@ -84,13 +84,13 @@ If a construct is ambiguous or non-obvious, it should be flagged or transformed 
 
 ## Overview
 
-OpenProse provides a declarative syntax for defining multi-agent workflows. Programs consist of statements that are executed sequentially, with each `session` statement spawning a subagent to complete a task.
+Hyper-Prose provides a declarative syntax for defining multi-agent workflows. Programs consist of statements that are executed sequentially, with each `session` statement spawning a subagent to complete a task.
 
 ### Design Principles
 
 - **Pattern over framework**: The simplest solution is barely anything at all—just structure for English
 - **Self-evident**: Programs should be understandable with minimal documentation
-- **The OpenProse VM is intelligent**: Design for understanding, not parsing
+- **The Hyper-Prose VM is intelligent**: Design for understanding, not parsing
 - **Framework-agnostic**: Works with Claude Code, OpenCode, and any future agent framework
 - **Files are artifacts**: `.prose` is the portable unit of work
 
@@ -199,7 +199,7 @@ session "Do another thing"
 
 ### Compilation Behavior
 
-Comments are **stripped during compilation**. The OpenProse VM never sees them. They have no effect on execution and exist purely for human documentation.
+Comments are **stripped during compilation**. The Hyper-Prose VM never sees them. They have no effect on execution and exist purely for human documentation.
 
 ### Important Notes
 
@@ -339,7 +339,7 @@ Please provide final recommendations.
 
 ## Use Statements (Program Composition)
 
-Use statements import other OpenProse programs from the registry at `p.prose.md`, enabling modular workflows.
+Use statements import other Hyper-Prose programs from the registry at `p.prose.md`, enabling modular workflows.
 
 ### Syntax
 
@@ -368,7 +368,7 @@ use "@bob/critique" as critic
 
 ### Program URL Resolution
 
-When the OpenProse VM encounters a `use` statement:
+When the Hyper-Prose VM encounters a `use` statement:
 
 1. Fetch the program from `https://p.prose.md/@handle/slug`
 2. Parse the program to extract its contract (inputs/outputs)
@@ -385,7 +385,7 @@ When the OpenProse VM encounters a `use` statement:
 
 ### Execution Semantics
 
-Use statements are processed before any agent definitions or sessions. The OpenProse VM:
+Use statements are processed before any agent definitions or sessions. The Hyper-Prose VM:
 
 1. Fetches and validates all imported programs at the start of execution
 2. Extracts input/output contracts from each program
@@ -692,7 +692,7 @@ When a session references an agent:
 
 ## Session Statement
 
-The session statement is the primary executable construct in OpenProse. It spawns a subagent to complete a task.
+The session statement is the primary executable construct in Hyper-Prose. It spawns a subagent to complete a task.
 
 ### Syntax Variants
 
@@ -747,7 +747,7 @@ session: researcher
 
 ### Execution Semantics
 
-When the OpenProse VM encounters a `session` statement:
+When the Hyper-Prose VM encounters a `session` statement:
 
 1. **Resolve Configuration**: Merge agent defaults with session overrides
 2. **Spawn a Subagent**: Create a new Claude subagent with the resolved configuration
@@ -758,7 +758,7 @@ When the OpenProse VM encounters a `session` statement:
 ### Execution Flow Diagram
 
 ```
-OpenProse VM                    Subagent
+Hyper-Prose VM                    Subagent
     |                              |
     |  spawn session               |
     |----------------------------->|
@@ -794,14 +794,14 @@ To execute a session, use the Task tool:
 ```typescript
 // Simple session
 Task({
-  description: "OpenProse session",
+  description: "Hyper-Prose session",
   prompt: "The prompt from the session statement",
   subagent_type: "general-purpose",
 });
 
 // Session with agent configuration
 Task({
-  description: "OpenProse session",
+  description: "Hyper-Prose session",
   prompt: "The session prompt",
   subagent_type: "general-purpose",
   model: "opus", // From agent or override
@@ -1491,7 +1491,7 @@ parallel ("any", count: 2, on-fail: "ignore"):
 
 ### Execution Semantics
 
-When the OpenProse VM encounters a `parallel:` block:
+When the Hyper-Prose VM encounters a `parallel:` block:
 
 1. **Fork**: Start all branches concurrently
 2. **Execute**: Each branch runs independently
@@ -1673,11 +1673,11 @@ session "Synthesize all research into a business plan"
 
 ## Unbounded Loops
 
-Unbounded loops provide iteration with AI-evaluated termination conditions. Unlike fixed loops, the iteration count is not known ahead of time - the OpenProse VM evaluates conditions at runtime using its intelligence to determine when to stop.
+Unbounded loops provide iteration with AI-evaluated termination conditions. Unlike fixed loops, the iteration count is not known ahead of time - the Hyper-Prose VM evaluates conditions at runtime using its intelligence to determine when to stop.
 
 ### Discretion Markers
 
-Unbounded loops use **discretion markers** (`**...**`) to wrap AI-evaluated conditions. These markers signal that the enclosed text should be interpreted intelligently by the OpenProse VM at runtime, not as a literal boolean expression.
+Unbounded loops use **discretion markers** (`**...**`) to wrap AI-evaluated conditions. These markers signal that the enclosed text should be interpreted intelligently by the Hyper-Prose VM at runtime, not as a literal boolean expression.
 
 ```prose
 # The text inside **...** is evaluated by the AI
@@ -1721,7 +1721,7 @@ loop until **the task is complete**:
   session "Continue working on the task"
 ```
 
-The OpenProse VM evaluates the discretion condition after each iteration and exits when it determines the condition is satisfied.
+The Hyper-Prose VM evaluates the discretion condition after each iteration and exits when it determines the condition is satisfied.
 
 ### Loop While
 
@@ -1835,7 +1835,7 @@ session "Finalize the document"
 
 ### Execution Semantics
 
-When the OpenProse VM encounters an unbounded loop:
+When the Hyper-Prose VM encounters an unbounded loop:
 
 1. **Initialize**: Set iteration counter to 0
 2. **Check Condition** (for `until`/`while`):
@@ -1853,11 +1853,11 @@ For basic `loop:` without conditions:
 
 ### Condition Evaluation
 
-The OpenProse VM uses its intelligence to evaluate discretion conditions:
+The Hyper-Prose VM uses its intelligence to evaluate discretion conditions:
 
 1. **Context Awareness**: The condition is evaluated in the context of what has happened so far in the session
 2. **Semantic Understanding**: The condition text is interpreted semantically, not literally
-3. **Uncertainty Handling**: When uncertain, the OpenProse VM may:
+3. **Uncertainty Handling**: When uncertain, the Hyper-Prose VM may:
    - Continue iterating if progress is being made
    - Exit early if diminishing returns are detected
    - Use heuristics based on the condition's semantics
@@ -1952,7 +1952,7 @@ let short = items | filter:
     context: item
 ```
 
-The session in a filter body should return something the OpenProse VM can interpret as truthy/falsy (like "yes"/"no").
+The session in a filter body should return something the Hyper-Prose VM can interpret as truthy/falsy (like "yes"/"no").
 
 ### Reduce
 
@@ -2045,7 +2045,7 @@ session "Format and present the combined summaries"
 
 ### Execution Semantics
 
-When the OpenProse VM encounters a pipeline:
+When the Hyper-Prose VM encounters a pipeline:
 
 1. **Input**: Start with the input collection
 2. **For each operation**:
@@ -2086,7 +2086,7 @@ session "use outer"
 
 ## Error Handling
 
-OpenProse provides structured error handling with try/catch/finally blocks, throw statements, and retry mechanisms for resilient workflows.
+Hyper-Prose provides structured error handling with try/catch/finally blocks, throw statements, and retry mechanisms for resilient workflows.
 
 ### Try/Catch Blocks
 
@@ -2293,7 +2293,7 @@ backoff_property ::= "backoff" ":" ( "none" | "linear" | "exponential" )
 
 ## Choice Blocks
 
-Choice blocks allow the OpenProse VM to select from multiple labeled options based on criteria. This is useful for branching workflows where the best path depends on runtime analysis.
+Choice blocks allow the Hyper-Prose VM to select from multiple labeled options based on criteria. This is useful for branching workflows where the best path depends on runtime analysis.
 
 ### Syntax
 
@@ -2307,7 +2307,7 @@ choice **criteria**:
 
 ### Criteria
 
-The criteria is wrapped in discretion markers (`**...**`) and is evaluated by the OpenProse VM to select which option to execute:
+The criteria is wrapped in discretion markers (`**...**`) and is evaluated by the Hyper-Prose VM to select which option to execute:
 
 ```prose
 choice **the best approach for the current situation**:
@@ -2380,7 +2380,7 @@ choice **the type of request**:
 
 ### Execution Semantics
 
-When the OpenProse VM encounters a `choice` block:
+When the Hyper-Prose VM encounters a `choice` block:
 
 1. **Evaluate Criteria**: Interpret the discretion criteria in current context
 2. **Select Option**: Choose the most appropriate labeled option
@@ -2556,7 +2556,7 @@ loop until **task complete** (max: 10):
 
 ### Execution Semantics
 
-When the OpenProse VM encounters an `if` statement:
+When the Hyper-Prose VM encounters an `if` statement:
 
 1. **Evaluate Condition**: Interpret the first discretion condition
 2. **If True**: Execute the then-body and skip remaining clauses
@@ -2593,7 +2593,7 @@ discretion ::= "**" text "**" | "***" text "***"
 
 ## Execution Model
 
-OpenProse uses a two-phase execution model.
+Hyper-Prose uses a two-phase execution model.
 
 ### Phase 1: Compilation (Static)
 
@@ -2606,7 +2606,7 @@ The compile phase handles deterministic preprocessing:
 
 ### Phase 2: Runtime (Intelligent)
 
-The OpenProse VM executes the compiled program:
+The Hyper-Prose VM executes the compiled program:
 
 1. **Load**: Receive the compiled program
 2. **Collect Agents**: Register all agent definitions
@@ -2614,7 +2614,7 @@ The OpenProse VM executes the compiled program:
 4. **Spawn**: Create subagents with resolved configurations
 5. **Coordinate**: Manage context passing between sessions
 
-### OpenProse VM Behavior
+### Hyper-Prose VM Behavior
 
 | Aspect               | Behavior                                        |
 | -------------------- | ----------------------------------------------- |
@@ -2633,7 +2633,7 @@ For the current implementation, state is tracked in-context (conversation histor
 | Agent definitions   | Collected at program start                          |
 | Execution flow      | Implicit reasoning ("completed X, now executing Y") |
 | Session outputs     | Held in conversation history                        |
-| Position in program | Tracked by OpenProse VM                             |
+| Position in program | Tracked by Hyper-Prose VM                             |
 
 ---
 
@@ -2956,7 +2956,7 @@ escape      → "\\" | "\"" | "\n" | "\t"
 
 ## Compiler API
 
-When a user invokes `/prose-compile` or asks you to compile a `.prose` file:
+When a user invokes `hypercraft compile` or asks you to compile a `.prose` file:
 
 1. **Read this document** (`compiler.md`) fully to understand all syntax and validation rules
 2. **Parse** the program according to the syntax grammar

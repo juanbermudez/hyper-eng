@@ -5,7 +5,7 @@ summary: |
   Read this file when compiling, validating, or resolving ambiguous syntax. Assumes
   prose.md is already in context for execution semantics.
 see-also:
-  - SKILL.md: Activation triggers, onboarding, telemetry
+  - SKILL.md: Activation triggers, onboarding
   - prose.md: Execution semantics, how to run programs
   - state/filesystem.md: File-system state management (default)
   - state/in-context.md: In-context state management (on request)
@@ -2956,7 +2956,7 @@ escape      → "\\" | "\"" | "\n" | "\t"
 
 ## Compiler API
 
-When a user invokes `/prose-compile` or asks you to compile a `.prose` file:
+When a user invokes `hypercraft compile` or asks you to compile a `.prose` file:
 
 1. **Read this document** (`compiler.md`) fully to understand all syntax and validation rules
 2. **Parse** the program according to the syntax grammar

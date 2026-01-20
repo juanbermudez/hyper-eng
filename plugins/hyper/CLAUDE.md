@@ -100,13 +100,13 @@ ls commands/*.md | wc -l
 ls -d skills/*/ 2>/dev/null | wc -l
 ```
 
-Current counts: **10 agents, 8 commands, 11 skills, 1 MCP server**
+Current counts: **10 agents, 8 commands, 12 skills, 1 MCP server**
 
 ---
 
 ## Project/Task MDX Format
 
-**CRITICAL**: When agents create projects and tasks, they MUST follow this exact format. Incorrect formatting causes parsing failures in Hyper Control.
+**CRITICAL**: When agents create projects and tasks, they MUST follow this exact format. Incorrect formatting causes parsing failures in Hypercraft.
 
 ### Project Frontmatter (`_project.mdx`)
 
@@ -183,7 +183,7 @@ See `skills/hyper-local/references/frontmatter-schema.md` for complete schema.
 
 ## Drive/Notes MDX Format
 
-**CRITICAL**: When creating Drive notes (artifacts), you MUST use the correct ID format or files will not appear in Hyper Control UI.
+**CRITICAL**: When creating Drive notes (artifacts), you MUST use the correct ID format or files will not appear in Hypercraft UI.
 
 ### Drive Note Frontmatter
 
@@ -322,7 +322,7 @@ Agent system prompt goes here. Include:
 
 2. Install the plugin:
    ```bash
-   claude /plugin install hyper-engineering
+   claude /plugin install hyper
    ```
 
 3. Test commands and agents:
@@ -338,12 +338,12 @@ Agent system prompt goes here. Include:
 
 ---
 
-## Integration with Hyper Control
+## Integration with Hypercraft
 
-This plugin creates `$HYPER_WORKSPACE_ROOT/` directory structures that are visualized by the Hyper Control desktop app:
+This plugin creates `$HYPER_WORKSPACE_ROOT/` directory structures that are visualized by the Hypercraft desktop app:
 
 - **Plugin creates**: Projects, tasks, specs, research docs in `$HYPER_WORKSPACE_ROOT/`
-- **Hyper Control reads**: Displays projects, tasks, status in UI
+- **Hypercraft reads**: Displays projects, tasks, status in UI
 - **File system is the API**: No sync needed, changes are immediate
 
 ---
