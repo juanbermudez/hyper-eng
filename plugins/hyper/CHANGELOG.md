@@ -5,6 +5,74 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.15.0] - 2026-01-20
+
+### Added
+
+**Skill-Based Workflow Architecture**
+
+Implements composable skills for sub-agents with configurable skill slots, enabling customizable workflows and compound engineering.
+
+**New Skills:**
+- `hyper-craft` - Core skill with directory structure, output contracts, lifecycle, CLI reference
+- `compound-engineering` - Trigger detection and learnings capture for continuous improvement
+- `skill-template-creator` - Generate new skills as templates for HyperCraft workflows
+
+**New Documentation:**
+- `docs/skill-authoring-guide.md` - Comprehensive guide for creating custom skills
+- `docs/architecture.md` - Technical overview of skill-based architecture
+- `docs/api-reference.md` - Prose syntax, output contracts, schemas
+
+**Skill Templates:**
+- `doc-lookup` - Options: context7, web-search, none
+- `code-search` - Options: grep-enhanced, ast-parser, none
+- `browser-testing` - Options: tauri-testing, playwright, none
+- `error-tracking` - Options: sentry-cli, datadog, none
+- `core` - Core skill configuration
+
+### Changed
+
+**Enhanced hyper-plan.prose:**
+- Added prior learnings query before research phase
+- Added compound engineering phase at workflow end
+- Integrated learnings capture for trigger detection
+
+**Enhanced hyper-implement.prose:**
+- Added relevant learnings surfacing before implementation
+- Added compound engineering phase at workflow end
+- Integrated output contract for structured responses
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 10 |
+| Commands | 8 |
+| Prose Workflows | 4 |
+| Skills | 14 |
+
+---
+
+## [3.14.0] - 2026-01-19
+
+### Added
+
+**New Skill: hyper-craft**
+- Central routing skill for Hyper Engineering workflows
+- Guidance on artifact placement across workspace and Drive scopes
+- Template usage and CLI-first conventions
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 10 |
+| Commands | 8 |
+| Prose Workflows | 4 |
+| Skills | 12 |
+
+---
+
 ## [3.13.0] - 2026-01-19
 
 ### Added
@@ -85,7 +153,7 @@ Transform `/hyper:init` into an intelligent setup wizard that:
 - This fixes the issue where project remained in "planned" status during implementation
 
 **Why this matters**:
-- Project status controls visibility in Hyper Control UI
+- Project status controls visibility in Hypercraft UI
 - A project in "planned" or "todo" appears dormant even with active tasks
 - Users couldn't see progress without proper project status update
 
@@ -234,15 +302,15 @@ Sidecar file approach chosen over separate registry:
 
 **Hyper-Prose Integration**
 - Renamed OpenProse to Hyper-Prose (our fork for extending the VM)
-- Slash commands now automatically use hyper-prose skill
-- Users invoke `/hyper:plan` → command loads hyper-prose skill → executes workflow
+- Slash commands now automatically use hypercraft skill
+- Users invoke `/hyper:plan` → command loads hypercraft skill → executes workflow
 
 ### Changed
 
-- `skills/open-prose/` → `skills/hyper-prose/`
-- SKILL.md updated with hyper-prose name and triggers
-- All slash commands (plan, implement, verify, status) rewritten to use hyper-prose
-- Package.json sync scripts renamed from `openprose:*` to `hyper-prose:*`
+- `skills/open-prose/` → `skills/hypercraft/`
+- SKILL.md updated with hypercraft name and triggers
+- All slash commands (plan, implement, verify, status) rewritten to use hypercraft
+- Package.json sync scripts renamed from `openprose:*` to `hypercraft:*`
 
 ### Summary
 
@@ -264,7 +332,7 @@ Sidecar file approach chosen over separate registry:
 - Bundled OpenProse VM as git subtree in `vendor/openprose/`
 - OpenProse skill symlinked into skills directory for automatic loading
 - Enables executable `.prose` workflow files with state management
-- Run workflows with: `prose run hyper-plan.prose feature="Add auth"`
+- Run workflows with: `hypercraft run hyper-plan.prose feature="Add auth"`
 
 **New Prose Workflows (4)**
 - `hyper-plan.prose` - Full planning: research → direction gate → spec → approval → tasks
@@ -276,7 +344,7 @@ Sidecar file approach chosen over separate registry:
 - `prose/blocks/verification.prose` - Reusable verification block with retry logic
 
 **New Agents (2)**
-- `tauri-ui-verifier.md` - Verifies Hyper Control UI state using Tauri MCP tools
+- `tauri-ui-verifier.md` - Verifies Hypercraft UI state using Tauri MCP tools
 - `workflow-observer.md` - Logs workflow events to Sentry for observability
 
 **Verification System**
@@ -323,7 +391,7 @@ Sidecar file approach chosen over separate registry:
 
 **Drive File Validation Warning**
 - DriveSyncHandler now logs warnings when drive files have incorrect ID format
-- Helps developers understand why files may not appear in Hyper Control UI
+- Helps developers understand why files may not appear in Hypercraft UI
 - Warning message includes expected format and actual value
 
 ### Summary
@@ -1002,11 +1070,11 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 
 ### Compatibility
 
-**Hyper Control UI**
-- Compatible with Hyper Control desktop app (optional)
-- Hyper Control watches `$HYPER_WORKSPACE_ROOT/` via file watcher
+**Hypercraft UI**
+- Compatible with Hypercraft desktop app (optional)
+- Hypercraft watches `$HYPER_WORKSPACE_ROOT/` via file watcher
 - TanStack DB syncs from `$HYPER_WORKSPACE_ROOT/` files
-- Plugin works standalone without Hyper Control
+- Plugin works standalone without Hypercraft
 
 ### Summary
 
@@ -1125,5 +1193,4 @@ Hyper-engineering commands leverage existing skills:
 ### Notes
 
 **v1.0.0 Cleanup:** Removed compound-engineering bloat, keeping only the core hyper-engineering workflow. All 4 agents are research agents (best-practices-researcher, framework-docs-researcher, git-history-analyzer, repo-research-analyst). All 5 commands are hyper-* prefixed (hyper-plan, hyper-implement, hyper-review, hyper-verify, hyper-init-stack). The 3 skills are linear-cli-expert, git-worktree, and compound-docs.
-
 
