@@ -1,0 +1,48 @@
+# Core Skill Configuration
+# The core skill (hyper-craft) is ALWAYS loaded by all hyper agents.
+# This template allows you to add project-specific additions to the core knowledge.
+
+# Core skill is always hyper-craft - this cannot be changed
+# The hyper-craft skill provides:
+# - Directory structure ($HYPER_WORKSPACE_ROOT/ layout)
+# - CLI reference (all hyper commands)
+# - Output contracts (sub-agent response format)
+# - Lifecycle management (status transitions, gates)
+# - Writing guidelines (frontmatter schemas, naming)
+
+# Project-specific additions to core knowledge
+project_context: |
+  # Add project-specific context that ALL agents should know:
+  # Example:
+  # - This is a Next.js 15 app with App Router
+  # - We use TanStack Query for data fetching
+  # - Our API is at /api/* and uses tRPC
+  # - Tests use Vitest and React Testing Library
+
+# Additional references to load
+additional_references: []
+  # Example:
+  # - path: "docs/architecture.md"
+  #   description: "Project architecture overview"
+  # - path: "CONTRIBUTING.md"
+  #   description: "Contribution guidelines"
+
+# Project-specific writing guidelines
+writing_additions: |
+  # Example:
+  # - Use sentence case for headings
+  # - Include JSDoc for all exported functions
+  # - PR descriptions should reference Linear issues
+
+# Quality gate customizations
+quality_gates:
+  # Additional commands to run during verification
+  additional_checks: []
+    # Example:
+    # - "pnpm test:e2e"
+    # - "pnpm audit"
+
+  # Checks to skip
+  skip_checks: []
+    # Example:
+    # - "typecheck"  # Skip if using JavaScript

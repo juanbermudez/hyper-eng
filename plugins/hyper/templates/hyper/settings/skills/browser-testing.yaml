@@ -1,0 +1,59 @@
+# Browser Testing Skill Configuration
+# This skill provides browser automation for verification and testing.
+# Used by: web-app-debugger, verification workflows
+
+# Selected skill for browser testing
+# Options: playwright, puppeteer, none
+selected: playwright
+
+# Skill-specific configuration
+config:
+  # playwright settings (MCP)
+  playwright:
+    # Default browser (chromium, firefox, webkit)
+    default_browser: chromium
+
+    # Viewport size for screenshots
+    viewport:
+      width: 1280
+      height: 720
+
+    # Default timeout in milliseconds
+    timeout_ms: 30000
+
+    # Base URL for relative navigation
+    base_url: ""
+      # Example: "http://localhost:3000"
+
+    # Headless mode (true for CI, false for debugging)
+    headless: true
+
+  # puppeteer settings
+  puppeteer:
+    # Default viewport
+    viewport:
+      width: 1280
+      height: 720
+
+    # Default timeout in milliseconds
+    timeout_ms: 30000
+
+    # Base URL
+    base_url: ""
+
+    # Headless mode
+    headless: true
+
+# Instructions added when this skill is loaded
+instructions_append: |
+  # Example:
+  # When testing in browser:
+  # - Always take screenshots of key states
+  # - Check console for errors after interactions
+  # - Verify responsive behavior at mobile viewport
+
+# Skip this skill in specific contexts
+skip_in_contexts: []
+  # Example:
+  # - "backend-only"  # Skip browser testing for API work
+  # - "quick-review"  # Skip for quick code reviews

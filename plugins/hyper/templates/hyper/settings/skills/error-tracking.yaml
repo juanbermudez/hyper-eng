@@ -1,0 +1,53 @@
+# Error Tracking Skill Configuration
+# This skill provides error monitoring integration for debugging and analysis.
+# Used by: debugging workflows, verification agents
+
+# Selected skill for error tracking
+# Options: sentry, none
+selected: sentry
+
+# Skill-specific configuration
+config:
+  # sentry settings (MCP)
+  sentry:
+    # Sentry organization slug
+    organization: ""
+      # Example: "my-org"
+
+    # Default project to query
+    default_project: ""
+      # Example: "my-app"
+
+    # Issue query defaults
+    query_defaults:
+      # Time window for recent issues (e.g., "24h", "7d", "30d")
+      time_window: "7d"
+
+      # Minimum events to consider significant
+      min_events: 5
+
+      # Issue status filter
+      status: "unresolved"
+        # Options: unresolved, resolved, ignored
+
+    # Alert thresholds
+    alert_thresholds:
+      # Error rate increase percentage to highlight
+      error_rate_increase: 50
+
+      # Minimum users affected to prioritize
+      min_users_affected: 10
+
+# Instructions added when this skill is loaded
+instructions_append: |
+  # Example:
+  # When analyzing errors:
+  # - Check for related issues before creating new reports
+  # - Include stack traces in debugging context
+  # - Link errors to relevant code changes
+
+# Skip this skill in specific contexts
+skip_in_contexts: []
+  # Example:
+  # - "new-feature"  # Skip for greenfield features
+  # - "docs-only"    # Skip for documentation tasks

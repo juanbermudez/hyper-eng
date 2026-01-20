@@ -1,0 +1,49 @@
+# Documentation Lookup Skill Configuration
+# This skill provides documentation retrieval for frameworks and libraries.
+# Used by: research agents, framework-docs-researcher
+
+# Selected skill for documentation lookup
+# Options: context7, web-search, none
+selected: context7
+
+# Skill-specific configuration
+config:
+  # context7 settings
+  context7:
+    # Preferred documentation sources
+    preferred_sources: []
+      # Example:
+      # - "/vercel/next.js"
+      # - "/facebook/react"
+
+    # Maximum tokens per query (default: 5000)
+    max_tokens: 5000
+
+    # Cache TTL in seconds (default: 3600)
+    cache_ttl: 3600
+
+  # web-search settings
+  web-search:
+    # Preferred domains for documentation
+    preferred_domains: []
+      # Example:
+      # - "nextjs.org"
+      # - "react.dev"
+
+    # Domains to exclude
+    blocked_domains: []
+      # Example:
+      # - "w3schools.com"
+
+# Instructions added when this skill is loaded
+instructions_append: |
+  # Example:
+  # When looking up documentation:
+  # - Prefer official docs over third-party tutorials
+  # - Always check for version-specific information
+  # - Include links to relevant sections
+
+# Skip this skill in specific contexts
+skip_in_contexts: []
+  # Example:
+  # - "quick-review"  # Skip doc lookup for quick reviews

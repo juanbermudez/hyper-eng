@@ -1,0 +1,61 @@
+# Code Search Skill Configuration
+# This skill provides codebase search and pattern analysis capabilities.
+# Used by: repo-research-analyst, implementation agents
+
+# Selected skill for code search
+# Options: codebase-search, sourcegraph, none
+selected: codebase-search
+
+# Skill-specific configuration
+config:
+  # codebase-search settings (built-in grep/glob)
+  codebase-search:
+    # Directories to always exclude from search
+    exclude_patterns:
+      - "node_modules"
+      - ".git"
+      - "dist"
+      - "build"
+      - ".next"
+      - "coverage"
+      # Add project-specific exclusions:
+      # - "vendor"
+      # - "__pycache__"
+
+    # File types to prioritize in search results
+    priority_extensions:
+      - ".ts"
+      - ".tsx"
+      - ".js"
+      - ".jsx"
+      # Add project-specific types:
+      # - ".py"
+      # - ".go"
+      # - ".rs"
+
+    # Maximum files to return per search (default: 50)
+    max_results: 50
+
+  # sourcegraph settings
+  sourcegraph:
+    # Sourcegraph instance URL
+    instance_url: ""
+      # Example: "https://sourcegraph.example.com"
+
+    # Repository patterns to search
+    repo_patterns: []
+      # Example:
+      # - "github.com/myorg/*"
+
+# Instructions added when this skill is loaded
+instructions_append: |
+  # Example:
+  # When searching code:
+  # - Always check for test files alongside implementation
+  # - Look for related constants and types
+  # - Note any TODO or FIXME comments
+
+# Skip this skill in specific contexts
+skip_in_contexts: []
+  # Example:
+  # - "docs-only"  # Skip code search for documentation tasks

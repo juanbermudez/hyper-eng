@@ -3,8 +3,8 @@
 # Executes a task from the approved specification with verification gates.
 # This workflow takes a task through: todo → in-progress → qa → complete
 #
-# Usage: prose run hyper-implement.prose task="ua-001"
-#        prose run hyper-implement.prose project="user-auth" task="001"
+# Usage: hypercraft run hyper-implement.prose task="ua-001"
+#        hypercraft run hyper-implement.prose project="user-auth" task="001"
 #
 # PATH RESOLUTION:
 # $HYPER_WORKSPACE_ROOT = ~/.hyper/accounts/{userId}/hyper/workspaces/{workspaceId}/
@@ -26,6 +26,9 @@ use "blocks/verification.prose"
 agent impl-captain:
   model: opus
   persist: true
+  skills:
+    - hyper-craft              # Core knowledge (always loaded)
+    - hyper-implementation     # Implementation-specific workflows
   prompt: """You are the Implementation Captain - you coordinate task execution.
 
 Your role:
@@ -35,12 +38,12 @@ Your role:
 4. Ensure all quality checks pass before marking complete
 
 Key principles:
+- Follow hyper-craft guidelines for CLI usage and output contracts
 - Read files COMPLETELY - never use limit/offset
 - Follow existing codebase patterns
-- Run verification frequently during implementation
 - Never mark complete until ALL gates pass
 
-Status transitions:
+Status transitions (from hyper-craft lifecycle):
 - todo → in-progress (starting work)
 - in-progress → qa (implementation done, verification starting)
 - qa → complete (all gates pass)
@@ -48,23 +51,23 @@ Status transitions:
 
 agent executor:
   model: opus
-  prompt: """You are a skilled code implementer. Your job is to:
+  skills:
+    - hyper-craft              # Core knowledge
+    - code-search              # Codebase analysis
+  prompt: """You are a skilled code implementer.
 
-1. Write clean, well-structured code following the spec
-2. Follow existing patterns in the codebase
-3. Add appropriate tests for new functionality
-4. Handle errors gracefully
-5. Add only necessary comments
-
-Implementation rules:
+Implementation rules (from hyper-craft):
 - Read target files COMPLETELY before editing
 - Match existing code style and patterns
 - Include TypeScript types where applicable
 - Write tests for new functionality
-- Don't over-engineer - keep it simple"""
+- Return output using hyper-craft output contract format"""
 
 agent reviewer:
   model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge
+    - code-search              # Code review capabilities
   prompt: """You are a code reviewer. Review implementation for:
 
 1. Does it match the task specification?
@@ -73,7 +76,9 @@ agent reviewer:
 4. Are edge cases handled?
 5. Are there appropriate tests?
 
-Output: APPROVE or REQUEST_CHANGES with specific feedback."""
+Output using hyper-craft output contract:
+- status: "complete" with APPROVE or "partial" with REQUEST_CHANGES
+- Include specific feedback in next_steps"""
 
 # ============================================================================
 # Phase 1: Initialize and Load Task
@@ -179,6 +184,27 @@ Document:
 - Naming conventions"""
   context: task_spec
 
+# Surface relevant learnings before implementation
+let relevant_learnings = session: impl-captain
+  prompt: """Query learnings that may be relevant to this task.
+
+```bash
+# Search for learnings related to files/patterns in this task
+# Extract key terms from task spec
+TASK_TERMS=$(echo "{task_spec}" | grep -oE '[A-Za-z]+' | sort -u | head -20)
+for term in $TASK_TERMS; do
+  grep -r -l -i "$term" $HYPER_WORKSPACE_ROOT/projects/*/resources/learnings.md 2>/dev/null || true
+done | sort -u | head -5
+```
+
+If relevant learnings found:
+1. Read and summarize the most relevant entries
+2. Note any gotchas, patterns, or warnings that apply
+3. Include these in implementation guidance
+
+If none found, proceed without learnings context."""
+  context: { task_spec, analysis }
+
 # ============================================================================
 # Phase 3: Implementation Loop
 # ============================================================================
@@ -193,11 +219,14 @@ loop until **implementation_approved** (max: 3):
     Task Spec: {task_spec}
     Codebase Patterns: {analysis}
 
+    **Prior Learnings to Consider**: {relevant_learnings}
+    (Pay attention to any gotchas or patterns from previous implementations)
+
     For each change:
     - Read target files COMPLETELY
     - Make the changes
     - Add tests if applicable"""
-    context: { task_spec, analysis }
+    context: { task_spec, analysis, relevant_learnings }
 
   let review = session: reviewer
     prompt: """Review the implementation.
@@ -299,3 +328,56 @@ Branch: feat/{task_id}
 {If failed: what to fix}
 """
   context: { task_spec, init }
+
+# ============================================================================
+# Phase 6: Compound Engineering (Optional)
+# ============================================================================
+
+agent compounding-agent:
+  model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge
+    - compound-engineering     # Trigger detection and learnings
+  prompt: """You extract and document learnings from implementation sessions.
+
+Your responsibilities:
+1. Analyze triggers detected during implementation
+2. Focus on errors, corrections, and retry patterns
+3. Extract actionable learnings for future implementations
+4. Write to the project's learnings file
+
+Prioritize learnings that help future implementations succeed faster."""
+
+# Check for compound engineering triggers at workflow end
+let triggers = **detect_compound_triggers(session)**
+
+if triggers.length > 0:
+  session: compounding-agent
+    prompt: """Review the implementation workflow for compound engineering opportunities.
+
+    **Task**: {task_id}
+    **Triggers Detected**:
+    {triggers}
+
+    Evaluate each trigger:
+    1. Was this a non-obvious issue that took investigation?
+    2. Did we make multiple attempts before succeeding?
+    3. Would this knowledge help future implementations?
+
+    If worth documenting, write to:
+    `$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/learnings.md`
+
+    Include:
+    - What you were trying to accomplish
+    - What went wrong and why
+    - How it was fixed
+    - How to prevent in the future
+
+    If no triggers worth documenting, report: "No significant learnings to capture."
+
+    Note: Query existing learnings first to avoid duplicates:
+    ```bash
+    grep -l "similar keywords" $HYPER_WORKSPACE_ROOT/projects/*/resources/learnings.md
+    ```
+    """
+    context: { triggers, task_spec, init }

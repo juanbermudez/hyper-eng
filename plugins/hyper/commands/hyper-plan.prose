@@ -5,7 +5,7 @@
 #   Gate 2: Post-research direction approval
 #   Gate 3: Spec approval before task creation
 #
-# Usage: prose run hyper-plan.prose feature="Add user authentication"
+# Usage: hypercraft run hyper-plan.prose feature="Add user authentication"
 #
 # ARTIFACT PATTERN:
 # - Prose bindings (.prose/runs/) = execution state, pointers to artifacts
@@ -28,6 +28,9 @@ input depth: "Research depth: comprehensive (default) or deep"
 agent hyper-captain:
   model: opus
   persist: true
+  skills:
+    - hyper-craft              # Core knowledge (always loaded)
+    - hyper-planning           # Planning-specific workflows
   prompt: """You are the Hyper Captain - the orchestrator for planning workflows.
 
 Your role:
@@ -39,29 +42,45 @@ Your role:
 Key principles:
 - Specs matter more than code
 - Always wait for human approval at HITL gates
-- Write ARTIFACTS to $HYPER_WORKSPACE_ROOT/projects/ using the CLI
-- Write BINDINGS as pointers/summaries to track execution state
+- Use hyper CLI for all artifact creation (see hyper-craft skill)
+- Follow output contract format (see hyper-craft skill)
 - At approval gates: READ the artifact content and DISPLAY it to the user
-- Update MDX frontmatter for status changes
 
-ARTIFACT vs BINDING:
-- ARTIFACT: The actual deliverable (project spec, task file, research doc)
-  Location: $HYPER_WORKSPACE_ROOT/projects/{slug}/
-  Created via: hyper CLI commands (project create, task create, file write)
+ARTIFACT PATTERN (from hyper-craft):
+- Write ARTIFACTS to $HYPER_WORKSPACE_ROOT/projects/ using the CLI
+- Write BINDINGS as pointers/summaries to track execution state"""
 
-- BINDING: Execution state tracking (summary + pointer to artifact)
-  Location: $HYPER_WORKSPACE_ROOT/.prose/runs/{run-id}/bindings/
-  Purpose: Enable workflow resume, track progress"""
-
-agent researcher:
+agent repo-analyst:
   model: sonnet
-  prompt: """You are a research specialist. Gather comprehensive information about:
-- Codebase patterns and conventions
-- Best practices from official documentation
-- Similar implementations in the project
-- Potential challenges and edge cases
+  skills:
+    - hyper-craft              # Core knowledge
+    - code-search              # Codebase analysis
+  prompt: """You analyze repository structure, patterns, and conventions.
+Return findings using the output contract format from hyper-craft."""
 
-Return structured findings."""
+agent best-practices:
+  model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge
+    - doc-lookup               # Web/documentation search
+  prompt: """You research external best practices and industry standards.
+Return findings using the output contract format from hyper-craft."""
+
+agent framework-docs:
+  model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge
+    - doc-lookup               # Documentation retrieval
+  prompt: """You fetch and analyze framework/library documentation.
+Return findings using the output contract format from hyper-craft."""
+
+agent git-analyzer:
+  model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge
+    - code-search              # Git history analysis
+  prompt: """You analyze git history to understand code evolution.
+Return findings using the output contract format from hyper-craft."""
 
 # ============================================================================
 # Phase 1: Initialize
@@ -145,32 +164,112 @@ After clarification, summarize:
 # ============================================================================
 
 if **clarification complete**:
-  let research = session: hyper-captain
-    prompt: """Spawn research sub-agents in parallel.
-
-Use the Task tool to spawn these agents:
-1. repo-research-analyst - Analyze repository structure
-2. best-practices-researcher - Gather external best practices
-3. framework-docs-researcher - Get framework documentation
-4. git-history-analyzer - Understand code evolution
-
-Feature to research: {feature}
-Clarified scope: {clarification}
-
-After research completes, synthesize findings and WRITE TO ARTIFACT:
+  # Query existing learnings before spawning research agents
+  let prior_learnings = session "Query existing learnings"
+    prompt: """Search for relevant learnings from previous projects.
 
 ```bash
-# Write research summary to artifact location
+# Search for learnings related to this feature
+FEATURE_KEYWORDS=$(echo "{feature}" | tr '[:upper:]' '[:lower:]' | tr ' ' '\n' | grep -v "^$")
+for keyword in $FEATURE_KEYWORDS; do
+  grep -r -l -i "$keyword" $HYPER_WORKSPACE_ROOT/projects/*/resources/learnings.md 2>/dev/null || true
+done | sort -u
+```
+
+If learnings found, read and summarize relevant entries.
+If none found, report: "No prior learnings found for this feature area."
+
+This helps avoid repeating past mistakes during research and implementation."""
+    context: { feature, clarification, init }
+
+  # Spawn skill-based research agents in parallel
+  parallel:
+    repo_findings = session: repo-analyst
+      prompt: """Analyze repository structure for: {feature}
+
+Search for:
+- Existing patterns and conventions
+- Similar implementations
+- Related code areas
+
+Clarified scope: {clarification}
+
+Write findings to:
+$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/research/codebase-analysis.md"""
+      context: { feature, clarification, init }
+
+    practices_findings = session: best-practices
+      prompt: """Research best practices for: {feature}
+
+Search for:
+- Industry standards
+- Security considerations
+- Performance patterns
+
+Clarified scope: {clarification}
+
+Write findings to:
+$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/research/best-practices.md"""
+      context: { feature, clarification, init }
+
+    docs_findings = session: framework-docs
+      prompt: """Fetch framework documentation for: {feature}
+
+Look up:
+- Relevant API documentation
+- Official guides
+- Migration notes if applicable
+
+Clarified scope: {clarification}
+
+Write findings to:
+$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/research/framework-docs.md"""
+      context: { feature, clarification, init }
+
+    history_findings = session: git-analyzer
+      prompt: """Analyze git history related to: {feature}
+
+Examine:
+- Evolution of related code
+- Previous attempts or related features
+- Key contributors
+
+Clarified scope: {clarification}
+
+Write findings to:
+$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/research/git-history.md"""
+      context: { feature, clarification, init }
+
+  let research = session: hyper-captain
+    prompt: """Synthesize research findings from parallel agents.
+
+Read the research artifacts:
+- projects/{project_slug}/resources/research/codebase-analysis.md
+- projects/{project_slug}/resources/research/best-practices.md
+- projects/{project_slug}/resources/research/framework-docs.md
+- projects/{project_slug}/resources/research/git-history.md
+
+Also incorporate any prior learnings: {prior_learnings}
+
+Create a unified research summary that includes:
+1. Codebase patterns and conventions
+2. Best practices and industry standards
+3. Framework documentation insights
+4. Git history context
+5. **Prior learnings to consider** (from compound engineering)
+
+```bash
 ${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \\
   "projects/$PROJECT_SLUG/resources/research-summary.md" \\
   --body "[synthesized research content]"
 ```
 
-The binding for this session should contain:
-- Summary of research findings
+The binding should contain:
+- Summary of key findings
 - Pointer to artifact: projects/{project_slug}/resources/research-summary.md
-- List of key insights for next phase"""
-    context: { feature, clarification, init }
+- Key insights for specification phase
+- Prior learnings that apply to this feature"""
+    context: { feature, clarification, init, repo_findings, practices_findings, docs_findings, history_findings, prior_learnings }
 
 # ============================================================================
 # Phase 4: Direction Gate (HITL Gate 2)
@@ -391,3 +490,49 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project "$PROJECT_SLUG" --json
 `$HYPER_WORKSPACE_ROOT/.prose/runs/{run_id}/`
 """
   context: { feature, init, spec, tasks }
+
+# ============================================================================
+# Phase 8: Compound Engineering (Optional)
+# ============================================================================
+
+agent compounding-agent:
+  model: sonnet
+  skills:
+    - hyper-craft              # Core knowledge
+    - compound-engineering     # Trigger detection and learnings
+  prompt: """You extract and document learnings from session events.
+
+Your responsibilities:
+1. Analyze triggers detected during the workflow
+2. Extract meaningful insights (not trivial errors)
+3. Format learnings using the compound-engineering skill structure
+4. Write to the project's learnings file
+
+Skip trivial issues. Focus on non-obvious solutions and patterns."""
+
+# Check for compound engineering triggers at workflow end
+let triggers = **detect_compound_triggers(session)**
+
+if triggers.length > 0:
+  session: compounding-agent
+    prompt: """Review the planning workflow for compound engineering opportunities.
+
+    **Triggers Detected**:
+    {triggers}
+
+    For each significant trigger, evaluate:
+    1. Is this worth documenting? (non-obvious solution, repeated issue, etc.)
+    2. What category does it fall into?
+    3. What are the key learnings?
+
+    If worth documenting, write to:
+    `$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/learnings.md`
+
+    Use the learnings schema from compound-engineering skill:
+    - Title: [Category]: [Descriptive Title]
+    - Include: context, what happened, root cause, solution, future prevention
+    - Add relevant tags for searchability
+
+    If no triggers worth documenting, report: "No significant learnings to capture."
+    """
+    context: { triggers, feature, init }

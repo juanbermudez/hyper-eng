@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-3.13.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-3.14.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering Plugin
@@ -10,9 +10,9 @@
 
 Local-first, spec-driven development workflow. Specs matter more than code—specifications are the source of truth, code is disposable.
 
-Works standalone or with [Hyper Control](https://github.com/juanbermudez/hyper-control) desktop app.
+Works standalone or with the Hypercraft desktop app ([repo](https://github.com/juanbermudez/hyper-control)).
 
-**Now with Hyper-Prose** (our fork of [OpenProse](https://github.com/openprose/prose)) for executable, resumable workflows. Slash commands automatically use the Hyper-Prose VM.
+**Now with Hyper-Prose** (a full fork of [OpenProse](https://github.com/openprose/prose)) for executable, resumable workflows. Slash commands automatically use the Hyper-Prose VM.
 
 ## Components
 
@@ -21,7 +21,7 @@ Works standalone or with [Hyper Control](https://github.com/juanbermudez/hyper-c
 | Agents | 10 |
 | Commands | 8 |
 | Prose Workflows | 4 |
-| Skills | 11 |
+| Skills | 14 |
 | MCP Servers | 1 |
 
 ---
@@ -108,12 +108,12 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
 | `web-app-debugger` | Testing | Debug web apps using Chrome extension for browser inspection |
-| `tauri-ui-verifier` | Verification | Verify Hyper Control UI state via Tauri MCP tools |
+| `tauri-ui-verifier` | Verification | Verify Hypercraft UI state via Tauri MCP tools |
 | `workflow-observer` | Verification | Log workflow events to Sentry for observability |
 
 ### Prose Workflows
 
-Executable workflows using [OpenProse](https://github.com/openprose/prose) for structured, resumable execution:
+Executable workflows using Hyper-Prose (a fork of [OpenProse](https://github.com/openprose/prose)) for structured, resumable execution:
 
 | Workflow | Description |
 |----------|-------------|
@@ -124,24 +124,56 @@ Executable workflows using [OpenProse](https://github.com/openprose/prose) for s
 
 **Running Workflows:**
 ```bash
-# In Claude Code, load the OpenProse skill then run:
-prose run hyper-plan.prose feature="Add user authentication"
-prose run hyper-implement.prose task="ua-001"
-prose run hyper-verify.prose project="user-auth"
+# In Claude Code, load the Hyper-Prose skill then run:
+hypercraft run hyper-plan.prose feature="Add user authentication"
+hypercraft run hyper-implement.prose task="ua-001"
+hypercraft run hyper-verify.prose project="user-auth"
 ```
 
 **State Management:**
 - Execution state: `$HYPER_WORKSPACE_ROOT/.prose/runs/{run-id}/`
 - Agent memory: `$HYPER_WORKSPACE_ROOT/.prose/agents/{name}/memory.md`
 
+### Skill-Based Agent Architecture
+
+Agents are organized in a three-tier hierarchy with composable skills:
+
+```
+COMMAND LAYER          /hyper:plan, /hyper:implement, /hyper:verify
+       │
+       ▼
+ORCHESTRATOR LAYER     hyper-captain, impl-captain, verify-captain
+       │               Skills: hyper-craft + task-specific
+       ▼
+SPECIALIST LAYER       repo-analyst, executor, reviewer
+                       Skills: hyper-craft + domain-specific
+```
+
+**Skill Types:**
+- **Core skills** - Always loaded (e.g., `hyper-craft`)
+- **Task skills** - Phase-specific (e.g., `hyper-planning`)
+- **User skills** - Configurable via Settings UI
+
+**Configurable Skill Slots:**
+
+| Slot | Default | Options |
+|------|---------|---------|
+| `doc-lookup` | context7 | context7, web-search, none |
+| `code-search` | grep-enhanced | grep-enhanced, ast-parser, none |
+| `browser-testing` | tauri-testing | tauri-testing, playwright, none |
+| `error-tracking` | none | sentry-cli, datadog, none |
+
+Customize via workspace settings: `$HYPER_WORKSPACE_ROOT/settings/skills/`
+
 ### Skills
 
-The workflow leverages 11 skills including the bundled OpenProse VM:
+The workflow leverages 14 skills including the bundled Hyper-Prose VM:
 
 | Skill | Used By | Purpose |
 |-------|---------|---------|
 | `hyper-cli` | All commands | CLI command reference for workspace operations |
 | `hyper-local` | All hyper-* commands | Guidance on `$HYPER_WORKSPACE_ROOT/` directory operations |
+| `hyper-craft` | All commands | Workflow routing, artifact placement, templates, and CLI conventions |
 | `hyper-planning` | hyper-plan | Spec-driven planning with research and approval gates |
 | `hyper-research` | hyper-plan | Orchestrate comprehensive codebase research |
 | `hyper-implementation` | hyper-implement | Task execution with verification gates |
@@ -150,7 +182,7 @@ The workflow leverages 11 skills including the bundled OpenProse VM:
 | `hyper-activity-tracking` | All commands | Activity tracking for file modifications |
 | `git-worktree` | hyper-implement | Isolated parallel development with Git worktrees |
 | `compound-docs` | hyper-review, hyper-plan | Document recurring patterns and learnings |
-| `hyper-prose` | All .prose workflows | Hyper-Prose VM for executing workflow files (fork of OpenProse) |
+| `hypercraft` | All .prose workflows | Hyper-Prose VM for executing workflow files (fork of OpenProse) |
 
 ### Quick Start
 
@@ -226,7 +258,7 @@ Orchestrators (2), Research agents (4), Testing agent (1), and Verification agen
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
 | `web-app-debugger` | Testing | Debug and test web apps using Claude Code Chrome extension |
-| `tauri-ui-verifier` | Verification | Verify Hyper Control UI state using Tauri MCP tools |
+| `tauri-ui-verifier` | Verification | Verify Hypercraft UI state using Tauri MCP tools |
 | `workflow-observer` | Verification | Log workflow events to Sentry for observability tracking |
 
 ### Commands (7)
@@ -243,7 +275,7 @@ Orchestrators (2), Research agents (4), Testing agent (1), and Verification agen
 
 ### Prose Workflows (4)
 
-Executable workflows using [OpenProse](https://github.com/openprose/prose):
+Executable workflows using Hyper-Prose (a fork of [OpenProse](https://github.com/openprose/prose)):
 
 | Workflow | Description |
 |----------|-------------|
@@ -252,14 +284,15 @@ Executable workflows using [OpenProse](https://github.com/openprose/prose):
 | `hyper-verify.prose` | Verification: automated checks → prose state → UI verification |
 | `hyper-status.prose` | Status reporting: project/task overview with progress metrics |
 
-### Skills (11)
+### Skills (14)
 
-Core skills including bundled OpenProse VM:
+Core skills including bundled Hyper-Prose VM:
 
 | Skill | Description |
 |-------|-------------|
 | `hyper-cli` | Complete CLI command reference for programmatic file operations |
 | `hyper-local` | Expert guidance for `$HYPER_WORKSPACE_ROOT/` directory operations and local-first development |
+| `hyper-craft` | Routing and conventions for workflows, artifacts, templates, and CLI usage |
 | `hyper-planning` | Spec-driven planning with research and approval gates |
 | `hyper-research` | Orchestrate comprehensive codebase research |
 | `hyper-implementation` | Task execution with verification gates |
@@ -268,7 +301,17 @@ Core skills including bundled OpenProse VM:
 | `hyper-activity-tracking` | Activity tracking for file modifications |
 | `git-worktree` | Manage Git worktrees for parallel development |
 | `compound-docs` | Capture solved problems as categorized documentation |
-| `hyper-prose` | Hyper-Prose VM for executing .prose workflow files (fork of OpenProse) |
+| `compound-engineering` | Detect triggers and capture learnings from workflow execution |
+| `skill-template-creator` | Create new skills as templates for HyperCraft workflows |
+| `hypercraft` | Hyper-Prose VM for executing .prose workflow files (fork of OpenProse) |
+
+### Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Skill Authoring Guide](./docs/skill-authoring-guide.md) | How to create custom skills |
+| [Architecture](./docs/architecture.md) | Technical overview of skill-based architecture |
+| [API Reference](./docs/api-reference.md) | Prose syntax, output contracts, schemas |
 
 ## MCP Servers
 
@@ -376,7 +419,7 @@ For comprehensive CLI documentation, see:
 ## Installation
 
 ```bash
-claude /plugin install hyper-engineering
+claude /plugin install hyper
 ```
 
 Then initialize a workspace:
@@ -385,11 +428,11 @@ Then initialize a workspace:
 /hyper-init
 ```
 
-## Hyper Control Integration
+## Hypercraft Integration
 
-This plugin works standalone, but optionally integrates with [Hyper Control](https://github.com/juanbermudez/hyper-control) desktop app:
+This plugin works standalone, but optionally integrates with [Hypercraft](https://github.com/juanbermudez/hyper-control) desktop app:
 
-- Hyper Control watches `$HYPER_WORKSPACE_ROOT/` via file watcher
+- Hypercraft watches `$HYPER_WORKSPACE_ROOT/` via file watcher
 - TanStack DB syncs from `$HYPER_WORKSPACE_ROOT/` files
 - Visual project management UI
 - Real-time status updates
