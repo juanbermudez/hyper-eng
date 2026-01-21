@@ -3,8 +3,8 @@
 # Used by: debugging workflows, verification agents
 
 # Selected skill for error tracking
-# Options: sentry, none
-selected: sentry
+# Options: none, sentry
+selected: none
 
 # Skill-specific configuration
 config:

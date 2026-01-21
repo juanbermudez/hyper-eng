@@ -30,19 +30,19 @@ planned → todo → in-progress → qa → complete/completed
 
 | Command | Purpose |
 |---------|---------|
-| `/hyper-init` | Initialize $HYPER_WORKSPACE_ROOT/ directory structure |
-| `/hyper-plan` | Research → create spec → approval → create tasks |
-| `/hyper-implement` | Implement task with verification loop |
-| `/hyper-verify` | Run comprehensive verification |
-| `/hyper-review` | Run code review with sub-agents |
-| `/hyper-status` | View project and task status |
+| `/hyper:init` | Initialize $HYPER_WORKSPACE_ROOT/ directory structure |
+| `/hyper:plan` | Research → create spec → approval → create tasks |
+| `/hyper:implement` | Implement task with verification loop |
+| `/hyper:verify` | Run comprehensive verification |
+| `/hyper:review` | Run code review with sub-agents |
+| `/hyper:status` | View project and task status |
 
 ## Detailed Workflow
 
 ### 1. Initialize Workspace
 
 ```bash
-/hyper-init my-project
+/hyper:init my-project
 ```
 
 Creates:
@@ -57,7 +57,7 @@ $HYPER_WORKSPACE_ROOT/
 ### 2. Plan a Feature
 
 ```bash
-/hyper-plan "Add user authentication with OAuth"
+/hyper:plan "Add user authentication with OAuth"
 ```
 
 **Phase 1: Clarification**
@@ -95,7 +95,7 @@ $HYPER_WORKSPACE_ROOT/
 ### 3. Implement a Task
 
 ```bash
-/hyper-implement auth-system/task-001
+/hyper:implement auth-system/task-001
 ```
 
 **Initialization**
@@ -129,7 +129,7 @@ $HYPER_WORKSPACE_ROOT/
 ### 4. Verify Implementation
 
 ```bash
-/hyper-verify auth-system/task-001
+/hyper:verify auth-system/task-001
 ```
 
 **Slop Detection**
@@ -155,7 +155,7 @@ $HYPER_WORKSPACE_ROOT/
 ### 5. Review Code
 
 ```bash
-/hyper-review auth-system
+/hyper:review auth-system
 ```
 
 **Parallel Sub-Agents**
@@ -232,7 +232,7 @@ Works without Hypercraft:
 ### No $HYPER_WORKSPACE_ROOT/ directory
 
 ```bash
-/hyper-init
+/hyper:init
 ```
 
 ### Tasks not appearing

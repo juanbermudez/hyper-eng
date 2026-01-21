@@ -80,7 +80,7 @@
       <article class="docs-article">
         <h1>Getting Started with Hyper-Engineering</h1>
         <p class="lead">
-          Five minutes from now, you'll run <code>/hyper-plan</code> and watch 4 specialized research agents explore your codebase, external docs, and best practices in parallel. Then you'll create a spec, get human approval, and implement with verification loops. That's hyper-engineering. Let's get you set up.
+          Five minutes from now, you'll run <code>/hyper:plan</code> and watch 4 specialized research agents explore your codebase, external docs, and best practices in parallel. Then you'll create a spec, get human approval, and implement with verification loops. That's hyper-engineering. Let's get you set up.
         </p>
 
         <!-- Installation Section -->
@@ -111,7 +111,7 @@
           <h3>Step 3: Initialize Workspace</h3>
           <p>Set up your local <code>$HYPER_WORKSPACE_ROOT/</code> workspace:</p>
           <div class="card-code-block">
-            <pre><code>/hyper-init</code></pre>
+            <pre><code>/hyper:init</code></pre>
           </div>
           <p>This creates the <code>$HYPER_WORKSPACE_ROOT/</code> directory structure where all your specs, tasks, and project docs will live.</p>
 
@@ -143,17 +143,17 @@
           <p>See what's in your workspace:</p>
           <div class="card-code-block">
             <pre><code># View all projects and their status
-/hyper-status
+/hyper:status
 
 # View a specific project
-/hyper-status user-authentication</code></pre>
+/hyper:status user-authentication</code></pre>
           </div>
 
           <h3>Create a Spec with Research</h3>
-          <p>This is the starting point. Run <code>/hyper-plan</code> and 4 research agents explore in parallel:</p>
+          <p>This is the starting point. Run <code>/hyper:plan</code> and 4 research agents explore in parallel:</p>
           <div class="card-code-block">
             <pre><code># Research and create a spec for a feature
-/hyper-plan "Add user authentication with OAuth"
+/hyper:plan "Add user authentication with OAuth"
 
 # The command spawns:
 # - repo-research-analyst (codebase patterns)
@@ -171,7 +171,7 @@
           <p>After your spec is approved, implement with verification loops:</p>
           <div class="card-code-block">
             <pre><code># Implement a specific task
-/hyper-implement auth-login
+/hyper:implement auth-login
 
 # Uses git-worktree for isolated development
 # Follows patterns from the approved spec

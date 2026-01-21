@@ -34,7 +34,7 @@
           <h3>Reference</h3>
           <ul>
             <li><a href="agents.html">Agents (7)</a></li>
-            <li><a href="commands.html">Commands (9)</a></li>
+            <li><a href="commands.html">Commands</a></li>
             <li><a href="skills.html" class="active">Skills (3)</a></li>
             <li><a href="mcp-servers.html">MCP Server (1)</a></li>
           </ul>
@@ -78,8 +78,8 @@
           <h3>How to Use Skills</h3>
           <div class="card-code-block">
             <pre><code># Skills are invoked automatically by commands
-/hyper-plan "Add auth"  # Uses hyper-local
-/hyper-implement auth-login  # Uses git-worktree and hyper-local
+/hyper:plan "Add auth"  # Uses hyper-local
+/hyper:implement auth-login  # Uses git-worktree and hyper-local
 
 # Or invoke explicitly in conversation
 skill: hyper-local
@@ -120,10 +120,10 @@ skill: compound-docs</code></pre>
             </ul>
             <h4>Used By</h4>
             <ul>
-              <li><code>/hyper-init</code> - For creating workspace structure</li>
-              <li><code>/hyper-plan</code> - For creating project directories and specs</li>
-              <li><code>/hyper-implement</code> - For reading/updating task files</li>
-              <li><code>/hyper-status</code> - For parsing project and task status</li>
+              <li><code>/hyper:init</code> - For creating workspace structure</li>
+              <li><code>/hyper:plan</code> - For creating project directories and specs</li>
+              <li><code>/hyper:implement</code> - For reading/updating task files</li>
+              <li><code>/hyper:status</code> - For parsing project and task status</li>
             </ul>
             <div class="card-code-block">
               <pre><code>skill: hyper-local</code></pre>
@@ -167,7 +167,7 @@ Glob $HYPER_WORKSPACE_ROOT/projects/auth-feature/tasks/*.mdx</code></pre>
             </ul>
             <h4>Used By</h4>
             <ul>
-              <li><code>/hyper-implement</code> - Offers worktree option for isolated parallel work</li>
+              <li><code>/hyper:implement</code> - Offers worktree option for isolated parallel work</li>
             </ul>
             <div class="card-code-block">
               <pre><code>skill: git-worktree</code></pre>
@@ -224,7 +224,7 @@ bash ${CLAUDE_PLUGIN_ROOT}/skills/git-worktree/scripts/worktree-manager.sh clean
             </ol>
             <h4>Used By</h4>
             <ul>
-              <li><code>/hyper-review</code> - Can document recurring issues discovered during review</li>
+              <li><code>/hyper:review</code> - Can document recurring issues discovered during review</li>
               <li>Manual invocation after solving non-trivial problems</li>
             </ul>
             <div class="card-code-block">

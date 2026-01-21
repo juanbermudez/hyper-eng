@@ -18,7 +18,7 @@ Research project management in AI-assisted development benefits from established
 
 The PARA method (Projects, Areas, Resources, Archives) provides a proven framework:
 
-| Category | Description | Application to /hyper-research |
+| Category | Description | Application to /hyper:research |
 |----------|-------------|-------------------------------|
 | Projects | Active, time-bound work | Research projects with status tracking |
 | Areas | Ongoing responsibilities | N/A for research |
@@ -78,7 +78,7 @@ Start → Research → Review → Refine → Review → Archive
                  ↑_________|
 ```
 
-**Recommendation**: `/hyper-research` should support iterative refinement:
+**Recommendation**: `/hyper:research` should support iterative refinement:
 - `hyper-research continue [project]` - Add to existing research
 - `hyper-research refine [project]` - Focus on specific areas
 

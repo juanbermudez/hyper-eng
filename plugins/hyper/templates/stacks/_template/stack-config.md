@@ -22,7 +22,7 @@ This is a generic template for creating custom stack configurations. Copy this f
 
 3. Initialize for your project:
    ```bash
-   claude /hyper-init-stack my-stack-name
+   claude /hyper:init-stack my-stack-name
    ```
 
 ## Verification Commands

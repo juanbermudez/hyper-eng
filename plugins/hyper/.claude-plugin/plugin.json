@@ -1,7 +1,7 @@
 {
   "name": "hyper",
   "description": "Spec-driven development with local HyperHome planning. 10 agents, 8 commands, 4 workflow programs, 14 skills (includes Hypercraft VM).",
-  "version": "3.16.0",
+  "version": "3.16.2",
   "author": {
     "name": "Juan Bermudez"
   },
@@ -17,13 +17,53 @@
     "hypercraft"
   ],
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate-write.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/hyper-init-check.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PLUGIN_ROOT/scripts/track-activity.sh"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/validate-hyper-file.py",
+            "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/track-activity.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/track-bash-activity.sh",
+            "timeout": 10
           }
         ]
       }

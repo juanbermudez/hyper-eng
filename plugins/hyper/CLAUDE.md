@@ -33,15 +33,13 @@ plugins/hyper-engineering/
 │   └── testing/
 │       └── web-app-debugger.md
 ├── commands/                    # Slash commands (8 commands)
-│   ├── hyper-plan.md            # /hyper-plan - Research → Spec → Tasks
-│   ├── hyper-implement.md       # /hyper-implement - Execute tasks
-│   ├── hyper-verify.md          # /hyper-verify - Verification loop
-│   ├── hyper-review.md          # /hyper-review - Code review
-│   ├── hyper-status.md          # /hyper-status - Project status
-│   ├── hyper-init.md            # /hyper-init - Initialize $HYPER_WORKSPACE_ROOT/
-│   ├── hyper-init-stack.md      # /hyper-init-stack - Project scaffolding
-│   ├── hyper-statusline-setup.md
-│   └── hyper-statusline-optout.md
+│   ├── hyper-plan.md            # /hyper:plan - Research → Spec → Tasks
+│   ├── hyper-implement.md       # /hyper:implement - Execute tasks
+│   ├── hyper-verify.md          # /hyper:verify - Verification loop
+│   ├── hyper-review.md          # /hyper:review - Code review
+│   ├── hyper-status.md          # /hyper:status - Project status
+│   ├── hyper-init.md            # /hyper:init - Initialize $HYPER_WORKSPACE_ROOT/
+│   ├── hyper-init-stack.md      # /hyper:init-stack - Project scaffolding
 ├── skills/                      # Model-invoked skills (3 skills)
 │   ├── hyper-local/             # $HYPER_WORKSPACE_ROOT/ directory operations
 │   │   ├── SKILL.md             # Main skill definition
@@ -249,11 +247,11 @@ hyper drive create "Architecture" --scope proj:my-project --icon "Box"
 
 **Workflow commands** use `hyper-` prefix to identify them as Hyper Engineering commands:
 
-- `/hyper-plan` - Create implementation plans with research
-- `/hyper-implement` - Execute tasks with verification
-- `/hyper-review` - Run comprehensive code reviews
-- `/hyper-verify` - Verification loops
-- `/hyper-status` - View project/task status
+- `/hyper:plan` - Create implementation plans with research
+- `/hyper:implement` - Execute tasks with verification
+- `/hyper:review` - Run comprehensive code reviews
+- `/hyper:verify` - Verification loops
+- `/hyper:status` - View project/task status
 
 ---
 
@@ -327,8 +325,8 @@ Agent system prompt goes here. Include:
 
 3. Test commands and agents:
    ```bash
-   claude /hyper-status
-   claude /hyper-plan "Test feature"
+   claude /hyper:status
+   claude /hyper:plan "Test feature"
    ```
 
 4. Or load directly:

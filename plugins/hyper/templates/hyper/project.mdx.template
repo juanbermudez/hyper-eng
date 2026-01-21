@@ -64,7 +64,7 @@ TASK ID FORMAT: {project-initials}-{3-digit-number}
 ## Verification Configuration
 
 ### Stack Commands
-Configure these based on your tech stack (detected or specified via `/hyper-init-stack`):
+Configure these based on your tech stack (detected or specified via `/hyper:init-stack`):
 
 | Check | Command | Notes |
 |-------|---------|-------|

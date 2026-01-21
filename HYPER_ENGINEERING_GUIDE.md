@@ -303,38 +303,6 @@ Read Task → Read Spec → Implement → Update Status → Verify
 
 ---
 
-### `/hyper-statusline:setup`
-
-**Purpose:** Install the Dracula-themed statusline.
-
-**What it does:**
-1. Configures Claude Code statusline setting
-2. Shows context usage (green/yellow/red)
-3. Displays model badge with colors
-4. Shows git branch and uncommitted changes
-5. Tracks session stats (lines added/removed, cost)
-
-**Usage:**
-```bash
-/hyper-statusline:setup
-```
-
----
-
-### `/hyper-statusline:optout`
-
-**Purpose:** Opt out of statusline setup prompt.
-
-**What it does:**
-- Sets preference to not show statusline prompt on session start
-
-**Usage:**
-```bash
-/hyper-statusline:optout
-```
-
----
-
 ## Agents Reference
 
 ### Research Agents (4)
@@ -603,5 +571,5 @@ claude agent best-practices-researcher "Form validation best practices"
 
 - **2.1.0** (2025-12-29): Added web-app-debugger agent, removed Playwright MCP, added AskUserQuestion protocol, added framework doc URLs
 - **2.0.0** (2025-12-28): Local-first architecture with $HYPER_WORKSPACE_ROOT/ directory
-- **1.1.0** (2025-12-23): Added Dracula statusline, two-gate approval
+- **1.1.0** (2025-12-23): Two-gate approval
 - **1.0.0** (2025-12-22): Initial release

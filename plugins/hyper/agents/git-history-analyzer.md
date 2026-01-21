@@ -99,7 +99,7 @@ When returning results, use this JSON structure:
 
 **Output Location:** `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/git-history.md`
 
-When called by the research-orchestrator during `/hyper-plan`:
+When called by the research-orchestrator during `/hyper:plan`:
 1. The orchestrator provides you with the project slug and areas to analyze
 2. Return your findings in the structured JSON format above
 3. The orchestrator writes findings to the output location

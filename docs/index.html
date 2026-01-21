@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Hyper-Engineering - Local-First Spec-Driven Development for Claude Code</title>
-  <meta content="Spec-driven development with local $HYPER_WORKSPACE_ROOT/ planning. 7 agents, 9 commands, 3 skills, and Context7 MCP server. Works standalone or with Hypercraft UI." name="description" />
+  <meta content="Spec-driven development with local $HYPER_WORKSPACE_ROOT/ planning. 10 agents, 8 commands, 14 skills, and Context7 MCP server. Works standalone or with Hypercraft UI." name="description" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
 
   <!-- Open Graph -->
@@ -12,10 +12,10 @@
   <meta property="og:site_name" content="Hyper-Engineering" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:title" content="Hyper-Engineering - Spec-Driven Development" />
-  <meta property="og:description" content="Specs matter more than code. Local-first workflow with 4 research agents, 9 commands, and mandatory verification loops." />
+  <meta property="og:description" content="Specs matter more than code. Local-first workflow with 4 research agents, 8 commands, and mandatory verification loops." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Hyper-Engineering" />
-  <meta name="twitter:description" content="7 agents, 9 commands, 3 skills, and Context7 MCP server for spec-driven development with local $HYPER_WORKSPACE_ROOT/ planning." />
+  <meta name="twitter:description" content="10 agents, 8 commands, 14 skills, and Context7 MCP server for spec-driven development with local $HYPER_WORKSPACE_ROOT/ planning." />
 
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -161,7 +161,7 @@
             Specs Matter More Than Code. Code Is Disposable.
           </h1>
           <p class="paragraph m secondary balanced" style="margin-bottom: 32px;">
-            Local-first, spec-driven development with mandatory review gates and verification loops. Run <code>/hyper-plan</code> and 4 research agents explore your codebase, external docs, and best practices in parallel. Your spec becomes the source of truth in the local <code>$HYPER_WORKSPACE_ROOT/</code> directory. Then <code>/hyper-implement</code> turns it into verified code. Works standalone or with <a href="https://github.com/juanbermudez/hyper-control">Hypercraft</a> desktop app. 7 agents, 9 commands, 3 skills, 1 MCP server.
+            Local-first, spec-driven development with mandatory review gates and verification loops. Run <code>/hyper:plan</code> and 4 research agents explore your codebase, external docs, and best practices in parallel. Your spec becomes the source of truth in the local <code>$HYPER_WORKSPACE_ROOT/</code> directory. Then <code>/hyper:implement</code> turns it into verified code. Works standalone or with <a href="https://github.com/juanbermudez/hyper-control">Hypercraft</a> desktop app. 10 agents, 8 commands, 14 skills, 1 MCP server.
           </p>
           <div class="button-group margin-paragraph centered">
             <a href="#install" class="button primary">
@@ -224,7 +224,7 @@
               <h3>Research</h3>
               <p class="pillar-tagline">4 specialized agents explore in parallel</p>
               <p class="pillar-description">
-                Run <code>/hyper-plan</code> and four research agents launch simultaneously: <code>repo-research-analyst</code> explores codebase patterns, <code>best-practices-researcher</code> searches external docs and open source, <code>framework-docs-researcher</code> fetches official documentation via Context7, and <code>git-history-analyzer</code> traces code evolution. Comprehensive research before a single line of code.
+                Run <code>/hyper:plan</code> and four research agents launch simultaneously: <code>repo-research-analyst</code> explores codebase patterns, <code>best-practices-researcher</code> searches external docs and open source, <code>framework-docs-researcher</code> fetches official documentation via Context7, and <code>git-history-analyzer</code> traces code evolution. Comprehensive research before a single line of code.
               </p>
               <div class="pillar-tools">
                 <span class="tool-tag">repo-research-analyst</span>
@@ -258,13 +258,13 @@
               <h3>Implement</h3>
               <p class="pillar-tagline">Follow patterns, use worktrees</p>
               <p class="pillar-description">
-                Run <code>/hyper-implement</code> with a task ID. The <code>engineering-agent</code> reads the spec from <code>$HYPER_WORKSPACE_ROOT/</code>, follows codebase patterns, and uses <code>git-worktree</code> for isolated parallel development. Implementation matches the approved spec exactly. Deviations require spec updates first.
+                Run <code>/hyper:implement</code> with a task ID. The <code>engineering-agent</code> reads the spec from <code>$HYPER_WORKSPACE_ROOT/</code>, follows codebase patterns, and uses <code>git-worktree</code> for isolated parallel development. Implementation matches the approved spec exactly. Deviations require spec updates first.
               </p>
               <div class="pillar-tools">
                 <span class="tool-tag">engineering-agent</span>
                 <span class="tool-tag">git-worktree skill</span>
                 <span class="tool-tag">hyper-local skill</span>
-                <span class="tool-tag">/hyper-implement</span>
+                <span class="tool-tag">/hyper:implement</span>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@
               <h3>Verify</h3>
               <p class="pillar-tagline">Automated + manual checks, every time</p>
               <p class="pillar-description">
-                Run <code>/hyper-verify</code> for comprehensive verification: lint, test, typecheck, build (automated), then manual checks. If verification fails, a fix task is created automatically. The loop continues until everything passes. <code>/hyper-review</code> spawns 4 domain reviewers in parallel (security, architecture, performance, code quality) for thorough code review.
+                Run <code>/hyper:verify</code> for comprehensive verification: lint, test, typecheck, build (automated), then manual checks. If verification fails, a fix task is created automatically. The loop continues until everything passes. <code>/hyper:review</code> spawns 4 domain reviewers in parallel (security, architecture, performance, code quality) for thorough code review.
               </p>
               <div class="pillar-tools">
                 <span class="tool-tag">review-orchestrator</span>
@@ -296,7 +296,7 @@
             <i class="fa-solid fa-microscope color-accent"></i> 4 Research Agents
           </h2>
           <p class="paragraph m secondary">
-            All agents focus on research. When you run <code>/hyper-plan</code>, these 4 agents launch in parallel to gather comprehensive context: codebase patterns, external best practices, framework documentation, and git history. Research-driven planning before a single line of code.
+            All agents focus on research. When you run <code>/hyper:plan</code>, these 4 agents launch in parallel to gather comprehensive context: codebase patterns, external best practices, framework documentation, and git history. Research-driven planning before a single line of code.
           </p>
         </div>
 
@@ -344,72 +344,65 @@
       <section id="commands">
         <div class="heading">
           <h2 class="no-top-margin">
-            <i class="fa-solid fa-terminal color-accent"></i> 9 Hyper Commands
+            <i class="fa-solid fa-terminal color-accent"></i> Hyper Commands
           </h2>
           <p class="paragraph m secondary">
-            The hyper-engineering workflow is nine commands: <code>/hyper-init</code> to set up your workspace, <code>/hyper-status</code> to see progress, <code>/hyper-plan</code> for research-driven specs, <code>/hyper-implement</code> for verified implementation, <code>/hyper-review</code> for parallel code review, <code>/hyper-verify</code> for automated and manual testing, plus setup commands for stack configuration and statusline customization.
+            The hyper-engineering workflow is a set of core commands: <code>/hyper:init</code> to set up your workspace, <code>/hyper:status</code> to see progress, <code>/hyper:plan</code> for research-driven specs, <code>/hyper:implement</code> for verified implementation, <code>/hyper:review</code> for parallel code review, <code>/hyper:verify</code> for automated and manual testing, plus setup commands for stack configuration.
           </p>
         </div>
 
         <!-- Hyper Commands -->
         <div class="command-category">
-          <h3><i class="fa-solid fa-arrows-spin"></i> Hyper Commands (9)</h3>
+          <h3><i class="fa-solid fa-arrows-spin"></i> Hyper Commands</h3>
           <div class="grid columns-2">
             <div class="command-card">
               <div class="command-header">
-                <code class="command-name">/hyper-init</code>
+                <code class="command-name">/hyper:init</code>
                 <span class="command-type-badge">setup</span>
               </div>
               <p class="command-description">Initialize $HYPER_WORKSPACE_ROOT/ workspace structure with templates. Creates projects/, docs/, and workspace.json.</p>
             </div>
             <div class="command-card">
               <div class="command-header">
-                <code class="command-name">/hyper-status</code>
+                <code class="command-name">/hyper:status</code>
                 <span class="command-type-badge">core</span>
               </div>
               <p class="command-description">View project and task status from CLI. Shows overview or detailed project view with progress tracking.</p>
             </div>
             <div class="command-card">
               <div class="command-header">
-                <code class="command-name">/hyper-plan</code>
+                <code class="command-name">/hyper:plan</code>
                 <span class="command-type-badge">core</span>
               </div>
               <p class="command-description">Create comprehensive specs by spawning 4 research agents in parallel, with human review gates before task creation.</p>
             </div>
             <div class="command-card">
               <div class="command-header">
-                <code class="command-name">/hyper-implement</code>
+                <code class="command-name">/hyper:implement</code>
                 <span class="command-type-badge">core</span>
               </div>
               <p class="command-description">Implement tasks with built-in verification loops, updating status and creating fix tasks automatically.</p>
             </div>
             <div class="command-card">
               <div class="command-header">
-                <code class="command-name">/hyper-review</code>
+                <code class="command-name">/hyper:review</code>
                 <span class="command-type-badge">core</span>
               </div>
               <p class="command-description">Orchestrate comprehensive code reviews using specialized domain sub-agents (security, architecture, performance, quality).</p>
             </div>
             <div class="command-card">
               <div class="command-header">
-                <code class="command-name">/hyper-verify</code>
+                <code class="command-name">/hyper:verify</code>
                 <span class="command-type-badge">core</span>
               </div>
               <p class="command-description">Run comprehensive automated and manual verification, creating fix tasks for failures.</p>
             </div>
             <div class="command-card">
               <div class="command-header">
-                <code class="command-name">/hyper-init-stack</code>
+                <code class="command-name">/hyper:init-stack</code>
                 <span class="command-type-badge">setup</span>
               </div>
               <p class="command-description">Initialize stack template for the project, configuring verification commands and patterns.</p>
-            </div>
-            <div class="command-card">
-              <div class="command-header">
-                <code class="command-name">/hyper-statusline:setup</code>
-                <span class="command-type-badge">setup</span>
-              </div>
-              <p class="command-description">Install the Dracula-themed statusline with visual context bar, git integration, and session stats.</p>
             </div>
           </div>
         </div>
@@ -539,16 +532,16 @@
               <h3>Start Building</h3>
               <div class="card-code-block">
                 <pre><code># Initialize workspace
-/hyper-init
+/hyper:init
 
 # Research and create a spec
-/hyper-plan "Add user authentication"
+/hyper:plan "Add user authentication"
 
 # Implement a task
-/hyper-implement auth-login
+/hyper:implement auth-login
 
 # View progress
-/hyper-status</code></pre>
+/hyper:status</code></pre>
               </div>
             </div>
           </div>

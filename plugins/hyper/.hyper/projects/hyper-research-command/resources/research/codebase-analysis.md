@@ -6,11 +6,11 @@ project: hyper-research-command
 created: 2026-01-03
 ---
 
-# Codebase Analysis: /hyper-research Command
+# Codebase Analysis: /hyper:research Command
 
 ## Executive Summary
 
-Analysis of the Hyper Engineering Plugin codebase reveals a well-structured architecture for spec-driven development. Adding a `/hyper-research` command requires extending the existing document type system, status workflow, and integrating with both the CLI and desktop app. The current research-orchestrator agent provides a solid foundation that can be enhanced for standalone deep research workflows.
+Analysis of the Hyper Engineering Plugin codebase reveals a well-structured architecture for spec-driven development. Adding a `/hyper:research` command requires extending the existing document type system, status workflow, and integrating with both the CLI and desktop app. The current research-orchestrator agent provides a solid foundation that can be enhanced for standalone deep research workflows.
 
 ## Existing Architecture Patterns
 
@@ -59,7 +59,7 @@ Current research-orchestrator:
 - Writes to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
 - Returns JSON summary to parent (hyper-plan)
 
-**Enhancement Opportunity**: Currently research is only a phase within `/hyper-plan`. A standalone `/hyper-research` command would:
+**Enhancement Opportunity**: Currently research is only a phase within `/hyper:plan`. A standalone `/hyper:research` command would:
 1. Skip spec creation phases
 2. Support deeper, iterative research
 3. Use a different project type to indicate "research-only"
@@ -176,8 +176,8 @@ export const AnyStatusSchema = z.enum([
 | File | Lines | Purpose |
 |------|-------|---------|
 | `agents/orchestrators/research-orchestrator.md` | 1-407 | Current research coordination logic |
-| `commands/hyper-plan.md` | 1-1132 | Main planning command with embedded research |
-| `commands/hyper-status.md` | 1-323 | Status display patterns |
+| `commands/hyper:plan.md` | 1-1132 | Main planning command with embedded research |
+| `commands/hyper:status.md` | 1-323 | Status display patterns |
 | `skills/hyper-local/references/frontmatter-schema.md` | 1-445 | Schema definitions |
 | `skills/hyper-local/references/directory-structure.md` | 1-225 | Directory conventions |
 | `templates/hyper/settings/workflows.yaml` | 1-291 | Workflow stage definitions |
@@ -276,7 +276,7 @@ $HYPER_WORKSPACE_ROOT/projects/{research-slug}/
 
 ### 1. Plugin Changes Needed
 
-- [ ] New command: `commands/hyper-research.md`
+- [ ] New command: `commands/hyper:research.md`
 - [ ] Update: `skills/hyper-local/references/frontmatter-schema.md` - add `project_type` field
 - [ ] Update: `templates/hyper/settings/workflows.yaml` - add research-specific statuses
 - [ ] Update: `CHANGELOG.md` and `plugin.json` version

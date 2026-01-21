@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-3.16.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-3.16.2-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering Plugin
@@ -108,8 +108,8 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
 | `web-app-debugger` | Testing | Debug web apps using Chrome extension for browser inspection |
-| `tauri-ui-verifier` | Verification | Verify Hypercraft UI state via Tauri MCP tools |
-| `workflow-observer` | Verification | Log workflow events to Sentry for observability |
+| `tauri-ui-verifier` | Verification | Internal-only UI verification (not enabled by default) |
+| `workflow-observer` | Verification | Internal-only observability hooks (not enabled by default) |
 
 ### Hypercraft Workflows
 
@@ -159,9 +159,9 @@ SPECIALIST LAYER       repo-analyst, executor, reviewer
 | Slot | Default | Options |
 |------|---------|---------|
 | `doc-lookup` | context7 | context7, web-search, none |
-| `code-search` | grep-enhanced | grep-enhanced, ast-parser, none |
-| `browser-testing` | tauri-testing | tauri-testing, playwright, none |
-| `error-tracking` | none | sentry-cli, datadog, none |
+| `code-search` | codebase-search | codebase-search, sourcegraph, none |
+| `browser-testing` | playwright | playwright, puppeteer, none |
+| `error-tracking` | none | none or custom integration |
 
 Customize via workspace settings: `$HYPER_WORKSPACE_ROOT/settings/skills/`
 
@@ -188,19 +188,19 @@ The workflow leverages 14 skills including the bundled Hypercraft VM:
 
 ```bash
 # Initialize workspace
-/hyper-init
+/hyper:init
 
 # Check status
-/hyper-status
+/hyper:status
 
 # Plan a new feature
-/hyper-plan "Add user authentication"
+/hyper:plan "Add user authentication"
 
 # Implement a task
-/hyper-implement auth-login
+/hyper:implement auth-login
 
 # Verify implementation
-/hyper-verify auth-login
+/hyper:verify auth-login
 ```
 
 ### Settings & Customization
@@ -258,8 +258,8 @@ Orchestrators (2), Research agents (4), Testing agent (1), and Verification agen
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
 | `web-app-debugger` | Testing | Debug and test web apps using Claude Code Chrome extension |
-| `tauri-ui-verifier` | Verification | Verify Hypercraft UI state using Tauri MCP tools |
-| `workflow-observer` | Verification | Log workflow events to Sentry for observability tracking |
+| `tauri-ui-verifier` | Verification | Internal-only UI verification (not enabled by default) |
+| `workflow-observer` | Verification | Internal-only observability hooks (not enabled by default) |
 
 ### Commands (7)
 
@@ -327,7 +327,6 @@ Core skills including bundled Hypercraft VM:
 
 Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, and more.
 
-> **Tauri Testing:** For Tauri v2 app testing, install the separate [tauri-testing plugin](https://github.com/Hyper-Builders/tauri-testing-plugin).
 
 ## CLI & Activity Tracking
 
@@ -394,6 +393,11 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write projects/auth-system/_proje
 
 ### Automatic Activity Tracking
 
+Write, edit, and session events are wired via Claude Code hooks:
+- PreToolUse validates writes before they happen
+- SessionStart runs workspace checks
+- PostToolUse tracks activity and validates frontmatter
+
 Activity is tracked automatically via PostToolUse hook:
 
 1. Agent writes to `$HYPER_WORKSPACE_ROOT/*.mdx` file
@@ -425,7 +429,7 @@ claude /plugin install hyper
 Then initialize a workspace:
 
 ```bash
-/hyper-init
+/hyper:init
 ```
 
 ## Hypercraft Integration

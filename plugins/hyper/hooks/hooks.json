@@ -15,15 +15,6 @@
     ],
     "SessionStart": [
       {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-statusline.sh"
-          }
-        ]
-      },
-      {
         "matcher": "startup|resume",
         "hooks": [
           {

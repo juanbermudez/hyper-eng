@@ -33,7 +33,7 @@ $HYPER_WORKSPACE_ROOT/
 
 ### workspace.json
 
-Workspace metadata - created by `/hyper-init`:
+Workspace metadata - created by `/hyper:init`:
 
 ```json
 {

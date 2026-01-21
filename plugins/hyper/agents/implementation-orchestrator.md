@@ -298,7 +298,7 @@ argument-hint: "[task-id or project-slug/task-id]"
 
     <phase name="report_to_parent" required="true">
       <instructions>
-        Return structured report to parent agent (/hyper-implement):
+        Return structured report to parent agent (/hyper:implement):
 
         ```json
         {

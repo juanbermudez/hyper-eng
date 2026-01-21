@@ -36,12 +36,12 @@ Please select an option or describe what you need.
 <routing>
 | User Intent | Action |
 |-------------|--------|
-| Plan, new feature, spec, PRD | Invoke `/hyper-plan` command |
-| Implement, work on, build, code | Invoke `/hyper-implement` command |
-| Review, check, audit | Invoke `/hyper-review` command |
-| Verify, test, check | Invoke `/hyper-verify` command |
-| Status, progress, list | Invoke `/hyper-status` command |
-| Initialize, setup, init | Invoke `/hyper-init` command |
+| Plan, new feature, spec, PRD | Invoke `/hyper:plan` command |
+| Implement, work on, build, code | Invoke `/hyper:implement` command |
+| Review, check, audit | Invoke `/hyper:review` command |
+| Verify, test, check | Invoke `/hyper:verify` command |
+| Status, progress, list | Invoke `/hyper:status` command |
+| Initialize, setup, init | Invoke `/hyper:init` command |
 | Customize, settings, workflows, agents, commands | Read [settings-guide.md](./references/settings-guide.md) or explain <settings_system> |
 | Learn, understand, help | Read [workflow-guide.md](./references/workflow-guide.md) |
 </routing>
@@ -485,7 +485,7 @@ skip_sub_agents:
 Each command can be customized via YAML file:
 
 ```yaml
-# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-plan.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper:plan.yaml
 
 context_additions: |
   - This project follows Domain-Driven Design
@@ -575,7 +575,7 @@ Only specified options are overridden; defaults are preserved for everything els
 User: I want to add user authentication with OAuth
 
 Agent:
-1. Runs `/hyper-plan "Add user authentication with OAuth"`
+1. Runs `/hyper:plan "Add user authentication with OAuth"`
 2. Checks if $HYPER_WORKSPACE_ROOT/ exists, creates if not
 3. Asks clarifying questions:
    - Which OAuth providers? (Google, GitHub, etc.)
@@ -594,7 +594,7 @@ Agent:
 User: Implement auth-system/task-001
 
 Agent:
-1. Runs `/hyper-implement auth-system/task-001`
+1. Runs `/hyper:implement auth-system/task-001`
 2. Reads task file from `$HYPER_WORKSPACE_ROOT/projects/auth-system/tasks/task-001.mdx`
 3. Reads project spec from `_project.mdx` (inline)
 4. Updates task status via CLI: `todo` → `in-progress`

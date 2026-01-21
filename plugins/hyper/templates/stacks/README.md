@@ -49,10 +49,10 @@ Use this as a starting point to create your own stack configuration.
 
 ```bash
 # Auto-detect stack
-claude /hyper-init-stack
+claude /hyper:init-stack
 
 # Specific stack
-claude /hyper-init-stack node-typescript
+claude /hyper:init-stack node-typescript
 ```
 
 This will:
@@ -76,7 +76,7 @@ This will:
 
 3. Initialize in your project:
    ```bash
-   claude /hyper-init-stack my-stack-name
+   claude /hyper:init-stack my-stack-name
    ```
 
 ## Stack Template Structure
@@ -121,22 +121,22 @@ description: Brief description
 
 ## How Templates Are Used
 
-### During Planning (`/hyper-plan`)
+### During Planning (`/hyper:plan`)
 - **planning-agent** references patterns when creating specs
 - Suggests appropriate architecture for the stack
 - Includes stack-specific diagrams in specs
 
-### During Implementation (`/hyper-implement`)
+### During Implementation (`/hyper:implement`)
 - **engineering-agent** follows patterns from stack config
 - Uses verification commands to validate work
 - Implements code matching stack conventions
 
-### During Review (`/hyper-review`)
+### During Review (`/hyper:review`)
 - **review-orchestrator** loads stack-specific reviewer sub-agent
 - Checks code against stack-specific criteria
 - Validates patterns and best practices
 
-### During Verification (`/hyper-verify`)
+### During Verification (`/hyper:verify`)
 - Runs verification commands from stack config
 - Checks automated and manual criteria
 - Ensures all stack-specific requirements met
@@ -207,7 +207,7 @@ To contribute a new stack template to hyper-engineering:
 
 ## Stack Detection
 
-The `/hyper-init-stack` command auto-detects stacks based on these files:
+The `/hyper:init-stack` command auto-detects stacks based on these files:
 
 | Stack | Detection Files |
 |-------|----------------|
@@ -226,7 +226,7 @@ When updating a stack template:
 1. Update the template in `templates/stacks/[stack-name]/`
 2. Version the change in plugin CHANGELOG.md
 3. Users can update their local config by:
-   - Re-running `/hyper-init-stack [stack-name]`
+   - Re-running `/hyper:init-stack [stack-name]`
    - Choosing "Reconfigure" when prompted
 
 ### Deprecating a Stack

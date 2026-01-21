@@ -41,7 +41,7 @@ planned ─────► todo ─────► in-progress ─────�
 - A project in "planned" or "todo" appears dormant even with active tasks
 - Users cannot see progress without proper project status
 
-**Enforcement pattern** (MUST be done in /hyper-implement):
+**Enforcement pattern** (MUST be done in /hyper:implement):
 
 ```bash
 # Before starting ANY task, check project status

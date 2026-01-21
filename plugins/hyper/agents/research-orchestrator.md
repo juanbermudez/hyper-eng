@@ -324,7 +324,7 @@ argument-hint: "[feature or problem to research] [project-slug]"
 
     <phase name="report_to_parent" required="true">
       <instructions>
-        Return a structured summary to the parent agent (/hyper-plan):
+        Return a structured summary to the parent agent (/hyper:plan):
 
         ```json
         {

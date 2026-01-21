@@ -7,7 +7,7 @@ Use the **hyper** skill to execute the verification workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-verify.prose` with:
+Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper:verify.prose` with:
 
 ```
 input target_id: "$ARGUMENTS"

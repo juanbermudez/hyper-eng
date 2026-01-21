@@ -5,6 +5,18 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.16.2] - 2026-01-21
+
+### Removed
+
+## [3.16.1] - 2026-01-21
+
+### Changed
+
+- Wired PreToolUse, SessionStart, and PostToolUse hooks in the plugin manifest.
+- Default error-tracking skill selection set to `none` in templates.
+- Normalized `/hyper:` command namespace across plugin docs and skills.
+
 ## [3.16.0] - 2026-01-20
 
 ### Added
@@ -157,7 +169,7 @@ Transform `/hyper:init` into an intelligent setup wizard that:
 
 ### Changed
 
-**Enforce Project Status Update in /hyper-implement**
+**Enforce Project Status Update in /hyper:implement**
 - Added mandatory project status check/update in Phase 2 of hyper-implement.prose
 - Project MUST be updated from "planned"/"todo" to "in-progress" when first task starts
 - Updated hyper-implementation skill with explicit "CRITICAL" step 2a/2b breakdown
@@ -497,12 +509,6 @@ Sidecar file approach chosen over separate registry:
 
 ## [3.4.0] - 2026-01-05
 
-### Removed
-
-**Statusline Commands**
-- `/hyper:statusline-setup` - Removed (utility bloat)
-- `/hyper:statusline-optout` - Removed (utility bloat)
-
 ### Summary
 
 | Component | Count |
@@ -660,7 +666,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 ### Added
 
 **Standalone Research Command**
-- New `/hyper-research` command for standalone research workflows
+- New `/hyper:research` command for standalone research workflows
 - Two depth modes: Comprehensive (default) and Deep
 - Creates research projects with `project_type: research`
 - Research projects use `ready-for-review` status for completion
@@ -719,9 +725,9 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 
 ### Changed
 
-- `/hyper-plan` now uses CLI for project and task creation (replaces bash heredocs)
-- `/hyper-plan` writes spec inline in `_project.mdx` (removed separate `resources/specification.md`)
-- `/hyper-implement` now uses CLI for status updates
+- `/hyper:plan` now uses CLI for project and task creation (replaces bash heredocs)
+- `/hyper:plan` writes spec inline in `_project.mdx` (removed separate `resources/specification.md`)
+- `/hyper:implement` now uses CLI for status updates
 - Implementation orchestrator uses CLI for status transitions
 - Research orchestrator documents automatic activity tracking
 - Updated all documentation to reference CLI commands
@@ -1032,8 +1038,8 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 - Directory structure: `initiatives/`, `projects/{slug}/`, `docs/`, `workspace.json`
 
 **New Commands (2)**
-- `/hyper-init` - Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure with templates
-- `/hyper-status` - View project and task status from CLI
+- `/hyper:init` - Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure with templates
+- `/hyper:status` - View project and task status from CLI
 
 **Template System (6 templates)**
 - `workspace.json.template` - Workspace configuration
@@ -1108,24 +1114,6 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 
 ## [1.1.0] - 2025-12-23
 
-### Added
-
-**Hyper-Statusline (Dracula Theme)**
-- Modern statusline with visual context bar included as plugin asset
-- Context bar changes color based on usage: green (0-49%), yellow (50-79%), red (80-100%)
-- Model badge with color-coded icons: pink diamond (Opus), purple diamond (Sonnet), cyan circle (Haiku)
-- Git branch indicator with uncommitted changes marker
-- Session stats: lines added/removed, cost in USD
-
-**New Commands (2)**
-- `/hyper-statusline:setup` - One-command installation of the Dracula statusline
-- `/hyper-statusline:optout` - Opt out of the setup prompt on session start
-
-**New Hook: SessionStart**
-- Checks if statusline is configured on new sessions
-- Shows setup prompt with preview if not configured
-- Respects opt-out preference
-
 ### Changed
 
 **hyper-plan: Two-Gate Approval Process**
@@ -1169,11 +1157,11 @@ Major addition: Linear-integrated, spec-driven development workflow with mandato
 - `code-quality-reviewer` - Naming, clarity, test coverage, error handling, code organization
 
 **New Commands (5)**
-- `/hyper-plan` - Spawn 4 specialized research agents → create spec with diagrams → wait for approval → create tasks. Uses `linear-cli-expert` skill for Linear guidance.
-- `/hyper-implement` - Implement Linear task with verification loop. Uses `git-worktree` skill for isolated parallel development.
-- `/hyper-review` - Orchestrate parallel domain reviewers. Uses `compound-docs` skill to document recurring patterns.
-- `/hyper-verify` - Run comprehensive automated and manual verification
-- `/hyper-init-stack` - Initialize stack-specific templates (node-typescript, python, go)
+- `/hyper:plan` - Spawn 4 specialized research agents → create spec with diagrams → wait for approval → create tasks. Uses `linear-cli-expert` skill for Linear guidance.
+- `/hyper:implement` - Implement Linear task with verification loop. Uses `git-worktree` skill for isolated parallel development.
+- `/hyper:review` - Orchestrate parallel domain reviewers. Uses `compound-docs` skill to document recurring patterns.
+- `/hyper:verify` - Run comprehensive automated and manual verification
+- `/hyper:init-stack` - Initialize stack-specific templates (node-typescript, python, go)
 
 **Skill Integration**
 Hyper-engineering commands leverage existing skills:

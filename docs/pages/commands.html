@@ -34,7 +34,7 @@
           <h3>Reference</h3>
           <ul>
             <li><a href="agents.html">Agents (7)</a></li>
-            <li><a href="commands.html" class="active">Commands (9)</a></li>
+            <li><a href="commands.html" class="active">Commands</a></li>
             <li><a href="skills.html">Skills (3)</a></li>
             <li><a href="mcp-servers.html">MCP Server (1)</a></li>
           </ul>
@@ -48,7 +48,7 @@
         <div class="nav-section">
           <h3>On This Page</h3>
           <ul>
-            <li><a href="#hyper-commands">Hyper Commands (9)</a></li>
+            <li><a href="#hyper-commands">Hyper Commands</a></li>
           </ul>
         </div>
       </nav>
@@ -71,7 +71,7 @@
       <article class="docs-article">
         <h1><i class="fa-solid fa-terminal color-accent"></i> Command Reference</h1>
         <p class="lead">
-          The hyper-engineering workflow is nine commands. Initialize your workspace, check status, research, spec, implement, verify, review—each one orchestrating agents and enforcing human approval gates. Plus a beautiful statusline to keep you informed. Type <code>/hyper-plan</code> and watch 4 research agents launch in parallel while you grab coffee. That's the point: automation that enforces quality instead of skipping it.
+          The hyper-engineering workflow is a set of core commands. Initialize your workspace, check status, research, spec, implement, verify, review—each one orchestrating agents and enforcing human approval gates. Type <code>/hyper:plan</code> and watch 4 research agents launch in parallel while you grab coffee. That's the point: automation that enforces quality instead of skipping it.
         </p>
 
         <div class="callout callout-info">
@@ -79,19 +79,19 @@
           <div class="callout-content">
             <h4>Local-First with Optional Linear Integration</h4>
             <p>
-              These commands use the local <code>$HYPER_WORKSPACE_ROOT/</code> directory for project management by default. Run <code>/hyper-init</code> to set up your workspace. Optionally, you can still use Linear CLI for integration if you have it installed and authenticated.
+              These commands use the local <code>$HYPER_WORKSPACE_ROOT/</code> directory for project management by default. Run <code>/hyper:init</code> to set up your workspace. Optionally, you can still use Linear CLI for integration if you have it installed and authenticated.
             </p>
           </div>
         </div>
 
         <!-- Hyper Commands -->
         <section id="hyper-commands">
-          <h2><i class="fa-solid fa-bolt"></i> Hyper Commands (9)</h2>
-          <p>These are the nine commands that define the hyper-engineering workflow: Initialize your workspace, check status, plan your feature, implement the tasks, review the code, verify it works, configure your stack, set up your statusline, and opt out if you prefer.</p>
+          <h2><i class="fa-solid fa-bolt"></i> Hyper Commands</h2>
+          <p>These commands define the hyper-engineering workflow: Initialize your workspace, check status, plan your feature, implement the tasks, review the code, verify it works, and configure your stack.</p>
 
           <div class="command-detail" id="hyper-init">
             <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-init</code>
+              <code class="command-detail-name">/hyper:init</code>
               <span class="command-type-badge">setup</span>
             </div>
             <p class="command-detail-description">
@@ -111,13 +111,13 @@
               <li><strong>Gitignore</strong> - Suggest adding $HYPER_WORKSPACE_ROOT/ to .gitignore if not tracking</li>
             </ol>
             <div class="card-code-block">
-              <pre><code>/hyper-init</code></pre>
+              <pre><code>/hyper:init</code></pre>
             </div>
           </div>
 
           <div class="command-detail" id="hyper-status">
             <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-status</code>
+              <code class="command-detail-name">/hyper:status</code>
               <span class="command-type-badge">core</span>
             </div>
             <p class="command-detail-description">
@@ -132,16 +132,16 @@
             </ul>
             <div class="card-code-block">
               <pre><code># Overview of all projects
-/hyper-status
+/hyper:status
 
 # Detailed view of specific project
-/hyper-status user-authentication</code></pre>
+/hyper:status user-authentication</code></pre>
             </div>
           </div>
 
           <div class="command-detail" id="hyper-plan">
             <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-plan</code>
+              <code class="command-detail-name">/hyper:plan</code>
               <span class="command-type-badge">planning</span>
             </div>
             <p class="command-detail-description">
@@ -186,7 +186,7 @@
               <li><strong>Task Breakdown (After Approval)</strong> - Create task files in <code>$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/</code></li>
             </ol>
             <div class="card-code-block">
-              <pre><code>/hyper-plan "Add user authentication with OAuth"</code></pre>
+              <pre><code>/hyper:plan "Add user authentication with OAuth"</code></pre>
             </div>
             <div class="callout callout-warning">
               <div class="callout-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -201,7 +201,7 @@
 
           <div class="command-detail" id="hyper-implement">
             <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-implement</code>
+              <code class="command-detail-name">/hyper:implement</code>
               <span class="command-type-badge">implementation</span>
             </div>
             <p class="command-detail-description">
@@ -222,7 +222,7 @@
               <li><strong>Completion (After Manual Verification)</strong> - Mark verification task and parent task as complete</li>
             </ol>
             <div class="card-code-block">
-              <pre><code>/hyper-implement auth-login</code></pre>
+              <pre><code>/hyper:implement auth-login</code></pre>
             </div>
             <h4>Verification Loop</h4>
             <p>If automated checks fail:</p>
@@ -237,7 +237,7 @@
 
           <div class="command-detail" id="hyper-review">
             <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-review</code>
+              <code class="command-detail-name">/hyper:review</code>
               <span class="command-type-badge">review</span>
             </div>
             <p class="command-detail-description">
@@ -269,13 +269,13 @@
               <li><strong>Linear Integration (Optional)</strong> - Add report to Linear task, create fix tasks for critical issues</li>
             </ol>
             <div class="card-code-block">
-              <pre><code>/hyper-review LOT-123</code></pre>
+              <pre><code>/hyper:review LOT-123</code></pre>
             </div>
           </div>
 
           <div class="command-detail" id="hyper-verify">
             <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-verify</code>
+              <code class="command-detail-name">/hyper:verify</code>
               <span class="command-type-badge">verification</span>
             </div>
             <p class="command-detail-description">
@@ -307,7 +307,7 @@
               <li><strong>Completion</strong> - Update verification task to Done, add completion comment with all results</li>
             </ol>
             <div class="card-code-block">
-              <pre><code>/hyper-verify LOT-123</code></pre>
+              <pre><code>/hyper:verify LOT-123</code></pre>
             </div>
             <h4>Verification Loop Logic</h4>
             <p>The loop continues until ALL checks pass:</p>
@@ -323,7 +323,7 @@
 
           <div class="command-detail" id="hyper-init-stack">
             <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-init-stack</code>
+              <code class="command-detail-name">/hyper:init-stack</code>
               <span class="command-type-badge">setup</span>
             </div>
             <p class="command-detail-description">
@@ -349,10 +349,10 @@
             </ol>
             <div class="card-code-block">
               <pre><code># Auto-detect stack
-/hyper-init-stack
+/hyper:init-stack
 
 # Explicit stack
-/hyper-init-stack node-typescript</code></pre>
+/hyper:init-stack node-typescript</code></pre>
             </div>
             <h4>Files Created</h4>
             <ul>
@@ -361,82 +361,6 @@
             </ul>
           </div>
 
-          <div class="command-detail" id="hyper-statusline-setup">
-            <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-statusline:setup</code>
-              <span class="command-type-badge">setup</span>
-            </div>
-            <p class="command-detail-description">
-              Install the Dracula-themed statusline with visual context bar, git integration, and session stats.
-            </p>
-            <h4>Features</h4>
-            <ul>
-              <li><strong>Visual Context Bar</strong> - Shows context usage as a colored bar:
-                <ul>
-                  <li style="color: #50fa7b;">Green (0-49%)</li>
-                  <li style="color: #f1fa8c;">Yellow (50-79%)</li>
-                  <li style="color: #ff5555;">Red (80-100%)</li>
-                </ul>
-              </li>
-              <li><strong>Model Badge</strong> - Color-coded: <span style="color: #ff79c6;">◆ Opus</span>, <span style="color: #bd93f9;">◇ Sonnet</span>, <span style="color: #8be9fd;">○ Haiku</span></li>
-              <li><strong>Git Branch</strong> - Shows branch with <span style="color: #ffb86c;">*</span> for uncommitted changes</li>
-              <li><strong>Session Stats</strong> - Lines added/removed, cost in USD</li>
-            </ul>
-            <h4>Preview</h4>
-            <div class="card-code-block">
-              <pre><code style="color: #f8f8f2; background: #282a36;"><span style="color: #ff79c6; font-weight: bold;">◆ Opus</span> <span style="color: #6272a4;">│</span> <span style="color: #8be9fd;"> project</span> <span style="color: #6272a4;">│</span> <span style="color: #bd93f9;"> main*</span> <span style="color: #6272a4;">│</span> <span style="color: #6272a4;">ctx</span> <span style="color: #f1fa8c;">████████░░</span> <span style="color: #6272a4;">78%</span> <span style="color: #6272a4;">│</span> <span style="color: #50fa7b;">+156</span> <span style="color: #ff5555;">-23</span></code></pre>
-            </div>
-            <h4>Workflow</h4>
-            <ol>
-              <li><strong>Copy Script</strong> - Copies statusline.sh to <code>~/.claude/statusline.sh</code></li>
-              <li><strong>Update Settings</strong> - Adds statusLine configuration to <code>~/.claude/settings.json</code></li>
-              <li><strong>Verify Installation</strong> - Tests the script works correctly</li>
-            </ol>
-            <div class="card-code-block">
-              <pre><code>/hyper-statusline:setup</code></pre>
-            </div>
-            <h4>Requirements</h4>
-            <ul>
-              <li><code>jq</code> - Install via <code>brew install jq</code> or <code>apt install jq</code></li>
-              <li>Terminal with 24-bit color support (iTerm2, Kitty, Alacritty)</li>
-            </ul>
-            <div class="callout callout-info">
-              <div class="callout-icon"><i class="fa-solid fa-circle-info"></i></div>
-              <div class="callout-content">
-                <h4>Restart Required</h4>
-                <p>After running the setup command, restart Claude Code to see your new statusline.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="command-detail" id="hyper-statusline-optout">
-            <div class="command-detail-header">
-              <code class="command-detail-name">/hyper-statusline:optout</code>
-              <span class="command-type-badge">setup</span>
-            </div>
-            <p class="command-detail-description">
-              Opt out of the statusline setup prompt that appears on session start.
-            </p>
-            <h4>When to Use</h4>
-            <p>If you prefer your current statusline or don't want to see the setup prompt on each new session, run this command to disable it.</p>
-            <h4>What It Does</h4>
-            <ul>
-              <li>Creates <code>~/.claude/.hyper-statusline-optout</code> marker file</li>
-              <li>The SessionStart hook checks for this file and skips the prompt</li>
-            </ul>
-            <div class="card-code-block">
-              <pre><code>/hyper-statusline:optout</code></pre>
-            </div>
-            <h4>Reversing the Opt-Out</h4>
-            <p>To re-enable the prompt or install the statusline later:</p>
-            <div class="card-code-block">
-              <pre><code># Re-enable the prompt
-rm ~/.claude/.hyper-statusline-optout
-
-# Or just install the statusline directly
-/hyper-statusline:setup</code></pre>
-            </div>
-          </div>
         </section>
 
         <div class="callout callout-info">
@@ -444,12 +368,11 @@ rm ~/.claude/.hyper-statusline-optout
           <div class="callout-content">
             <h4>The Complete Workflow</h4>
             <p>
-              <strong>1.</strong> <code>/hyper-init-stack</code> - Configure your project (once)<br>
-              <strong>2.</strong> <code>/hyper-statusline:setup</code> - Install beautiful statusline (once, or opt out)<br>
-              <strong>3.</strong> <code>/hyper-plan "feature"</code> - Research → Spec → Approve → Tasks<br>
-              <strong>4.</strong> <code>/hyper-implement TASK-123</code> - Implement → Auto-verify → Manual verify<br>
-              <strong>5.</strong> <code>/hyper-verify TASK-123</code> - Re-run verification after fixes<br>
-              <strong>6.</strong> <code>/hyper-review TASK-123</code> - Parallel domain reviews → Fix critical issues
+              <strong>1.</strong> <code>/hyper:init-stack</code> - Configure your project (once)<br>
+              <strong>2.</strong> <code>/hyper:plan "feature"</code> - Research → Spec → Approve → Tasks<br>
+              <strong>3.</strong> <code>/hyper:implement TASK-123</code> - Implement → Auto-verify → Manual verify<br>
+              <strong>4.</strong> <code>/hyper:verify TASK-123</code> - Re-run verification after fixes<br>
+              <strong>5.</strong> <code>/hyper:review TASK-123</code> - Parallel domain reviews → Fix critical issues
             </p>
           </div>
         </div>
