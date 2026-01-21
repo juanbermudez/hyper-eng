@@ -94,14 +94,14 @@ $HYPER_WORKSPACE_ROOT/
 
 ## Quick Reference
 
-**IMPORTANT**: Always use the Hyper CLI for workspace operations. The CLI handles validation, activity tracking, and maintains data integrity.
+**IMPORTANT**: Always use the Hypercraft CLI for workspace operations. The CLI handles validation, activity tracking, and maintains data integrity.
 
 ```bash
 # Initialize workspace
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper init --name "My Project"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft init --name "My Project"
 
 # Create project
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project create \
   --slug "auth-system" \
   --title "User Authentication System" \
   --priority "high" \
@@ -109,26 +109,26 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
   --json
 
 # Create task (ID is auto-generated)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task create \
   --project "auth-system" \
   --title "Phase 1: OAuth Provider Setup" \
   --priority "high" \
   --json
 
 # Update task status (ID is positional arg)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update as-001 --status "in-progress"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update as-001 --status "in-progress"
 
 # Update project status
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update auth-system --status "in-progress"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update auth-system --status "in-progress"
 
 # List projects
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project list --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project list --json
 
 # List tasks for a project
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project auth-system --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task list --project auth-system --json
 
 # Search across all resources
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "OAuth" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "OAuth" --json
 ```
 
 ## Activity Tracking
@@ -144,7 +144,7 @@ Session IDs are captured and logged in the `activity` array in frontmatter.
 **Manual (user actions via UI/CLI)**:
 ```bash
 # Add a comment
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft activity comment \
   --file "$HYPER_WORKSPACE_ROOT/projects/auth-system/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \
@@ -235,7 +235,7 @@ The `qa` status is where quality checks and verification happen:
 
 ```bash
 # Create project with validated frontmatter (returns JSON with created file info)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project create \
   --slug "auth-system" \
   --title "User Authentication System" \
   --priority "high" \
@@ -243,7 +243,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
   --json
 
 # For spec content, use file API to add body while preserving frontmatter
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write \
   projects/auth-system/_project.mdx \
   --body "# User Authentication System\n\n## Overview\n..." \
   --json
@@ -253,14 +253,14 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \
 
 ```bash
 # Create task with auto-generated ID
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task create \
   --project "auth-system" \
   --title "Phase 1: OAuth Provider Setup" \
   --priority "high" \
   --json
 
 # Add task content via file API
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write \
   projects/auth-system/tasks/task-001.mdx \
   --body "# Phase 1: OAuth Provider Setup\n\n## Objectives\n..." \
   --json
@@ -270,42 +270,42 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \
 
 ```bash
 # Update task status (ID is positional argument)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update as-001 --status "in-progress"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update as-001 --status "in-progress"
 
 # Update project status (slug is positional argument)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update auth-system --status "in-progress"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update auth-system --status "in-progress"
 ```
 
 ### Reading Data (CLI)
 
 ```bash
 # Get project details
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project get auth-system --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project get auth-system --json
 
 # Get task details
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task get as-001 --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task get as-001 --json
 
 # List all tasks for a project
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project auth-system --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task list --project auth-system --json
 
 # Read file with frontmatter parsed
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read projects/auth-system/_project.mdx --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read projects/auth-system/_project.mdx --json
 
 # Read only frontmatter
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read projects/auth-system/_project.mdx --frontmatter-only --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read projects/auth-system/_project.mdx --frontmatter-only --json
 ```
 
 ### Searching (CLI)
 
 ```bash
 # Search across all resources
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "OAuth" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "OAuth" --json
 
 # Search with filters
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "authentication" --resource-type project --status in-progress --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "authentication" --resource-type project --status in-progress --json
 
 # File-level search
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file search "OAuth" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file search "OAuth" --json
 ```
 
 ### Activity Tracking
@@ -314,7 +314,7 @@ Activity is automatically tracked via PostToolUse hook when agents write to `$HY
 
 ```bash
 # Manual activity entry (for programmatic updates)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity add \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft activity add \
   --file "projects/auth-system/tasks/task-001.mdx" \
   --actor-type session \
   --actor-id "$SESSION_ID" \
@@ -322,7 +322,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity add \
   --json
 
 # Add a comment (convenience wrapper)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft activity comment \
   --file "projects/auth-system/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \

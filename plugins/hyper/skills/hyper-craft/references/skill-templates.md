@@ -1,6 +1,6 @@
 # Skill Templates Reference
 
-Skill templates enable customizable skill loading for hyper workflows. Users configure which skills are loaded via templates that materialize to workspace settings.
+Skill templates enable customizable skill loading for hypercraft workflows. Users configure which skills are loaded via templates that materialize to workspace settings.
 
 ## Overview
 

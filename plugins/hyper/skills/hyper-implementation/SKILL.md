@@ -59,7 +59,7 @@ PROJECT_STATUS=$(grep "^status:" "$PROJECT_DIR/_project.mdx" | awk '{print $2}')
 
 # MUST update project to in-progress if currently planned or todo
 if [ "$PROJECT_STATUS" = "planned" ] || [ "$PROJECT_STATUS" = "todo" ]; then
-  ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update \
     "${PROJECT_SLUG}" --status "in-progress"
 fi
 ```
@@ -67,7 +67,7 @@ fi
 #### Step 2b: Update TASK Status
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update \
   "${TASK_ID}" --status "in-progress"
 ```
 
@@ -103,7 +103,7 @@ Based on verification results:
 
 **All checks pass**:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update \
   "${TASK_ID}" --status "complete"
 ```
 

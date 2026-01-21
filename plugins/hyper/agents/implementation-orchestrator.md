@@ -56,11 +56,11 @@ argument-hint: "[task-id or project-slug/task-id]"
 
     <phase name="status_update_start" required="true">
       <instructions>
-        Update task to 'in-progress' using the Hyper CLI:
+        Update task to 'in-progress' using the Hypercraft CLI:
 
         1. Update task status via CLI:
            ```bash
-           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update \
              --id "{task-id}" \
              --project "{project-slug}" \
              --status "in-progress"
@@ -254,7 +254,7 @@ argument-hint: "[task-id or project-slug/task-id]"
 
         1. Update task status via CLI:
            ```bash
-           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update \
              --id "{task-id}" \
              --project "{project-slug}" \
              --status "complete"

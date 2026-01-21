@@ -66,7 +66,7 @@ Based on results:
 
 **All pass**:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update \
   "${TASK_ID}" --status "complete"
 ```
 

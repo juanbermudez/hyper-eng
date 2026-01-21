@@ -31,7 +31,7 @@ This skill activates:
 
 - At workflow completion (planning, implementation, verification)
 - When explicitly invoked via `/compound` command
-- When triggered by hyper-prose workflows
+- When triggered by hypercraft workflows
 
 ## Trigger Detection
 
@@ -205,7 +205,7 @@ beforeAll(async () => {
 
 ## Workflow Integration
 
-### In Prose Workflows
+### In Hypercraft Workflows
 
 Add compound engineering phase at workflow end:
 

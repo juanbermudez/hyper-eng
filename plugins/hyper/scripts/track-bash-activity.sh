@@ -1,12 +1,12 @@
 #!/bin/bash
-# Track activity from Bash commands that use the hyper CLI
+# Track activity from Bash commands that use the Hypercraft CLI
 # Called by PostToolUse hook after Bash operations
 #
-# This hook addresses the CLI bypass gap where agents using `hyper project create`
-# or `hyper task create` via Bash don't trigger the Write|Edit PostToolUse hooks.
+# This hook addresses the CLI bypass gap where agents using `hypercraft project create`
+# or `hypercraft task create` via Bash don't trigger the Write|Edit PostToolUse hooks.
 #
 # Design:
-# - Parse command for hyper CLI operations (project, task, file, activity)
+# - Parse command for Hypercraft CLI operations (project, task, file, activity)
 # - Extract project/task identifiers from arguments
 # - Call update-session.sh to create sidecar file with workspace target
 
@@ -35,6 +35,22 @@ log_debug "COMMAND: ${COMMAND:0:200}"
 log_debug "SESSION_ID: $SESSION_ID"
 log_debug "CWD: $CWD"
 
+resolve_hyper_bin() {
+  local hyper_bin="${CLAUDE_PLUGIN_ROOT:-}/binaries/hypercraft"
+  if [[ -x "$hyper_bin" ]]; then
+    echo "$hyper_bin"
+    return
+  fi
+
+  hyper_bin="${CLAUDE_PLUGIN_ROOT:-}/binaries/hyper"
+  if [[ -x "$hyper_bin" ]]; then
+    echo "$hyper_bin"
+    return
+  fi
+
+  echo "hypercraft"
+}
+
 # Skip if no session ID
 if [[ -z "$SESSION_ID" ]]; then
   log_debug "SKIP: no session ID"
@@ -49,44 +65,44 @@ if echo "$TOOL_RESULT" | grep -qi "error\|failed\|not found" 2>/dev/null; then
 fi
 
 # Extract the first command (before any pipes)
-# This handles cases like "hyper project create | grep something"
+# This handles cases like "hypercraft project create | grep something"
 FIRST_CMD=$(echo "$COMMAND" | cut -d'|' -f1 | xargs)
 
-# Check if this is a hyper CLI command
-# Match: hyper project|task|file|activity|drive
-# Also match: ${CLAUDE_PLUGIN_ROOT}/binaries/hyper (full path invocation)
-HYPER_PATTERN='(^hyper |/hyper )(project|task|file|activity|drive)'
+# Check if this is a Hypercraft CLI command
+# Match: hypercraft/hyper project|task|file|activity|drive
+# Also match: ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft (full path invocation)
+HYPER_PATTERN='(^hypercraft |^hyper |/hypercraft |/hyper )(project|task|file|activity|drive)'
 if ! echo "$FIRST_CMD" | grep -qE "$HYPER_PATTERN"; then
-  log_debug "SKIP: not a hyper CLI command"
+  log_debug "SKIP: not a Hypercraft CLI command"
   exit 0
 fi
 
 # Skip `hyper activity add` calls - these are already tracking activity
 # and we don't want to create a recursive loop
-if echo "$FIRST_CMD" | grep -qE 'hyper\s+activity\s+add'; then
-  log_debug "SKIP: hyper activity add (already tracking)"
+if echo "$FIRST_CMD" | grep -qE '(hypercraft|hyper)\s+activity\s+add'; then
+  log_debug "SKIP: Hypercraft activity add (already tracking)"
   exit 0
 fi
 
 # Skip read-only commands
-if echo "$FIRST_CMD" | grep -qE 'hyper\s+(project|task|file|drive)\s+(list|get|show|read|search|find)'; then
+if echo "$FIRST_CMD" | grep -qE '(hypercraft|hyper)\s+(project|task|file|drive)\s+(list|get|show|read|search|find)'; then
   log_debug "SKIP: read-only command"
   exit 0
 fi
 
-log_debug "Detected hyper CLI command"
+log_debug "Detected Hypercraft CLI command"
 
 # Extract subcommand (project, task, file, activity, drive)
 SUBCOMMAND=""
-if echo "$FIRST_CMD" | grep -qE '(^hyper |/hyper )project'; then
+if echo "$FIRST_CMD" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )project'; then
   SUBCOMMAND="project"
-elif echo "$FIRST_CMD" | grep -qE '(^hyper |/hyper )task'; then
+elif echo "$FIRST_CMD" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )task'; then
   SUBCOMMAND="task"
-elif echo "$FIRST_CMD" | grep -qE '(^hyper |/hyper )file'; then
+elif echo "$FIRST_CMD" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )file'; then
   SUBCOMMAND="file"
-elif echo "$FIRST_CMD" | grep -qE '(^hyper |/hyper )activity'; then
+elif echo "$FIRST_CMD" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )activity'; then
   SUBCOMMAND="activity"
-elif echo "$FIRST_CMD" | grep -qE '(^hyper |/hyper )drive'; then
+elif echo "$FIRST_CMD" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )drive'; then
   SUBCOMMAND="drive"
 fi
 
@@ -121,8 +137,8 @@ extract_project_slug() {
 
   # For project commands, try positional arg after action verb
   # e.g., "hyper project create my-project" or "hyper project update my-project --status done"
-  if echo "$cmd" | grep -qE '(^hyper |/hyper )project\s+(create|update)'; then
-    slug=$(echo "$cmd" | sed -E 's/.*(^hyper |\/hyper )project (create|update) +"?([^" -][^" ]*)"?.*/\3/' | head -1)
+  if echo "$cmd" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )project\s+(create|update)'; then
+    slug=$(echo "$cmd" | sed -E 's/.*(^hypercraft |^hyper |\/hypercraft |\/hyper )project (create|update) +"?([^" -][^" ]*)"?.*/\3/' | head -1)
     # Clean up - remove anything that looks like a flag
     if [[ "$slug" != -* && -n "$slug" ]]; then
       echo "$slug"
@@ -147,8 +163,8 @@ extract_task_id() {
 
   # For task commands, try positional arg after action verb
   # e.g., "hyper task update sat-001 --status complete"
-  if echo "$cmd" | grep -qE '(^hyper |/hyper )task\s+(create|update)'; then
-    task_id=$(echo "$cmd" | sed -E 's/.*(^hyper |\/hyper )task (create|update) +"?([^" -][^" ]*)"?.*/\3/' | head -1)
+  if echo "$cmd" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )task\s+(create|update)'; then
+    task_id=$(echo "$cmd" | sed -E 's/.*(^hypercraft |^hyper |\/hypercraft |\/hyper )task (create|update) +"?([^" -][^" ]*)"?.*/\3/' | head -1)
     if [[ "$task_id" != -* && -n "$task_id" ]]; then
       echo "$task_id"
       return
@@ -180,7 +196,8 @@ resolve_workspace_root() {
     return
   fi
 
-  local hyper_bin="${CLAUDE_PLUGIN_ROOT:-}/binaries/hyper"
+  local hyper_bin
+  hyper_bin="$(resolve_hyper_bin)"
   if [[ -x "$hyper_bin" ]]; then
     local resolved
     resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)
@@ -383,10 +400,7 @@ if [[ "$SUBCOMMAND" == "file" ]]; then
     fi
 
     # Get hyper binary path
-    HYPER_BIN="${CLAUDE_PLUGIN_ROOT:-}/binaries/hyper"
-    if [[ ! -x "$HYPER_BIN" ]]; then
-      HYPER_BIN="hyper"  # Fall back to PATH
-    fi
+    HYPER_BIN="$(resolve_hyper_bin)"
 
     # Call activity add (async, don't block on failure)
     "$HYPER_BIN" activity add \
@@ -420,10 +434,7 @@ if [[ "$SUBCOMMAND" == "drive" ]]; then
     fi
 
     # Get hyper binary path
-    HYPER_BIN="${CLAUDE_PLUGIN_ROOT:-}/binaries/hyper"
-    if [[ ! -x "$HYPER_BIN" ]]; then
-      HYPER_BIN="hyper"
-    fi
+    HYPER_BIN="$(resolve_hyper_bin)"
 
     # Call activity add (async, don't block on failure)
     "$HYPER_BIN" activity add \

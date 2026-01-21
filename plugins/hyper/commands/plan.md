@@ -3,11 +3,11 @@ description: Create a comprehensive specification with two approval gates - firs
 argument-hint: "[feature or requirement description]"
 ---
 
-Use the **hypercraft** skill to execute the planning workflow.
+Use the **hyper** skill to execute the planning workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hypercraft/prose.md` and execute the workflow at `commands/hyper-plan.prose` with:
+Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-plan.prose` with:
 
 ```
 input feature: "$ARGUMENTS"
@@ -36,7 +36,7 @@ This enables resumption if interrupted.
 
 ## CLI Integration
 
-The workflow uses `${CLAUDE_PLUGIN_ROOT}/binaries/hyper` for all file operations.
+The workflow uses `${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft` for all file operations.
 
 ## Status Flow
 

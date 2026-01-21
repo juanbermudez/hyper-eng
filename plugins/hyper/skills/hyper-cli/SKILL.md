@@ -1,6 +1,6 @@
 ---
 name: hyper-cli
-description: This skill provides guidance on using the Hyper CLI for programmatic file operations. This skill should be used when agents need to create, read, update, delete, or search files in the $HYPER_WORKSPACE_ROOT/ directory structure, manage Drive notes, track activity, handle validation errors, or self-correct from structured error responses.
+description: This skill provides guidance on using the Hypercraft CLI for programmatic file operations. This skill should be used when agents need to create, read, update, delete, or search files in the $HYPER_WORKSPACE_ROOT/ directory structure, manage Drive notes, track activity, handle validation errors, or self-correct from structured error responses.
 model: sonnet
 allowed-tools:
   - Read
@@ -12,14 +12,14 @@ allowed-tools:
 <skill name="hyper-cli">
 
 <description>
-This skill teaches AI agents how to work with the Hyper CLI for programmatic manipulation of `$HYPER_WORKSPACE_ROOT/` planning documents and HyperHome Drive notes. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
+This skill teaches AI agents how to work with the Hypercraft CLI for programmatic manipulation of `$HYPER_WORKSPACE_ROOT/` planning documents and HyperHome Drive notes. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
 </description>
 
 <context>
 
 ## CLI Overview
 
-The Hyper CLI provides commands for managing workspace projects, tasks, Drive notes, and configuration.
+The Hypercraft CLI provides commands for managing workspace projects, tasks, Drive notes, and configuration.
 
 ```
 hypercraft <COMMAND>
@@ -183,7 +183,7 @@ All CLI commands with `--json` flag return structured responses:
 | Code | Exit | Meaning | Action |
 |------|------|---------|--------|
 | `SUCCESS` | 0 | Operation completed | Continue |
-| `WORKSPACE_NOT_FOUND` | 1 | No $HYPER_WORKSPACE_ROOT/ directory | Run `hyper init` |
+| `WORKSPACE_NOT_FOUND` | 1 | No $HYPER_WORKSPACE_ROOT/ directory | Run `hypercraft init` |
 | `PROJECT_NOT_FOUND` | 66 | Project doesn't exist | Check slug, create if needed |
 | `TASK_NOT_FOUND` | 66 | Task doesn't exist | Check ID |
 | `FILE_NOT_FOUND` | 66 | File doesn't exist | Check path |
@@ -208,7 +208,7 @@ When receiving a validation error, extract correct values from the error respons
 
 ```bash
 # Step 1: Attempt with invalid status
-hyper file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
+hypercraft file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
   --frontmatter "id=proj-foo" \
   --frontmatter "title=Foo" \
   --frontmatter "type=project" \
@@ -220,7 +220,7 @@ hyper file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
 # { "error": { "context": { "allowed": ["planning", "todo", ...] } } }
 
 # Step 2: Self-correct using the allowed value
-hyper file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
+hypercraft file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
   --frontmatter "id=proj-foo" \
   --frontmatter "title=Foo" \
   --frontmatter "type=project" \
@@ -258,7 +258,7 @@ hyper file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
 
 ```bash
 # Option 1: Resource API (recommended for creation)
-hyper project create \
+hypercraft project create \
   --slug my-feature \
   --title "My Feature" \
   --priority high \
@@ -266,7 +266,7 @@ hyper project create \
   --json
 
 # Option 2: File API (for full control)
-hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
+hypercraft file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
   --frontmatter "id=proj-my-feature" \
   --frontmatter "title=My Feature" \
   --frontmatter "type=project" \
@@ -281,10 +281,10 @@ hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
 
 ```bash
 # Resource API (simple)
-hyper project update my-feature --status in-progress
+hypercraft project update my-feature --status in-progress
 
 # File API (preserves existing body content)
-hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
+hypercraft file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
   --frontmatter "status=in-progress" \
   --json
 ```
@@ -293,14 +293,14 @@ hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
 
 ```bash
 # Resource API
-hyper task create \
+hypercraft task create \
   --project my-feature \
   --title "Phase 1: Foundation" \
   --priority high \
   --json
 
 # File API (full control)
-hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
+hypercraft file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
   --frontmatter "id=mf-001" \
   --frontmatter "title=Phase 1: Foundation" \
   --frontmatter "type=task" \
@@ -315,10 +315,10 @@ hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
 
 ```bash
 # Resource API
-hyper task update mf-001 --status in-progress
+hypercraft task update mf-001 --status in-progress
 
 # File API
-hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
+hypercraft file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
   --frontmatter "status=in-progress" \
   --json
 ```
@@ -327,10 +327,10 @@ hyper file write $HYPER_WORKSPACE_ROOT/projects/my-feature/tasks/task-001.mdx \
 
 ```bash
 # Delete a task file
-hyper file delete projects/my-feature/tasks/task-001.mdx --force --json
+hypercraft file delete projects/my-feature/tasks/task-001.mdx --force --json
 
 # Delete a project directory (removes all tasks too)
-hyper file delete projects/my-feature --force --json
+hypercraft file delete projects/my-feature --force --json
 
 # Note: Resource API (project/task) does not have delete - use file API
 ```
@@ -339,45 +339,45 @@ hyper file delete projects/my-feature --force --json
 
 ```bash
 # Search by content (full text)
-hyper file search "authentication" --json
+hypercraft file search "authentication" --json
 
 # Search by field value
-hyper file search "in-progress" --field status --file-type project --json
+hypercraft file search "in-progress" --field status --file-type project --json
 
 # High-level search with filters
-hyper search "OAuth" --status in-progress --json
+hypercraft search "OAuth" --status in-progress --json
 ```
 
 ### Reading Workflow Configuration
 
 ```bash
 # List all settings
-hyper settings workflow list --json
+hypercraft settings workflow list --json
 
 # Get project stages
-hyper settings workflow get project.stages --json
+hypercraft settings workflow get project.stages --json
 
 # Get task statuses
-hyper settings workflow get task.statuses --json
+hypercraft settings workflow get task.statuses --json
 
 # Set a value
-hyper settings workflow set project.stages '["planning", "todo", "in-progress", "completed"]' --json
+hypercraft settings workflow set project.stages '["planning", "todo", "in-progress", "completed"]' --json
 ```
 
 ### Reading and Writing Files
 
 ```bash
 # List files in a directory
-hyper file list --path $HYPER_WORKSPACE_ROOT/projects --file-type project --recursive --json
+hypercraft file list --path $HYPER_WORKSPACE_ROOT/projects --file-type project --recursive --json
 
 # Read a file
-hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --json
+hypercraft file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --json
 
 # Read only frontmatter
-hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --frontmatter-only --json
+hypercraft file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --frontmatter-only --json
 
 # Read only body
-hyper file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --body-only --json
+hypercraft file read $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx --body-only --json
 ```
 
 ## Settings API
@@ -386,18 +386,18 @@ The settings API allows reading and modifying workflow configuration:
 
 ```bash
 # Full workflow config
-hyper settings workflow list --json
+hypercraft settings workflow list --json
 
 # Get specific setting
-hyper settings workflow get project.stages --json
+hypercraft settings workflow get project.stages --json
 
 # Set a value
-hyper settings workflow set project.stages '["planning", "todo", "in-progress", "completed"]' --json
+hypercraft settings workflow set project.stages '["planning", "todo", "in-progress", "completed"]' --json
 
 # Manage workflow stages
-hyper settings stage list --json
-hyper settings gate list --json
-hyper settings tag list --json
+hypercraft settings stage list --json
+hypercraft settings gate list --json
+hypercraft settings tag list --json
 ```
 
 ## Drive API
@@ -406,39 +406,39 @@ Manage HyperHome Drive items (wiki-style notes):
 
 ```bash
 # List all drive items
-hyper drive list --json
+hypercraft drive list --json
 
 # Create a new note
-hyper drive create "My Note Title" --folder "research" --icon "book" --json
+hypercraft drive create "My Note Title" --folder "research" --icon "book" --json
 
 # Show note content
-hyper drive show <id> --json
+hypercraft drive show <id> --json
 
 # Delete a note
-hyper drive delete <id> --force --json
+hypercraft drive delete <id> --force --json
 
 # Create a folder
-hyper drive mkdir "research/experiments" --json
+hypercraft drive mkdir "research/experiments" --json
 
 # Move a note to a different folder or scope
-hyper drive move <id> --to-folder "archive" --json
-hyper drive move <id> --to-scope "ws:my-workspace" --json
-hyper drive move <id> --to-scope "personal" --to-folder "notes" --keep-redirect --json
+hypercraft drive move <id> --to-folder "archive" --json
+hypercraft drive move <id> --to-scope "ws:my-workspace" --json
+hypercraft drive move <id> --to-scope "personal" --to-folder "notes" --keep-redirect --json
 ```
 
 ### Moving Drive Items
 
-The `hyper drive move` command moves notes between folders and/or scopes:
+The `hypercraft drive move` command moves notes between folders and/or scopes:
 
 ```bash
 # Move to a different folder (same scope)
-hyper drive move "personal:my-note" --to-folder "archive" --json
+hypercraft drive move "personal:my-note" --to-folder "archive" --json
 
 # Move to a different scope (note gets new ID)
-hyper drive move "personal:my-note" --to-scope "ws:workspace-id" --json
+hypercraft drive move "personal:my-note" --to-scope "ws:workspace-id" --json
 
 # Move with redirect (leaves pointer at old location)
-hyper drive move "personal:my-note" --to-scope "ws:workspace-id" --keep-redirect --json
+hypercraft drive move "personal:my-note" --to-scope "ws:workspace-id" --keep-redirect --json
 ```
 
 **Cross-scope moves**:
@@ -466,24 +466,24 @@ Drive notes support scopes:
 | Team templates | `org:{orgId}:` | Cross-workspace org standards |
 
 **Rule of thumb**:
-- Personal notes → Personal Drive (`hyper drive create "..." --scope personal`)
-- Project artifacts → Workspace Drive (`hyper drive create "..." --scope ws:{id}`)
+- Personal notes → Personal Drive (`hypercraft drive create "..." --scope personal`)
+- Project artifacts → Workspace Drive (`hypercraft drive create "..." --scope ws:{id}`)
 - Planning docs → `$HYPER_WORKSPACE_ROOT/projects/{slug}/` (git-tracked)
 
 ### Workspace-Scoped Drive Examples
 
 ```bash
 # Create in personal drive (default)
-hyper drive create "My Personal Note" --icon "FileText"
+hypercraft drive create "My Personal Note" --icon "FileText"
 
 # Create in workspace drive (visible in workspace Drive view)
-hyper drive create "Design Doc" --scope ws:my-workspace --icon "Layout"
+hypercraft drive create "Design Doc" --scope ws:my-workspace --icon "Layout"
 
 # Create in project scope
-hyper drive create "Architecture" --scope proj:my-project --icon "Box"
+hypercraft drive create "Architecture" --scope proj:my-project --icon "Box"
 
 # List workspace drive items
-hyper drive list --scope ws:my-workspace --json
+hypercraft drive list --scope ws:my-workspace --json
 ```
 
 ### Drive File Frontmatter Format
@@ -530,7 +530,7 @@ The `id` field MUST include a scope prefix followed by a colon:
 
 ```bash
 # CLI handles ID generation, validation, and formatting automatically
-hyper drive create "My Note Title" --icon "FileText" --json
+hypercraft drive create "My Note Title" --icon "FileText" --json
 ```
 
 The CLI:
@@ -547,7 +547,7 @@ Track activity on projects and tasks:
 
 ```bash
 # Add activity entry (automatic via hooks, but can be manual)
-hyper activity add \
+hypercraft activity add \
   --file "projects/my-feature/_project.mdx" \
   --actor-id "$SESSION_ID" \
   --actor-type session \
@@ -555,7 +555,7 @@ hyper activity add \
   --json
 
 # Add a comment (convenience wrapper)
-hyper activity comment \
+hypercraft activity comment \
   --file "projects/my-feature/tasks/task-001.mdx" \
   --actor-id "user-uuid" \
   --actor-type user \
@@ -576,16 +576,16 @@ Manage git worktrees for isolated development:
 
 ```bash
 # Create worktree for a project
-hyper worktree create --project my-feature --json
+hypercraft worktree create --project my-feature --json
 
 # List all worktrees
-hyper worktree list --json
+hypercraft worktree list --json
 
 # Show current worktree status
-hyper worktree status --json
+hypercraft worktree status --json
 
 # Remove a worktree
-hyper worktree remove my-feature --json
+hypercraft worktree remove my-feature --json
 ```
 
 ## Search API
@@ -594,17 +594,17 @@ Search across all workspace resources:
 
 ```bash
 # Full-text search
-hyper search "authentication" --json
+hypercraft search "authentication" --json
 
 # Filter by resource type
-hyper search "auth" --resource-type project --json
-hyper search "login" --resource-type task --json
+hypercraft search "auth" --resource-type project --json
+hypercraft search "login" --resource-type task --json
 
 # Filter by status
-hyper search "OAuth" --status in-progress --json
+hypercraft search "OAuth" --status in-progress --json
 
 # Filter by priority
-hyper search "security" --priority high --json
+hypercraft search "security" --priority high --json
 ```
 
 ## VFS (Virtual Filesystem) API
@@ -613,13 +613,13 @@ Unified access across workspace and Drive:
 
 ```bash
 # List files at virtual path
-hyper vfs list /projects --json
+hypercraft vfs list /projects --json
 
 # Resolve virtual path to physical
-hyper vfs resolve /projects/my-feature --json
+hypercraft vfs resolve /projects/my-feature --json
 
 # Search across all sources
-hyper vfs search "authentication" --json
+hypercraft vfs search "authentication" --json
 ```
 
 ## Configuration API
@@ -628,15 +628,15 @@ Manage workspace and global configuration:
 
 ```bash
 # Get a config value
-hyper config get globalPath --json
-hyper config get worktree.enabled --json
+hypercraft config get globalPath --json
+hypercraft config get worktree.enabled --json
 
 # Set a config value
-hyper config set worktree.enabled true --json
-hyper config set globalPath ~/.hyper --global --json
+hypercraft config set worktree.enabled true --json
+hypercraft config set globalPath ~/.hypercraft --global --json
 
 # List all config
-hyper config list --json
+hypercraft config list --json
 ```
 
 ## Best Practices

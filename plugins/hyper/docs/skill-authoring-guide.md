@@ -7,7 +7,7 @@ How to create custom skills for HyperCraft workflows.
 Skills are specialized knowledge packages that agents load at runtime. They provide domain-specific guidance, patterns, and instructions that help agents perform tasks more effectively.
 
 **Types of skills:**
-- **Core skills** - Always loaded by hyper agents (e.g., `hyper-craft`)
+- **Core skills** - Always loaded by hypercraft agents (e.g., `hyper-craft`)
 - **Task skills** - Loaded for specific workflow phases (e.g., `hyper-planning`)
 - **User skills** - Configurable skills selected via Settings UI
 

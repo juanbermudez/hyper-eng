@@ -107,6 +107,6 @@ If verification fails:
 This agent is called by:
 - `hyper-verify.prose` - Standalone verification
 - `hyper-implement.prose` - Post-implementation verification
-- Verification block in prose workflows
+- Verification block in Hypercraft workflows
 
 The parent workflow will use your report to determine if verification passed.

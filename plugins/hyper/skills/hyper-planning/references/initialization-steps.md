@@ -54,7 +54,7 @@ mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research"
 Use CLI to create with validated frontmatter:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project create \
   --slug "${PROJECT_SLUG}" \
   --title "[TITLE]" \
   --priority "[PRIORITY]" \

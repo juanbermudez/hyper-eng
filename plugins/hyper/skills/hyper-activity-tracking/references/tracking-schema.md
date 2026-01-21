@@ -65,7 +65,7 @@ This enables tracing any modification back to the root session.
 ## CLI Track Command
 
 ```bash
-hyper activity track \
+hypercraft activity track \
   --session "current-session-id" \
   --parent "parent-session-id" \    # optional
   --path "$HYPER_WORKSPACE_ROOT/projects/x/y.mdx" \
@@ -84,7 +84,7 @@ The CLI:
 
 ```bash
 # Returns sessions with recent activity (last 5 minutes)
-hyper activity active --json
+hypercraft activity active --json
 ```
 
 Response:
@@ -105,7 +105,7 @@ Response:
 
 ```bash
 # Returns activity history for a file
-hyper activity history --path "$HYPER_WORKSPACE_ROOT/projects/x/_project.mdx" --json
+hypercraft activity history --path "$HYPER_WORKSPACE_ROOT/projects/x/_project.mdx" --json
 ```
 
 Response:

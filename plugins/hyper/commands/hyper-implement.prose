@@ -89,7 +89,7 @@ let init = session "Initialize implementation"
 
 1. Resolve workspace:
 ```bash
-WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper workspace path)
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft config get globalPath)
 export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
 ```
 
@@ -98,13 +98,13 @@ export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
 RUN_ID="impl-$(date +%Y%m%d-%H%M%S)-$(uuidgen | cut -c1-8)"
 ```
 
-3. Initialize prose state:
+3. Initialize Hypercraft state:
 ```bash
 mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/runs/$RUN_ID/bindings"
 mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/agents/impl-captain"
 ```
 
-Report the workspace path and run ID."""
+Report the config get globalPath and run ID."""
 
 let task_spec = session: impl-captain
   prompt: """Load the task specification for: {task_id}
@@ -148,7 +148,7 @@ PROJECT_STATUS=$(grep "^status:" "$PROJECT_DIR/_project.mdx" | awk '{print $2}')
 # If project is planned or todo, update to in-progress
 if [ "$PROJECT_STATUS" = "planned" ] || [ "$PROJECT_STATUS" = "todo" ]; then
   echo "🔄 Updating project '$PROJECT_SLUG' status: $PROJECT_STATUS → in-progress"
-  ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update "$PROJECT_SLUG" --status "in-progress"
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update "$PROJECT_SLUG" --status "in-progress"
 else
   echo "✓ Project already in-progress or later stage: $PROJECT_STATUS"
 fi
@@ -157,7 +157,7 @@ fi
 ## Step 2: Update TASK status to in-progress
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{task_id}" --status "in-progress"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update "{task_id}" --status "in-progress"
 ```
 
 ## Step 3: Create git branch
@@ -252,7 +252,7 @@ session: impl-captain
   prompt: """Enter QA phase.
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{task_id}" --status "qa"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update "{task_id}" --status "qa"
 ```"""
 
 do verify-with-retry(
@@ -272,7 +272,7 @@ if **verification passed**:
     prompt: """Mark task complete.
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{task_id}" --status "complete"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update "{task_id}" --status "complete"
 ```
 
 Commit changes:
@@ -289,7 +289,7 @@ Check if all project tasks are complete:
 ```bash
 INCOMPLETE=$(find "$PROJECT_DIR/tasks" -name "*.mdx" -exec grep -l "status: todo\|status: in-progress\|status: qa" {} \; | wc -l)
 if [ "$INCOMPLETE" -eq 0 ]; then
-  ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update "$PROJECT_SLUG" --status "qa"
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update "$PROJECT_SLUG" --status "qa"
 fi
 ```"""
 

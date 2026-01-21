@@ -151,7 +151,7 @@ argument-hint: "[source] - Optional: todo, github, linear, or leave empty for gu
 
            For each project:
            ```bash
-           HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+           HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
            $HYPER_CLI project create --title "{project-name}" --status planned --json
            ```
 
@@ -247,7 +247,7 @@ argument-hint: "[source] - Optional: todo, github, linear, or leave empty for gu
 
            Create project:
            ```bash
-           HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+           HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
            $HYPER_CLI project create --title "{project-name}" --status in-progress --json
            ```
 
@@ -408,7 +408,7 @@ argument-hint: "[source] - Optional: todo, github, linear, or leave empty for gu
         3. **Create project and tasks:**
 
            ```bash
-           HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+           HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
 
            # Create project
            $HYPER_CLI project create --title "{project-name}" --status planned --json

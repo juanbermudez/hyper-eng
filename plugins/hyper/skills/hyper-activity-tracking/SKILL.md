@@ -42,7 +42,7 @@ When a file in `$HYPER_WORKSPACE_ROOT/` is modified, the PostToolUse hook:
 
 1. Detects Write/Edit tool completion
 2. Extracts file path and session ID
-3. Calls `hyper activity track` with metadata
+3. Calls `hypercraft activity track` with metadata
 4. Activity is appended to file's frontmatter
 
 ### Session ID Sources
@@ -64,17 +64,17 @@ When a file in `$HYPER_WORKSPACE_ROOT/` is modified, the PostToolUse hook:
 
 ```bash
 # Track activity (called by hook)
-hyper activity track \
+hypercraft activity track \
   --session "$CLAUDE_SESSION_ID" \
   --parent "$CLAUDE_PARENT_SESSION_ID" \
   --path "$HYPER_WORKSPACE_ROOT/projects/x/tasks/task-001.mdx" \
   --operation "modify"
 
 # Query active sessions
-hyper activity active --json
+hypercraft activity active --json
 
 # Query file history
-hyper activity history --path "$HYPER_WORKSPACE_ROOT/projects/x/_project.mdx"
+hypercraft activity history --path "$HYPER_WORKSPACE_ROOT/projects/x/_project.mdx"
 ```
 
 ## Activity Entry Format
@@ -99,18 +99,18 @@ The `track-bash-activity.sh` PostToolUse hook also tracks activity for CLI comma
 
 | Command | Activity Action | Tracked Data |
 |---------|-----------------|--------------|
-| `hyper file write` | `created` / `modified` | File path from result |
-| `hyper file create` | `created` | File path from result |
-| `hyper drive create` | `created` | Note path from result |
-| `hyper drive move` | `moved` | New path from result |
-| `hyper project create/update` | Session sidecar | Project slug |
-| `hyper task create/update` | Session sidecar | Task ID + project |
+| `hypercraft file write` | `created` / `modified` | File path from result |
+| `hypercraft file create` | `created` | File path from result |
+| `hypercraft drive create` | `created` | Note path from result |
+| `hypercraft drive move` | `moved` | New path from result |
+| `hypercraft project create/update` | Session sidecar | Project slug |
+| `hypercraft task create/update` | Session sidecar | Task ID + project |
 
 ### How CLI Tracking Works
 
 1. **PostToolUse hook** detects `hyper` CLI commands in Bash
 2. **Parses tool result** to extract created/modified paths
-3. **Calls `hyper activity add`** asynchronously with:
+3. **Calls `hypercraft activity add`** asynchronously with:
    - `--file <path>` - The affected file
    - `--actor-type session` - Session context
    - `--actor-id <session-id>` - Current session
@@ -120,14 +120,14 @@ The `track-bash-activity.sh` PostToolUse hook also tracks activity for CLI comma
 
 ```bash
 # Agent runs this command:
-hyper drive create "Research Notes" --icon "FileText" --json
+hypercraft drive create "Research Notes" --icon "FileText" --json
 
 # Hook detects:
 # - Subcommand: drive
 # - Result: {"success":true,"data":{"path":"notes/research-notes.mdx"}}
 
 # Hook calls (async):
-hyper activity add \
+hypercraft activity add \
   --file "notes/research-notes.mdx" \
   --actor-type session \
   --actor-id "$SESSION_ID" \

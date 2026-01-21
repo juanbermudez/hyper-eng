@@ -5,7 +5,7 @@ Create task files only AFTER explicit user approval of the specification.
 ## Update Project Status
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update \
   "${PROJECT_SLUG}" --status "todo"
 ```
 
@@ -30,7 +30,7 @@ TASK_FILE_NUM=$(printf "%03d" $TASK_NUM)
 TASK_ID="${INITIALS}-${TASK_FILE_NUM}"
 
 # Create task with validated frontmatter
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task create \
   --project "${PROJECT_SLUG}" \
   --id "${TASK_ID}" \
   --title "Phase ${TASK_NUM}: [Phase Name]" \
@@ -119,7 +119,7 @@ VERIFY_NUM=$((TASK_NUM + 100))  # Verification tasks start at 101
 VERIFY_FILE_NUM=$(printf "%03d" $VERIFY_NUM)
 VERIFY_ID="${INITIALS}-${VERIFY_FILE_NUM}"
 
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task create \
   --project "${PROJECT_SLUG}" \
   --id "${VERIFY_ID}" \
   --title "Verify: Phase ${TASK_NUM} - [Phase Name]" \
@@ -135,7 +135,7 @@ Create a final project verification task:
 ```bash
 FINAL_ID="${INITIALS}-999"
 
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task create \
   --project "${PROJECT_SLUG}" \
   --id "${FINAL_ID}" \
   --title "Final: Project Completion Verification" \

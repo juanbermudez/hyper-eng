@@ -257,8 +257,8 @@ status: completed
 ---
 ```
 
-To archive via CLI: `hyper project archive --slug old-research`
-To unarchive: `hyper project archive --slug old-research --unarchive`
+To archive via CLI: `hypercraft project archive --slug old-research`
+To unarchive: `hypercraft project archive --slug old-research --unarchive`
 
 ### Example Project
 
@@ -387,11 +387,11 @@ For tasks, the validator checks:
 
 1. **Parent Reference**: The `parent` field must reference an existing project ID
    - Error: `INVALID_PARENT_REFERENCE`
-   - Suggestion: Check project exists with `hyper project list --json`
+   - Suggestion: Check project exists with `hypercraft project list --json`
 
 2. **Dependency References**: All IDs in `depends_on` must reference existing tasks
    - Error: `INVALID_DEPENDENCY_REFERENCE`
-   - Suggestion: Check task exists with `hyper task list --project <slug> --json`
+   - Suggestion: Check task exists with `hypercraft task list --project <slug> --json`
 
 3. **Self-Dependency**: A task cannot depend on itself
    - Error: `SELF_DEPENDENCY`
@@ -480,7 +480,7 @@ For Claude Code sessions, activity is tracked automatically:
 
 1. **PostToolUse hook** triggers on Write/Edit operations to `$HYPER_WORKSPACE_ROOT/` files
 2. **Hook script** (`track-activity.sh`) extracts session_id from hook payload
-3. **Hyper CLI** appends activity entry to frontmatter
+3. **Hypercraft CLI** appends activity entry to frontmatter
 
 Agents do NOT need to manually log activity - just use Write/Edit tools normally.
 
@@ -490,7 +490,7 @@ For user-initiated activities (comments, status changes from UI):
 
 ```bash
 # Add a comment
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft activity comment \
   --file "$HYPER_WORKSPACE_ROOT/projects/my-project/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \
@@ -498,7 +498,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity comment \
   "This looks ready for review"
 
 # Add an activity entry
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity add \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft activity add \
   --file "$HYPER_WORKSPACE_ROOT/projects/my-project/tasks/task-001.mdx" \
   --actor-type user \
   --actor-id "user-uuid" \

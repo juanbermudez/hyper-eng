@@ -8,7 +8,7 @@
 #
 # VERIFICATION LAYERS:
 # 1. Automated checks (lint, typecheck, test, build)
-# 2. Prose state validation (state.md, bindings, memory)
+# 2. Hypercraft state validation (state.md, bindings, memory)
 # 3. Tauri UI verification (connect, screenshot, verify state)
 # 4. Sentry observability (log all results)
 #
@@ -36,7 +36,7 @@ agent verify-captain:
 
 Verification layers (from hyper-craft):
 1. **Automated checks**: lint, typecheck, test, build
-2. **Prose state**: Validate framework state files
+2. **Hypercraft state**: Validate framework state files
 3. **UI verification**: Browser testing via skill
 4. **Observability**: Track all results
 
@@ -72,7 +72,7 @@ let init = session "Initialize verification"
 
 1. Resolve workspace:
 ```bash
-WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper workspace path)
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft config get globalPath)
 export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
 ```
 
@@ -131,7 +131,7 @@ if **target_type is task and status is in-progress**:
   session "Update status to qa"
     prompt: """Update task status to qa before verification:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{target_id}" --status "qa"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update "{target_id}" --status "qa"
 ```"""
     context: target_info
 
@@ -154,14 +154,14 @@ if **verification passed**:
 
 For task:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{target_id}" --status "complete"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update "{target_id}" --status "complete"
 ```
 
 For project (if all tasks complete):
 ```bash
 INCOMPLETE=$(find "$PROJECT_DIR/tasks" -name "*.mdx" -exec grep -l "status: todo\|status: in-progress\|status: qa" {} \; | wc -l)
 if [ "$INCOMPLETE" -eq 0 ]; then
-  ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update "{target_id}" --status "completed"
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update "{target_id}" --status "completed"
 fi
 ```"""
 
@@ -169,7 +169,7 @@ else:
   session "Handle failure"
     prompt: """Verification failed. Revert status:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update "{target_id}" --status "in-progress"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update "{target_id}" --status "in-progress"
 ```
 
 Report failures and suggest fixes."""

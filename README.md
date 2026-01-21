@@ -109,7 +109,7 @@ Tasks and projects include a `qa` status for quality assurance:
 
 ## OpenProse Credit
 
-Hyper-Prose, the workflow VM used by this plugin, is a full fork of [OpenProse](https://github.com/openprose/prose) adapted for Hypercraft workflows.
+Hypercraft VM, the workflow VM used by this plugin, is a full fork of [OpenProse](https://github.com/openprose/prose) adapted for Hypercraft workflows.
 
 ## Philosophy
 

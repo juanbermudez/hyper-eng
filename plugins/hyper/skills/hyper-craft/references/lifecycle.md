@@ -228,10 +228,10 @@ quality_gates:
 
 ```bash
 # Update task status
-hyper task update as-001 --status in-progress
+hypercraft task update as-001 --status in-progress
 
 # Update project status
-hyper project update auth-system --status qa
+hypercraft project update auth-system --status qa
 
 # Activity is automatically tracked
 ```

@@ -92,7 +92,7 @@ agent repo-analyst:
 
 ### Core Skills
 
-Always loaded by all hyper agents. Provides foundational knowledge.
+Always loaded by all hypercraft agents. Provides foundational knowledge.
 
 **Example:** `hyper-craft`
 

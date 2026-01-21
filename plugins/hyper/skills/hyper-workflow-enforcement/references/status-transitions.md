@@ -49,7 +49,7 @@ PROJECT_STATUS=$(grep "^status:" "$PROJECT_DIR/_project.mdx" | awk '{print $2}')
 
 # Update to in-progress if not already there
 if [ "$PROJECT_STATUS" = "planned" ] || [ "$PROJECT_STATUS" = "todo" ]; then
-  hyper project update "$PROJECT_SLUG" --status "in-progress"
+  hypercraft project update "$PROJECT_SLUG" --status "in-progress"
 fi
 ```
 

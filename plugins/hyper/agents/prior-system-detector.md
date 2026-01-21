@@ -80,7 +80,7 @@ For each section (## header):
 # Check for common files
 ls -la CLAUDE.md .claude/CLAUDE.md AGENTS.md TODO.md TASKS.md ROADMAP.md 2>/dev/null
 
-# Check for .hyper directory
+# Check for .hypercraft directory
 ls -la .hyper/ 2>/dev/null
 
 # Check for GitHub templates

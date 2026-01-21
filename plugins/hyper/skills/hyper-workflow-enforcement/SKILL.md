@@ -42,14 +42,14 @@ When included by another skill, this enforces:
 
 ```bash
 # Validate transition is allowed
-hyper status validate --from "${CURRENT}" --to "${NEW}" --type "${TYPE}"
+hypercraft status validate --from "${CURRENT}" --to "${NEW}" --type "${TYPE}"
 ```
 
 ### Before Completion
 
 ```bash
 # Verify all gates passed
-hyper gate check --task "${TASK_ID}" --gates "lint,typecheck,test,build"
+hypercraft gate check --task "${TASK_ID}" --gates "lint,typecheck,test,build"
 ```
 
 ### On Failure
@@ -62,8 +62,8 @@ hyper gate check --task "${TASK_ID}" --gates "lint,typecheck,test,build"
 
 | Command | Purpose |
 |---------|---------|
-| `hyper task update --status` | Update task status |
-| `hyper project update --status` | Update project status |
+| `hypercraft task update --status` | Update task status |
+| `hypercraft project update --status` | Update project status |
 
 ## Best Practices
 

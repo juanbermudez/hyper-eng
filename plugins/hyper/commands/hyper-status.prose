@@ -24,10 +24,10 @@ Your job:
 3. Identify blockers or issues
 4. Format clear status report
 
-Use the Hyper CLI for queries:
-- ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project list --json
-- ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project {slug} --json
-- ${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "{query}" --json
+Use the Hypercraft CLI for queries:
+- ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project list --json
+- ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task list --project {slug} --json
+- ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "{query}" --json
 
 Output clean, scannable reports."""
 
@@ -40,7 +40,7 @@ let init = session "Initialize status check"
 
 1. Resolve workspace:
 ```bash
-WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper workspace path)
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft config get globalPath)
 export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
 echo "Workspace: $WORKSPACE_ROOT"
 ```
@@ -53,7 +53,7 @@ if [ ! -d "$HYPER_WORKSPACE_ROOT/projects" ]; then
 fi
 ```
 
-Report workspace path."""
+Report config get globalPath."""
 
 # ============================================================================
 # Phase 2: Gather Project Status
@@ -65,12 +65,12 @@ if **project_slug provided**:
 
 1. Get project info:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project get {project_slug} --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project get {project_slug} --json
 ```
 
 2. List all tasks:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project {project_slug} --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task list --project {project_slug} --json
 ```
 
 3. Calculate metrics:
@@ -89,7 +89,7 @@ else:
 
 1. List all projects:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project list --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project list --json
 ```
 
 2. For each project, get task counts:
@@ -108,11 +108,11 @@ Report workspace status."""
     context: init
 
 # ============================================================================
-# Phase 3: Check Prose State
+# Phase 3: Check Hypercraft State
 # ============================================================================
 
-let prose_state = session: status-reporter
-  prompt: """Check prose execution state.
+let hypercraft_state = session: status-reporter
+  prompt: """Check Hypercraft execution state.
 
 1. List recent runs:
 ```bash
@@ -131,7 +131,7 @@ for d in "$HYPER_WORKSPACE_ROOT/.prose/agents/"*/; do
 done
 ```
 
-Report prose state."""
+Report Hypercraft state."""
   context: init
 
 # ============================================================================
@@ -178,7 +178,7 @@ output report = session: status-reporter
 
 ---
 
-### Prose Execution State
+### Hypercraft Execution State
 
 **Recent Runs**: {count}
 **Agent Memory**: {agents with memory}
@@ -189,4 +189,4 @@ output report = session: status-reporter
 
 {Based on status, suggest next actions}
 """
-  context: { init, project_status, prose_state, verbose }
+  context: { init, project_status, hypercraft_state, verbose }

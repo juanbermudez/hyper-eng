@@ -3,11 +3,11 @@ description: Implement tasks from $HYPER_WORKSPACE_ROOT/ - pass project-slug for
 argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single task)"
 ---
 
-Use the **hypercraft** skill to execute the implementation workflow.
+Use the **hyper** skill to execute the implementation workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hypercraft/prose.md` and execute the workflow at `commands/hyper-implement.prose` with:
+Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-implement.prose` with:
 
 ```
 input task_id: "$ARGUMENTS"

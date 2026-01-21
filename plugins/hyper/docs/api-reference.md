@@ -2,7 +2,7 @@
 
 Technical reference for the skill-based workflow system.
 
-## Prose Skill Syntax
+## Hypercraft VM Syntax
 
 ### Agent Definition with Skills
 
@@ -23,7 +23,7 @@ The `skills:` field declares which skills an agent should load:
 
 ```yaml
 skills:
-  - hyper-craft           # Core skill (always load for hyper agents)
+  - hyper-craft           # Core skill (always load for hypercraft agents)
   - hyper-planning        # Task-specific skill
   - doc-lookup            # Configurable slot
 ```
@@ -299,25 +299,25 @@ Actionable guidance to avoid in future.
 
 ## CLI Commands
 
-### Hyper CLI
+### Hypercraft CLI
 
 ```bash
-# Get workspace path
-hyper workspace path
+# Get workspace data path
+hypercraft config get globalPath
 
 # Project operations
-hyper project create --slug "my-project" --title "My Project" --priority high
-hyper project update "my-project" --status in-progress
-hyper project get "my-project" --json
+hypercraft project create --slug "my-project" --title "My Project" --priority high
+hypercraft project update "my-project" --status in-progress
+hypercraft project get "my-project" --json
 
 # Task operations
-hyper task create --project "my-project" --title "Task 1" --priority high
-hyper task update "task-001" --status complete
-hyper task list --project "my-project" --json
+hypercraft task create --project "my-project" --title "Task 1" --priority high
+hypercraft task update "task-001" --status complete
+hypercraft task list --project "my-project" --json
 
 # File operations
-hyper file write "path/to/file.md" --body "content"
-hyper file read "path/to/file.md" --json
+hypercraft file write "path/to/file.md" --body "content"
+hypercraft file read "path/to/file.md" --json
 ```
 
 ### Status Values
@@ -348,7 +348,8 @@ draft → todo → in-progress → qa → complete
 ```
 hyper-engineer-plugin/plugins/hyper/
 ├── skills/           # Plugin skills
-├── commands/         # Prose command files
+├── commands/         # Hypercraft command files
+├── blocks/           # Reusable workflow blocks
 ├── templates/        # Default templates
 └── docs/             # Documentation
 ```
@@ -362,7 +363,7 @@ $HYPER_WORKSPACE_ROOT/
 │   ├── skills/       # Skill configurations
 │   ├── commands/     # Command configurations
 │   └── agents/       # Agent configurations
-└── .prose/           # Prose runtime state
+└── .prose/           # Hypercraft runtime state
     ├── runs/         # Execution state
     └── agents/       # Persistent agent state
 ```

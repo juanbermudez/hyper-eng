@@ -3,11 +3,11 @@ description: View status of all projects and tasks in $HYPER_WORKSPACE_ROOT/ dir
 argument-hint: "[project-slug]"
 ---
 
-Use the **hypercraft** skill to execute the status workflow.
+Use the **hyper** skill to execute the status workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hypercraft/prose.md` and execute the workflow at `commands/hyper-status.prose` with:
+Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-status.prose` with:
 
 ```
 input project_slug: "$ARGUMENTS"
@@ -18,7 +18,7 @@ The workflow will:
 
 1. **Initialize** - Resolve workspace path
 2. **Gather Status** - Query projects and tasks via CLI
-3. **Check Prose State** - Report recent runs and agent memory
+3. **Check Hypercraft State** - Report recent runs and agent memory
 4. **Generate Report** - Formatted status output
 
 ## Output Format
@@ -31,7 +31,7 @@ The workflow will:
 |---------|--------|----------|----------|
 | auth    | in-progress | 4/8 | high |
 
-### Prose Execution State
+### Hypercraft Execution State
 Recent Runs: 3
 Agent Memory: impl-captain, researcher
 
@@ -41,9 +41,9 @@ Agent Memory: impl-captain, researcher
 
 ## CLI Integration
 
-Uses `${CLAUDE_PLUGIN_ROOT}/binaries/hyper` for queries:
-- `hyper project list --json`
-- `hyper task list --project {slug} --json`
+Uses `${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft` for queries:
+- `hypercraft project list --json`
+- `hypercraft task list --project {slug} --json`
 
 ## State Location
 

@@ -43,13 +43,30 @@ build_transcript_path() {
 
 TRANSCRIPT_PATH=$(build_transcript_path "$SESSION_ID" "$CWD")
 
+resolve_hyper_bin() {
+  local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
+  if [[ -x "$hyper_bin" ]]; then
+    echo "$hyper_bin"
+    return
+  fi
+
+  hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+  if [[ -x "$hyper_bin" ]]; then
+    echo "$hyper_bin"
+    return
+  fi
+
+  echo "hypercraft"
+}
+
 resolve_workspace_root() {
   if [[ -n "$HYPER_WORKSPACE_ROOT" ]]; then
     echo "$HYPER_WORKSPACE_ROOT"
     return
   fi
 
-  local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+  local hyper_bin
+  hyper_bin="$(resolve_hyper_bin)"
   if [[ -x "$hyper_bin" ]]; then
     local resolved
     resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)
@@ -67,6 +84,7 @@ resolve_workspace_root() {
   echo ""
 }
 
+HYPER_BIN="$(resolve_hyper_bin)"
 WORKSPACE_ROOT="$(resolve_workspace_root)"
 WORKSPACE_ROOT="${WORKSPACE_ROOT%/}"
 
@@ -114,7 +132,7 @@ if [[ -z "$SESSION_ID" ]]; then
 fi
 
 # Build command with actor schema
-CMD="${CLAUDE_PLUGIN_ROOT}/binaries/hyper activity add"
+CMD="$HYPER_BIN activity add"
 CMD="$CMD --file \"$FILE_PATH\""
 CMD="$CMD --actor-type session"
 CMD="$CMD --actor-id \"$SESSION_ID\""

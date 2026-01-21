@@ -3,11 +3,11 @@ description: Run comprehensive automated and manual verification, creating fix t
 argument-hint: "[project-slug/task-id]"
 ---
 
-Use the **hypercraft** skill to execute the verification workflow.
+Use the **hyper** skill to execute the verification workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hypercraft/prose.md` and execute the workflow at `commands/hyper-verify.prose` with:
+Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-verify.prose` with:
 
 ```
 input target_id: "$ARGUMENTS"
@@ -26,13 +26,13 @@ The workflow will guide you through:
 | Layer | Description |
 |-------|-------------|
 | **Automated Checks** | Lint, typecheck, test, build |
-| **Prose State** | Validate framework state files |
+| **Hypercraft State** | Validate framework state files |
 | **UI Verification** | Tauri MCP tools (connect, screenshot, verify) |
 | **Sentry Logging** | Track all results for observability |
 
 ## Verification Block
 
-Uses reusable block from `prose/blocks/verification.prose`:
+Uses reusable block from `blocks/verification.prose`:
 - `verify-implementation` - Single verification pass
 - `verify-with-retry` - Up to 3 attempts with fixes
 

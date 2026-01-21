@@ -1,6 +1,6 @@
 ---
 name: hyper-craft
-description: This skill provides core knowledge for ALL hyper agents including directory structure, CLI reference, output contracts, lifecycle management, and writing guidelines. Load this skill when working on any hyper-engineering workflow.
+description: This skill provides core knowledge for ALL hypercraft agents including directory structure, CLI reference, output contracts, lifecycle management, and writing guidelines. Load this skill when working on any hyper-engineering workflow.
 model: sonnet
 allowed-tools:
   - Read
@@ -16,7 +16,7 @@ allowed-tools:
 
 ## Overview
 
-Hyper Craft is the foundational skill that ALL hyper agents load. It provides the shared knowledge base for working with the `$HYPER_WORKSPACE_ROOT/` directory structure, Hyper CLI, output contracts, and lifecycle management.
+Hyper Craft is the foundational skill that ALL hypercraft agents load. It provides the shared knowledge base for working with the `$HYPER_WORKSPACE_ROOT/` directory structure, the Hypercraft CLI, output contracts, and lifecycle management.
 
 ## Quick Reference
 
@@ -41,20 +41,20 @@ See [directory-structure.md](./references/directory-structure.md) for full detai
 
 ```bash
 # Initialize workspace
-hyper init --name "My Project"
+hypercraft init --name "My Project"
 
 # Projects
-hyper project create --slug "auth" --title "Authentication" --priority high --json
-hyper project update auth --status in-progress
-hyper project get auth --json
+hypercraft project create --slug "auth" --title "Authentication" --priority high --json
+hypercraft project update auth --status in-progress
+hypercraft project get auth --json
 
 # Tasks
-hyper task create --project auth --title "Phase 1" --priority high --json
-hyper task update au-001 --status in-progress
-hyper task list --project auth --json
+hypercraft task create --project auth --title "Phase 1" --priority high --json
+hypercraft task update au-001 --status in-progress
+hypercraft task list --project auth --json
 
 # Search
-hyper search "OAuth" --json
+hypercraft search "OAuth" --json
 ```
 
 See [cli-reference.md](./references/cli-reference.md) for complete CLI documentation.
@@ -171,7 +171,7 @@ See [skill-templates.md](./references/skill-templates.md) for detailed configura
 ## References
 
 - [directory-structure.md](./references/directory-structure.md) - Complete `$HYPER_WORKSPACE_ROOT/` layout
-- [cli-reference.md](./references/cli-reference.md) - All Hyper CLI commands
+- [cli-reference.md](./references/cli-reference.md) - All Hypercraft CLI commands
 - [output-contracts.md](./references/output-contracts.md) - Sub-agent response format
 - [lifecycle.md](./references/lifecycle.md) - Status transitions and gates
 - [writing-guidelines.md](./references/writing-guidelines.md) - File naming and frontmatter specs

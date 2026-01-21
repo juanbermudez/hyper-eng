@@ -1,6 +1,6 @@
 # Sub-Agent Output Contracts
 
-All hyper sub-agents MUST return structured responses following these output contracts. This enables orchestrators to reliably parse results, track artifacts, and coordinate multi-agent workflows.
+All hypercraft sub-agents MUST return structured responses following these output contracts. This enables orchestrators to reliably parse results, track artifacts, and coordinate multi-agent workflows.
 
 ## Standard Response Format
 

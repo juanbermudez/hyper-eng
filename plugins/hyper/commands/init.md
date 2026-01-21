@@ -30,10 +30,10 @@ argument-hint: ""
     <!-- ============================================================ -->
     <phase name="cli_check" required="true">
       <instructions>
-        First, verify the Hyper CLI is available:
+        First, verify the Hypercraft CLI is available:
 
         ```bash
-        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
 
         if [ ! -x "$HYPER_CLI" ]; then
           echo "CLI_MISSING"
@@ -44,9 +44,9 @@ argument-hint: ""
 
         **If CLI_MISSING**: Stop and inform user:
         ---
-        **Hyper CLI not found**
+        **Hypercraft CLI not found**
 
-        The Hyper CLI binary is required for workspace initialization.
+        The Hypercraft CLI binary is required for workspace initialization.
         Please ensure the plugin was installed correctly.
 
         Try reinstalling:
@@ -457,7 +457,7 @@ argument-hint: ""
 
         **Step 2: Create/repair workspace**
         ```bash
-        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
         $HYPER_CLI init --repair
         ```
 
@@ -479,10 +479,10 @@ argument-hint: ""
         If "Replace entirely":
         - Write Hyper template as new CLAUDE.md
 
-        **Step 4: Handle legacy .hyper migration (if applicable)**
+        **Step 4: Handle legacy .hypercraft migration (if applicable)**
         ```bash
         if [ -d ".hyper" ]; then
-          echo "Legacy .hyper directory found"
+          echo "Legacy .hypercraft directory found"
           # Note: Migration is complex, inform user
           echo "Please manually review and migrate data from .hyper/ to $HYPER_WORKSPACE_ROOT"
         fi
@@ -493,8 +493,8 @@ argument-hint: ""
         If skill configuration was completed (not Quick setup):
 
         ```bash
-        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
-        WORKSPACE_ROOT=$($HYPER_CLI workspace path)
+        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
+        WORKSPACE_ROOT=$($HYPER_CLI config get globalPath)
 
         # Create skills settings directory
         mkdir -p "$WORKSPACE_ROOT/settings/skills"
@@ -592,7 +592,7 @@ EOF
         Verify setup was successful:
 
         ```bash
-        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+        HYPER_CLI="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
         WORKSPACE_ROOT=$($HYPER_CLI config get globalPath 2>/dev/null || echo "")
 
         if [ -z "$WORKSPACE_ROOT" ] || [ "$WORKSPACE_ROOT" = "null" ]; then

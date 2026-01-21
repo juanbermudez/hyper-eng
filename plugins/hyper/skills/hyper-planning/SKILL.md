@@ -109,8 +109,8 @@ Set `depends_on` to establish order:
 **CRITICAL**: Create project skeleton BEFORE research:
 
 ```bash
-# Create project via CLI (visible in Hyperbench immediately)
-hyper project create \
+# Create project via CLI (visible in Hypercraft immediately)
+hypercraft project create \
   --slug "$PROJECT_SLUG" \
   --title "{feature}" \
   --priority "high" \
@@ -118,4 +118,4 @@ hyper project create \
   --json
 ```
 
-This ensures the project appears in Hyperbench immediately, even before research completes.
+This ensures the project appears in Hypercraft immediately, even before research completes.

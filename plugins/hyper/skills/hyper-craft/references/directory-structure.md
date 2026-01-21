@@ -32,7 +32,7 @@ $HYPER_WORKSPACE_ROOT/
 │   │   └── *.yaml
 │   └── commands/            # Command customization
 │       └── *.yaml
-└── .prose/                  # Hyper-Prose run state (auto-managed)
+└── .prose/                  # Hypercraft VM run state (auto-managed)
     ├── runs/{run-id}/       # Run artifacts
     └── agents/{name}/       # Agent memory
 ```

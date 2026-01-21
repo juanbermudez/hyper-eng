@@ -14,7 +14,8 @@ resolve_workspace_root() {
         return
     fi
 
-    local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+    local hyper_bin
+    hyper_bin="$(resolve_hyper_bin)"
     if [[ -x "$hyper_bin" ]]; then
         local resolved
         resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)
@@ -30,6 +31,22 @@ resolve_workspace_root() {
     fi
 
     echo ""
+}
+
+resolve_hyper_bin() {
+    local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
+    if [[ -x "$hyper_bin" ]]; then
+        echo "$hyper_bin"
+        return
+    fi
+
+    hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+    if [[ -x "$hyper_bin" ]]; then
+        echo "$hyper_bin"
+        return
+    fi
+
+    echo "hypercraft"
 }
 
 # ============================================================
@@ -63,7 +80,8 @@ detect_prior_systems() {
     # Check for legacy local .hyper directory that needs migration
     if [[ -d ".hyper" ]]; then
         local global_configured=false
-        local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+        local hyper_bin
+        hyper_bin="$(resolve_hyper_bin)"
         if [[ -x "$hyper_bin" ]]; then
             local resolved
             resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)

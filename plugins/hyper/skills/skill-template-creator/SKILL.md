@@ -17,7 +17,7 @@ Create new skills that integrate with HyperCraft's template system and workspace
 ## When to Use
 
 Use this skill when:
-- Creating a new skill for hyper workflows
+- Creating a new skill for hypercraft workflows
 - Converting an existing skill to use templates
 - Adding a configurable skill slot
 

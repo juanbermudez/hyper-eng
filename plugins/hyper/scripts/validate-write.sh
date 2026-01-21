@@ -28,13 +28,30 @@ if [[ -z "$FILE_PATH" ]]; then
   exit 0
 fi
 
+resolve_hyper_bin() {
+  local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
+  if [[ -x "$hyper_bin" ]]; then
+    echo "$hyper_bin"
+    return
+  fi
+
+  hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+  if [[ -x "$hyper_bin" ]]; then
+    echo "$hyper_bin"
+    return
+  fi
+
+  echo "hypercraft"
+}
+
 resolve_workspace_root() {
   if [[ -n "$HYPER_WORKSPACE_ROOT" ]]; then
     echo "$HYPER_WORKSPACE_ROOT"
     return
   fi
 
-  local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+  local hyper_bin
+  hyper_bin="$(resolve_hyper_bin)"
   if [[ -x "$hyper_bin" ]]; then
     local resolved
     resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)
@@ -134,8 +151,8 @@ if [[ -x "$PYTHON_VALIDATOR" ]] || command -v python3 &>/dev/null; then
   fi
 fi
 
-# Fallback: Try hyper CLI validation if Python not available
-HYPER_BIN="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+# Fallback: Try Hypercraft CLI validation if Python not available
+HYPER_BIN="$(resolve_hyper_bin)"
 if [[ -x "$HYPER_BIN" ]]; then
   # Use CLI validation
   RESULT=$("$HYPER_BIN" file validate --path "$FILE_PATH" --content "$CONTENT" --json 2>&1)

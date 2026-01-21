@@ -8,7 +8,7 @@
 # Usage: hypercraft run hyper-plan.prose feature="Add user authentication"
 #
 # ARTIFACT PATTERN:
-# - Prose bindings (.prose/runs/) = execution state, pointers to artifacts
+# - Hypercraft bindings (.prose/runs/) = execution state, pointers to artifacts
 # - Project artifacts (projects/) = actual deliverables via CLI
 #
 # PATH RESOLUTION:
@@ -42,7 +42,7 @@ Your role:
 Key principles:
 - Specs matter more than code
 - Always wait for human approval at HITL gates
-- Use hyper CLI for all artifact creation (see hyper-craft skill)
+- Use hypercraft CLI for all artifact creation (see hyper-craft skill)
 - Follow output contract format (see hyper-craft skill)
 - At approval gates: READ the artifact content and DISPLAY it to the user
 
@@ -91,7 +91,7 @@ let init = session "Initialize planning workflow"
 
 1. Resolve workspace:
 ```bash
-WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper workspace path)
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft config get globalPath)
 export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
 echo "WORKSPACE_ROOT=$WORKSPACE_ROOT"
 ```
@@ -104,7 +104,7 @@ echo "RUN_ID=$RUN_ID"
 echo "PROJECT_SLUG=$PROJECT_SLUG"
 ```
 
-3. Create prose state directory:
+3. Create Hypercraft state directory:
 ```bash
 mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/runs/$RUN_ID/bindings"
 mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/agents/hyper-captain"
@@ -259,7 +259,7 @@ Create a unified research summary that includes:
 5. **Prior learnings to consider** (from compound engineering)
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \\
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write \\
   "projects/$PROJECT_SLUG/resources/research-summary.md" \\
   --body "[synthesized research content]"
 ```
@@ -282,7 +282,7 @@ let direction = session: hyper-captain
 
 1. Read the research artifact:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read \\
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read \\
   "projects/$PROJECT_SLUG/resources/research-summary.md" \\
   --json
 ```
@@ -332,7 +332,7 @@ if **direction approved**:
 
 1. Create project via CLI:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \\
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project create \\
   --slug "$PROJECT_SLUG" \\
   --title "{feature}" \\
   --priority "high" \\
@@ -342,7 +342,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \\
 
 2. Write FULL specification to _project.mdx:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \\
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write \\
   "projects/$PROJECT_SLUG/_project.mdx" \\
   --body "[full specification content]"
 ```
@@ -372,7 +372,7 @@ let spec_approval = session: hyper-captain
 
 1. Read the project spec:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read \\
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read \\
   "projects/$PROJECT_SLUG/_project.mdx" \\
   --json
 ```
@@ -409,7 +409,7 @@ if **spec approved**:
 
 1. Read the spec to extract implementation phases:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read \\
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read \\
   "projects/$PROJECT_SLUG/_project.mdx" \\
   --json
 ```
@@ -417,7 +417,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read \\
 2. For EACH phase in the spec, create a task:
 ```bash
 # Create task via CLI (generates ID automatically)
-TASK_RESULT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \\
+TASK_RESULT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task create \\
   --project "$PROJECT_SLUG" \\
   --title "Phase N: [Phase Title]" \\
   --priority "high" \\
@@ -430,7 +430,7 @@ TASK_FILE=$(echo "$TASK_RESULT" | jq -r '.file')
 
 3. Write FULL task content to each task file:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write \\
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write \\
   "$TASK_FILE" \\
   --body "[full task specification]"
 ```
@@ -443,7 +443,7 @@ Each task body MUST include:
 
 4. Update project status to 'todo':
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update "$PROJECT_SLUG" --status "todo"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update "$PROJECT_SLUG" --status "todo"
 ```
 
 The binding for this session should contain:
@@ -461,8 +461,8 @@ output summary = session: hyper-captain
 
 Read the final project state:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project get "$PROJECT_SLUG" --json
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project "$PROJECT_SLUG" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project get "$PROJECT_SLUG" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task list --project "$PROJECT_SLUG" --json
 ```
 
 ## Planning Complete
@@ -486,7 +486,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task list --project "$PROJECT_SLUG" --json
 1. Run `/hyper:implement {project_slug}` to start implementation
 2. Or implement individual tasks: `/hyper:implement {project_slug}/{task_id}`
 
-### Prose State (for workflow resume)
+### Hypercraft State (for workflow resume)
 `$HYPER_WORKSPACE_ROOT/.prose/runs/{run_id}/`
 """
   context: { feature, init, spec, tasks }

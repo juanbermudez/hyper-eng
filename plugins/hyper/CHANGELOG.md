@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Hypercraft rebrand applied across plugin docs and workflows.
-- Hyper-Prose (OpenProse fork) updated with telemetry removal and banner cleanup.
+- Hypercraft VM (OpenProse fork) documentation and path cleanup.
 
 ## [3.15.0] - 2026-01-20
 
@@ -33,7 +33,7 @@ Implements composable skills for sub-agents with configurable skill slots, enabl
 **New Documentation:**
 - `docs/skill-authoring-guide.md` - Comprehensive guide for creating custom skills
 - `docs/architecture.md` - Technical overview of skill-based architecture
-- `docs/api-reference.md` - Prose syntax, output contracts, schemas
+- `docs/api-reference.md` - Hypercraft VM syntax, output contracts, schemas
 
 **Skill Templates:**
 - `doc-lookup` - Options: context7, web-search, none
@@ -60,7 +60,7 @@ Implements composable skills for sub-agents with configurable skill slots, enabl
 |-----------|-------|
 | Agents | 10 |
 | Commands | 8 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 14 |
 
 ---
@@ -80,7 +80,7 @@ Implements composable skills for sub-agents with configurable skill slots, enabl
 |-----------|-------|
 | Agents | 10 |
 | Commands | 8 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 12 |
 
 ---
@@ -148,7 +148,7 @@ Transform `/hyper:init` into an intelligent setup wizard that:
 |-----------|-------|
 | Agents | 10 |
 | Commands | 8 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 11 |
 
 ---
@@ -175,7 +175,7 @@ Transform `/hyper:init` into an intelligent setup wizard that:
 |-----------|-------|
 | Agents | 9 |
 | Commands | 7 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 11 |
 
 ---
@@ -196,7 +196,7 @@ Transform `/hyper:init` into an intelligent setup wizard that:
 |-----------|-------|
 | Agents | 9 |
 | Commands | 7 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 11 |
 
 ---
@@ -227,7 +227,7 @@ Transform `/hyper:init` into an intelligent setup wizard that:
 |-----------|-------|
 | Agents | 9 |
 | Commands | 7 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 11 |
 | MCP Servers | 1 |
 
@@ -253,7 +253,7 @@ Transform `/hyper:init` into an intelligent setup wizard that:
 |-----------|-------|
 | Agents | 9 |
 | Commands | 7 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 11 |
 | MCP Servers | 1 |
 
@@ -302,7 +302,7 @@ Sidecar file approach chosen over separate registry:
 |-----------|-------|
 | Agents | 9 |
 | Commands | 7 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 11 |
 | MCP Servers | 1 |
 
@@ -312,17 +312,17 @@ Sidecar file approach chosen over separate registry:
 
 ### Added
 
-**Hyper-Prose Integration**
-- Renamed OpenProse to Hyper-Prose (our fork for extending the VM)
-- Slash commands now automatically use hypercraft skill
-- Users invoke `/hyper:plan` → command loads hypercraft skill → executes workflow
+**Hypercraft VM Integration**
+- Renamed OpenProse to Hypercraft VM (our fork for extending the VM)
+- Slash commands now automatically use hyper skill
+- Users invoke `/hyper:plan` → command loads hyper skill → executes workflow
 
 ### Changed
 
-- `skills/open-prose/` → `skills/hypercraft/`
-- SKILL.md updated with hypercraft name and triggers
-- All slash commands (plan, implement, verify, status) rewritten to use hypercraft
-- Package.json sync scripts renamed from `openprose:*` to `hypercraft:*`
+- `skills/open-prose/` → `skills/hyper/`
+- SKILL.md updated with hyper name and triggers
+- All slash commands (plan, implement, verify, status) rewritten to use hyper
+- Package.json sync scripts renamed to `hypercraft-vm:*`
 
 ### Summary
 
@@ -330,7 +330,7 @@ Sidecar file approach chosen over separate registry:
 |-----------|-------|
 | Agents | 9 |
 | Commands | 7 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 11 |
 | MCP Servers | 1 |
 
@@ -346,34 +346,34 @@ Sidecar file approach chosen over separate registry:
 - Enables executable `.prose` workflow files with state management
 - Run workflows with: `hypercraft run hyper-plan.prose feature="Add auth"`
 
-**New Prose Workflows (4)**
+**New Hypercraft Workflows (4)**
 - `hyper-plan.prose` - Full planning: research → direction gate → spec → approval → tasks
 - `hyper-implement.prose` - Implementation: load task → analyze → implement → review → verify → complete
-- `hyper-verify.prose` - Verification: automated checks → prose state → UI verification via Tauri
+- `hyper-verify.prose` - Verification: automated checks → Hypercraft state → UI verification via Tauri
 - `hyper-status.prose` - Status reporting: project/task overview with Sentry traces
 
-**New Prose Blocks (1)**
-- `prose/blocks/verification.prose` - Reusable verification block with retry logic
+**New Hypercraft Blocks (1)**
+- `blocks/verification.prose` - Reusable verification block with retry logic
 
 **New Agents (2)**
 - `tauri-ui-verifier.md` - Verifies Hypercraft UI state using Tauri MCP tools
 - `workflow-observer.md` - Logs workflow events to Sentry for observability
 
 **Verification System**
-- Three-layer verification: Automated checks → Prose state → Tauri UI verification
+- Three-layer verification: Automated checks → Hypercraft state → Tauri UI verification
 - Sentry observability for workflow tracking
 - Status flows: Task `todo → in-progress → qa → complete`
 
 **State Synchronization**
 - Project State: MDX frontmatter (UI reads via file watcher)
-- Execution State: `.prose/runs/{run-id}/state.md` (Prose VM internal)
+- Execution State: `.prose/runs/{run-id}/state.md` (Hypercraft VM internal)
 - Workflows update MDX frontmatter via CLI at each transition
 
 ### Changed
 
 - Agent count: 7 → 9
-- Skill count: 10 → 11 (added open-prose)
-- Added prose workflows as new component type
+- Skill count: 10 → 11 (added hyper VM)
+- Added Hypercraft workflows as new component type
 
 ### Summary
 
@@ -381,8 +381,8 @@ Sidecar file approach chosen over separate registry:
 |-----------|-------|
 | Agents | 9 |
 | Commands | 7 |
-| Prose Workflows | 4 |
-| Prose Blocks | 1 |
+| Hypercraft Workflows | 4 |
+| Hypercraft Blocks | 1 |
 | Skills | 11 |
 | MCP Servers | 1 |
 
@@ -701,7 +701,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 ### Added
 
 **CLI Integration**
-- Bundled Hyper CLI binary (`binaries/hyper`) for project and task management
+- Bundled Hypercraft CLI binary (`binaries/hypercraft`, alias `binaries/hyper`) for project and task management
 - CLI commands: `project create`, `task create`, `task update`, `project update`
 - CLI validates frontmatter schema and handles file creation consistently
 - CLI handles activity tracking with `activity add` and `activity comment` commands

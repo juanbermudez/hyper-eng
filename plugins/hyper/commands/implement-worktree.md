@@ -162,7 +162,7 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
 
         1. Update task status using CLI:
            ```bash
-           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update \
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update \
              --id "${TASK_ID}" \
              --project "${PROJECT_SLUG}" \
              --status "in-progress"
@@ -170,7 +170,7 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
 
         2. If first task, update project status:
            ```bash
-           ${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update \
+           ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update \
              --slug "${PROJECT_SLUG}" \
              --status "in-progress"
            ```

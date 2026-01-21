@@ -114,9 +114,9 @@ View workflow traces in Sentry:
 https://sentry.io/organizations/{org}/issues/?query=workflow:hyper-* run_id:{run_id}
 ```
 
-## Integration with Prose Workflows
+## Integration with Hypercraft Workflows
 
-Called by prose workflows at key points:
+Called by Hypercraft workflows at key points:
 1. Workflow start
 2. Phase transitions
 3. Status changes

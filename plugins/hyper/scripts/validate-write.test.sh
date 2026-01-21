@@ -77,8 +77,8 @@ assert_block "MDX without frontmatter blocked" \
   "frontmatter"
 
 # Test 5: Project file missing id should be blocked (if CLI available)
-# This test depends on the hyper CLI being available
-if [[ -x "${CLAUDE_PLUGIN_ROOT:-/nonexistent}/binaries/hyper" ]]; then
+# This test depends on the Hypercraft CLI being available
+if [[ -x "${CLAUDE_PLUGIN_ROOT:-/nonexistent}/binaries/hypercraft" || -x "${CLAUDE_PLUGIN_ROOT:-/nonexistent}/binaries/hyper" ]]; then
   assert_block "Project missing id blocked" \
     '{"tool_name": "Write", "tool_input": {"file_path": "/project/.hyper/projects/test/_project.mdx", "content": "---\ntitle: Test\ntype: project\n---\n\nContent"}}' \
     "id"

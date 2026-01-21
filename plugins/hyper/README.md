@@ -12,7 +12,7 @@ Local-first, spec-driven development workflow. Specs matter more than code—spe
 
 Works standalone or with the Hypercraft desktop app ([repo](https://github.com/juanbermudez/hyper-control)).
 
-**Now with Hyper-Prose** (a full fork of [OpenProse](https://github.com/openprose/prose)) for executable, resumable workflows. Slash commands automatically use the Hyper-Prose VM.
+**Now with Hypercraft VM** (a full fork of [OpenProse](https://github.com/openprose/prose)) for executable, resumable workflows. Slash commands automatically use the Hypercraft VM.
 
 ## Components
 
@@ -20,7 +20,7 @@ Works standalone or with the Hypercraft desktop app ([repo](https://github.com/j
 |-----------|-------|
 | Agents | 10 |
 | Commands | 8 |
-| Prose Workflows | 4 |
+| Hypercraft Workflows | 4 |
 | Skills | 14 |
 | MCP Servers | 1 |
 
@@ -111,20 +111,20 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 | `tauri-ui-verifier` | Verification | Verify Hypercraft UI state via Tauri MCP tools |
 | `workflow-observer` | Verification | Log workflow events to Sentry for observability |
 
-### Prose Workflows
+### Hypercraft Workflows
 
-Executable workflows using Hyper-Prose (a fork of [OpenProse](https://github.com/openprose/prose)) for structured, resumable execution:
+Executable workflows using Hypercraft VM (a fork of [OpenProse](https://github.com/openprose/prose)) for structured, resumable execution:
 
 | Workflow | Description |
 |----------|-------------|
 | `hyper-plan.prose` | Full planning: research → direction gate → spec → approval → tasks |
 | `hyper-implement.prose` | Implementation: load task → analyze → implement → review → verify → complete |
-| `hyper-verify.prose` | Verification: automated checks → prose state → UI verification via Tauri |
+| `hyper-verify.prose` | Verification: automated checks → Hypercraft state → UI verification via Tauri |
 | `hyper-status.prose` | Status reporting: project/task overview with progress metrics |
 
 **Running Workflows:**
 ```bash
-# In Claude Code, load the Hyper-Prose skill then run:
+# In Claude Code, load the Hypercraft VM skill then run:
 hypercraft run hyper-plan.prose feature="Add user authentication"
 hypercraft run hyper-implement.prose task="ua-001"
 hypercraft run hyper-verify.prose project="user-auth"
@@ -167,7 +167,7 @@ Customize via workspace settings: `$HYPER_WORKSPACE_ROOT/settings/skills/`
 
 ### Skills
 
-The workflow leverages 14 skills including the bundled Hyper-Prose VM:
+The workflow leverages 14 skills including the bundled Hypercraft VM:
 
 | Skill | Used By | Purpose |
 |-------|---------|---------|
@@ -182,7 +182,7 @@ The workflow leverages 14 skills including the bundled Hyper-Prose VM:
 | `hyper-activity-tracking` | All commands | Activity tracking for file modifications |
 | `git-worktree` | hyper-implement | Isolated parallel development with Git worktrees |
 | `compound-docs` | hyper-review, hyper-plan | Document recurring patterns and learnings |
-| `hypercraft` | All .prose workflows | Hyper-Prose VM for executing workflow files (fork of OpenProse) |
+| `hyper` | All .prose workflows | Hypercraft VM for executing workflow files (fork of OpenProse) |
 
 ### Quick Start
 
@@ -273,20 +273,20 @@ Orchestrators (2), Research agents (4), Testing agent (1), and Verification agen
 | `/hyper:verify` | Run comprehensive automated and manual verification |
 | `/hyper:research` | Standalone research workflow with comprehensive or deep modes |
 
-### Prose Workflows (4)
+### Hypercraft Workflows (4)
 
-Executable workflows using Hyper-Prose (a fork of [OpenProse](https://github.com/openprose/prose)):
+Executable workflows using Hypercraft VM (a fork of [OpenProse](https://github.com/openprose/prose)):
 
 | Workflow | Description |
 |----------|-------------|
 | `hyper-plan.prose` | Full planning: research → direction gate → spec → approval → tasks |
 | `hyper-implement.prose` | Implementation: load task → analyze → implement → review → verify |
-| `hyper-verify.prose` | Verification: automated checks → prose state → UI verification |
+| `hyper-verify.prose` | Verification: automated checks → Hypercraft state → UI verification |
 | `hyper-status.prose` | Status reporting: project/task overview with progress metrics |
 
 ### Skills (14)
 
-Core skills including bundled Hyper-Prose VM:
+Core skills including bundled Hypercraft VM:
 
 | Skill | Description |
 |-------|-------------|
@@ -303,7 +303,7 @@ Core skills including bundled Hyper-Prose VM:
 | `compound-docs` | Capture solved problems as categorized documentation |
 | `compound-engineering` | Detect triggers and capture learnings from workflow execution |
 | `skill-template-creator` | Create new skills as templates for HyperCraft workflows |
-| `hypercraft` | Hyper-Prose VM for executing .prose workflow files (fork of OpenProse) |
+| `hyper` | Hypercraft VM for executing .prose workflow files (fork of OpenProse) |
 
 ### Documentation
 
@@ -311,7 +311,7 @@ Core skills including bundled Hyper-Prose VM:
 |----------|-------------|
 | [Skill Authoring Guide](./docs/skill-authoring-guide.md) | How to create custom skills |
 | [Architecture](./docs/architecture.md) | Technical overview of skill-based architecture |
-| [API Reference](./docs/api-reference.md) | Prose syntax, output contracts, schemas |
+| [API Reference](./docs/api-reference.md) | Hypercraft VM syntax, output contracts, schemas |
 
 ## MCP Servers
 
@@ -331,12 +331,12 @@ Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, 
 
 ## CLI & Activity Tracking
 
-The plugin includes a bundled CLI binary (`hyper`) for managing workspace files, Drive notes, and activity tracking.
+The plugin includes a bundled Hypercraft CLI binary (`hypercraft`, alias `hyper`) for managing workspace files, Drive notes, and activity tracking.
 
 ### CLI Overview
 
 ```
-hyper <COMMAND>
+hypercraft <COMMAND>
 
 Commands:
   init      Initialize a new workspace
@@ -356,40 +356,40 @@ Commands:
 
 ```bash
 # Initialize workspace
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper init --name "My Project"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft init --name "My Project"
 
 # Create project with validated frontmatter
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project create \
   --slug "auth-system" \
   --title "User Auth" \
   --priority "high" \
   --json
 
 # Create task (ID auto-generated)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task create \
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task create \
   --project "auth-system" \
   --title "Phase 1: OAuth Setup" \
   --priority "high" \
   --json
 
 # Update task status (ID is positional argument)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper task update as-001 --status "in-progress"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update as-001 --status "in-progress"
 
 # Update project status (slug is positional argument)
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project update auth-system --status "in-progress"
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update auth-system --status "in-progress"
 
 # List projects
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper project list --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project list --json
 
 # Search across all resources
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper search "OAuth" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "OAuth" --json
 
 # Create Drive note
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper drive create "Research Notes" --folder "research" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft drive create "Research Notes" --folder "research" --json
 
 # Low-level file operations
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file read projects/auth-system/_project.mdx --json
-${CLAUDE_PLUGIN_ROOT}/binaries/hyper file write projects/auth-system/_project.mdx --body "New content" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read projects/auth-system/_project.mdx --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write projects/auth-system/_project.mdx --body "New content" --json
 ```
 
 ### Automatic Activity Tracking
