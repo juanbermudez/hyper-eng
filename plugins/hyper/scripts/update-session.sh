@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Update session workspace metadata as sidecar file
 # Creates/updates ~/.claude/projects/{path}/{session-id}.hyper.json
 # Called by track-activity.sh after Write|Edit operations
@@ -10,6 +10,15 @@
 # - No new directories to watch
 
 set -euo pipefail
+
+# ==============================================================================
+# Path Resolution
+# ==============================================================================
+
+# Note: This script receives WORKSPACE_ROOT as an environment variable from
+# track-activity.sh, which sources resolve-paths.sh and exports the correct value.
+# We don't need to source resolve-paths.sh again here, but we include the
+# standard header for documentation purposes.
 
 # Debug logging
 DEBUG_LOG="/tmp/hyper-session-debug.log"
@@ -25,7 +34,7 @@ PARENT_SESSION="${PARENT_SESSION:-}"
 CWD="${CWD:-}"
 TRANSCRIPT_PATH="${TRANSCRIPT_PATH:-}"
 FILE_PATH="${FILE_PATH:-}"
-WORKSPACE_ROOT="${WORKSPACE_ROOT:-}"
+WORKSPACE_ROOT="${WORKSPACE_ROOT:-}"  # Already resolved by caller
 
 log_debug "update-session.sh called with SESSION_ID=$SESSION_ID TRANSCRIPT_PATH=$TRANSCRIPT_PATH"
 

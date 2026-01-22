@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Track activity from Bash commands that use the Hypercraft CLI
 # Called by PostToolUse hook after Bash operations
 #
@@ -11,6 +11,14 @@
 # - Call update-session.sh to create sidecar file with workspace target
 
 set -euo pipefail
+
+# ==============================================================================
+# Path Resolution
+# ==============================================================================
+
+# Source central path resolution
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/resolve-paths.sh"
 
 # Debug logging
 DEBUG_LOG="/tmp/hyper-hook-debug.log"
@@ -189,31 +197,9 @@ extract_file_path() {
   echo ""
 }
 
-# Resolve workspace root
-resolve_workspace_root() {
-  if [[ -n "${HYPER_WORKSPACE_ROOT:-}" ]]; then
-    echo "$HYPER_WORKSPACE_ROOT"
-    return
-  fi
-
-  local hyper_bin
-  hyper_bin="$(resolve_hyper_bin)"
-  if [[ -x "$hyper_bin" ]]; then
-    local resolved
-    resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)
-    if [[ -n "$resolved" && "$resolved" != "null" ]]; then
-      echo "$resolved"
-      return
-    fi
-  fi
-
-  if [[ -d ".hyper" ]]; then
-    echo "$PWD/.hyper"
-    return
-  fi
-
-  echo ""
-}
+# ==============================================================================
+# Helper Functions
+# ==============================================================================
 
 # Build transcript path
 # NOTE: Claude Code encodes CWD by replacing / with - but KEEPS the leading dash
@@ -238,9 +224,8 @@ build_transcript_path() {
   fi
 }
 
-# Get workspace root
-WORKSPACE_ROOT="$(resolve_workspace_root)"
-WORKSPACE_ROOT="${WORKSPACE_ROOT%/}"
+# Use resolved workspace root from central resolver (already exported)
+WORKSPACE_ROOT="${HYPER_WORKSPACE_ROOT%/}"
 
 log_debug "WORKSPACE_ROOT: $WORKSPACE_ROOT"
 

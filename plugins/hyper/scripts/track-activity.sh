@@ -1,6 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Track activity on workspace data root file modifications
 # Called by PostToolUse hook after Write|Edit operations
+
+set -euo pipefail
+
+# ==============================================================================
+# Path Resolution
+# ==============================================================================
+
+# Source central path resolution
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/resolve-paths.sh"
 
 # Debug logging (remove after testing)
 DEBUG_LOG="/tmp/hyper-hook-debug.log"
@@ -43,6 +53,10 @@ build_transcript_path() {
 
 TRANSCRIPT_PATH=$(build_transcript_path "$SESSION_ID" "$CWD")
 
+# ==============================================================================
+# Hypercraft CLI Resolution
+# ==============================================================================
+
 resolve_hyper_bin() {
   local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
   if [[ -x "$hyper_bin" ]]; then
@@ -59,34 +73,10 @@ resolve_hyper_bin() {
   echo "hypercraft"
 }
 
-resolve_workspace_root() {
-  if [[ -n "$HYPER_WORKSPACE_ROOT" ]]; then
-    echo "$HYPER_WORKSPACE_ROOT"
-    return
-  fi
-
-  local hyper_bin
-  hyper_bin="$(resolve_hyper_bin)"
-  if [[ -x "$hyper_bin" ]]; then
-    local resolved
-    resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)
-    if [[ -n "$resolved" && "$resolved" != "null" ]]; then
-      echo "$resolved"
-      return
-    fi
-  fi
-
-  if [[ -d ".hyper" ]]; then
-    echo "$PWD/.hyper"
-    return
-  fi
-
-  echo ""
-}
-
 HYPER_BIN="$(resolve_hyper_bin)"
-WORKSPACE_ROOT="$(resolve_workspace_root)"
-WORKSPACE_ROOT="${WORKSPACE_ROOT%/}"
+
+# Use resolved workspace root from central resolver (already exported)
+WORKSPACE_ROOT="${HYPER_WORKSPACE_ROOT%/}"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] FILE_PATH: $FILE_PATH" >> "$DEBUG_LOG"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] SESSION_ID: $SESSION_ID" >> "$DEBUG_LOG"
@@ -96,7 +86,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] WORKSPACE_ROOT: $WORKSPACE_ROOT" >> "$DEBUG
 
 # Check if file is in HyperHome (global ~/.hyper/accounts/...)
 # This takes priority over local .hyper folders
-HYPER_HOME="$HOME/.hyper"
+# Use resolved HYPER_HOME from central resolver (already exported)
 IS_HYPER_HOME_FILE=false
 if [[ "$FILE_PATH" == "$HYPER_HOME/accounts/"* ]]; then
   IS_HYPER_HOME_FILE=true

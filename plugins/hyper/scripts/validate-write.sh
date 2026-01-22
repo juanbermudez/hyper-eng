@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # PreToolUse validation for workspace data root file writes
 # Called BEFORE Write|Edit operations - can BLOCK invalid writes
 #
@@ -16,6 +16,16 @@
 #   }
 # }
 
+set -euo pipefail
+
+# ==============================================================================
+# Path Resolution
+# ==============================================================================
+
+# Source central path resolution
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/resolve-paths.sh"
+
 # Read PreToolUse JSON from stdin
 INPUT=$(cat)
 
@@ -28,49 +38,8 @@ if [[ -z "$FILE_PATH" ]]; then
   exit 0
 fi
 
-resolve_hyper_bin() {
-  local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
-  if [[ -x "$hyper_bin" ]]; then
-    echo "$hyper_bin"
-    return
-  fi
-
-  hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
-  if [[ -x "$hyper_bin" ]]; then
-    echo "$hyper_bin"
-    return
-  fi
-
-  echo "hypercraft"
-}
-
-resolve_workspace_root() {
-  if [[ -n "$HYPER_WORKSPACE_ROOT" ]]; then
-    echo "$HYPER_WORKSPACE_ROOT"
-    return
-  fi
-
-  local hyper_bin
-  hyper_bin="$(resolve_hyper_bin)"
-  if [[ -x "$hyper_bin" ]]; then
-    local resolved
-    resolved=$("$hyper_bin" config get globalPath 2>/dev/null || true)
-    if [[ -n "$resolved" && "$resolved" != "null" ]]; then
-      echo "$resolved"
-      return
-    fi
-  fi
-
-  if [[ -d ".hyper" ]]; then
-    echo "$PWD/.hyper"
-    return
-  fi
-
-  echo ""
-}
-
-WORKSPACE_ROOT="$(resolve_workspace_root)"
-WORKSPACE_ROOT="${WORKSPACE_ROOT%/}"
+# Use resolved workspace root (already exported by resolve-paths.sh)
+WORKSPACE_ROOT="${HYPER_WORKSPACE_ROOT%/}"
 
 # Only validate workspace data root paths - passthrough all others
 if [[ -n "$WORKSPACE_ROOT" ]]; then
@@ -168,6 +137,26 @@ if [[ -x "$HYPER_BIN" ]]; then
     exit 2
   fi
 fi
+
+# ==============================================================================
+# Fallback Validation
+# ==============================================================================
+
+resolve_hyper_bin() {
+  local hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft"
+  if [[ -x "$hyper_bin" ]]; then
+    echo "$hyper_bin"
+    return
+  fi
+
+  hyper_bin="${CLAUDE_PLUGIN_ROOT}/binaries/hyper"
+  if [[ -x "$hyper_bin" ]]; then
+    echo "$hyper_bin"
+    return
+  fi
+
+  echo "hypercraft"
+}
 
 # Last resort fallback: basic frontmatter validation
 # Check if content starts with frontmatter

@@ -1,9 +1,21 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # detect-prior-systems.sh
 # Detects existing task tracking systems and steering documents in the current directory
 # Returns JSON for use by init wizard and SessionStart hook
 
-set -e
+set -euo pipefail
+
+# ==============================================================================
+# Path Resolution
+# ==============================================================================
+
+# Source central path resolution
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/resolve-paths.sh"
+
+# ==============================================================================
+# Detection Logic
+# ==============================================================================
 
 # Output JSON structure
 OUTPUT='{}'

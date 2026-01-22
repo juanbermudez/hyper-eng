@@ -30,10 +30,34 @@ Use a three-tier model to keep context tight and skills composable:
 
 ## Quick Reference
 
+### Path Resolution (CRITICAL)
+
+**All operations MUST use resolved paths from `scripts/resolve-paths.sh`**.
+
+```bash
+# In any script, source the resolver first:
+source "$SCRIPT_DIR/../scripts/resolve-paths.sh"
+
+# Now use exported variables:
+$HYPER_HOME              # Base HyperHome (OS-specific)
+$HYPER_ACCOUNT_ROOT      # Account-scoped root
+$HYPER_PERSONAL_DRIVE    # Personal Drive notes (account-level)
+$HYPER_WORKSPACE_ROOT    # Resolved workspace directory
+$HYPER_PLATFORM          # Detected platform (macos|linux|windows)
+```
+
+**Platform-Specific HyperHome**:
+- **macOS**: `~/.hyper/`
+- **Linux**: `~/.hyper/` or `$XDG_DATA_HOME/hyper/`
+- **Windows**: `%USERPROFILE%\.hyper\`
+
+See [path-resolution.md](./references/path-resolution.md) for cross-platform details.
+
 ### Directory Structure
 
+**`$HYPER_WORKSPACE_ROOT` resolves to**:
 ```
-$HYPER_WORKSPACE_ROOT/
+~/.hyper/accounts/{accountId}/hyper/workspaces/{workspaceId}/
 ├── workspace.json           # Workspace metadata (read-only)
 ├── projects/                # Project containers
 │   └── {slug}/
@@ -44,7 +68,14 @@ $HYPER_WORKSPACE_ROOT/
 └── settings/                # Workflow customization
 ```
 
-See [directory-structure.md](./references/directory-structure.md) for full details.
+**Personal Drive** (account-level):
+```
+~/.hyper/accounts/{accountId}/hyper/notes/
+├── personal-note-1.mdx      # id: "personal:note-1"
+└── personal-note-2.mdx      # id: "personal:note-2"
+```
+
+See [directory-structure.md](./references/directory-structure.md) for full hierarchy.
 
 ### CLI Commands (Most Common)
 

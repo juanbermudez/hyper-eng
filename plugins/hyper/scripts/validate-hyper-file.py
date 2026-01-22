@@ -11,6 +11,7 @@ import sys
 import re
 import os
 import argparse
+import subprocess
 
 # Try to import PyYAML for robust parsing
 try:
@@ -175,8 +176,71 @@ def normalize_path(file_path: str) -> str:
     return file_path.replace('\\', '/').rstrip('/')
 
 
+def get_hyper_paths():
+    """Get resolved Hyper paths by calling resolve-paths.sh."""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    resolver_path = os.path.join(script_dir, 'resolve-paths.sh')
+
+    if not os.path.exists(resolver_path):
+        # Fallback to environment variable if resolver not found
+        return {
+            'platform': 'unknown',
+            'home': '',
+            'account_id': 'local',
+            'workspace_root': os.environ.get('HYPER_WORKSPACE_ROOT', '').strip(),
+            'personal_drive': ''
+        }
+
+    try:
+        # Source resolver and export variables
+        cmd = f'source "{resolver_path}" && hyper_print_paths'
+        result = subprocess.run(['bash', '-c', cmd], capture_output=True, text=True, timeout=5)
+
+        if result.returncode != 0:
+            # Fallback to environment variable on error
+            return {
+                'platform': 'unknown',
+                'home': '',
+                'account_id': 'local',
+                'workspace_root': os.environ.get('HYPER_WORKSPACE_ROOT', '').strip(),
+                'personal_drive': ''
+            }
+
+        # Parse output into dict
+        paths = {}
+        for line in result.stdout.split('\n'):
+            if ':' in line and not line.startswith('='):
+                parts = line.split(':', 1)
+                if len(parts) == 2:
+                    key = parts[0].strip()
+                    value = parts[1].strip()
+                    paths[key] = value
+
+        return {
+            'platform': paths.get('Platform', 'unknown'),
+            'home': paths.get('HyperHome', ''),
+            'account_id': paths.get('Account ID', 'local'),
+            'workspace_root': paths.get('Workspace Root', ''),
+            'personal_drive': paths.get('Personal Drive', '')
+        }
+    except Exception:
+        # Fallback to environment variable on any error
+        return {
+            'platform': 'unknown',
+            'home': '',
+            'account_id': 'local',
+            'workspace_root': os.environ.get('HYPER_WORKSPACE_ROOT', '').strip(),
+            'personal_drive': ''
+        }
+
+
 def resolve_workspace_root() -> str:
-    root = os.environ.get('HYPER_WORKSPACE_ROOT', '').strip()
+    """Resolve workspace root using central path resolution."""
+    paths = get_hyper_paths()
+    root = paths.get('workspace_root', '')
+    if not root:
+        # Fallback to environment variable
+        root = os.environ.get('HYPER_WORKSPACE_ROOT', '').strip()
     if not root:
         return ''
     return normalize_path(root)

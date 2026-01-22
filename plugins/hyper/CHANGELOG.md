@@ -5,6 +5,41 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.17.0] - 2026-01-22
+
+### Added
+
+- **Central Path Resolution System** - New `resolve-paths.sh` script provides cross-platform path resolution for macOS, Linux, and Windows
+- **Cross-Platform Documentation** - New `path-resolution.md` reference (484 lines) documenting HyperHome locations and resolution logic across operating systems
+- **Platform Detection** - Automatic detection of macOS, Linux, Windows (Git Bash/WSL) with OS-specific path handling
+
+### Changed
+
+- **Init Command** - Complete rewrite (754 lines) with elegant 6-state detection (initialized, registered_missing, legacy_needs_migration, account_ready, home_exists, fresh_install)
+- **Script Path Resolution** - All validation and activity tracking scripts now use central path resolver:
+  - `validate-hyper-file.py` - Python subprocess approach to call bash resolver
+  - `validate-write.sh` - Sources central resolver
+  - `track-activity.sh` - Sources central resolver
+  - `track-bash-activity.sh` - Sources central resolver
+  - `update-session.sh` - Receives resolved paths from callers
+- **Directory Structure Docs** - Updated to show full HyperHome hierarchy with account/workspace scoping
+- **Skill Documentation** - Added "Path Resolution (CRITICAL)" section to hyper-craft skill with platform-specific examples
+
+### Fixed
+
+- **Hardcoded Paths** - Eliminated all hardcoded path assumptions (`~/.hyper`, `$HOME/.hyper`, `.hyper/`)
+- **Account Scoping** - Proper support for multiple accounts across different machines
+- **Windows Support** - Git Bash and WSL path handling with correct environment variable usage
+- **Legacy Migration** - Graceful detection and migration path for local `.hyper/` folders
+
+### Documentation
+
+- New: `PHASE_1_IMPLEMENTATION_SUMMARY.md` - Complete Phase 1 implementation details
+- New: `PHASE_2_CHANGES.md` - Script migration summary and docs-internal outline
+- New: `plugins/hyper/skills/hyper-craft/references/path-resolution.md` - Cross-platform path resolution guide
+- Updated: `plugins/hyper/skills/hyper-craft/references/directory-structure.md` - Full HyperHome hierarchy
+- Updated: `plugins/hyper/skills/hyper-craft/SKILL.md` - Added path resolution quick reference
+
 ## [3.16.2] - 2026-01-21
 
 ### Removed
