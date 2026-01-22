@@ -924,7 +924,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 ### Added
 
 **New Orchestrator Agents (2)**
-- `research-orchestrator` - Coordinates research sub-agents in parallel, synthesizes findings, writes to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
+- `research-orchestrator` - Coordinates research sub-agents in parallel, synthesizes findings, writes to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/`
 - `implementation-orchestrator` - Coordinates engineering sub-agents (backend, frontend, test), enforces verification gates, updates task status and implementation logs
 
 **Verification Requirements in Tasks**
@@ -951,7 +951,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 **hyper-plan: Orchestrator Pattern**
 - Now spawns `research-orchestrator` instead of 4 agents directly
 - Orchestrator coordinates parallel research and synthesizes findings
-- Research output explicitly written to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
+- Research output explicitly written to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/`
 
 **hyper-implement: Orchestrator Pattern**
 - Now spawns `implementation-orchestrator` for task implementation
@@ -1062,7 +1062,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 
 **hyper-plan: Local File Operations**
 - Creates project directory in `$HYPER_WORKSPACE_ROOT/projects/{slug}/`
-- Writes research findings to `resources/research/`
+- Writes research findings to `resources/`
 - Creates `specification.md` with full spec
 - Creates task files in `tasks/` after approval
 - Updates frontmatter status at each workflow transition
@@ -1081,7 +1081,7 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 **Research Agents (4)**
 - All research agents now include HYPER INTEGRATION section
 - Agents return structured JSON for parent agent synthesis
-- Output written to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
+- Output written to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/`
 - Updated: repo-research-analyst, best-practices-researcher, framework-docs-researcher, git-history-analyzer
 
 ### Compatibility

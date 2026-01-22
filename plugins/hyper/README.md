@@ -43,8 +43,7 @@ $HYPER_WORKSPACE_ROOT/
 │       ├── _project.mdx     # Project definition + spec (inline)
 │       ├── tasks/           # Task files
 │       │   └── task-NNN.mdx # Tasks with 3-digit numbering
-│       └── resources/       # Supporting docs
-│           └── research/    # Research findings
+│       └── resources/       # Research + artifacts (no nested research/)
 ├── docs/                    # Standalone documentation
 │   └── {slug}.mdx
 └── settings/                # Customization
@@ -54,6 +53,11 @@ $HYPER_WORKSPACE_ROOT/
     └── commands/            # Command customization
         └── {command}.yaml
 ```
+
+Drive items live outside the workspace and are accessed via the Hypercraft CLI:
+
+- Personal Drive: `personal:` scope (private notes)
+- Workspace Drive: `ws:` scope (shared notes)
 
 ### MDX File Naming
 
@@ -68,17 +72,16 @@ $HYPER_WORKSPACE_ROOT/
 ### Workflow Stages
 
 ```
-Draft → Spec Review → Ready → In Progress → Verification → Done
+planned → todo → in-progress → qa → completed
 ```
 
 | Stage | Description |
 |-------|-------------|
-| **Draft** | Research phase - agent explores codebase with parallel sub-agents |
-| **Spec Review** | Human review gate - spec must be approved before tasks are created |
-| **Ready** | Tasks created from approved spec |
-| **In Progress** | Implementation following codebase patterns |
-| **Verification** | Automated (lint, test, typecheck, build) + manual checks |
-| **Done** | All verification passed |
+| **planned** | Research + direction (spec drafting) |
+| **todo** | Spec approved, tasks created |
+| **in-progress** | Implementation following codebase patterns |
+| **qa** | Automated (lint, test, typecheck, build) + manual checks |
+| **completed** | All verification passed |
 
 ### Hyper Commands
 
@@ -106,6 +109,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 | `best-practices-researcher` | Research | Gather external best practices and examples |
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
+| `prior-system-detector` | Detection | Identify prior systems, migrations, or legacy integrations |
 | `web-app-debugger` | Testing | Debug web apps using Chrome extension for browser inspection |
 | `tauri-ui-verifier` | Verification | Internal-only UI verification (not enabled by default) |
 | `workflow-observer` | Verification | Internal-only observability hooks (not enabled by default) |
@@ -118,6 +122,7 @@ Executable workflows using Hypercraft VM (a fork of [OpenProse](https://github.c
 |----------|-------------|
 | `hyper-plan.prose` | Full planning: research → direction gate → spec → approval → tasks |
 | `hyper-implement.prose` | Implementation: load task → analyze → implement → review → verify → complete |
+| `hyper-review.prose` | Review: scope → domain review → findings → fix tasks |
 | `hyper-verify.prose` | Verification: automated checks → Hypercraft state → UI verification via Tauri |
 | `hyper-status.prose` | Status reporting: project/task overview with progress metrics |
 
@@ -126,6 +131,7 @@ Executable workflows using Hypercraft VM (a fork of [OpenProse](https://github.c
 # In Claude Code, load the Hypercraft VM skill then run:
 hypercraft run hyper-plan.prose feature="Add user authentication"
 hypercraft run hyper-implement.prose task="ua-001"
+hypercraft run hyper-review.prose target_id="user-auth/ua-001"
 hypercraft run hyper-verify.prose project="user-auth"
 ```
 
@@ -138,13 +144,13 @@ hypercraft run hyper-verify.prose project="user-auth"
 Agents are organized in a three-tier hierarchy with composable skills:
 
 ```
-COMMAND LAYER          /hyper:plan, /hyper:implement, /hyper:verify
+COMMAND LAYER          /hyper:plan, /hyper:implement, /hyper:review, /hyper:verify
        │
        ▼
-ORCHESTRATOR LAYER     hyper-captain, impl-captain, verify-captain
+CAPTAIN/ORCHESTRATOR   hyper-captain, impl-captain, review-captain, verify-captain
        │               Skills: hyper-craft + task-specific
        ▼
-SPECIALIST LAYER       repo-analyst, executor, reviewer
+WORKER LAYER           repo-analyst, executor, reviewer
                        Skills: hyper-craft + domain-specific
 ```
 
@@ -181,6 +187,8 @@ The workflow leverages 14 skills including the bundled Hypercraft VM:
 | `hyper-activity-tracking` | All commands | Activity tracking for file modifications |
 | `git-worktree` | hyper-implement | Isolated parallel development with Git worktrees |
 | `compound-docs` | hyper-review, hyper-plan | Document recurring patterns and learnings |
+| `compound-engineering` | All commands | Capture learnings from workflow triggers |
+| `skill-template-creator` | All commands | Create reusable skill templates |
 | `hyper` | All .prose workflows | Hypercraft VM for executing workflow files (fork of OpenProse) |
 
 ### Quick Start
@@ -244,9 +252,9 @@ skip_phases:
 
 ## Reference
 
-### Agents (9)
+### Agents (10)
 
-Orchestrators (2), Research agents (4), Testing agent (1), and Verification agents (2):
+Orchestrators (2), Research agents (4), Detection agent (1), Testing agent (1), and Verification agents (2):
 
 | Agent | Category | Description |
 |-------|----------|-------------|
@@ -256,6 +264,7 @@ Orchestrators (2), Research agents (4), Testing agent (1), and Verification agen
 | `best-practices-researcher` | Research | Gather external best practices and examples |
 | `framework-docs-researcher` | Research | Research framework documentation and best practices |
 | `git-history-analyzer` | Research | Analyze git history and code evolution |
+| `prior-system-detector` | Detection | Identify prior systems, migrations, or legacy integrations |
 | `web-app-debugger` | Testing | Debug and test web apps using Claude Code Chrome extension |
 | `tauri-ui-verifier` | Verification | Internal-only UI verification (not enabled by default) |
 | `workflow-observer` | Verification | Internal-only observability hooks (not enabled by default) |
@@ -381,6 +390,10 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project update auth-system --status "i
 
 # List projects
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project list --json
+
+# Archive project (hide from default views)
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project archive --slug auth-system
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project archive --slug auth-system --unarchive
 
 # Search across all resources
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "OAuth" --json

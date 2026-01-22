@@ -1,25 +1,25 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-2.4.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-3.16.2-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering
 
 **Specs first. Code second. Verification always.**
 
-A Claude Code plugin for local-first, spec-driven development. Transform vague ideas into comprehensive specifications, implement them systematically, and verify everything before it ships. Works standalone or with the Hypercraft desktop app.
+A Claude Code plugin for local-first, spec-driven development. It turns workflows into reusable programs, keeps all artifacts local, and enforces human gates before code ships. Works standalone or with the Hypercraft desktop app.
 
 ## Why Hyper-Engineering?
 
-Traditional AI-assisted development is chaotic. You prompt, get code, fix bugs, repeat. Context gets lost. Quality varies wildly.
+Traditional AI-assisted development is chaotic. You prompt, get code, fix bugs, repeat. Context gets lost. Quality varies.
 
 Hyper-Engineering inverts this:
 
-- **Research before planning** — 4 agents explore your codebase in parallel
-- **Specs before code** — Comprehensive specifications with diagrams and success criteria
-- **Approval before work** — Two gates prevent wasted effort
-- **Verification before done** — Nothing ships without passing all checks
+- **Research before planning** - Parallel research agents explore the codebase and docs
+- **Specs before code** - The spec is the source of truth
+- **Approval before work** - Gates prevent wasted effort
+- **Verification before done** - QA must pass before completion
 
 ## Quick Start
 
@@ -33,81 +33,110 @@ In Claude Code, run these slash commands:
 /plugin install hyper
 
 # Initialize workspace
-/hyper-init
+/hyper:init
 
 # Start planning
-/hyper-plan "Add user authentication with OAuth"
+/hyper:plan "Add user authentication with OAuth"
 ```
 
-## The Workflow
+## Workflow
 
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   RESEARCH  │───▶│    SPEC     │───▶│  IMPLEMENT  │───▶│   VERIFY    │
-│             │    │             │    │             │    │             │
-│ 4 parallel  │    │ Gate 1: Dir │    │ Incremental │    │ Slop check  │
-│ agents      │    │ Gate 2: Full│    │ + worktrees │    │ Auto checks │
-│             │    │             │    │             │    │ Manual test │
-└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
-                          │                   │                  │
-                          ▼                   ▼                  ▼
-                    ┌─────────────────────────────────────────────────┐
-                    │               $HYPER_WORKSPACE_ROOT/ DIRECTORY                  │
-                    │    Projects • Specs • Tasks • Status Updates     │
-                    └─────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    R[Research] --> S[Spec + Direction Gate]
+    S --> A[Approval Gate]
+    A --> T[Task Files]
+    T --> I[Implement]
+    I --> RV[Review]
+    RV --> V[Verify/QA]
+    V --> C[Completed]
+
+    subgraph Workspace["$HYPER_WORKSPACE_ROOT/"]
+      P[_project.mdx]
+      K[tasks/task-NNN.mdx]
+      Q[resources/]
+    end
+
+    R --> Q
+    S --> P
+    T --> K
 ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/hyper-init` | Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure |
-| `/hyper-plan` | Research → Spec → Approval → Tasks |
-| `/hyper-implement` | Execute a task with verification loops |
-| `/hyper-verify` | Run slop detection + automated checks + manual verification |
-| `/hyper-review` | Parallel code review (security, architecture, performance, quality) |
-| `/hyper-status` | View project and task status |
+| `/hyper:init` | Initialize workspace structure and migrate legacy data |
+| `/hyper:plan` | Research → spec → approval → tasks |
+| `/hyper:implement` | Execute a task with verification loops |
+| `/hyper:implement-worktree` | Implement in an isolated worktree |
+| `/hyper:review` | Parallel code review (security, architecture, performance, quality) |
+| `/hyper:verify` | Automated + manual verification gates |
+| `/hyper:status` | View project and task status |
+| `/hyper:research` | Research-only workflow |
+| `/hyper:import-external` | Import from external systems (Linear, GitHub, TODO.md) |
 
-## What Makes It Different
+## Agent Model
 
-### Context-Aware Agents
+Captains are user-facing and select workflows. Orchestrators manage steps and pass a minimal skill list to workers.
 
-Agents return **pointers, not dumps**. You get `file:line` references and JSON summaries instead of walls of code. Large tasks checkpoint to `PROGRESS.md` so you can continue in a fresh context.
+```mermaid
+graph TD
+    U[User] --> C[Captain]
+    C --> O[Orchestrator]
+    O --> W1[Worker Agents]
+    O --> W2[Reviewers]
+    W1 --> CLI[Hypercraft CLI]
+    W2 --> CLI
+    CLI --> FS[$HYPER_WORKSPACE_ROOT/]
+    CLI --> DRV[Drive (personal:/ws:)]
+```
 
-### Slop Detection
+## Status Model
 
-AI-specific checks that run before standard verification:
-- **Import validation** — Catches hallucinated packages
-- **Hardcoded secrets** — Finds API keys that should be env vars
-- **Debug statements** — Removes console.log before production
+Project flow:
 
-### Two-Gate Approval
+```
+planned → todo → in-progress → qa → completed
+```
 
-1. **Direction checkpoint** — Validate approach before writing detailed spec
-2. **Full spec approval** — Review complete spec before creating tasks
+Task flow:
 
-### QA Status
+```
+draft → todo → in-progress → qa → complete
+```
 
-Tasks and projects include a `qa` status for quality assurance:
-- Run automated checks (lint, typecheck, test, build)
-- Manual verification with browser testing
-- Only move to `complete` when ALL checks pass
+## Archiving Projects
 
-## Requirements
+Archive hides projects from default views without deleting files:
 
-- [Claude Code](https://claude.ai/download)
-- Git (for worktree support)
+```
+hypercraft project archive --slug auth-system
+hypercraft project archive --slug auth-system --unarchive
+```
+
+## Artifacts and Drives
+
+Workspace artifacts live under `$HYPER_WORKSPACE_ROOT/` and are git-trackable.
+Drive items live in HyperHome and are accessed via the CLI:
+
+```
+hypercraft drive list --json
+hypercraft drive get ws:notes/overview.md --json
+hypercraft drive get personal:ideas/agent-notes.md --json
+```
 
 ## Components
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Agents | 7 | Research specialists + orchestrators |
+| Agents | 10 | Orchestrators, research, detection, testing, verification |
 | Commands | 9 | Core workflow commands |
-| Skills | 3 | Reusable capabilities |
+| Workflows | 5 | `.prose` programs executed by the Hypercraft VM |
+| Skills | 14 | Reusable knowledge + VM |
 | MCP Servers | 1 | Context7 for framework docs |
 
-## OpenProse Credit
+## Hypercraft VM Credit
 
 Hypercraft VM, the workflow VM used by this plugin, is a full fork of [OpenProse](https://github.com/openprose/prose) adapted for Hypercraft workflows.
 
@@ -115,9 +144,7 @@ Hypercraft VM, the workflow VM used by this plugin, is a full fork of [OpenProse
 
 **Specs matter more than code.**
 
-Code is disposable. It can be regenerated, refactored, rewritten. Specifications capture intent, decisions, and rationale. They're the permanent artifact.
-
-Hyper-Engineering treats specs as the source of truth. The local `$HYPER_WORKSPACE_ROOT/` directory holds everything—projects, documents, tasks, status. Code is just an implementation detail.
+Code is disposable. Specifications capture intent, decisions, and rationale. Hyper-Engineering treats specs as the source of truth, with the local `$HYPER_WORKSPACE_ROOT/` directory as the persistent system of record.
 
 ## Contributing
 

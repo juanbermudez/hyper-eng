@@ -136,6 +136,13 @@
 # Detailed view of specific project
 /hyper:status user-authentication</code></pre>
             </div>
+            <p class="command-detail-description">
+              Archive hides projects from default views without deleting files (CLI only):
+            </p>
+            <div class="card-code-block">
+              <pre><code>hypercraft project archive --slug auth-system
+hypercraft project archive --slug auth-system --unarchive</code></pre>
+            </div>
           </div>
 
           <div class="command-detail" id="hyper-plan">
@@ -179,8 +186,8 @@
                   <li><strong>Open Questions</strong> - Must ALL be resolved before approval</li>
                 </ul>
               </li>
-              <li><strong>Project Creation</strong> - Create project in <code>$HYPER_WORKSPACE_ROOT/projects/{slug}/</code> with specification.md</li>
-              <li><strong>🚦 Gate 2: Spec Approval</strong> - Set status to "review" and STOP. Wait for human approval. Do NOT create tasks yet.</li>
+              <li><strong>Project Creation</strong> - Create project in <code>$HYPER_WORKSPACE_ROOT/projects/{slug}/</code> with spec inline in <code>_project.mdx</code></li>
+              <li><strong>🚦 Gate 2: Spec Approval</strong> - Keep status <code>planned</code> and STOP. Wait for human approval. Do NOT create tasks yet.</li>
               <li><strong>Iteration (Optional)</strong> - Update spec based on feedback, return to review gate</li>
               <li><strong>Task Breakdown (After Approval)</strong> - Create task files in <code>$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/</code></li>
             </ol>

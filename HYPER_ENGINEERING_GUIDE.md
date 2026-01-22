@@ -50,41 +50,62 @@ claude /plugin install hyper
 
 ## Directory Structure
 
-After running `/hyper:init`, your project will have:
+After running `/hyper:init`, your workspace will have:
 
 ```
 $HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace configuration
 ├── projects/                # Active projects
 │   └── {slug}/
-│       ├── project.mdx      # Project definition
-│       ├── specification.md # Full specification
+│       ├── _project.mdx     # Project spec (inline)
 │       ├── tasks/           # Task files
-│       │   └── {id}.mdx
-│       └── resources/       # Supporting docs
-│           └── research/    # Research findings
+│       │   └── task-NNN.mdx
+│       └── resources/       # Research + artifacts (no nested research/)
 └── docs/                    # Standalone documentation
     └── {slug}.mdx
 ```
+
+Drive items live outside the workspace and are accessed via the Hypercraft CLI:
+
+- Personal Drive: `personal:` scope (private notes)
+- Workspace Drive: `ws:` scope (shared notes)
 
 ---
 
 ## Workflow Overview
 
 ```
-Draft → Spec Review → Ready → In Progress → Verification → Done
-         ↑                                        ↓
-         └────────── Fix Tasks (if needed) ←──────┘
+planned → todo → in-progress → qa → completed
+                      ↑             ↓
+                      └── Fix tasks ─┘
 ```
 
 | Stage | Description | Gate |
 |-------|-------------|------|
-| **Draft** | Research phase - agents explore codebase | - |
-| **Spec Review** | Human reviews spec | **APPROVAL REQUIRED** |
-| **Ready** | Tasks created from approved spec | - |
-| **In Progress** | Implementation | - |
-| **Verification** | Automated + manual checks | **MUST PASS** |
-| **Done** | All verification passed | - |
+| **planned** | Research + direction (spec drafting) | - |
+| **todo** | Spec approved, tasks created | **APPROVAL REQUIRED** |
+| **in-progress** | Implementation | - |
+| **qa** | Automated + manual checks | **MUST PASS** |
+| **completed** | All verification passed | - |
+
+---
+
+## Agent Roles
+
+Captains are the user-facing agents that select workflows and coordinate sub-agents. Orchestrators manage workflow steps and pass minimal skills to workers.
+
+```mermaid
+graph TD
+    U[User] --> C[Captain (/hyper:plan, /hyper:implement, /hyper:review)]
+    C --> O[Orchestrator]
+    O --> W1[Worker Agents]
+    O --> W2[Reviewers]
+    W1 --> CLI[Hypercraft CLI]
+    W2 --> CLI
+    CLI --> FS[$HYPER_WORKSPACE_ROOT/]
+    CLI --> DRV[Drive (personal:/ws:)]
+    FS --> APP[Hypercraft App]
+```
 
 ---
 
@@ -136,8 +157,8 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 | Project | Status | Tasks | Progress |
 |---------|--------|-------|----------|
 | user-auth | in-progress | 5 | 60% |
-| api-redesign | draft | 0 | 0% |
-| dark-mode | complete | 8 | 100% |
+| api-redesign | planned | 0 | 0% |
+| dark-mode | completed | 8 | 100% |
 ```
 
 ---
@@ -170,9 +191,8 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 ```
 
 **Output:**
-- `$HYPER_WORKSPACE_ROOT/projects/user-auth/project.mdx`
-- `$HYPER_WORKSPACE_ROOT/projects/user-auth/specification.md`
-- `$HYPER_WORKSPACE_ROOT/projects/user-auth/resources/research/*.md`
+- `$HYPER_WORKSPACE_ROOT/projects/user-auth/_project.mdx`
+- `$HYPER_WORKSPACE_ROOT/projects/user-auth/resources/*.md`
 - `$HYPER_WORKSPACE_ROOT/projects/user-auth/tasks/*.mdx` (after approval)
 
 ---
@@ -539,11 +559,24 @@ claude agent web-app-debugger "Form submission not working"
 
 **Research before implementation:**
 ```bash
-claude agent framework-docs-researcher "React Server Components patterns"
-claude agent best-practices-researcher "Form validation best practices"
+/hyper:research "React Server Components patterns"
+/hyper:research "Form validation best practices"
 ```
 
 ### Status Values
+
+**Projects**
+
+| Status | Meaning |
+|--------|---------|
+| `planned` | Research + spec drafting |
+| `todo` | Spec approved, ready for tasks |
+| `in-progress` | Active implementation |
+| `qa` | Verification and review |
+| `completed` | Done and verified |
+| `canceled` | Intentionally stopped |
+
+**Tasks**
 
 | Status | Meaning |
 |--------|---------|
@@ -553,6 +586,15 @@ claude agent best-practices-researcher "Form validation best practices"
 | `qa` | In quality verification |
 | `blocked` | Waiting on dependency |
 | `complete` | Done and verified |
+
+### Archiving Projects
+
+Archive hides a project from default views without deleting files. You can set `archived: true` in `_project.mdx` or use the CLI:
+
+```bash
+hypercraft project archive --slug auth-system
+hypercraft project archive --slug auth-system --unarchive
+```
 
 ### Priority Values
 

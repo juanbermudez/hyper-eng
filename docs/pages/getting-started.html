@@ -162,8 +162,8 @@
 # - git-history-analyzer (code evolution)
 
 # Creates:
-# - $HYPER_WORKSPACE_ROOT/projects/user-auth/project.mdx
-# - $HYPER_WORKSPACE_ROOT/projects/user-auth/specification.md
+# - $HYPER_WORKSPACE_ROOT/projects/user-auth/_project.mdx
+# - $HYPER_WORKSPACE_ROOT/projects/user-auth/resources/*.md
 # - $HYPER_WORKSPACE_ROOT/projects/user-auth/tasks/*.mdx (after approval)</code></pre>
           </div>
 
@@ -179,14 +179,21 @@
 # Updates task status in $HYPER_WORKSPACE_ROOT/</code></pre>
           </div>
 
+          <h3>Archive a Project</h3>
+          <p>Archive hides a project from default views without deleting files:</p>
+          <div class="card-code-block">
+            <pre><code>hypercraft project archive --slug auth-system
+hypercraft project archive --slug auth-system --unarchive</code></pre>
+          </div>
+
           <h3>Run Parallel Code Review</h3>
           <p>Spawn 4 domain reviewers in parallel:</p>
           <div class="card-code-block">
-            <pre><code># Rails code review with Kieran's conventions
-claude agent kieran-rails-reviewer "Review the UserController"
+            <pre><code># Review a task
+/hyper:review auth-login
 
-# Security audit
-claude agent security-sentinel "Audit authentication flow"
+# Review a folder
+/hyper:review src/auth/
 
 # Research best practices
 claude agent best-practices-researcher "Find pagination patterns for Rails"</code></pre>

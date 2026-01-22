@@ -51,25 +51,23 @@ Specialists return structured JSON to orchestrators:
 
 ```json
 {
-  "status": "complete|partial|blocked|error",
-  "findings": {
-    "summary": "Brief human-readable summary",
-    "details": "Detailed information",
-    "key_points": ["Point 1", "Point 2"]
+  "meta": {
+    "agent_name": "repo-research-analyst",
+    "status": "complete|partial|blocked|error",
+    "execution_time_ms": 1234
   },
-  "artifacts": {
-    "artifact-key": "path/to/artifact.md",
-    "another-artifact": "path/to/file.ts"
-  },
+  "artifacts": [
+    {
+      "type": "document",
+      "path": "projects/slug/resources/codebase-analysis.md",
+      "summary": "Summary of patterns found",
+      "key_points": ["Point 1", "Point 2"]
+    }
+  ],
   "next_steps": [
     "Suggested follow-up action 1",
     "Suggested follow-up action 2"
-  ],
-  "metadata": {
-    "duration_ms": 1234,
-    "tools_used": ["Read", "Grep"],
-    "files_modified": ["path/to/file.ts"]
-  }
+  ]
 }
 ```
 
@@ -82,31 +80,29 @@ Specialists return structured JSON to orchestrators:
 | `blocked` | Cannot proceed | Missing dependencies or permissions |
 | `error` | Task failed | Unrecoverable error |
 
-### Findings Object
+### Meta Object
 
 ```json
-"findings": {
-  "summary": "Found 3 similar patterns in the codebase",
-  "details": "Detailed analysis...",
-  "key_points": [
-    "Pattern A used in auth module",
-    "Pattern B used in API layer"
-  ],
-  "recommendations": [
-    "Follow Pattern A for consistency"
-  ]
+"meta": {
+  "agent_name": "repo-research-analyst",
+  "status": "complete",
+  "execution_time_ms": 4321
 }
 ```
 
-### Artifacts Object
+### Artifacts Array
 
-Maps artifact names to file paths:
+Each artifact entry describes a concrete file output:
 
 ```json
-"artifacts": {
-  "research-summary": "$HYPER_WORKSPACE_ROOT/projects/slug/resources/research-summary.md",
-  "codebase-analysis": "$HYPER_WORKSPACE_ROOT/projects/slug/resources/codebase.md"
-}
+"artifacts": [
+  {
+    "type": "document",
+    "path": "projects/slug/resources/research-summary.md",
+    "summary": "Research summary",
+    "key_points": ["Key point 1", "Key point 2"]
+  }
+]
 ```
 
 ## Skill Template Format

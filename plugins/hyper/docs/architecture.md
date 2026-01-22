@@ -6,6 +6,18 @@ Technical overview of the HyperCraft skill-based agent system.
 
 The skill-based architecture organizes AI agents into a three-tier hierarchy with composable skills that provide domain-specific knowledge and capabilities.
 
+```mermaid
+graph TD
+    U[User] --> CMD[/hyper:plan, /hyper:implement, /hyper:review]
+    CMD --> CAP[Captain/Orchestrator]
+    CAP --> W1[Workers]
+    CAP --> W2[Reviewers]
+    W1 --> CLI[Hypercraft CLI]
+    W2 --> CLI
+    CLI --> FS[$HYPER_WORKSPACE_ROOT/]
+    CLI --> DRV[Drive (personal:/ws:)]
+```
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                      COMMAND LAYER                              │
@@ -15,16 +27,16 @@ The skill-based architecture organizes AI agents into a three-tier hierarchy wit
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    ORCHESTRATOR LAYER                           │
-│  hyper-captain       impl-captain       review-captain          │
-│                      verify-captain                           │
+│                CAPTAIN/ORCHESTRATOR LAYER                       │
+│  hyper-captain       impl-captain       review-captain           │
+│                      verify-captain                             │
 │  Persistent agents that coordinate specialist agents            │
 │  Skills: hyper-craft + task-specific (hyper-planning, etc.)     │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     SPECIALIST LAYER                            │
+│                       WORKER LAYER                              │
 │  repo-analyst    best-practices    executor    reviewer         │
 │  Single-purpose agents that perform specific tasks              │
 │  Skills: hyper-craft + domain-specific (code-search, etc.)      │
@@ -46,7 +58,7 @@ Commands are the entry points invoked by users:
 
 Commands define the overall workflow structure and HITL gates.
 
-### Orchestrator Layer
+### Captain/Orchestrator Layer
 
 Orchestrators are persistent agents that:
 
@@ -54,6 +66,8 @@ Orchestrators are persistent agents that:
 - Maintain workflow state
 - Present HITL gates for human approval
 - Synthesize outputs from specialists
+
+Captains are the user-facing orchestrators. They select the workflow and pass a minimal skill list to each worker.
 
 **Key characteristics:**
 - Use `persist: true` for conversation continuity
@@ -113,6 +127,8 @@ Loaded for specific workflow phases. Provides phase-specific guidance.
 | `hyper-implementation` | impl-captain | Verification gates, code review, testing |
 | `hyper-verification` | verify-captain | Automated checks, browser testing, QA |
 
+Review workflows reuse `hyper-craft` plus domain skills (`code-search`, `doc-lookup`, `compound-docs`) rather than a dedicated review skill.
+
 ### User Skills (Configurable)
 
 Selected by users via Settings UI. Allows customization of agent capabilities.
@@ -120,9 +136,9 @@ Selected by users via Settings UI. Allows customization of agent capabilities.
 | Slot | Default | Options |
 |------|---------|---------|
 | `doc-lookup` | context7 | context7, web-search, none |
-| `code-search` | grep-enhanced | grep-enhanced, ast-parser, none |
-| `browser-testing` | tauri-testing | tauri-testing, playwright, none |
-| `error-tracking` | none | sentry-cli, datadog, none |
+| `code-search` | codebase-search | codebase-search, sourcegraph, none |
+| `browser-testing` | playwright | playwright, puppeteer, none |
+| `error-tracking` | none | none or custom integration |
 
 ## Skill Resolution
 
@@ -166,18 +182,20 @@ Specialists communicate with orchestrators using structured output:
 
 ```json
 {
-  "status": "complete",
-  "findings": {
-    "summary": "Brief summary of results",
-    "details": "..."
+  "meta": {
+    "agent_name": "repo-research-analyst",
+    "status": "complete",
+    "execution_time_ms": 12500
   },
-  "artifacts": {
-    "file1.md": "$HYPER_WORKSPACE_ROOT/projects/slug/resources/file1.md"
-  },
-  "next_steps": [
-    "Suggested action 1",
-    "Suggested action 2"
-  ]
+  "artifacts": [
+    {
+      "type": "document",
+      "path": "projects/{slug}/resources/codebase-analysis.md",
+      "summary": "Analysis of existing patterns",
+      "key_points": ["JWT used for sessions", "No OAuth currently"]
+    }
+  ],
+  "next_steps": ["Research OAuth providers", "Check security requirements"]
 }
 ```
 
@@ -306,8 +324,8 @@ Templates provide defaults that can be customized:
 templates/hyper/settings/
 ├── skills/
 │   ├── doc-lookup.yaml      # Default: context7
-│   ├── code-search.yaml     # Default: grep-enhanced
-│   └── browser-testing.yaml # Default: tauri-testing
+│   ├── code-search.yaml     # Default: codebase-search
+│   └── browser-testing.yaml # Default: playwright
 └── ...
 ```
 

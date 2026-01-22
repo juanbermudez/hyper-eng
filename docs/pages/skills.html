@@ -132,13 +132,16 @@ skill: compound-docs</code></pre>
             <div class="card-code-block">
               <pre><code># Create project directory
 mkdir -p $HYPER_WORKSPACE_ROOT/projects/auth-feature/tasks
-mkdir -p $HYPER_WORKSPACE_ROOT/projects/auth-feature/resources/research
+mkdir -p $HYPER_WORKSPACE_ROOT/projects/auth-feature/resources
 
 # Write project file with frontmatter
-Write $HYPER_WORKSPACE_ROOT/projects/auth-feature/project.mdx
+Write $HYPER_WORKSPACE_ROOT/projects/auth-feature/_project.mdx
 
 # Read all tasks for a project
-Glob $HYPER_WORKSPACE_ROOT/projects/auth-feature/tasks/*.mdx</code></pre>
+Glob $HYPER_WORKSPACE_ROOT/projects/auth-feature/tasks/*.mdx
+
+# Archive project
+hypercraft project archive --slug auth-feature</code></pre>
             </div>
           </div>
 
