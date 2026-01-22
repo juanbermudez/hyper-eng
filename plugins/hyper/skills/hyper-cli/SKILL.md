@@ -15,6 +15,10 @@ allowed-tools:
 This skill teaches AI agents how to work with the Hypercraft CLI for programmatic manipulation of `$HYPER_WORKSPACE_ROOT/` planning documents and HyperHome Drive notes. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
 </description>
 
+<note>
+Core workflow context lives in `hyper-craft`. This skill is a CLI reference only.
+</note>
+
 <context>
 
 ## CLI Overview
@@ -37,7 +41,7 @@ Commands:
   activity    Track activity on projects and tasks (add, comment)
   file        Low-level file operations (list, read, write, search, delete)
   settings    Manage workspace settings (workflow, stage, gate, tag)
-  search      Search across all resources (projects, tasks, initiatives)
+  search      Search across all resources (projects, tasks)
   vfs         Virtual filesystem operations (list, resolve, search)
 ```
 
@@ -107,7 +111,6 @@ $HYPER_WORKSPACE_ROOT/
 │       │   └── task-NNN.mdx
 │       └── resources/     # Research, docs, artifacts (WRITABLE)
 │           └── research/
-├── initiatives/           # High-level initiatives (PROTECTED - directory)
 ├── docs/                  # Workspace documentation (WRITABLE)
 └── settings/              # Configuration
     ├── workflows.yaml     # Project/task stages (WRITABLE)
@@ -124,7 +127,7 @@ $HYPER_WORKSPACE_ROOT/
 id: proj-{slug}           # Required, pattern: ^proj-[a-z0-9-]+$
 title: "Project Title"    # Required, minLength: 1
 type: project             # Required, literal
-status: planning          # Required, enum: planning|todo|blocked|in-progress|verifying|completed|canceled
+status: planned           # Required, enum: planned|todo|in-progress|qa|completed|canceled
 priority: medium          # Required, enum: urgent|high|medium|low
 summary: "Brief desc"     # Optional
 created: 2026-01-13       # Optional, auto-set on creation
@@ -140,7 +143,7 @@ tags: [tag1, tag2]        # Optional, string[]
 id: {initials}-{NNN}      # Required, pattern: ^[a-z]+-\d{3}$
 title: "Task Title"       # Required
 type: task                # Required, literal
-status: todo              # Required, enum: draft|todo|in-progress|verifying|complete|blocked
+status: todo              # Required, enum: draft|todo|in-progress|qa|complete|blocked
 priority: medium          # Optional, enum: urgent|high|medium|low
 parent: proj-{slug}       # Required, project ID
 depends_on: [id-001]      # Optional, task IDs
@@ -171,9 +174,9 @@ All CLI commands with `--json` flag return structured responses:
     "context": {
       "field": "status",
       "value": "foo",
-      "allowed": ["planning", "todo", "blocked", "in-progress", "verifying", "completed", "canceled"]
+      "allowed": ["planned", "todo", "in-progress", "qa", "completed", "canceled"]
     },
-    "suggestion": "Valid values: planning, todo, blocked, in-progress, verifying, completed, canceled"
+    "suggestion": "Valid values: planned, todo, in-progress, qa, completed, canceled"
   }
 }
 ```
@@ -217,7 +220,7 @@ hypercraft file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
   --json
 
 # Error response includes allowed values:
-# { "error": { "context": { "allowed": ["planning", "todo", ...] } } }
+# { "error": { "context": { "allowed": ["planned", "todo", ...] } } }
 
 # Step 2: Self-correct using the allowed value
 hypercraft file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
@@ -234,7 +237,6 @@ hypercraft file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
 **CANNOT modify:**
 - `$HYPER_WORKSPACE_ROOT/workspace.json` (core structure)
 - `$HYPER_WORKSPACE_ROOT/projects` (directory itself)
-- `$HYPER_WORKSPACE_ROOT/initiatives` (directory itself)
 - `$HYPER_WORKSPACE_ROOT/settings` (directory itself)
 
 **CAN create/edit/delete:**
@@ -242,9 +244,6 @@ hypercraft file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/_project.mdx` (project files)
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/*.mdx` (task files)
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/**` (resource files)
-- `$HYPER_WORKSPACE_ROOT/initiatives/{slug}/_initiative.mdx` (initiative files)
-- `$HYPER_WORKSPACE_ROOT/initiatives/{slug}/tasks/*.mdx` (initiative tasks)
-- `$HYPER_WORKSPACE_ROOT/initiatives/{slug}/resources/**` (initiative resources)
 - `$HYPER_WORKSPACE_ROOT/notes/*.mdx` (personal drive notes)
 - `$HYPER_WORKSPACE_ROOT/notes/**/*.mdx` (nested notes in subfolders)
 - `$HYPER_WORKSPACE_ROOT/docs/**/*.md` (documentation)
@@ -270,7 +269,7 @@ hypercraft file write $HYPER_WORKSPACE_ROOT/projects/my-feature/_project.mdx \
   --frontmatter "id=proj-my-feature" \
   --frontmatter "title=My Feature" \
   --frontmatter "type=project" \
-  --frontmatter "status=planning" \
+  --frontmatter "status=planned" \
   --frontmatter "priority=high" \
   --frontmatter "summary=Implementing a new feature" \
   --body "# My Feature\n\n## Description\n..." \
@@ -361,7 +360,7 @@ hypercraft settings workflow get project.stages --json
 hypercraft settings workflow get task.statuses --json
 
 # Set a value
-hypercraft settings workflow set project.stages '["planning", "todo", "in-progress", "completed"]' --json
+hypercraft settings workflow set project.stages '["planned", "todo", "in-progress", "qa", "completed"]' --json
 ```
 
 ### Reading and Writing Files
@@ -392,7 +391,7 @@ hypercraft settings workflow list --json
 hypercraft settings workflow get project.stages --json
 
 # Set a value
-hypercraft settings workflow set project.stages '["planning", "todo", "in-progress", "completed"]' --json
+hypercraft settings workflow set project.stages '["planned", "todo", "in-progress", "qa", "completed"]' --json
 
 # Manage workflow stages
 hypercraft settings stage list --json

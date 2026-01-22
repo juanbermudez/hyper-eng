@@ -49,7 +49,6 @@ Creates:
 ```
 $HYPER_WORKSPACE_ROOT/
 ├── workspace.json
-├── initiatives/
 ├── projects/
 └── docs/
 ```
@@ -70,7 +69,7 @@ $HYPER_WORKSPACE_ROOT/
   - best-practices-researcher
   - framework-docs-researcher
   - git-history-analyzer
-- Writes findings to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
+- Writes findings to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/`
 
 **Phase 3: Direction Check (Gate 1)**
 - Presents brief summary for early validation
@@ -174,7 +173,7 @@ $HYPER_WORKSPACE_ROOT/
 
 ```bash
 PROJECT_SLUG="auth-system"
-mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
+mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/{tasks,resources,resources}"
 # Write _project.mdx with project template
 ```
 

@@ -19,8 +19,8 @@ Works standalone or with the Hypercraft desktop app ([repo](https://github.com/j
 | Component | Count |
 |-----------|-------|
 | Agents | 10 |
-| Commands | 8 |
-| Hypercraft Workflows | 4 |
+| Commands | 9 |
+| Hypercraft Workflows | 5 |
 | Skills | 14 |
 | MCP Servers | 1 |
 
@@ -37,7 +37,6 @@ The hyper-engineering workflow uses local `$HYPER_WORKSPACE_ROOT/` directory as 
 ```
 $HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace configuration
-├── initiatives/             # Strategic groupings
 │   └── {slug}.mdx
 ├── projects/                # Active projects
 │   └── {slug}/
@@ -64,7 +63,6 @@ $HYPER_WORKSPACE_ROOT/
 |-----------|----------|---------|
 | Project | `_project.mdx` | `$HYPER_WORKSPACE_ROOT/projects/auth-system/_project.mdx` |
 | Task | `task-NNN.mdx` | `$HYPER_WORKSPACE_ROOT/projects/auth-system/tasks/task-001.mdx` |
-| Initiative | `{slug}.mdx` | `$HYPER_WORKSPACE_ROOT/initiatives/q1-goals.mdx` |
 | Doc | `{slug}.mdx` | `$HYPER_WORKSPACE_ROOT/docs/architecture.mdx` |
 
 ### Workflow Stages
@@ -92,6 +90,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 | `/hyper:plan` | Spawn research agents → create spec → wait for approval → create tasks |
 | `/hyper:implement` | Implement task with verification loop |
 | `/hyper:implement-worktree` | Implement task in isolated worktree (mandatory isolation) |
+| `/hyper:review` | Orchestrate code review with domain sub-agents |
 | `/hyper:verify` | Run comprehensive automated and manual verification |
 | `/hyper:research` | Standalone research workflow with comprehensive or deep modes |
 
@@ -261,19 +260,21 @@ Orchestrators (2), Research agents (4), Testing agent (1), and Verification agen
 | `tauri-ui-verifier` | Verification | Internal-only UI verification (not enabled by default) |
 | `workflow-observer` | Verification | Internal-only observability hooks (not enabled by default) |
 
-### Commands (7)
+### Commands (9)
 
 | Command | Description |
 |---------|-------------|
 | `/hyper:init` | Initialize or repair workspace structure in HyperHome |
+| `/hyper:import-external` | Import from external systems (TODO.md, GitHub Issues, Linear) |
 | `/hyper:status` | View project and task status from CLI |
 | `/hyper:plan` | Spawn research agents → create spec → wait for approval → create tasks |
 | `/hyper:implement` | Implement task with verification loop |
 | `/hyper:implement-worktree` | Implement task in isolated worktree (mandatory isolation) |
+| `/hyper:review` | Orchestrate code review with domain sub-agents |
 | `/hyper:verify` | Run comprehensive automated and manual verification |
 | `/hyper:research` | Standalone research workflow with comprehensive or deep modes |
 
-### Hypercraft Workflows (4)
+### Hypercraft Workflows (5)
 
 Executable workflows using Hypercraft VM (a fork of [OpenProse](https://github.com/openprose/prose)):
 
@@ -281,6 +282,7 @@ Executable workflows using Hypercraft VM (a fork of [OpenProse](https://github.c
 |----------|-------------|
 | `hyper-plan.prose` | Full planning: research → direction gate → spec → approval → tasks |
 | `hyper-implement.prose` | Implementation: load task → analyze → implement → review → verify |
+| `hyper-review.prose` | Review: scoped code review with domain reviewers |
 | `hyper-verify.prose` | Verification: automated checks → Hypercraft state → UI verification |
 | `hyper-status.prose` | Status reporting: project/task overview with progress metrics |
 
@@ -347,7 +349,7 @@ Commands:
   activity  Track activity on projects and tasks (add, comment)
   file      Low-level file operations (list, read, write, search, delete)
   settings  Manage workspace settings (workflow, stage, gate, tag)
-  search    Search across all resources (projects, tasks, initiatives)
+  search    Search across all resources (projects, tasks)
   vfs       Virtual filesystem operations (list, resolve, search)
 ```
 

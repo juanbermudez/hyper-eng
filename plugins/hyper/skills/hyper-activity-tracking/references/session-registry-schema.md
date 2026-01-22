@@ -77,17 +77,7 @@ The sidecar file is created next to the session JSONL, using the same session ID
   "type": "resource",
   "projectSlug": "auth-system",
   "resourcePath": "research/api-patterns.md",
-  "filePath": "$HYPER_WORKSPACE_ROOT/projects/auth/resources/research/api-patterns.md"
-}
-```
-
-### Initiative Target
-
-```json
-{
-  "type": "initiative",
-  "initiativeSlug": "q1-goals",
-  "filePath": "$HYPER_WORKSPACE_ROOT/initiatives/q1-goals.mdx"
+  "filePath": "$HYPER_WORKSPACE_ROOT/projects/auth/resources/api-patterns.md"
 }
 ```
 

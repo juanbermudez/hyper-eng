@@ -129,7 +129,7 @@ Enable isolated development: {{USE_WORKTREE}}
 
 ## Research Resources
 
-Research documents location: `resources/research/`
+Research documents location: `resources/`
 
 - codebase-analysis.md
 - best-practices.md

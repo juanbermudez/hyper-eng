@@ -5,11 +5,11 @@
 Read ALL research documents in full - do not skim:
 
 ```bash
-cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/codebase-analysis.md"
-cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/best-practices.md"
-cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/framework-docs.md"
-cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/git-history.md"
-cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/research-summary.md"
+cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/codebase-analysis.md"
+cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/best-practices.md"
+cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/framework-docs.md"
+cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/git-history.md"
+cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research-summary.md"
 ```
 
 ## Step 2: Identify Decision Points

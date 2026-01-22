@@ -22,7 +22,7 @@ Research → Interview → Spec → Review → Tasks
 **Output:**
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/_project.mdx` (spec inline)
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/task-*.mdx`
-- `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
+- `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/`
 
 ### 2. Implement → /hyper:implement
 

@@ -8,7 +8,6 @@ Templates for the `$HYPER_WORKSPACE_ROOT/` directory structure used by the hyper
 |----------|---------|
 | `project.mdx.template` | Project definition with metadata and goals |
 | `task.mdx.template` | Implementation task with acceptance criteria |
-| `initiative.mdx.template` | Strategic grouping of projects |
 | `resource.mdx.template` | Supporting documentation (specs, research) |
 | `doc.mdx.template` | Standalone documentation |
 | `workspace.json.template` | Workspace metadata |
@@ -79,17 +78,13 @@ custom_field: custom value
 
 ## Document Types
 
-### Initiative
-High-level strategic grouping (e.g., "Q1 2025 Product Launch")
-- Status: `planned`, `in-progress`, `completed`, `canceled`
-
 ### Project
 A discrete piece of work with tasks and resources
-- Status: `planned`, `todo`, `in-progress`, `completed`, `canceled`
+- Status: `planned`, `todo`, `in-progress`, `qa`, `completed`, `canceled`
 
 ### Task
 Individual implementation units within a project
-- Status: `draft`, `todo`, `in-progress`, `review`, `complete`, `blocked`
+- Status: `draft`, `todo`, `in-progress`, `qa`, `complete`, `blocked`
 
 ### Resource
 Supporting documentation, specifications, research
@@ -107,7 +102,7 @@ All documents follow this schema (compatible with Hypercraft):
 ---
 id: string           # Unique identifier (e.g., "proj-auth", "task-auth-001")
 title: string        # Human-readable title
-type: string         # initiative | project | task | resource | doc
+type: string         # project | task | resource | doc
 status: string       # See status enums above
 priority: string     # urgent | high | medium | low (optional)
 created: string      # ISO date (YYYY-MM-DD)

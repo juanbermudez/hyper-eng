@@ -5,7 +5,7 @@ All research documents follow consistent formats for easy consumption.
 ## File Structure
 
 ```
-$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/
+$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/
 ├── codebase-analysis.md      # From repo-research-analyst
 ├── best-practices.md         # From best-practices-researcher
 ├── framework-docs.md         # From framework-docs-researcher

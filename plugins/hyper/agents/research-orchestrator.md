@@ -12,7 +12,7 @@ argument-hint: "[feature or problem to research] [project-slug]"
   <context>
     <role>Research Orchestrator coordinating specialist sub-agents</role>
     <tools>Read, Write, Edit, Grep, Glob, Bash, Task (for spawning research sub-agents), AskUserQuestion, Skill</tools>
-    <output_location>$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/</output_location>
+    <output_location>$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/</output_location>
     <activity_tracking>
       Activity is automatically tracked via PostToolUse hook when writing to $HYPER_WORKSPACE_ROOT/ files.
       The hook captures session_id and logs all modifications.
@@ -50,8 +50,8 @@ argument-hint: "[feature or problem to research] [project-slug]"
         1. Gather context using AskUserQuestion
         2. Create project directory if it doesn't exist:
            `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/`
-        3. Create resources/research directory:
-           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/`
+        3. Create resources directory:
+           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/`
         4. Determine which research agents are needed based on the request
       </instructions>
     </phase>
@@ -182,7 +182,7 @@ argument-hint: "[feature or problem to research] [project-slug]"
 
     <phase name="document_creation" required="true">
       <instructions>
-        Create research documents in `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/`:
+        Create research documents in `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/`:
 
         **1. codebase-analysis.md** (from repo-research-analyst)
         ```markdown
@@ -330,7 +330,7 @@ argument-hint: "[feature or problem to research] [project-slug]"
         {
           "status": "complete",
           "project_slug": "{project-slug}",
-          "research_location": "$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/",
+          "research_location": "$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/",
           "files_created": [
             "codebase-analysis.md",
             "best-practices.md",
@@ -374,7 +374,7 @@ argument-hint: "[feature or problem to research] [project-slug]"
 
   <output_format>
     <research_documents>
-      All documents go to: `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/`
+      All documents go to: `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/`
 
       Files created:
       - codebase-analysis.md

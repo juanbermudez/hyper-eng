@@ -10,12 +10,13 @@ allowed-tools:
   - Glob
   - Task
 includes:
+  - hyper-craft
   - hyper-cli
 ---
 
 # Hyper Verification Skill
 
-Comprehensive verification and quality assurance with automated checks and browser testing.
+Comprehensive verification and quality assurance with automated checks and browser testing. Requires `hyper-craft` as the core skill.
 
 ## Overview
 

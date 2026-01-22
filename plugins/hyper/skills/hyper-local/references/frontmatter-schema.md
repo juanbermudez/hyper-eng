@@ -110,7 +110,6 @@ Valid values for `type`:
 
 | Type | Description | Status Values |
 |------|-------------|---------------|
-| `initiative` | Strategic grouping | planned, in-progress, qa, completed, canceled |
 | `project` | Work container | planned, todo, in-progress, qa, completed, canceled |
 | `task` | Implementation unit | draft, todo, in-progress, qa, complete, blocked |
 | `resource` | Supporting documentation | (none) |
@@ -179,10 +178,6 @@ The `id` field MUST include a scope prefix:
 **QA Status**: Projects enter QA when all tasks are complete. This is for project-level verification: integration testing, final review, documentation check.
 
 **Ready for Review Status**: Used primarily for research projects. Indicates research is complete and awaiting human review before archiving or follow-up planning.
-
-### Initiative Statuses
-
-Same as project statuses.
 
 ## Priority Values
 
@@ -527,7 +522,7 @@ interface ActivityEntry {
 interface Frontmatter {
   id: string;
   title: string;
-  type: 'initiative' | 'project' | 'task' | 'resource' | 'doc';
+  type: 'project' | 'task' | 'resource' | 'doc';
   status?: string;
   priority?: 'urgent' | 'high' | 'medium' | 'low';
   parent?: string;

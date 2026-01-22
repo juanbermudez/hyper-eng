@@ -191,8 +191,8 @@ sequenceDiagram
 
 | Document | Location | Key Sections |
 |----------|----------|--------------|
-| Codebase Analysis | `resources/research/codebase-analysis.md` | Patterns |
-| Best Practices | `resources/research/best-practices.md` | Recommendations |
+| Codebase Analysis | `resources/codebase-analysis.md` | Patterns |
+| Best Practices | `resources/best-practices.md` | Recommendations |
 
 ## Open Questions (Must Resolve Before Approval)
 

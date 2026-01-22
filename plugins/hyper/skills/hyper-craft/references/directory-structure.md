@@ -9,8 +9,6 @@ $HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace metadata (PROTECTED - read-only)
 ├── templates/               # Custom templates (optional)
 │   └── *.template
-├── initiatives/             # High-level strategic groupings
-│   └── {initiative-slug}.mdx
 ├── projects/                # Project containers (PROTECTED - directory itself)
 │   └── {project-slug}/
 │       ├── _project.mdx     # Project definition (required)
@@ -99,7 +97,7 @@ tags:
 # Task Implementation Details
 ```
 
-### projects/{slug}/resources/research/*.md
+### projects/{slug}/resources/*.md
 
 Research findings from sub-agents:
 
@@ -161,7 +159,6 @@ quality_gates:
 **CANNOT modify:**
 - `workspace.json` - Core workspace structure
 - `projects/` directory itself - Use CLI to create projects
-- `initiatives/` directory itself
 - `settings/` directory itself
 
 **CAN create/edit/delete:**
@@ -181,7 +178,6 @@ quality_gates:
 | Project slug | kebab-case | `auth-system` |
 | Project file | `_project.mdx` | Always `_project.mdx` |
 | Task file | `task-NNN.mdx` | `task-001.mdx` |
-| Initiative | `{slug}.mdx` | `q1-2025.mdx` |
 | Doc | `{slug}.mdx` | `architecture.mdx` |
 
 ## ID Conventions
@@ -190,7 +186,6 @@ quality_gates:
 |------|---------|---------|
 | Project | `proj-{slug}` | `proj-auth-system` |
 | Task | `{initials}-{NNN}` | `as-001` |
-| Initiative | `init-{slug}` | `init-q1-2025` |
 | Doc | `doc-{slug}` | `doc-architecture` |
 
 ## Core Principles
@@ -209,7 +204,6 @@ quality_gates:
 Available templates:
 - `project.mdx.template`
 - `task.mdx.template`
-- `initiative.mdx.template`
 - `resource.mdx.template`
 - `doc.mdx.template`
 - `workspace.json.template`

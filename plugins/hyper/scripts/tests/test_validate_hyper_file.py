@@ -180,7 +180,7 @@ class TestInferTypeFromPath(unittest.TestCase):
 
     def test_resource_path(self):
         """Test resource file detection."""
-        path = '/some/path/.hyper/projects/my-project/resources/research/doc.md'
+        path = '/some/path/.hyper/projects/my-project/resources/doc.md'
         self.assertEqual(validator.infer_type_from_path(path), 'resource')
 
     def test_note_path(self):

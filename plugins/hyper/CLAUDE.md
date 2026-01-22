@@ -32,14 +32,16 @@ plugins/hyper-engineering/
 │   │   └── git-history-analyzer.md
 │   └── testing/
 │       └── web-app-debugger.md
-├── commands/                    # Slash commands (8 commands)
-│   ├── hyper-plan.md            # /hyper:plan - Research → Spec → Tasks
-│   ├── hyper-implement.md       # /hyper:implement - Execute tasks
-│   ├── hyper-verify.md          # /hyper:verify - Verification loop
-│   ├── hyper-review.md          # /hyper:review - Code review
-│   ├── hyper-status.md          # /hyper:status - Project status
-│   ├── hyper-init.md            # /hyper:init - Initialize $HYPER_WORKSPACE_ROOT/
-│   ├── hyper-init-stack.md      # /hyper:init-stack - Project scaffolding
+├── commands/                    # Slash commands (9 commands)
+│   ├── plan.md                  # /hyper:plan - Research → Spec → Tasks
+│   ├── implement.md             # /hyper:implement - Execute tasks
+│   ├── verify.md                # /hyper:verify - Verification loop
+│   ├── review.md                # /hyper:review - Code review
+│   ├── status.md                # /hyper:status - Project status
+│   ├── init.md                  # /hyper:init - Initialize $HYPER_WORKSPACE_ROOT/
+│   ├── import-external.md       # /hyper:import-external - Import external systems
+│   ├── implement-worktree.md    # /hyper:implement-worktree - Isolated implementation
+│   └── research.md              # /hyper:research - Standalone research
 ├── skills/                      # Model-invoked skills (3 skills)
 │   ├── hyper-local/             # $HYPER_WORKSPACE_ROOT/ directory operations
 │   │   ├── SKILL.md             # Main skill definition

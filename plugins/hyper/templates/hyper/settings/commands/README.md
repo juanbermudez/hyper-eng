@@ -83,7 +83,7 @@ reason: "Using custom planning process during migration"
 ## Example: Customizing hyper-plan
 
 ```yaml
-# $HYPER_WORKSPACE_ROOT/settings/commands/hyper:plan.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-plan.yaml
 
 context_additions: |
   - This project follows Domain-Driven Design principles
@@ -109,7 +109,7 @@ phase_overrides:
 ## Example: Customizing hyper-implement
 
 ```yaml
-# $HYPER_WORKSPACE_ROOT/settings/commands/hyper:implement.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-implement.yaml
 
 context_additions: |
   - Run tests in watch mode during development
@@ -140,7 +140,7 @@ quality_gates:
 ## Example: Customizing hyper-verify
 
 ```yaml
-# $HYPER_WORKSPACE_ROOT/settings/commands/hyper:verify.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-verify.yaml
 
 context_additions: |
   - E2E tests require Docker to be running

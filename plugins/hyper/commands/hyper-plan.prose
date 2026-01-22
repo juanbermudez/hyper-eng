@@ -110,7 +110,18 @@ mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/runs/$RUN_ID/bindings"
 mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/agents/hyper-captain"
 ```
 
-4. Create project directory structure:
+4. Ensure project exists (create if missing):
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project get "$PROJECT_SLUG" --json >/dev/null 2>&1 || \
+  ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project create \
+    --slug "$PROJECT_SLUG" \
+    --title "{feature}" \
+    --priority "high" \
+    --status "planned" \
+    --json
+```
+
+5. Create project directory structure:
 ```bash
 mkdir -p "$HYPER_WORKSPACE_ROOT/projects/$PROJECT_SLUG/resources"
 mkdir -p "$HYPER_WORKSPACE_ROOT/projects/$PROJECT_SLUG/tasks"
@@ -195,7 +206,7 @@ Search for:
 Clarified scope: {clarification}
 
 Write findings to:
-$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/research/codebase-analysis.md"""
+$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/codebase-analysis.md"""
       context: { feature, clarification, init }
 
     practices_findings = session: best-practices
@@ -209,7 +220,7 @@ Search for:
 Clarified scope: {clarification}
 
 Write findings to:
-$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/research/best-practices.md"""
+$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/best-practices.md"""
       context: { feature, clarification, init }
 
     docs_findings = session: framework-docs
@@ -223,7 +234,7 @@ Look up:
 Clarified scope: {clarification}
 
 Write findings to:
-$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/research/framework-docs.md"""
+$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/framework-docs.md"""
       context: { feature, clarification, init }
 
     history_findings = session: git-analyzer
@@ -237,17 +248,17 @@ Examine:
 Clarified scope: {clarification}
 
 Write findings to:
-$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/research/git-history.md"""
+$HYPER_WORKSPACE_ROOT/projects/{project_slug}/resources/git-history.md"""
       context: { feature, clarification, init }
 
   let research = session: hyper-captain
     prompt: """Synthesize research findings from parallel agents.
 
 Read the research artifacts:
-- projects/{project_slug}/resources/research/codebase-analysis.md
-- projects/{project_slug}/resources/research/best-practices.md
-- projects/{project_slug}/resources/research/framework-docs.md
-- projects/{project_slug}/resources/research/git-history.md
+- projects/{project_slug}/resources/codebase-analysis.md
+- projects/{project_slug}/resources/best-practices.md
+- projects/{project_slug}/resources/framework-docs.md
+- projects/{project_slug}/resources/git-history.md
 
 Also incorporate any prior learnings: {prior_learnings}
 
@@ -330,17 +341,7 @@ if **direction approved**:
   let spec = session: hyper-captain
     prompt: """Create detailed specification and write to artifact.
 
-1. Create project via CLI:
-```bash
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project create \\
-  --slug "$PROJECT_SLUG" \\
-  --title "{feature}" \\
-  --priority "high" \\
-  --summary "[one-line summary from research]" \\
-  --json
-```
-
-2. Write FULL specification to _project.mdx:
+1. Write FULL specification to _project.mdx:
 ```bash
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write \\
   "projects/$PROJECT_SLUG/_project.mdx" \\

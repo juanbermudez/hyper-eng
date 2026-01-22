@@ -44,7 +44,6 @@ NEXT_NUM=$(printf "%03d" $((10#$LAST_NUM + 1)))
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| Initiative | `init-{slug}` | `init-q1-2025` |
 | Doc | `doc-{slug}` | `doc-architecture` |
 | Resource | `resource-{project-slug}-{slug}` | `resource-auth-system-spec` |
 
@@ -54,7 +53,6 @@ NEXT_NUM=$(printf "%03d" $((10#$LAST_NUM + 1)))
 |------|---------|---------|
 | Project file | `_project.mdx` | Always `_project.mdx` |
 | Task file | `task-NNN.mdx` | `task-001.mdx` |
-| Initiative | `{slug}.mdx` | `q1-2025.mdx` |
 | Doc | `{slug}.mdx` | `architecture.mdx` |
 | Research | `{topic}.md` | `codebase-analysis.md` |
 
@@ -69,7 +67,7 @@ NEXT_NUM=$(printf "%03d" $((10#$LAST_NUM + 1)))
 id: proj-{slug}               # REQUIRED: Pattern ^proj-[a-z0-9-]+$
 title: "Project Title"        # REQUIRED: minLength 1
 type: project                 # REQUIRED: literal "project"
-status: planning              # REQUIRED: See status values
+status: planned               # REQUIRED: See status values
 priority: medium              # REQUIRED: urgent|high|medium|low
 summary: "Brief description"  # REQUIRED: One-line summary
 project_type: feature         # OPTIONAL: feature|research|spike
@@ -114,22 +112,6 @@ tags:                         # OPTIONAL: string[]
 ```
 
 **Task status values:** `draft`, `todo`, `in-progress`, `blocked`, `qa`, `complete`
-
-### Initiative (`initiatives/{slug}.mdx`)
-
-```yaml
----
-id: init-{slug}               # REQUIRED
-title: "Initiative Title"     # REQUIRED
-type: initiative              # REQUIRED: literal "initiative"
-status: in-progress           # REQUIRED: Same as project statuses
-priority: high                # REQUIRED
-created: YYYY-MM-DD           # REQUIRED
-updated: YYYY-MM-DD           # OPTIONAL
-tags:                         # OPTIONAL
-  - quarterly
----
-```
 
 ### Resource (`resources/*.md`)
 

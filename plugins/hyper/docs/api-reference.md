@@ -105,7 +105,7 @@ Maps artifact names to file paths:
 ```json
 "artifacts": {
   "research-summary": "$HYPER_WORKSPACE_ROOT/projects/slug/resources/research-summary.md",
-  "codebase-analysis": "$HYPER_WORKSPACE_ROOT/projects/slug/resources/research/codebase.md"
+  "codebase-analysis": "$HYPER_WORKSPACE_ROOT/projects/slug/resources/codebase.md"
 }
 ```
 

@@ -13,7 +13,7 @@ fi
 ## Create Structure (if NO_HYPER)
 
 ```bash
-mkdir -p $HYPER_WORKSPACE_ROOT/{initiatives,projects,docs}
+mkdir -p $HYPER_WORKSPACE_ROOT/{projects,docs}
 echo '{"workspacePath": "'$(pwd)'", "name": "'$(basename $(pwd))'", "created": "'$(date +%Y-%m-%d)'"}' > $HYPER_WORKSPACE_ROOT/workspace.json
 echo "Created $HYPER_WORKSPACE_ROOT/ directory structure"
 ```
@@ -46,7 +46,7 @@ If exists, ask user:
 
 ```bash
 mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks"
-mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research"
+mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources"
 ```
 
 ## Create Project File

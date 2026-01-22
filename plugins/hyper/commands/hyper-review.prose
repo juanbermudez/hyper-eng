@@ -1,0 +1,352 @@
+# Hyper Review Workflow
+#
+# Orchestrates code review with domain sub-agents and writes a review artifact.
+#
+# Usage: hypercraft run hyper-review.prose target_id="auth-system"
+#        hypercraft run hyper-review.prose target_id="auth-system/as-001"
+#
+# PATH RESOLUTION:
+# $HYPER_WORKSPACE_ROOT = ~/.hyper/accounts/{userId}/hyper/workspaces/{workspaceId}/
+
+input target_id: "Project slug or task id (or project-slug/task-id)"
+input scope: "Optional file list or glob override (comma-separated)"
+
+# ============================================================================
+# Agent Definitions
+# ============================================================================
+
+agent review-captain:
+  model: opus
+  persist: true
+  skills:
+    - hyper-craft              # Core knowledge (always loaded)
+    - code-search              # Codebase analysis
+    - compound-docs            # Optional learnings capture
+  prompt: """You are the Review Captain.
+
+Your role:
+1. Resolve the review target (project or task)
+2. Identify the files and scope to review
+3. Coordinate domain reviewers in parallel
+4. Synthesize findings into a single review report
+
+Key principles:
+- Use hypercraft CLI for file operations
+- Prefer minimal scope, targeted review
+- Provide file:line references for findings
+- Keep the report structured and actionable"""
+
+agent security-reviewer:
+  model: sonnet
+  skills:
+    - hyper-craft
+    - code-search
+    - doc-lookup
+  prompt: """You are a security reviewer.
+Review for auth issues, injection risks, secrets exposure, and unsafe data handling.
+Return findings using the hyper-craft output contract format."""
+
+agent architecture-reviewer:
+  model: sonnet
+  skills:
+    - hyper-craft
+    - code-search
+  prompt: """You are an architecture reviewer.
+Review for layering violations, coupling, and design consistency.
+Return findings using the hyper-craft output contract format."""
+
+agent performance-reviewer:
+  model: sonnet
+  skills:
+    - hyper-craft
+    - code-search
+  prompt: """You are a performance reviewer.
+Review for inefficient queries, render hot paths, and heavy computations.
+Return findings using the hyper-craft output contract format."""
+
+agent code-quality-reviewer:
+  model: sonnet
+  skills:
+    - hyper-craft
+    - code-search
+  prompt: """You are a code quality reviewer.
+Review for correctness, tests, edge cases, and maintainability.
+Return findings using the hyper-craft output contract format."""
+
+# ============================================================================
+# Phase 1: Initialize
+# ============================================================================
+
+let init = session "Initialize review workflow"
+  prompt: """Initialize the review workflow.
+
+1. Resolve workspace:
+```bash
+WORKSPACE_ROOT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft config get globalPath)
+export HYPER_WORKSPACE_ROOT="$WORKSPACE_ROOT"
+```
+
+2. Generate run ID:
+```bash
+RUN_ID="review-$(date +%Y%m%d-%H%M%S)-$(uuidgen | cut -c1-8)"
+```
+
+3. Create Hypercraft state directory:
+```bash
+mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/runs/$RUN_ID/bindings"
+mkdir -p "$HYPER_WORKSPACE_ROOT/.prose/agents/review-captain"
+```
+
+Report: WORKSPACE_ROOT, RUN_ID"""
+
+# ============================================================================
+# Phase 2: Load Review Settings
+# ============================================================================
+
+let review_settings = session: review-captain
+  prompt: """Load review settings.
+
+Defaults:
+```json
+{
+  "auto_create_fix_tasks": {
+    "blocking": true,
+    "high": true,
+    "medium": false,
+    "low": false
+  },
+  "priority_mapping": {
+    "blocking": "urgent",
+    "high": "high",
+    "medium": "medium",
+    "low": "low"
+  },
+  "skip_reviews": []
+}
+```
+
+If settings file exists, read and override defaults:
+```bash
+SETTINGS_FILE="$HYPER_WORKSPACE_ROOT/settings/commands/hyper-review.yaml"
+if [ -f "$SETTINGS_FILE" ]; then
+  cat "$SETTINGS_FILE"
+fi
+```
+
+Return JSON with:
+- auto_create_fix_tasks
+- priority_mapping
+- skip_reviews"""
+  context: { init }
+
+# ============================================================================
+# Phase 3: Resolve Target
+# ============================================================================
+
+let target = session: review-captain
+  prompt: """Resolve review target for: {target_id}
+
+1. Try to locate task by ID:
+```bash
+TASK_FILE=$(find "$HYPER_WORKSPACE_ROOT/projects" -name "task-*.mdx" -exec grep -l "id: {target_id}" {} \\; | head -1)
+```
+
+2. If task found, set project slug from path and read task + project:
+```bash
+if [ -n "$TASK_FILE" ]; then
+  PROJECT_DIR=$(dirname $(dirname "$TASK_FILE"))
+  PROJECT_SLUG=$(basename "$PROJECT_DIR")
+  cat "$TASK_FILE"
+  cat "$PROJECT_DIR/_project.mdx"
+fi
+```
+
+3. If no task found, treat target as project slug:
+```bash
+if [ -z "$TASK_FILE" ]; then
+  PROJECT_SLUG="{target_id}"
+  cat "$HYPER_WORKSPACE_ROOT/projects/$PROJECT_SLUG/_project.mdx"
+fi
+```
+
+Return:
+- project_slug
+- task_file (if any)
+- review_target_type: project|task"""
+  context: { target_id, init }
+
+# ============================================================================
+# Phase 4: Scope Analysis
+# ============================================================================
+
+let scope_analysis = session: review-captain
+  prompt: """Determine review scope.
+
+Inputs:
+- target_id: {target_id}
+- scope override: {scope}
+
+Steps:
+1. If scope override provided, use it verbatim.
+2. Else, try git diff to identify changed files:
+```bash
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 && \
+  (git diff --name-only --diff-filter=ACMRTUXB; git diff --name-only --cached) | sort -u
+```
+3. If still empty and task file exists, read "Implementation Log" for file list.
+4. If no files found, ask user for scope using AskUserQuestion.
+
+Return:
+- files_to_review (array)
+- scope_source (override|git|task-log|user)"""
+  context: { target, scope, init }
+
+# ============================================================================
+# Phase 5: Parallel Reviews
+# ============================================================================
+
+parallel:
+  security = session: security-reviewer
+    prompt: """Review security for target {target_id}.
+
+Files: {scope_analysis.files_to_review}
+Project: {target.project_slug}
+
+If skip_reviews includes "security_review", return status "skipped" with an empty findings array.
+
+Return output contract plus a findings array:
+```json
+{
+  "meta": { "agent_name": "security-reviewer", "status": "complete|skipped" },
+  "findings": [
+    {
+      "severity": "blocking|high|medium|low",
+      "title": "Short issue title",
+      "details": "Clear explanation and risk",
+      "file": "path/to/file",
+      "line": 1
+    }
+  ],
+  "artifacts": [],
+  "next_steps": []
+}
+```"""
+    context: { target, scope_analysis, review_settings }
+
+  architecture = session: architecture-reviewer
+    prompt: """Review architecture for target {target_id}.
+
+Files: {scope_analysis.files_to_review}
+Project: {target.project_slug}
+
+If skip_reviews includes "architecture_review", return status "skipped" with an empty findings array.
+
+Return output contract plus a findings array (same schema as security reviewer)."""
+    context: { target, scope_analysis, review_settings }
+
+  performance = session: performance-reviewer
+    prompt: """Review performance for target {target_id}.
+
+Files: {scope_analysis.files_to_review}
+Project: {target.project_slug}
+
+If skip_reviews includes "performance_review", return status "skipped" with an empty findings array.
+
+Return output contract plus a findings array (same schema as security reviewer)."""
+    context: { target, scope_analysis, review_settings }
+
+  code_quality = session: code-quality-reviewer
+    prompt: """Review code quality for target {target_id}.
+
+Files: {scope_analysis.files_to_review}
+Project: {target.project_slug}
+
+If skip_reviews includes "code_quality_review", return status "skipped" with an empty findings array.
+
+Return output contract plus a findings array (same schema as security reviewer)."""
+    context: { target, scope_analysis, review_settings }
+
+# ============================================================================
+# Phase 6: Synthesis and Report
+# ============================================================================
+
+let report = session: review-captain
+  prompt: """Synthesize review results and write report.
+
+Inputs:
+- security findings: {security}
+- architecture findings: {architecture}
+- performance findings: {performance}
+- code quality findings: {code_quality}
+- review settings: {review_settings}
+
+1. Merge findings into a single list (ignore skipped reviewers).
+2. Group by severity: blocking, high, medium, low.
+3. If auto_create_fix_tasks allows a severity, create fix tasks:
+```bash
+TASK_RESULT=$(${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task create \\
+  --project "{target.project_slug}" \\
+  --title "Fix: [short title]" \\
+  --priority "[mapped priority]" \\
+  --json)
+
+TASK_ID=$(echo "$TASK_RESULT" | jq -r '.id')
+TASK_FILE=$(echo "$TASK_RESULT" | jq -r '.file')
+
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write \\
+  "$TASK_FILE" \\
+  --body "## Objective\n\n[Fix the issue]\n\n## Details\n\n- Severity: [severity]\n- Location: [file:line]\n- Notes: [details]\n\n## Acceptance Criteria\n\n- Issue resolved\n- Tests updated if needed\n"
+```
+4. If auto_create_fix_tasks is false for a severity, list findings without creating tasks.
+
+Write review report to:
+```bash
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file write \\
+  "projects/{target.project_slug}/resources/review-$RUN_ID.md" \\
+  --body "[review report content]"
+```
+
+Report must include:
+- Executive Summary
+- Findings grouped by severity
+- File:line references
+- Recommended fixes and follow-ups
+- Suggested next steps (including optional fix tasks)
+- Fix tasks created (IDs and titles)
+
+Example Fix Tasks section:
+```
+## Fix Tasks
+- as-014 (blocking, urgent) - Fix: sanitize user input in sessions endpoint
+- as-015 (high, high) - Fix: add guard for null workspace state
+```
+
+Return:
+- report_path
+- summary of findings by severity
+- fix tasks created (IDs and titles)
+- recommended next steps"""
+  context: { target, scope_analysis, security, architecture, performance, code_quality, review_settings, init }
+
+# ============================================================================
+# Output Summary
+# ============================================================================
+
+output summary = session: review-captain
+  prompt: """Generate review summary.
+
+## Review Complete
+
+**Target**: {target_id}
+**Project**: {target.project_slug}
+**Report**: `$HYPER_WORKSPACE_ROOT/projects/{target.project_slug}/resources/review-$RUN_ID.md`
+
+### Key Findings
+[Brief summary by severity]
+
+### Next Steps
+1. Address blocking/high issues (if any)
+2. Create fix tasks if needed
+3. Re-run `/hyper:review` after fixes
+"""
+  context: { target, report, init }

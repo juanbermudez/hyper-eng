@@ -48,7 +48,6 @@ $HYPER_WORKSPACE_ROOT/
 │       ├── _project.mdx # Project specification
 │       ├── tasks/       # Task breakdown
 │       └── resources/   # Research, docs
-├── initiatives/         # Strategic groupings
 ├── docs/                # Documentation
 └── settings/            # Configuration
 ```

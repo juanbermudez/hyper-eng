@@ -179,7 +179,6 @@ In addition to per-file activity tracking, the system creates sidecar files next
 | `task` | `taskId`, `projectSlug`, `filePath` | Working on a specific task |
 | `project` | `projectSlug`, `filePath` | Working on project spec |
 | `resource` | `projectSlug`, `resourcePath`, `filePath` | Writing research docs |
-| `initiative` | `initiativeSlug`, `filePath` | Working on initiative |
 | `doc` | `docSlug`, `filePath` | Writing documentation |
 | `other` | `filePath` | Other workspace files |
 

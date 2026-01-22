@@ -252,7 +252,7 @@ argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single 
         - Project: ${PROJECT_SLUG}
         - Spec: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/_project.mdx
         - Tasks Directory: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/tasks/
-        - Research: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/
+        - Research: $HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/
 
         **Your Job - Implement ALL Tasks:**
         1. Read project spec to understand the full scope

@@ -1035,7 +1035,6 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 - Intake routing for different request types
 - File operations reference with examples
 - Template system documentation
-- Directory structure: `initiatives/`, `projects/{slug}/`, `docs/`, `workspace.json`
 
 **New Commands (2)**
 - `/hyper:init` - Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure with templates
@@ -1045,7 +1044,6 @@ The simplified command set keeps the workflow focused: plan → implement → ve
 - `workspace.json.template` - Workspace configuration
 - `project.mdx.template` - Project definition with frontmatter
 - `task.mdx.template` - Task with dependencies and verification
-- `initiative.mdx.template` - Strategic grouping of projects
 - `resource.mdx.template` - Supporting documentation
 - `doc.mdx.template` - Standalone documentation
 

@@ -7,7 +7,7 @@ Use the **hyper** skill to execute the implementation workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper:implement.prose` with:
+Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-implement.prose` with:
 
 ```
 input task_id: "$ARGUMENTS"

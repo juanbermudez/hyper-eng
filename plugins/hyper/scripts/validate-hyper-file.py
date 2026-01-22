@@ -20,7 +20,7 @@ except ImportError:
     HAS_PYYAML = False
 
 # Valid enum values (must match Hypercraft schemas)
-VALID_TYPES = ['initiative', 'project', 'task', 'resource', 'doc']
+VALID_TYPES = ['project', 'task', 'resource', 'doc']
 VALID_STATUSES = [
     # Task statuses
     'draft', 'todo', 'in-progress', 'review', 'complete', 'blocked', 'qa',
@@ -49,15 +49,6 @@ SCHEMAS = {
             'priority': VALID_PRIORITIES,
         },
     },
-    'initiative': {
-        'required': ['id', 'title', 'type'],
-        'optional': ['status', 'priority', 'created', 'updated', 'tags'],
-        'enums': {
-            'type': ['initiative'],
-            'status': VALID_STATUSES,
-            'priority': VALID_PRIORITIES,
-        },
-    },
     'resource': {
         'required': ['title'],
         'optional': ['id', 'type', 'created', 'updated'],
@@ -81,7 +72,6 @@ SCHEMAS = {
 FILENAME_PATTERNS = {
     'project': r'^_project\.mdx$',
     'task': r'^(task|verify-task)-\d{3}\.mdx$',
-    'initiative': r'^[a-z0-9-]+\.mdx$',
     'doc': r'^[a-z0-9-]+\.mdx$',
     'resource': r'^[a-z0-9-]+\.(md|mdx)$',
 }
@@ -222,8 +212,6 @@ def infer_type_from_path(file_path: str) -> str:
         return 'note'
     elif '/notes/' in rel_path:
         return 'note'
-    elif rel_path.startswith('initiatives/'):
-        return 'initiative'
     elif rel_path.startswith('projects/'):
         if rel_path.endswith('/_project.mdx'):
             return 'project'
@@ -710,7 +698,7 @@ def main():
         print("---", file=sys.stderr)
         print('id: "unique-id"  # Quote if contains colon', file=sys.stderr)
         print("title: Document Title", file=sys.stderr)
-        print("type: task|project|initiative|doc|resource", file=sys.stderr)
+        print("type: task|project|doc|resource", file=sys.stderr)
         print("status: todo|in-progress|complete|...", file=sys.stderr)
         print("---", file=sys.stderr)
         # Don't block, just warn

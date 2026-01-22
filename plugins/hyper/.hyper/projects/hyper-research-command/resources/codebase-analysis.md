@@ -56,7 +56,7 @@ argument-hint: "[expected arguments]"
 Current research-orchestrator:
 - Spawns 4 sub-agents in parallel using Task tool
 - Synthesizes findings into structured documents
-- Writes to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
+- Writes to `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/`
 - Returns JSON summary to parent (hyper-plan)
 
 **Enhancement Opportunity**: Currently research is only a phase within `/hyper:plan`. A standalone `/hyper:research` command would:
@@ -215,7 +215,7 @@ The current research-orchestrator can be extracted and enhanced:
 </phase>
 
 <phase name="document_creation">
-  Write to: $HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/
+  Write to: $HYPER_WORKSPACE_ROOT/projects/{slug}/resources/
   - codebase-analysis.md
   - best-practices.md
   - framework-docs.md
@@ -248,7 +248,7 @@ esac
 | Command file | `hyper-{name}.md` | `hyper-research.md` |
 | Agent name | `hyper-{name}-agent` | `hyper-research-agent` |
 | Project ID | `proj-{slug}` | `proj-auth-research` |
-| Research resource | `resources/research/*.md` | Same as current |
+| Research resource | `resources/*.md` | Same as current |
 
 ### Status Values
 

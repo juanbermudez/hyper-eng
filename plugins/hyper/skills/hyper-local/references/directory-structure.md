@@ -9,8 +9,6 @@ $HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace metadata
 ├── templates/               # Custom templates (optional)
 │   └── *.template
-├── initiatives/             # High-level strategic groupings
-│   └── {initiative-slug}.mdx
 ├── projects/                # Project containers
 │   └── {project-slug}/
 │       ├── _project.mdx     # Project definition (required)
@@ -41,25 +39,6 @@ Workspace metadata - created by `/hyper:init`:
   "name": "My Project",
   "created": "2025-12-28"
 }
-```
-
-### initiatives/*.mdx
-
-Strategic groupings that contain multiple projects:
-
-```yaml
----
-id: init-q1-2025
-title: "Q1 2025 Product Launch"
-type: initiative
-status: in-progress
-priority: high
-created: 2025-12-28
-updated: 2025-12-28
-tags:
-  - quarterly
-  - product
----
 ```
 
 ### projects/{slug}/_project.mdx
@@ -140,7 +119,7 @@ Detailed specification document:
 ...
 ```
 
-### projects/{slug}/resources/research/*.md
+### projects/{slug}/resources/*.md
 
 Research findings from sub-agents:
 
@@ -174,7 +153,6 @@ tags:
 | Task file | `task-NNN.mdx` | `task-001.mdx` |
 | Verify task | `verify-task-NNN.mdx` | `verify-task-001.mdx` |
 | Project file | `_project.mdx` | Always `_project.mdx` |
-| Initiative | `{slug}.mdx` | `q1-2025.mdx` |
 | Doc | `{slug}.mdx` | `architecture.mdx` |
 
 ## ID Conventions
@@ -184,7 +162,6 @@ tags:
 | Project | `proj-{slug}` | `proj-auth-system` |
 | Task | `task-{project-slug}-{NNN}` | `task-auth-system-001` |
 | Verify | `verify-{project-slug}-{NNN}` | `verify-auth-system-001` |
-| Initiative | `init-{slug}` | `init-q1-2025` |
 | Doc | `doc-{slug}` | `doc-architecture` |
 | Resource | `resource-{project-slug}-{slug}` | `resource-auth-system-spec` |
 
@@ -193,7 +170,7 @@ tags:
 ### Initialize Workspace
 
 ```bash
-mkdir -p $HYPER_WORKSPACE_ROOT/{initiatives,projects,docs}
+mkdir -p $HYPER_WORKSPACE_ROOT/{projects,docs}
 echo '{"workspacePath": "'$(pwd)'", "name": "Project", "created": "'$(date +%Y-%m-%d)'"}' > $HYPER_WORKSPACE_ROOT/workspace.json
 ```
 
@@ -201,7 +178,7 @@ echo '{"workspacePath": "'$(pwd)'", "name": "Project", "created": "'$(date +%Y-%
 
 ```bash
 PROJECT_SLUG="auth-system"
-mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/{tasks,resources,resources/research}"
+mkdir -p "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/{tasks,resources,resources}"
 ```
 
 ### List Projects

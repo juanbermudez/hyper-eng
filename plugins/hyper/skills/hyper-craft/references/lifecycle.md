@@ -144,7 +144,6 @@ Rules:
 
 Projects don't have explicit dependencies, but:
 - Related projects should be documented in the spec
-- Cross-project coordination happens at the initiative level
 
 ## Workflow Customization
 

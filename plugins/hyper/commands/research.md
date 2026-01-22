@@ -43,7 +43,7 @@ $ARGUMENTS
 ```
 $HYPER_WORKSPACE_ROOT/projects/{slug}/
 ├── _project.mdx              # Research project (project_type: research)
-└── resources/research/
+└── resources/
     ├── codebase-analysis.md
     ├── best-practices.md
     ├── framework-docs.md

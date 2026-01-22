@@ -12,12 +12,13 @@ allowed-tools:
   - WebFetch
   - WebSearch
 includes:
+  - hyper-craft
   - hyper-local
 ---
 
 # Hyper Research Skill
 
-Orchestrate comprehensive research using parallel sub-agents to gather codebase patterns, best practices, framework documentation, and code evolution history.
+Orchestrate comprehensive research using parallel sub-agents to gather codebase patterns, best practices, framework documentation, and code evolution history. Requires `hyper-craft` as the core skill.
 
 ## Overview
 
@@ -63,7 +64,7 @@ After all agents return, synthesize the findings:
 
 ### Step 4: Write Research Documents
 
-Output to: `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/`
+Output to: `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/`
 
 <hyper-embed file="references/output-formats.md" />
 
@@ -134,7 +135,7 @@ Return: Timeline of evolution with key commits.
 All research documents are written to:
 
 ```
-$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/
+$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/
 ├── codebase-analysis.md
 ├── best-practices.md
 ├── framework-docs.md
@@ -150,7 +151,7 @@ After completion, return JSON summary:
 {
   "status": "complete",
   "project_slug": "{slug}",
-  "research_location": "$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/",
+  "research_location": "$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/",
   "key_findings": {
     "recommended_approach": "...",
     "key_decisions": ["..."],

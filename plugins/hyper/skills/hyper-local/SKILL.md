@@ -16,7 +16,7 @@ allowed-tools:
 <skill name="hyper-local">
 
 <description>
-Expert guidance for spec-driven development with local file-based project management. Uses the $HYPER_WORKSPACE_ROOT/ directory structure compatible with Hypercraft UI. Orchestrates research, planning, and implementation workflows using specialized sub-agents with local files as the single source of truth.
+Expert guidance for spec-driven development with local file-based project management. Uses the $HYPER_WORKSPACE_ROOT/ directory structure compatible with Hypercraft UI. Orchestrates research, planning, and implementation workflows using specialized sub-agents with local files as the single source of truth. Core workflow context lives in `hyper-craft`.
 </description>
 
 <intake>
@@ -61,8 +61,6 @@ The $HYPER_WORKSPACE_ROOT/ directory is the local file-based alternative to Line
 ```
 $HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace metadata
-├── initiatives/             # High-level strategic groupings
-│   └── *.mdx
 ├── projects/                # Project containers
 │   └── {project-slug}/
 │       ├── _project.mdx     # Project definition + spec (inline)
@@ -342,7 +340,6 @@ Templates are loaded in this order:
 
 - `project.mdx.template` - Project definition
 - `task.mdx.template` - Implementation task
-- `initiative.mdx.template` - Strategic grouping
 - `resource.mdx.template` - Supporting documentation
 - `doc.mdx.template` - Standalone documentation
 - `workspace.json.template` - Workspace metadata
@@ -485,7 +482,7 @@ skip_sub_agents:
 Each command can be customized via YAML file:
 
 ```yaml
-# $HYPER_WORKSPACE_ROOT/settings/commands/hyper:plan.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-plan.yaml
 
 context_additions: |
   - This project follows Domain-Driven Design
@@ -584,7 +581,7 @@ Agent:
 4. Launches research sub-agents
 5. Creates project using CLI and writes:
    - `_project.mdx` (status: planned, with inline spec)
-   - `resources/research/*.md` (research findings)
+   - `resources/*.md` (research findings)
 6. Updates project status to "review"
 7. Waits for human approval
 8. Creates task files via CLI after approval (status: todo)

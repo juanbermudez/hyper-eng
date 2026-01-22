@@ -302,7 +302,7 @@ quality_gates:
 ### Example: Customizing hyper-plan
 
 ```yaml
-# $HYPER_WORKSPACE_ROOT/settings/commands/hyper:plan.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-plan.yaml
 
 context_additions: |
   - This project follows Domain-Driven Design
@@ -332,7 +332,7 @@ interview:
 ### Example: Customizing hyper-implement
 
 ```yaml
-# $HYPER_WORKSPACE_ROOT/settings/commands/hyper:implement.yaml
+# $HYPER_WORKSPACE_ROOT/settings/commands/hyper-implement.yaml
 
 context_additions: |
   - Use conventional commit messages

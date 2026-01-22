@@ -46,7 +46,7 @@ argument-hint: "[task-id or project-slug/task-id]"
            `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/_project.mdx`
 
         5. Read relevant research if exists:
-           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/`
+           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/`
 
         6. Verify dependencies are complete:
            - Check each task in `depends_on`
@@ -91,7 +91,7 @@ argument-hint: "[task-id or project-slug/task-id]"
         Gather implementation context:
 
         1. Read codebase patterns from research:
-           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/research/codebase-analysis.md`
+           `$HYPER_WORKSPACE_ROOT/projects/{project-slug}/resources/codebase-analysis.md`
 
         2. Identify files to modify (from task):
            - New files to create

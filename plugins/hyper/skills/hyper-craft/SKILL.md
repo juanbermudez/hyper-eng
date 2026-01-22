@@ -18,6 +18,16 @@ allowed-tools:
 
 Hyper Craft is the foundational skill that ALL hypercraft agents load. It provides the shared knowledge base for working with the `$HYPER_WORKSPACE_ROOT/` directory structure, the Hypercraft CLI, output contracts, and lifecycle management.
 
+## Agent Roles and Skill Composition
+
+Use a three-tier model to keep context tight and skills composable:
+
+- **Captain**: Primary user-facing agent. Loads `hyper-craft` and selects the workflow (plan/implement/review/verify).
+- **Orchestrator**: Coordinates sub-agents for a phase. Passes a targeted skill list to each worker.
+- **Worker**: Executes a focused task with only the skills it needs (plus `hyper-craft`).
+
+**Skill pass-through rule**: Captains define the minimal skill list for each sub-agent. Workers never auto-load unrelated skills.
+
 ## Quick Reference
 
 ### Directory Structure
@@ -30,7 +40,6 @@ $HYPER_WORKSPACE_ROOT/
 │       ├── _project.mdx     # Project spec (inline)
 │       ├── tasks/           # Task files (task-NNN.mdx)
 │       └── resources/       # Research, docs, artifacts
-├── initiatives/             # Strategic groupings
 ├── docs/                    # Standalone documentation
 └── settings/                # Workflow customization
 ```
@@ -59,6 +68,19 @@ hypercraft search "OAuth" --json
 
 See [cli-reference.md](./references/cli-reference.md) for complete CLI documentation.
 
+### CLI Capability Discovery
+
+When you need to discover available actions or configuration, prefer the CLI:
+
+```bash
+hypercraft help
+hypercraft <command> --help
+hypercraft config list --json
+hypercraft settings workflow list --json
+hypercraft vfs list / --json
+hypercraft drive list --json
+```
+
 ### Status Transitions
 
 **Projects:** `planned` -> `todo` -> `in-progress` -> `qa` -> `completed`
@@ -81,7 +103,7 @@ All sub-agents MUST return structured responses:
   "artifacts": [
     {
       "type": "document",
-      "path": "projects/{slug}/resources/research/codebase-analysis.md",
+      "path": "projects/{slug}/resources/codebase-analysis.md",
       "summary": "Analysis of existing authentication patterns",
       "key_points": ["JWT used for sessions", "No OAuth currently"]
     }
@@ -107,6 +129,7 @@ See [writing-guidelines.md](./references/writing-guidelines.md) for frontmatter 
 |--------|--------|
 | Plan a feature | Run `/hyper:plan` |
 | Implement a task | Run `/hyper:implement` or `/hyper:implement-worktree` |
+| Review code | Run `/hyper:review` |
 | Verify work | Run `/hyper:verify` |
 | Get status | Run `/hyper:status` |
 | Research only | Run `/hyper:research` |
@@ -118,9 +141,11 @@ See [writing-guidelines.md](./references/writing-guidelines.md) for frontmatter 
 |---------------|----------|-------|
 | Project specs | `$HYPER_WORKSPACE_ROOT/projects/{slug}/_project.mdx` | Git-tracked |
 | Tasks | `$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/task-NNN.mdx` | Git-tracked |
-| Research | `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/` | Git-tracked |
+| Research | `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/` | Git-tracked |
 | Personal notes | Drive (`personal:`) | Not git-tracked |
 | Shared docs | Drive (`ws:` or `org:`) | Not git-tracked |
+
+See [drive.md](./references/drive.md) for Drive scopes, IDs, and commands.
 
 ## CLI-First Operations
 
@@ -172,6 +197,7 @@ See [skill-templates.md](./references/skill-templates.md) for detailed configura
 
 - [directory-structure.md](./references/directory-structure.md) - Complete `$HYPER_WORKSPACE_ROOT/` layout
 - [cli-reference.md](./references/cli-reference.md) - All Hypercraft CLI commands
+- [drive.md](./references/drive.md) - Drive scopes, IDs, and commands
 - [output-contracts.md](./references/output-contracts.md) - Sub-agent response format
 - [lifecycle.md](./references/lifecycle.md) - Status transitions and gates
 - [writing-guidelines.md](./references/writing-guidelines.md) - File naming and frontmatter specs

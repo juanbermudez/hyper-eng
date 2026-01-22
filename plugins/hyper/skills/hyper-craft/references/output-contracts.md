@@ -77,7 +77,7 @@ Array of recommended follow-up actions. Use imperative form:
   "artifacts": [
     {
       "type": "document",
-      "path": "projects/auth-system/resources/research/codebase-analysis.md",
+      "path": "projects/auth-system/resources/codebase-analysis.md",
       "summary": "Analysis of existing authentication patterns in the codebase",
       "key_points": [
         "JWT tokens used for session management",

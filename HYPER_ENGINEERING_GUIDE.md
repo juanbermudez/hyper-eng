@@ -40,23 +40,21 @@ claude /plugin marketplace add https://github.com/juanbermudez/hyper-eng
 claude /plugin install hyper
 
 # Step 3: Initialize your workspace
-/hyper-init
+/hyper:init
 
 # Step 4: Verify installation
-/hyper-status
+/hyper:status
 ```
 
 ---
 
 ## Directory Structure
 
-After running `/hyper-init`, your project will have:
+After running `/hyper:init`, your project will have:
 
 ```
 $HYPER_WORKSPACE_ROOT/
 ├── workspace.json           # Workspace configuration
-├── initiatives/             # Strategic groupings
-│   └── {slug}.mdx
 ├── projects/                # Active projects
 │   └── {slug}/
 │       ├── project.mdx      # Project definition
@@ -92,26 +90,26 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 ## Commands Reference
 
-### `/hyper-init`
+### `/hyper:init`
 
 **Purpose:** Initialize `$HYPER_WORKSPACE_ROOT/` workspace structure with templates.
 
 **What it does:**
 1. Creates `$HYPER_WORKSPACE_ROOT/` directory structure
-2. Copies template files for projects, tasks, initiatives
+2. Copies template files for projects and tasks
 3. Creates `workspace.json` configuration
 4. Sets up resource directories
 
 **Usage:**
 ```bash
-/hyper-init
+/hyper:init
 ```
 
 **When to use:** First time setting up hyper-engineering in a project.
 
 ---
 
-### `/hyper-status`
+### `/hyper:status`
 
 **Purpose:** View project and task status from CLI.
 
@@ -124,10 +122,10 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 **Usage:**
 ```bash
 # Overview of all projects
-/hyper-status
+/hyper:status
 
 # Detailed view of specific project
-/hyper-status user-authentication
+/hyper:status user-authentication
 ```
 
 **Output example:**
@@ -144,7 +142,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 ---
 
-### `/hyper-plan`
+### `/hyper:plan`
 
 **Purpose:** Create comprehensive specs by spawning 4 research agents in parallel.
 
@@ -168,7 +166,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 **Usage:**
 ```bash
-/hyper-plan "Add user authentication with OAuth"
+/hyper:plan "Add user authentication with OAuth"
 ```
 
 **Output:**
@@ -179,7 +177,7 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 ---
 
-### `/hyper-implement`
+### `/hyper:implement`
 
 **Purpose:** Implement a task with verification loop.
 
@@ -194,10 +192,10 @@ Draft → Spec Review → Ready → In Progress → Verification → Done
 
 **Usage:**
 ```bash
-/hyper-implement auth-login
+/hyper:implement auth-login
 
 # With project context
-/hyper-implement user-auth/auth-login
+/hyper:implement user-auth/auth-login
 ```
 
 **Workflow:**
@@ -210,7 +208,7 @@ Read Task → Read Spec → Implement → Update Status → Verify
 
 ---
 
-### `/hyper-review`
+### `/hyper:review`
 
 **Purpose:** Orchestrate parallel code reviews using specialized domain sub-agents.
 
@@ -224,15 +222,15 @@ Read Task → Read Spec → Implement → Update Status → Verify
 
 3. Synthesizes findings by severity (Critical/High/Medium/Low)
 4. Generates review report
-5. Creates fix tasks for critical issues
+5. Creates fix tasks for configured severities
 
 **Usage:**
 ```bash
 # Review specific files
-/hyper-review src/auth/
+/hyper:review src/auth/
 
 # Review by task ID
-/hyper-review auth-login
+/hyper:review auth-login
 ```
 
 **Output:**
@@ -253,7 +251,7 @@ Read Task → Read Spec → Implement → Update Status → Verify
 
 ---
 
-### `/hyper-verify`
+### `/hyper:verify`
 
 **Purpose:** Run comprehensive automated and manual verification.
 
@@ -275,12 +273,12 @@ Read Task → Read Spec → Implement → Update Status → Verify
 
 **Usage:**
 ```bash
-/hyper-verify auth-login
+/hyper:verify auth-login
 ```
 
 ---
 
-### `/hyper-init-stack`
+### `/hyper:init-stack`
 
 **Purpose:** Initialize stack-specific templates and verification commands.
 
@@ -296,9 +294,9 @@ Read Task → Read Spec → Implement → Update Status → Verify
 
 **Usage:**
 ```bash
-/hyper-init-stack
+/hyper:init-stack
 # or
-/hyper-init-stack node-typescript
+/hyper:init-stack node-typescript
 ```
 
 ---
@@ -307,7 +305,7 @@ Read Task → Read Spec → Implement → Update Status → Verify
 
 ### Research Agents (4)
 
-These agents are spawned in parallel by `/hyper-plan`:
+These agents are spawned in parallel by `/hyper:plan`:
 
 #### `repo-research-analyst`
 
@@ -461,7 +459,7 @@ skill: hyper-local
 - Isolated development environments
 - No context switching between features
 
-**When invoked:** By `/hyper-implement` for isolated development
+**When invoked:** By `/hyper:implement` for isolated development
 
 **Direct usage:**
 ```
@@ -480,7 +478,7 @@ skill: git-worktree
 - Uses YAML frontmatter for categorization
 - Prevents same mistakes from recurring
 
-**When invoked:** By `/hyper-review` when patterns are discovered
+**When invoked:** By `/hyper:review` when patterns are discovered
 
 **Direct usage:**
 ```
@@ -523,10 +521,10 @@ Add to `.claude/settings.json`:
 
 **Starting a new feature:**
 ```bash
-/hyper-plan "Add dark mode toggle"
+/hyper:plan "Add dark mode toggle"
 # Review and approve spec
-/hyper-implement dark-mode-toggle
-/hyper-verify dark-mode-toggle
+/hyper:implement dark-mode-toggle
+/hyper:verify dark-mode-toggle
 ```
 
 **Debugging an issue:**
@@ -536,7 +534,7 @@ claude agent web-app-debugger "Form submission not working"
 
 **Code review before PR:**
 ```bash
-/hyper-review src/features/auth/
+/hyper:review src/features/auth/
 ```
 
 **Research before implementation:**
@@ -549,10 +547,10 @@ claude agent best-practices-researcher "Form validation best practices"
 
 | Status | Meaning |
 |--------|---------|
-| `draft` | Initial research phase |
+| `draft` | Task definition in progress |
 | `todo` | Ready to be worked on |
 | `in-progress` | Currently being implemented |
-| `review` | Awaiting code review |
+| `qa` | In quality verification |
 | `blocked` | Waiting on dependency |
 | `complete` | Done and verified |
 

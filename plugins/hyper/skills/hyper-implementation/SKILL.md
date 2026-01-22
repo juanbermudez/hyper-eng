@@ -12,6 +12,7 @@ allowed-tools:
   - Glob
   - Task
 includes:
+  - hyper-craft
   - hyper-workflow-enforcement
   - hyper-cli
   - hyper-verification
@@ -19,7 +20,7 @@ includes:
 
 # Hyper Implementation Skill
 
-Guided task implementation following the task specification with verification gates.
+Guided task implementation following the task specification with verification gates. Requires `hyper-craft` as the core skill.
 
 ## Overview
 

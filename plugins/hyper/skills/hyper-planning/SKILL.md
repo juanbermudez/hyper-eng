@@ -11,11 +11,13 @@ allowed-tools:
   - Bash
   - Task
   - AskUserQuestion
+includes:
+  - hyper-craft
 ---
 
 # Hyper Planning Skill
 
-Planning-specific knowledge for the hyper-captain during `/hyper:plan` workflows.
+Planning-specific knowledge for the hyper-captain during `/hyper:plan` workflows. Requires `hyper-craft` as the core skill.
 
 ## Planning Workflow Overview
 
@@ -54,7 +56,7 @@ Use the Task tool to spawn these research agents in parallel:
 
 All research artifacts go to:
 ```
-$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/research/
+$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/
 ├── codebase-analysis.md     # From repo-analyst
 ├── best-practices.md        # From best-practices
 ├── framework-docs.md        # From framework-docs

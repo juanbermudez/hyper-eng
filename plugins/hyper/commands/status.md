@@ -7,7 +7,7 @@ Use the **hyper** skill to execute the status workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper:status.prose` with:
+Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-status.prose` with:
 
 ```
 input project_slug: "$ARGUMENTS"

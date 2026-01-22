@@ -82,8 +82,8 @@ Would you like to:
 
 If research exists:
 ```bash
-if [ -d "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research" ]; then
-  cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research/research-summary.md"
+if [ -d "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources" ]; then
+  cat "$HYPER_WORKSPACE_ROOT/projects/${PROJECT_SLUG}/resources/research-summary.md"
 fi
 ```
 

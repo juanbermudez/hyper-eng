@@ -18,7 +18,6 @@ This allows project-specific customization while falling back to plugin defaults
 | `workspace.json.template` | Workspace metadata | WORKSPACE_PATH, NAME, DATE |
 | `project.mdx.template` | Project definition | SLUG, TITLE, PRIORITY, SUMMARY, DATE, etc. |
 | `task.mdx.template` | Implementation task | PROJECT_SLUG, NUM, TITLE, PRIORITY, etc. |
-| `initiative.mdx.template` | Strategic grouping | SLUG, TITLE, STATUS, PRIORITY, etc. |
 | `resource.mdx.template` | Supporting documentation | PROJECT_SLUG, SLUG, TITLE, etc. |
 | `doc.mdx.template` | Standalone documentation | SLUG, TITLE, DATE, etc. |
 

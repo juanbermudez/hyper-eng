@@ -90,13 +90,6 @@ determine_target() {
     return
   fi
 
-  # Check if it's an initiative: initiatives/{slug}.mdx
-  if [[ "$rel_path" =~ ^initiatives/([^/]+)\.mdx$ ]]; then
-    local initiative_slug="${BASH_REMATCH[1]}"
-    echo "{\"type\":\"initiative\",\"initiativeSlug\":\"${initiative_slug}\",\"filePath\":\"${file_path}\"}"
-    return
-  fi
-
   # Check if it's a doc: docs/{slug}.mdx
   if [[ "$rel_path" =~ ^docs/([^/]+)\.mdx$ ]]; then
     local doc_slug="${BASH_REMATCH[1]}"

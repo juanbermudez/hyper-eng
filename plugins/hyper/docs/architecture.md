@@ -9,14 +9,15 @@ The skill-based architecture organizes AI agents into a three-tier hierarchy wit
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                      COMMAND LAYER                              │
-│  /hyper:plan    /hyper:implement    /hyper:verify               │
+│  /hyper:plan    /hyper:implement    /hyper:review    /hyper:verify│
 │  Entry points that orchestrate entire workflows                 │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                    ORCHESTRATOR LAYER                           │
-│  hyper-captain       impl-captain       verify-captain          │
+│  hyper-captain       impl-captain       review-captain          │
+│                      verify-captain                           │
 │  Persistent agents that coordinate specialist agents            │
 │  Skills: hyper-craft + task-specific (hyper-planning, etc.)     │
 └─────────────────────────────────────────────────────────────────┘
@@ -40,6 +41,7 @@ Commands are the entry points invoked by users:
 |---------|---------|--------------|
 | `/hyper:plan` | Research → Spec → Tasks | hyper-captain |
 | `/hyper:implement` | Task execution with verification | impl-captain |
+| `/hyper:review` | Domain reviews and fix tasks | review-captain |
 | `/hyper:verify` | Comprehensive verification loop | verify-captain |
 
 Commands define the overall workflow structure and HITL gates.

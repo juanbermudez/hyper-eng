@@ -16,7 +16,7 @@ Commands:
   activity  Track activity on projects and tasks (add, comment)
   file      Low-level file operations (list, read, write, search, delete)
   settings  Manage workspace settings (workflow, stage, gate, tag)
-  search    Search across all resources (projects, tasks, initiatives)
+  search    Search across all resources (projects, tasks)
   config    Get/set configuration (get, set, list)
   vfs       Virtual filesystem operations (list, resolve, search)
 ```
@@ -102,7 +102,7 @@ hypercraft file write projects/foo/_project.mdx \
   --frontmatter "id=proj-foo" \
   --frontmatter "title=Foo" \
   --frontmatter "type=project" \
-  --frontmatter "status=planning" \
+  --frontmatter "status=planned" \
   --frontmatter "priority=high" \
   --json
 
@@ -201,7 +201,7 @@ hypercraft settings workflow get project.stages --json
 hypercraft settings workflow get task.statuses --json
 
 # Set value
-hypercraft settings workflow set project.stages '["planning", "todo", "in-progress", "completed"]' --json
+hypercraft settings workflow set project.stages '["planned", "todo", "in-progress", "qa", "completed"]' --json
 
 # Manage stages/gates/tags
 hypercraft settings stage list --json
@@ -285,9 +285,9 @@ All commands with `--json` return structured responses:
     "context": {
       "field": "status",
       "value": "foo",
-      "allowed": ["planning", "todo", "in-progress", "qa", "completed", "canceled"]
+      "allowed": ["planned", "todo", "in-progress", "qa", "completed", "canceled"]
     },
-    "suggestion": "Valid values: planning, todo, in-progress, qa, completed, canceled"
+    "suggestion": "Valid values: planned, todo, in-progress, qa, completed, canceled"
   }
 }
 ```
@@ -316,7 +316,7 @@ When receiving validation errors, extract correct values from error response:
 hypercraft file write projects/foo/_project.mdx \
   --frontmatter "status=wip" \
   --json
-# Error: { "error": { "context": { "allowed": ["planning", "todo", ...] } } }
+# Error: { "error": { "context": { "allowed": ["planned", "todo", ...] } } }
 
 # Step 2: Self-correct using allowed value
 hypercraft file write projects/foo/_project.mdx \
