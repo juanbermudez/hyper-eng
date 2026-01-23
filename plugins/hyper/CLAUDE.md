@@ -181,16 +181,17 @@ See `skills/hyper-local/references/frontmatter-schema.md` for complete schema.
 
 ---
 
-## Drive/Notes MDX Format
+## Drive/Artifacts MDX Format
 
-**CRITICAL**: When creating Drive notes (artifacts), you MUST use the correct ID format or files will not appear in Hypercraft UI.
+**CRITICAL**: When creating Drive artifacts, you MUST use the correct ID format or files will not appear in Hypercraft UI.
 
-### Drive Note Frontmatter
+### Drive Artifact Frontmatter
 
 ```yaml
 ---
-id: "personal:my-note-slug"        # REQUIRED: Scope-prefixed ID
-title: "My Note Title"             # REQUIRED: Human-readable title
+id: "personal:my-artifact-slug"    # REQUIRED: Scope-prefixed ID
+title: "My Artifact Title"         # REQUIRED: Human-readable title
+type: artifact                     # REQUIRED: Must be "artifact"
 icon: FileText                     # OPTIONAL: Lucide icon name
 created: 2026-01-18                # REQUIRED: ISO date
 updated: 2026-01-18                # OPTIONAL: ISO date
@@ -209,17 +210,17 @@ The `id` field MUST include a scope prefix followed by a colon:
 | Workspace | `ws-{wsId}:{slug}` | `id: "ws-proj-123:notes"` |
 
 **Common Mistakes (will be blocked by validation):**
-- `id: my-note` ❌ → Missing scope prefix
+- `id: my-artifact` ❌ → Missing scope prefix
 - `id: activity-summary` ❌ → Missing scope prefix
-- `id: personal:my-note` ⚠️ → Must quote if contains colon
-- `id: "personal:my-note"` ✓ → Correct format
+- `id: personal:my-artifact` ⚠️ → Must quote if contains colon
+- `id: "personal:my-artifact"` ✓ → Correct format
 
 **PreToolUse Validation**: The `validate-hyper-file.py` hook will BLOCK writes with invalid IDs and provide helpful feedback on how to fix them.
 
 **Always prefer the CLI** for creating drive files:
 
 ```bash
-hypercraft drive create "My Note Title" --icon "FileText" --json
+hypercraft drive create "My Artifact Title" --icon "FileText" --json
 ```
 
 See `skills/hyper-cli/SKILL.md` for full Drive API documentation.
@@ -228,13 +229,13 @@ See `skills/hyper-cli/SKILL.md` for full Drive API documentation.
 
 | Artifact Type | Recommended Scope | Rationale |
 |---------------|-------------------|-----------|
-| Personal notes | `personal:` | Private learning, research, drafts |
+| Personal artifacts | `personal:` | Private learning, research, drafts |
 | Workspace artifacts | `ws:{workspaceId}:` | Shared context for workspace projects |
 | Project diagrams | `proj:{projectId}:` | Project-specific design docs |
 | Team templates | `org:{orgId}:` | Cross-workspace org standards |
 
 **Rule of thumb**:
-- Personal notes → Personal Drive (global `/drive`)
+- Personal artifacts → Personal Drive (global `/drive`)
 - Project artifacts → Workspace Drive (per-workspace)
 - Planning docs → `$HYPER_WORKSPACE_ROOT/projects/{slug}/` (git-tracked)
 
@@ -242,7 +243,7 @@ See `skills/hyper-cli/SKILL.md` for full Drive API documentation.
 
 ```bash
 # Create in personal drive (default)
-hyper drive create "My Personal Note" --icon "FileText"
+hyper drive create "My Personal Artifact" --icon "FileText"
 
 # Create in workspace drive
 hyper drive create "Design Doc" --scope ws:my-workspace --icon "Layout"

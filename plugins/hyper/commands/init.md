@@ -46,7 +46,7 @@ argument-hint: ""
         - `HYPER_ACCOUNT_ROOT` - Account-scoped root
         - `HYPER_WORKSPACE_ID` - Current workspace ID (if exists)
         - `HYPER_WORKSPACE_ROOT` - Resolved workspace directory (if exists)
-        - `HYPER_PERSONAL_DRIVE` - Personal Drive notes directory
+        - `HYPER_PERSONAL_DRIVE` - Personal Drive artifacts directory
         - `HYPER_PLATFORM` - Detected platform (macos|linux|windows)
 
         **Verify resolution succeeded**:
@@ -185,7 +185,7 @@ argument-hint: ""
 
         Benefits of migration:
         - Centralized management across all projects
-        - Account-scoped Drive notes
+        - Account-scoped Drive artifacts
         - Better multi-workspace support
         - Cleaner project directories
 
@@ -402,7 +402,7 @@ argument-hint: ""
 
         # Create default account
         ACCOUNT_DIR="$HYPER_ACCOUNT_ROOT"
-        mkdir -p "$ACCOUNT_DIR"/{notes,workspaces}
+        mkdir -p "$ACCOUNT_DIR"/{artifacts,workspaces}
 
         # Write active-account.json
         cat > "$ACTIVE_ACCOUNT_FILE" << EOF
@@ -669,7 +669,7 @@ argument-hint: ""
         echo "Next Steps:"
         echo "  /hyper:status           - View workspace status"
         echo "  /hyper:plan \"feature\"   - Create your first project"
-        echo "  hypercraft drive create - Create personal notes"
+        echo "  hypercraft drive create - Create personal artifacts"
         echo ""
 
         # Platform-specific notes

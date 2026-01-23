@@ -5,6 +5,26 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.19.0] - 2026-01-23
+
+### Changed
+
+- **Rename Notes to Artifacts** - Full migration from "notes" terminology to "artifacts"
+  - Filesystem path change: `notes/` → `artifacts/` in HyperHome
+  - MDX type field: `type: note` → `type: artifact`
+  - All documentation updated to use "artifacts" terminology
+  - Backwards compatibility: validation accepts both `artifact` and `note` types during transition
+  - Dual-read support: DriveWatcherService watches both directories
+
+### Updated
+
+- **CLAUDE.md** - Updated Drive/Artifacts section with new format
+- **README.md** - Updated Drive scopes documentation
+- **commands/init.md** - Updated environment variables and mkdir paths
+- **skills/hyper-cli/SKILL.md** - Updated CLI overview and Drive API section
+- **skills/hyper-local/references/frontmatter-schema.md** - Updated artifact schema
+- **scripts/validate-hyper-file.py** - Accept both artifact and note types
+
 ## [3.18.0] - 2026-01-22
 
 ### Changed

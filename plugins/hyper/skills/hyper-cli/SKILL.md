@@ -1,6 +1,6 @@
 ---
 name: hyper-cli
-description: This skill provides guidance on using the Hypercraft CLI for programmatic file operations. This skill should be used when agents need to create, read, update, delete, or search files in the $HYPER_WORKSPACE_ROOT/ directory structure, manage Drive notes, track activity, handle validation errors, or self-correct from structured error responses.
+description: This skill provides guidance on using the Hypercraft CLI for programmatic file operations. This skill should be used when agents need to create, read, update, delete, or search files in the $HYPER_WORKSPACE_ROOT/ directory structure, manage Drive artifacts, track activity, handle validation errors, or self-correct from structured error responses.
 model: sonnet
 allowed-tools:
   - Read
@@ -12,7 +12,7 @@ allowed-tools:
 <skill name="hyper-cli">
 
 <description>
-This skill teaches AI agents how to work with the Hypercraft CLI for programmatic manipulation of `$HYPER_WORKSPACE_ROOT/` planning documents and HyperHome Drive notes. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
+This skill teaches AI agents how to work with the Hypercraft CLI for programmatic manipulation of `$HYPER_WORKSPACE_ROOT/` planning documents and HyperHome Drive artifacts. It covers both the Resource API (high-level operations) and File API (low-level plumbing), error handling patterns, and self-correction workflows.
 </description>
 
 <note>
@@ -23,7 +23,7 @@ Core workflow context lives in `hyper-craft`. This skill is a CLI reference only
 
 ## CLI Overview
 
-The Hypercraft CLI provides commands for managing workspace projects, tasks, Drive notes, and configuration.
+The Hypercraft CLI provides commands for managing workspace projects, tasks, Drive artifacts, and configuration.
 
 ```
 hypercraft <COMMAND>
@@ -35,7 +35,7 @@ Commands:
   worktree    Manage git worktrees for isolated development
   project     Manage workspace projects (list, get, create, update)
   task        Manage workspace tasks (list, get, create, update)
-  drive       Manage HyperHome drive items/notes (list, create, show, delete, mkdir)
+  drive       Manage HyperHome drive items/artifacts (list, create, show, delete, mkdir)
   agents      Manage Claude/Codex primitives (config, skill, agent)
   config      Get/set configuration (get, set, list)
   activity    Track activity on projects and tasks (add, comment)
@@ -59,7 +59,7 @@ Commands:
 | Delete file | N/A (use file API) | `hypercraft file delete projects/x/_project.mdx --force --json` |
 | Search | `hypercraft search "query" --json` | `hypercraft file search "query" --json` |
 | Task operations | `hypercraft task list/get/create/update` | `hypercraft file ...` on task files |
-| Drive notes | `hypercraft drive list/create/show/delete` | N/A |
+| Drive artifacts | `hypercraft drive list/create/show/delete` | N/A |
 | Activity tracking | `hypercraft activity add/comment` | N/A |
 
 ### When to Use Each API
@@ -244,8 +244,8 @@ hypercraft file write $HYPER_WORKSPACE_ROOT/projects/foo/_project.mdx \
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/_project.mdx` (project files)
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/tasks/*.mdx` (task files)
 - `$HYPER_WORKSPACE_ROOT/projects/{slug}/resources/**` (resource files)
-- `$HYPER_WORKSPACE_ROOT/notes/*.mdx` (personal drive notes)
-- `$HYPER_WORKSPACE_ROOT/notes/**/*.mdx` (nested notes in subfolders)
+- `$HYPER_WORKSPACE_ROOT/artifacts/*.mdx` (personal drive artifacts)
+- `$HYPER_WORKSPACE_ROOT/artifacts/**/*.mdx` (nested artifacts in subfolders)
 - `$HYPER_WORKSPACE_ROOT/docs/**/*.md` (documentation)
 - `$HYPER_WORKSPACE_ROOT/settings/workflows.yaml` (workflow config)
 - `$HYPER_WORKSPACE_ROOT/settings/agents/*.yaml` (agent configs)
@@ -401,43 +401,43 @@ hypercraft settings tag list --json
 
 ## Drive API
 
-Manage HyperHome Drive items (wiki-style notes):
+Manage HyperHome Drive items (wiki-style artifacts):
 
 ```bash
 # List all drive items
 hypercraft drive list --json
 
-# Create a new note
-hypercraft drive create "My Note Title" --folder "research" --icon "book" --json
+# Create a new artifact
+hypercraft drive create "My Artifact Title" --folder "research" --icon "book" --json
 
-# Show note content
+# Show artifact content
 hypercraft drive show <id> --json
 
-# Delete a note
+# Delete an artifact
 hypercraft drive delete <id> --force --json
 
 # Create a folder
 hypercraft drive mkdir "research/experiments" --json
 
-# Move a note to a different folder or scope
+# Move an artifact to a different folder or scope
 hypercraft drive move <id> --to-folder "archive" --json
 hypercraft drive move <id> --to-scope "ws:my-workspace" --json
-hypercraft drive move <id> --to-scope "personal" --to-folder "notes" --keep-redirect --json
+hypercraft drive move <id> --to-scope "personal" --to-folder "research" --keep-redirect --json
 ```
 
 ### Moving Drive Items
 
-The `hypercraft drive move` command moves notes between folders and/or scopes:
+The `hypercraft drive move` command moves artifacts between folders and/or scopes:
 
 ```bash
 # Move to a different folder (same scope)
-hypercraft drive move "personal:my-note" --to-folder "archive" --json
+hypercraft drive move "personal:my-artifact" --to-folder "archive" --json
 
-# Move to a different scope (note gets new ID)
-hypercraft drive move "personal:my-note" --to-scope "ws:workspace-id" --json
+# Move to a different scope (artifact gets new ID)
+hypercraft drive move "personal:my-artifact" --to-scope "ws:workspace-id" --json
 
 # Move with redirect (leaves pointer at old location)
-hypercraft drive move "personal:my-note" --to-scope "ws:workspace-id" --keep-redirect --json
+hypercraft drive move "personal:my-artifact" --to-scope "ws:workspace-id" --keep-redirect --json
 ```
 
 **Cross-scope moves**:
@@ -449,11 +449,11 @@ hypercraft drive move "personal:my-note" --to-scope "ws:workspace-id" --keep-red
 - Update the `folder` field in frontmatter
 - Preserve the same ID
 
-Drive notes support scopes:
-- `--scope personal` (default) - User's personal notes in global `/drive`
-- `--scope org:<id>` - Organization-scoped notes
-- `--scope ws:<id>` - Workspace-scoped notes (shown in workspace Drive view)
-- `--scope proj:<id>` - Project-scoped notes in project resources
+Drive artifacts support scopes:
+- `--scope personal` (default) - User's personal artifacts in global `/drive`
+- `--scope org:<id>` - Organization-scoped artifacts
+- `--scope ws:<id>` - Workspace-scoped artifacts (shown in workspace Drive view)
+- `--scope proj:<id>` - Project-scoped artifacts in project resources
 
 ### Choosing the Right Scope
 
@@ -491,7 +491,7 @@ hypercraft drive list --scope ws:my-workspace --json
 
 ```yaml
 ---
-id: "personal:my-note-slug"        # REQUIRED: Scope-prefixed ID (see below)
+id: "personal:my-artifact-slug"        # REQUIRED: Scope-prefixed ID (see below)
 title: "My Note Title"             # REQUIRED: Human-readable title
 icon: FileText                     # OPTIONAL: Lucide icon name (default: "box")
 created: 2026-01-18                # REQUIRED: ISO date (YYYY-MM-DD)
@@ -518,10 +518,10 @@ The `id` field MUST include a scope prefix followed by a colon:
 
 | Mistake | Correct |
 |---------|---------|
-| `id: my-note` | `id: "personal:my-note"` (missing scope prefix) |
-| `id: personal/my-note` | `id: "personal:my-note"` (use colon, not slash) |
-| `id: PERSONAL:my-note` | `id: "personal:my-note"` (lowercase scope) |
-| Missing quotes | `id: "personal:my-note"` (quote if contains colons) |
+| `id: my-artifact` | `id: "personal:my-artifact"` (missing scope prefix) |
+| `id: personal/my-artifact` | `id: "personal:my-artifact"` (use colon, not slash) |
+| `id: PERSONAL:my-artifact` | `id: "personal:my-artifact"` (lowercase scope) |
+| Missing quotes | `id: "personal:my-artifact"` (quote if contains colons) |
 
 ### Recommended: Use CLI Instead
 

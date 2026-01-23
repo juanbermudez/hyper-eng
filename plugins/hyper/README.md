@@ -56,8 +56,8 @@ $HYPER_WORKSPACE_ROOT/
 
 Drive items live outside the workspace and are accessed via the Hypercraft CLI:
 
-- Personal Drive: `personal:` scope (private notes)
-- Workspace Drive: `ws:` scope (shared notes)
+- Personal Drive: `personal:` scope (private artifacts)
+- Workspace Drive: `ws:` scope (shared artifacts)
 
 ### MDX File Naming
 
@@ -341,7 +341,7 @@ Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, 
 
 ## CLI & Activity Tracking
 
-The plugin includes a bundled Hypercraft CLI binary (`hypercraft`, alias `hyper`) for managing workspace files, Drive notes, and activity tracking.
+The plugin includes a bundled Hypercraft CLI binary (`hypercraft`, alias `hyper`) for managing workspace files, Drive artifacts, and activity tracking.
 
 ### CLI Overview
 
@@ -353,7 +353,7 @@ Commands:
   worktree  Manage git worktrees for isolated development
   project   Manage workspace projects (list, get, create, update)
   task      Manage workspace tasks (list, get, create, update)
-  drive     Manage HyperHome drive items/notes (list, create, show, delete)
+  drive     Manage HyperHome drive items/artifacts (list, create, show, delete)
   config    Get/set configuration (get, set, list)
   activity  Track activity on projects and tasks (add, comment)
   file      Low-level file operations (list, read, write, search, delete)

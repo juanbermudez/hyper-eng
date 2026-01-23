@@ -21,7 +21,8 @@ except ImportError:
     HAS_PYYAML = False
 
 # Valid enum values (must match Hypercraft schemas)
-VALID_TYPES = ['project', 'task', 'resource', 'doc', 'note']
+# Note: 'note' is deprecated, use 'artifact' instead
+VALID_TYPES = ['project', 'task', 'resource', 'doc', 'artifact', 'note']
 VALID_STATUSES = [
     # Task statuses
     'draft', 'todo', 'in-progress', 'review', 'complete', 'blocked', 'qa',
@@ -62,10 +63,20 @@ SCHEMAS = {
             'type': ['doc'],
         },
     },
-    'note': {
+    'artifact': {
         'required': ['id', 'title'],
-        'optional': ['created', 'updated', 'icon', 'sortPosition', 'activity'],
-        'enums': {},
+        'optional': ['type', 'created', 'updated', 'icon', 'sortPosition', 'activity'],
+        'enums': {
+            'type': ['artifact', 'note'],  # Accept both for backwards compat
+        },
+    },
+    'note': {
+        # Deprecated - use 'artifact' instead. Kept for backwards compatibility.
+        'required': ['id', 'title'],
+        'optional': ['type', 'created', 'updated', 'icon', 'sortPosition', 'activity'],
+        'enums': {
+            'type': ['artifact', 'note'],  # Accept both for backwards compat
+        },
     },
 }
 
@@ -266,7 +277,7 @@ def is_workspace_file(file_path: str) -> bool:
     """Check if file is a Hyper-managed file (workspace, personal drive, etc.)"""
     path = normalize_path(file_path)
 
-    # Check personal drive first (notes in ~/.hyper/accounts/.../notes/)
+    # Check personal drive first (artifacts in ~/.hyper/accounts/.../artifacts/ or legacy notes/)
     if PERSONAL_DRIVE and (path == PERSONAL_DRIVE or path.startswith(f"{PERSONAL_DRIVE}/")):
         return True
 
@@ -293,11 +304,16 @@ def infer_type_from_path(file_path: str) -> str:
     elif '/.hyper/' in path:
         rel_path = path.split('/.hyper/', 1)[1]
 
-    # Handle notes (personal drive or workspace notes)
-    if rel_path.startswith('notes/'):
-        return 'note'
+    # Handle artifacts (personal drive) - new location is artifacts/, legacy is notes/
+    if rel_path.startswith('artifacts/'):
+        return 'artifact'
+    elif '/artifacts/' in rel_path:
+        return 'artifact'
+    # Legacy notes/ path - still return 'artifact' to use the new schema
+    elif rel_path.startswith('notes/'):
+        return 'artifact'  # Use artifact schema for validation
     elif '/notes/' in rel_path:
-        return 'note'
+        return 'artifact'  # Use artifact schema for validation
     elif rel_path.startswith('projects/'):
         if rel_path.endswith('/_project.mdx'):
             return 'project'
@@ -606,8 +622,8 @@ def validate_frontmatter(frontmatter: dict, expected_type: str, file_path: str) 
                 'message': f"ID '{id_value}' appears truncated (missing part after colon?)",
                 'suggestion': 'IDs with colons must be quoted: id: "personal:my-note-123"',
             })
-        # Check if note/drive item ID is missing scope prefix
-        elif expected_type == 'note':
+        # Check if artifact/drive item ID is missing scope prefix
+        elif expected_type in ('artifact', 'note'):
             # Valid scope prefixes for drive items
             valid_prefixes = ['personal:', 'ws-', 'org-', 'proj-']
             has_valid_prefix = any(id_value.startswith(p) for p in valid_prefixes)
@@ -615,15 +631,15 @@ def validate_frontmatter(frontmatter: dict, expected_type: str, file_path: str) 
                 errors.append({
                     'code': 'MISSING_SCOPE_PREFIX',
                     'field': 'id',
-                    'message': f"Note ID '{id_value}' is missing the required scope prefix",
+                    'message': f"Artifact ID '{id_value}' is missing the required scope prefix",
                     'suggestion': (
-                        'Note IDs must include a scope prefix. Examples:\n'
-                        '  - Personal: id: "personal:my-note-slug"\n'
-                        '  - Workspace: id: "ws-{workspaceId}:my-note"\n'
-                        '  - Organization: id: "org-{orgId}:my-note"\n'
+                        'Artifact IDs must include a scope prefix. Examples:\n'
+                        '  - Personal: id: "personal:my-artifact-slug"\n'
+                        '  - Workspace: id: "ws-{workspaceId}:my-artifact"\n'
+                        '  - Organization: id: "org-{orgId}:my-artifact"\n'
                         '\n'
-                        'Recommended: Use the CLI to create notes automatically:\n'
-                        '  hypercraft drive create "My Note Title" --icon "FileText" --json'
+                        'Recommended: Use the CLI to create artifacts automatically:\n'
+                        '  hypercraft drive create "My Artifact Title" --icon "FileText" --json'
                     ),
                 })
 

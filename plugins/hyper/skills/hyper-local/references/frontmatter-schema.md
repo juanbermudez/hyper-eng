@@ -114,11 +114,12 @@ Valid values for `type`:
 | `task` | Implementation unit | draft, todo, in-progress, qa, complete, blocked |
 | `resource` | Supporting documentation | (none) |
 | `doc` | Standalone documentation | (none) |
-| `note` | Personal drive note | (none) |
+| `artifact` | Drive item (document, research, etc.) | (none) |
+| `note` | **DEPRECATED** - Use `artifact` instead | (none) |
 
-## Note Schema
+## Artifact Schema
 
-Notes are personal drive items stored in `$HYPER_WORKSPACE_ROOT/notes/`:
+Artifacts are drive items stored in `~/.hyper/accounts/{userId}/hyper/artifacts/`:
 
 ```yaml
 ---
@@ -135,9 +136,9 @@ tags:                              # Optional: Searchable tags
 ---
 ```
 
-### Note ID Format
+### Artifact ID Format
 
-**CRITICAL**: The `id` field MUST include a scope prefix. Notes with incorrect IDs will NOT appear in the Hypercraft UI.
+**CRITICAL**: The `id` field MUST include a scope prefix. Artifacts with incorrect IDs will NOT appear in the Hypercraft UI.
 
 | Scope | ID Format | Example |
 |-------|-----------|---------|
@@ -147,14 +148,14 @@ tags:                              # Optional: Searchable tags
 | Project | `proj-{projId}:{slug}` | `id: "proj-auth:design-doc"` |
 
 **Common Mistakes:**
-- `id: my-note` ❌ → Missing scope prefix
+- `id: my-artifact` ❌ → Missing scope prefix
 - `id: activity-summary` ❌ → Missing scope prefix
-- `id: personal:my-note` ⚠️ → Must quote if contains colon
-- `id: "personal:my-note"` ✓ → Correct format
+- `id: personal:my-artifact` ⚠️ → Must quote if contains colon
+- `id: "personal:my-artifact"` ✓ → Correct format
 
-**Recommended**: Always use the CLI to create notes:
+**Recommended**: Always use the CLI to create artifacts:
 ```bash
-hypercraft drive create "My Note Title" --icon "FileText" --json
+hypercraft drive create "My Artifact Title" --icon "FileText" --json
 ```
 
 **Note**: IDs with colons MUST be quoted in YAML to avoid parsing errors.
