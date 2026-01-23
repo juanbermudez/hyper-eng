@@ -76,10 +76,10 @@ argument-hint: "[task-id or project-slug/task-id]"
            - Approach: [brief description]
            ```
 
-        3. Create git branch if configured in project:
-           - Read project.mdx for git workflow settings
-           - If worktree enabled: `skill: git-worktree`
-           - Branch naming: `feat/{project-slug}/{task-id}`
+        3. Git workflow (OPTIONAL - disabled by default):
+           - Agents now work on the current branch by default
+           - For isolated branches, use `/hyper:implement-worktree` command
+           - Branch creation is configurable in project settings (future)
 
         **Note**: Activity tracking is automatic via PostToolUse hook.
         The hook captures session_id and logs modifications to $HYPER_WORKSPACE_ROOT/ files.
@@ -276,7 +276,7 @@ argument-hint: "[task-id or project-slug/task-id]"
            - Browser verification: PASS/N/A
 
            **Git:**
-           - Branch: feat/{project-slug}/{task-id}
+           - Branch: (current branch - use worktree for isolation)
            - Commits: {commit hashes}
            ```
 
@@ -318,7 +318,7 @@ argument-hint: "[task-id or project-slug/task-id]"
             "browser": "pass/skipped"
           },
           "git": {
-            "branch": "feat/...",
+            "branch": "(current branch)",
             "commits": [...]
           },
           "task_updated": true,

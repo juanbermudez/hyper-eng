@@ -67,9 +67,8 @@ determine_target() {
   # Remove workspace root prefix
   local rel_path="${file_path#$workspace_root/}"
 
-  # Check if it's a task file: projects/{slug}/tasks/task-*.mdx
-  # Task IDs can contain alphanumeric chars and hyphens (e.g., task-auth-001, task-setup-db)
-  if [[ "$rel_path" =~ ^projects/([^/]+)/tasks/(task-[a-zA-Z0-9-]+)\.mdx$ ]]; then
+  # Check if it's a task file: projects/{slug}/tasks/task-NNN.mdx
+  if [[ "$rel_path" =~ ^projects/([^/]+)/tasks/(task-[0-9]+)\.mdx$ ]]; then
     local project_slug="${BASH_REMATCH[1]}"
     local task_id="${BASH_REMATCH[2]}"
     echo "{\"type\":\"task\",\"taskId\":\"${task_id}\",\"projectSlug\":\"${project_slug}\",\"filePath\":\"${file_path}\"}"
@@ -95,21 +94,6 @@ determine_target() {
   if [[ "$rel_path" =~ ^docs/([^/]+)\.mdx$ ]]; then
     local doc_slug="${BASH_REMATCH[1]}"
     echo "{\"type\":\"doc\",\"docSlug\":\"${doc_slug}\",\"filePath\":\"${file_path}\"}"
-    return
-  fi
-
-  # Check if it's a Drive/notes file: ~/.hyper/accounts/{userId}/hyper/notes/*.mdx
-  # This uses the absolute file_path, not the workspace-relative path
-  if [[ "$file_path" =~ \.hyper/accounts/[^/]+/hyper/notes/([^/]+)\.mdx$ ]]; then
-    local note_slug="${BASH_REMATCH[1]}"
-    echo "{\"type\":\"drive\",\"noteSlug\":\"${note_slug}\",\"filePath\":\"${file_path}\"}"
-    return
-  fi
-
-  # Check if it's a workspace-scoped Drive file: {workspace}/notes/*.mdx
-  if [[ "$rel_path" =~ ^notes/([^/]+)\.mdx$ ]]; then
-    local note_slug="${BASH_REMATCH[1]}"
-    echo "{\"type\":\"drive\",\"noteSlug\":\"${note_slug}\",\"filePath\":\"${file_path}\"}"
     return
   fi
 

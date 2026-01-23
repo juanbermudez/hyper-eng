@@ -5,17 +5,62 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.17.2] - 2026-01-23
+## [3.18.0] - 2026-01-22
 
-### Fixed
+### Changed
 
-- **Task ID Regex** - Fixed `update-session.sh` to handle alphanumeric task IDs (e.g., `task-auth-001`) instead of just numeric IDs
-- **Project Slug Extraction** - Fixed `track-bash-activity.sh` `extract_project_slug()` to handle full path invocations and CLI commands with quoted arguments
-- **Task ID Extraction** - Fixed `track-bash-activity.sh` `extract_task_id()` similarly for full paths and various argument formats
+- **Rust-Based Hooks** - Replaced Python and bash scripts with native Rust implementation
+  - Removed dependency on `jq` for JSON parsing
+  - Removed dependency on Python for MDX validation
+  - All hooks now use the bundled `hyper` CLI binary
+  - Faster execution (~5x improvement)
+  - Single binary handles all hook operations
 
 ### Added
 
-- **Drive/Notes Detection** - Added detection for Drive notes in `update-session.sh` (`~/.hyper/accounts/.../notes/*.mdx` and `{workspace}/notes/*.mdx`)
+- **`hyper hook` command** - New CLI subcommand for hook processing
+  - `hyper hook pre-tool-use --json` - PreToolUse hook handler
+  - `hyper hook post-tool-use --json` - PostToolUse hook handler (validation + activity tracking)
+  - `hyper hook session-start --json` - SessionStart hook handler
+  - `hyper hook json <path>` - JSON parsing (jq replacement)
+
+- **`hyper validate` command** - New CLI subcommand for MDX validation
+  - `hyper validate file --path <path>` - Validate MDX frontmatter
+  - `hyper validate file --pre-validate` - Pre-validation from stdin
+  - Validates schema, enums, required fields, relationships
+
+### Removed
+
+- **Python dependency** - No longer requires Python for `validate-hyper-file.py`
+- **jq dependency** - No longer requires `jq` for JSON parsing in hooks
+- **Multiple bash scripts** - Consolidated into single Rust binary:
+  - `validate-write.sh` → `hyper hook pre-tool-use`
+  - `validate-hyper-file.py` → `hyper hook post-tool-use`
+  - `track-activity.sh` → `hyper hook post-tool-use`
+  - `hyper-init-check.sh` → `hyper hook session-start`
+
+### Technical
+
+- Hook timeouts reduced from 10-30s to 5-10s due to faster Rust execution
+- Binary size: 6.4MB (includes all hook functionality)
+- No external runtime dependencies
+
+## [3.17.2] - 2026-01-22
+
+### Fixed
+
+- **Workspace Resolution Bug** - Fixed `resolve-paths.sh` looking at wrong file for workspace registry
+  - Changed line 136 from `$HYPER_HOME/config.json` to `$HYPER_ACCOUNT_ROOT/workspaces.json`
+  - This enables proper CWD → workspace ID mapping using absolute paths
+  - All scripts that source `resolve-paths.sh` now correctly resolve workspaces
+
+### Changed
+
+- **Git Branching Now Optional** - Removed automatic feature branch creation from `/hyper:implement`
+  - Agents now work on the current branch by default
+  - For isolated branch work, use `/hyper:implement-worktree` instead
+  - Branch creation will be configurable in project settings (future)
+  - Updated `hyper-implement.prose` and `implementation-orchestrator.md`
 
 ## [3.17.0] - 2026-01-22
 

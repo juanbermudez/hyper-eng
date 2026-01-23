@@ -160,12 +160,10 @@ fi
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update "{task_id}" --status "in-progress"
 ```
 
-## Step 3: Create git branch
+## Step 3: Ready to implement
 
-```bash
-git checkout main && git pull origin main
-git checkout -b feat/{task_id}
-```
+**Note**: Git branching is now optional/configurable. Agents work on the current branch.
+To use feature branches, use `/hyper:implement-worktree` instead.
 
 VERIFY both statuses were updated before proceeding."""
   context: task_spec
@@ -321,7 +319,7 @@ output summary = session: impl-captain
 | UI | {result} |
 
 ### Git
-Branch: feat/{task_id}
+Working on current branch (use /hyper:implement-worktree for isolated branches)
 
 ### Next Steps
 {If complete: next task}
