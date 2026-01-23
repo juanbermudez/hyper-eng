@@ -10,8 +10,8 @@
   "plugins": [
     {
       "name": "hyper",
-      "description": "Spec-driven development with local .hyper/ planning. 10 agents, 8 commands, 4 prose workflows, 14 skills (includes Hyper-Prose VM).",
-      "version": "3.15.0",
+      "description": "Spec-driven development with local HyperHome planning. 10 agents, 8 commands, 4 workflow programs, 14 skills (includes Hypercraft VM).",
+      "version": "3.18.1",
       "author": {
         "name": "Juan Bermudez"
       },

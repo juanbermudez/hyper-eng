@@ -137,7 +137,7 @@ tags:                              # Optional: Searchable tags
 
 ### Note ID Format
 
-The `id` field MUST include a scope prefix:
+**CRITICAL**: The `id` field MUST include a scope prefix. Notes with incorrect IDs will NOT appear in the Hypercraft UI.
 
 | Scope | ID Format | Example |
 |-------|-----------|---------|
@@ -145,6 +145,17 @@ The `id` field MUST include a scope prefix:
 | Organization | `org-{orgId}:{slug}` | `id: "org-abc123:team-docs"` |
 | Workspace | `ws-{wsId}:{slug}` | `id: "ws-proj-123:feature-notes"` |
 | Project | `proj-{projId}:{slug}` | `id: "proj-auth:design-doc"` |
+
+**Common Mistakes:**
+- `id: my-note` ❌ → Missing scope prefix
+- `id: activity-summary` ❌ → Missing scope prefix
+- `id: personal:my-note` ⚠️ → Must quote if contains colon
+- `id: "personal:my-note"` ✓ → Correct format
+
+**Recommended**: Always use the CLI to create notes:
+```bash
+hypercraft drive create "My Note Title" --icon "FileText" --json
+```
 
 **Note**: IDs with colons MUST be quoted in YAML to avoid parsing errors.
 

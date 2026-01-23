@@ -72,17 +72,21 @@ resolve_workspace_root() {
 WORKSPACE_ROOT="$(resolve_workspace_root)"
 WORKSPACE_ROOT="${WORKSPACE_ROOT%/}"
 
-# Only validate workspace data root paths - passthrough all others
-if [[ -n "$WORKSPACE_ROOT" ]]; then
-  case "$FILE_PATH" in
-    "$WORKSPACE_ROOT"/*) ;;
-    *) echo '{"decision": "allow"}'; exit 0 ;;
-  esac
-else
-  if [[ "$FILE_PATH" != *".hyper/"* && "$FILE_PATH" != *"/.hyper/"* ]]; then
-    echo '{"decision": "allow"}'
-    exit 0
-  fi
+# Check if file is in a Hyper-managed location:
+# - Workspace root (if set)
+# - Personal drive or other HyperHome locations (*.hyper/*)
+IS_HYPER_FILE=false
+
+if [[ -n "$WORKSPACE_ROOT" && "$FILE_PATH" == "$WORKSPACE_ROOT"/* ]]; then
+  IS_HYPER_FILE=true
+elif [[ "$FILE_PATH" == *".hyper/"* || "$FILE_PATH" == *"/.hyper/"* ]]; then
+  # Personal drive, org drive, or other HyperHome files
+  IS_HYPER_FILE=true
+fi
+
+if [[ "$IS_HYPER_FILE" != "true" ]]; then
+  echo '{"decision": "allow"}'
+  exit 0
 fi
 
 # Only validate .mdx files within the workspace data root

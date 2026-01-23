@@ -208,10 +208,18 @@ The `id` field MUST include a scope prefix followed by a colon:
 | Organization | `org-{orgId}:{slug}` | `id: "org-abc123:team-docs"` |
 | Workspace | `ws-{wsId}:{slug}` | `id: "ws-proj-123:notes"` |
 
+**Common Mistakes (will be blocked by validation):**
+- `id: my-note` ❌ → Missing scope prefix
+- `id: activity-summary` ❌ → Missing scope prefix
+- `id: personal:my-note` ⚠️ → Must quote if contains colon
+- `id: "personal:my-note"` ✓ → Correct format
+
+**PreToolUse Validation**: The `validate-hyper-file.py` hook will BLOCK writes with invalid IDs and provide helpful feedback on how to fix them.
+
 **Always prefer the CLI** for creating drive files:
 
 ```bash
-hyper drive create "My Note Title" --icon "FileText" --json
+hypercraft drive create "My Note Title" --icon "FileText" --json
 ```
 
 See `skills/hyper-cli/SKILL.md` for full Drive API documentation.

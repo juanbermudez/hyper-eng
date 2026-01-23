@@ -1,7 +1,7 @@
 {
   "name": "hyper",
   "description": "Spec-driven development with local HyperHome planning. 10 agents, 8 commands, 4 workflow programs, 14 skills (includes Hypercraft VM).",
-  "version": "3.18.0",
+  "version": "3.18.1",
   "author": {
     "name": "Juan Bermudez"
   },
@@ -23,8 +23,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/binaries/hyper hook pre-tool-use --json",
-            "timeout": 5
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate-write.sh",
+            "timeout": 10
           }
         ]
       }

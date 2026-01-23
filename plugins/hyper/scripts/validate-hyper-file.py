@@ -21,7 +21,7 @@ except ImportError:
     HAS_PYYAML = False
 
 # Valid enum values (must match Hypercraft schemas)
-VALID_TYPES = ['project', 'task', 'resource', 'doc']
+VALID_TYPES = ['project', 'task', 'resource', 'doc', 'note']
 VALID_STATUSES = [
     # Task statuses
     'draft', 'todo', 'in-progress', 'review', 'complete', 'blocked', 'qa',
@@ -238,21 +238,43 @@ def resolve_workspace_root() -> str:
     """Resolve workspace root using central path resolution."""
     paths = get_hyper_paths()
     root = paths.get('workspace_root', '')
-    if not root:
+    # Handle marker values from resolver indicating no workspace
+    if not root or root.startswith('<') or root == 'null':
         # Fallback to environment variable
         root = os.environ.get('HYPER_WORKSPACE_ROOT', '').strip()
-    if not root:
+    if not root or root.startswith('<') or root == 'null':
         return ''
     return normalize_path(root)
+
+
+def resolve_personal_drive() -> str:
+    """Resolve personal drive path using central path resolution."""
+    paths = get_hyper_paths()
+    drive = paths.get('personal_drive', '')
+    if not drive or drive.startswith('<') or drive == 'null':
+        return ''
+    return normalize_path(drive)
+
+
+PERSONAL_DRIVE = resolve_personal_drive()
 
 
 WORKSPACE_ROOT = resolve_workspace_root()
 
 
 def is_workspace_file(file_path: str) -> bool:
+    """Check if file is a Hyper-managed file (workspace, personal drive, etc.)"""
     path = normalize_path(file_path)
-    if WORKSPACE_ROOT:
-        return path == WORKSPACE_ROOT or path.startswith(f"{WORKSPACE_ROOT}/")
+
+    # Check personal drive first (notes in ~/.hyper/accounts/.../notes/)
+    if PERSONAL_DRIVE and (path == PERSONAL_DRIVE or path.startswith(f"{PERSONAL_DRIVE}/")):
+        return True
+
+    # Check workspace root
+    if WORKSPACE_ROOT and (path == WORKSPACE_ROOT or path.startswith(f"{WORKSPACE_ROOT}/")):
+        return True
+
+    # Fallback: any file in a .hyper directory structure
     return '/.hyper/' in path
 
 
@@ -584,6 +606,26 @@ def validate_frontmatter(frontmatter: dict, expected_type: str, file_path: str) 
                 'message': f"ID '{id_value}' appears truncated (missing part after colon?)",
                 'suggestion': 'IDs with colons must be quoted: id: "personal:my-note-123"',
             })
+        # Check if note/drive item ID is missing scope prefix
+        elif expected_type == 'note':
+            # Valid scope prefixes for drive items
+            valid_prefixes = ['personal:', 'ws-', 'org-', 'proj-']
+            has_valid_prefix = any(id_value.startswith(p) for p in valid_prefixes)
+            if not has_valid_prefix:
+                errors.append({
+                    'code': 'MISSING_SCOPE_PREFIX',
+                    'field': 'id',
+                    'message': f"Note ID '{id_value}' is missing the required scope prefix",
+                    'suggestion': (
+                        'Note IDs must include a scope prefix. Examples:\n'
+                        '  - Personal: id: "personal:my-note-slug"\n'
+                        '  - Workspace: id: "ws-{workspaceId}:my-note"\n'
+                        '  - Organization: id: "org-{orgId}:my-note"\n'
+                        '\n'
+                        'Recommended: Use the CLI to create notes automatically:\n'
+                        '  hypercraft drive create "My Note Title" --icon "FileText" --json'
+                    ),
+                })
 
     # Validate relationships (parent, depends_on)
     relationship_errors = validate_relationships(frontmatter, expected_type, file_path)
