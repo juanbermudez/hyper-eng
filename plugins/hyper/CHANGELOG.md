@@ -5,6 +5,18 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.17.2] - 2026-01-23
+
+### Fixed
+
+- **Task ID Regex** - Fixed `update-session.sh` to handle alphanumeric task IDs (e.g., `task-auth-001`) instead of just numeric IDs
+- **Project Slug Extraction** - Fixed `track-bash-activity.sh` `extract_project_slug()` to handle full path invocations and CLI commands with quoted arguments
+- **Task ID Extraction** - Fixed `track-bash-activity.sh` `extract_task_id()` similarly for full paths and various argument formats
+
+### Added
+
+- **Drive/Notes Detection** - Added detection for Drive notes in `update-session.sh` (`~/.hyper/accounts/.../notes/*.mdx` and `{workspace}/notes/*.mdx`)
+
 ## [3.17.0] - 2026-01-22
 
 ### Added

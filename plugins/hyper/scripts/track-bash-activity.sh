@@ -122,33 +122,35 @@ extract_project_slug() {
   local cmd="$1"
   local slug=""
 
-  # Try --slug
-  slug=$(echo "$cmd" | grep -oE '\-\-slug[= ]+"?([^" ]+)"?' | sed -E 's/--slug[= ]+"?([^" ]+)"?/\1/' | head -1)
+  # Try --slug (with = or space, with or without quotes)
+  slug=$(echo "$cmd" | grep -oE '\-\-slug[= ]+"?([a-zA-Z0-9_-]+)"?' | sed -E 's/--slug[= ]+"?([a-zA-Z0-9_-]+)"?/\1/' | head -1)
   if [[ -n "$slug" ]]; then
     echo "$slug"
     return
   fi
 
-  # Try --project
-  slug=$(echo "$cmd" | grep -oE '\-\-project[= ]+"?([^" ]+)"?' | sed -E 's/--project[= ]+"?([^" ]+)"?/\1/' | head -1)
+  # Try --project (with = or space, with or without quotes)
+  slug=$(echo "$cmd" | grep -oE '\-\-project[= ]+"?([a-zA-Z0-9_-]+)"?' | sed -E 's/--project[= ]+"?([a-zA-Z0-9_-]+)"?/\1/' | head -1)
   if [[ -n "$slug" ]]; then
     echo "$slug"
     return
   fi
 
   # Try -p (short form)
-  slug=$(echo "$cmd" | grep -oE '\-p[= ]+"?([^" ]+)"?' | sed -E 's/-p[= ]+"?([^" ]+)"?/\1/' | head -1)
+  slug=$(echo "$cmd" | grep -oE '\-p[= ]+"?([a-zA-Z0-9_-]+)"?' | sed -E 's/-p[= ]+"?([a-zA-Z0-9_-]+)"?/\1/' | head -1)
   if [[ -n "$slug" ]]; then
     echo "$slug"
     return
   fi
 
   # For project commands, try positional arg after action verb
-  # e.g., "hyper project create my-project" or "hyper project update my-project --status done"
-  if echo "$cmd" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )project\s+(create|update)'; then
-    slug=$(echo "$cmd" | sed -E 's/.*(^hypercraft |^hyper |\/hypercraft |\/hyper )project (create|update) +"?([^" -][^" ]*)"?.*/\3/' | head -1)
-    # Clean up - remove anything that looks like a flag
-    if [[ "$slug" != -* && -n "$slug" ]]; then
+  # Handles both simple "hyper" and full path invocations like "${PLUGIN_ROOT}/binaries/hypercraft"
+  # e.g., "hyper project create my-project" or "/path/to/hypercraft project update my-project --status done"
+  if echo "$cmd" | grep -qE '(hypercraft|hyper)\s+project\s+(create|update)'; then
+    # Extract the positional argument after "project create|update"
+    slug=$(echo "$cmd" | sed -E 's/.*(hypercraft|hyper)\s+project\s+(create|update)\s+"?([a-zA-Z0-9_-]+)"?.*/\3/')
+    # Clean up - remove anything that looks like a flag or if it matched the full command
+    if [[ "$slug" != "$cmd" && "$slug" != -* && -n "$slug" ]]; then
       echo "$slug"
       return
     fi
@@ -158,22 +160,26 @@ extract_project_slug() {
 }
 
 # Extract task ID from command
+# Task IDs can be alphanumeric with hyphens (e.g., task-auth-001, sat-001)
 extract_task_id() {
   local cmd="$1"
   local task_id=""
 
-  # Try --task or --id
-  task_id=$(echo "$cmd" | grep -oE '\-\-(task|id)[= ]+"?([^" ]+)"?' | sed -E 's/--[a-z]+[= ]+"?([^" ]+)"?/\1/' | head -1)
+  # Try --task or --id (with = or space, with or without quotes)
+  task_id=$(echo "$cmd" | grep -oE '\-\-(task|id)[= ]+"?([a-zA-Z0-9_-]+)"?' | sed -E 's/--[a-z]+[= ]+"?([a-zA-Z0-9_-]+)"?/\1/' | head -1)
   if [[ -n "$task_id" ]]; then
     echo "$task_id"
     return
   fi
 
   # For task commands, try positional arg after action verb
-  # e.g., "hyper task update sat-001 --status complete"
-  if echo "$cmd" | grep -qE '(^hypercraft |^hyper |/hypercraft |/hyper )task\s+(create|update)'; then
-    task_id=$(echo "$cmd" | sed -E 's/.*(^hypercraft |^hyper |\/hypercraft |\/hyper )task (create|update) +"?([^" -][^" ]*)"?.*/\3/' | head -1)
-    if [[ "$task_id" != -* && -n "$task_id" ]]; then
+  # Handles both simple "hyper" and full path invocations
+  # e.g., "hyper task update sat-001 --status complete" or "${PLUGIN_ROOT}/binaries/hypercraft task update task-auth-001"
+  if echo "$cmd" | grep -qE '(hypercraft|hyper)\s+task\s+(create|update)'; then
+    # Extract the positional argument after "task create|update"
+    task_id=$(echo "$cmd" | sed -E 's/.*(hypercraft|hyper)\s+task\s+(create|update)\s+"?([a-zA-Z0-9_-]+)"?.*/\3/')
+    # Clean up - remove if it matched the full command or looks like a flag
+    if [[ "$task_id" != "$cmd" && "$task_id" != -* && -n "$task_id" ]]; then
       echo "$task_id"
       return
     fi
