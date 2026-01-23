@@ -5,6 +5,46 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.18.0] - 2026-01-22
+
+### Changed
+
+- **Rust-Based Hooks** - Replaced Python and bash scripts with native Rust implementation
+  - Removed dependency on `jq` for JSON parsing
+  - Removed dependency on Python for MDX validation
+  - All hooks now use the bundled `hyper` CLI binary
+  - Faster execution (~5x improvement)
+  - Single binary handles all hook operations
+
+### Added
+
+- **`hyper hook` command** - New CLI subcommand for hook processing
+  - `hyper hook pre-tool-use --json` - PreToolUse hook handler
+  - `hyper hook post-tool-use --json` - PostToolUse hook handler (validation + activity tracking)
+  - `hyper hook session-start --json` - SessionStart hook handler
+  - `hyper hook json <path>` - JSON parsing (jq replacement)
+
+- **`hyper validate` command** - New CLI subcommand for MDX validation
+  - `hyper validate file --path <path>` - Validate MDX frontmatter
+  - `hyper validate file --pre-validate` - Pre-validation from stdin
+  - Validates schema, enums, required fields, relationships
+
+### Removed
+
+- **Python dependency** - No longer requires Python for `validate-hyper-file.py`
+- **jq dependency** - No longer requires `jq` for JSON parsing in hooks
+- **Multiple bash scripts** - Consolidated into single Rust binary:
+  - `validate-write.sh` → `hyper hook pre-tool-use`
+  - `validate-hyper-file.py` → `hyper hook post-tool-use`
+  - `track-activity.sh` → `hyper hook post-tool-use`
+  - `hyper-init-check.sh` → `hyper hook session-start`
+
+### Technical
+
+- Hook timeouts reduced from 10-30s to 5-10s due to faster Rust execution
+- Binary size: 6.4MB (includes all hook functionality)
+- No external runtime dependencies
+
 ## [3.17.2] - 2026-01-22
 
 ### Fixed

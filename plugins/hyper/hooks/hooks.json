@@ -1,5 +1,5 @@
 {
-  "description": "Hyper Engineering - Format validation, activity tracking, and workflow hooks",
+  "description": "Hyper Engineering - Format validation, activity tracking, and workflow hooks (v3.18.0 - Rust-based)",
   "hooks": {
     "PreToolUse": [
       {
@@ -7,8 +7,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate-write.sh",
-            "timeout": 10
+            "command": "${CLAUDE_PLUGIN_ROOT}/binaries/hyper hook pre-tool-use --json",
+            "timeout": 5
           }
         ]
       }
@@ -19,8 +19,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/hyper-init-check.sh",
-            "timeout": 10
+            "command": "${CLAUDE_PLUGIN_ROOT}/binaries/hyper hook session-start --json",
+            "timeout": 5
           }
         ]
       }
@@ -31,22 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/validate-hyper-file.py",
-            "timeout": 30
-          },
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/track-activity.sh",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/track-bash-activity.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/binaries/hyper hook post-tool-use --json",
             "timeout": 10
           }
         ]
