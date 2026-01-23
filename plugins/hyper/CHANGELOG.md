@@ -5,6 +5,23 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.17.2] - 2026-01-22
+
+### Fixed
+
+- **Workspace Resolution Bug** - Fixed `resolve-paths.sh` looking at wrong file for workspace registry
+  - Changed line 136 from `$HYPER_HOME/config.json` to `$HYPER_ACCOUNT_ROOT/workspaces.json`
+  - This enables proper CWD → workspace ID mapping using absolute paths
+  - All scripts that source `resolve-paths.sh` now correctly resolve workspaces
+
+### Changed
+
+- **Git Branching Now Optional** - Removed automatic feature branch creation from `/hyper:implement`
+  - Agents now work on the current branch by default
+  - For isolated branch work, use `/hyper:implement-worktree` instead
+  - Branch creation will be configurable in project settings (future)
+  - Updated `hyper-implement.prose` and `implementation-orchestrator.md`
+
 ## [3.17.0] - 2026-01-22
 
 ### Added

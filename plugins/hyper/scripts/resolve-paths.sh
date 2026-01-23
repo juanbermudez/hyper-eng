@@ -133,7 +133,9 @@ export HYPER_PERSONAL_DRIVE
 
 resolve_workspace_id() {
   local cwd
-  local registry_file="$HYPER_HOME/config.json"
+  # FIX: Use workspaces.json in account root, not config.json in HYPER_HOME
+  # workspaces.json contains the CWD → workspace ID mapping
+  local registry_file="$HYPER_ACCOUNT_ROOT/workspaces.json"
   local workspace_id=""
 
   # Get current working directory
