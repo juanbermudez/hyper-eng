@@ -36,6 +36,34 @@ This skill coordinates 4 specialized research agents:
 - [Research Scope Template](./references/research-scope-template.md) - Defining research scope
 - [Synthesis Template](./references/synthesis-template.md) - Combining findings
 
+## Search Strategy
+
+Research agents use **QFS (Quick File Search)** for fast, ranked codebase searches:
+
+```bash
+# Check if QFS index is available
+hypercraft index status --json
+
+# BM25 search with ranked results and snippets
+hypercraft search "authentication" --engine qfs --json
+
+# Search specific collection
+hypercraft search "pattern" --engine qfs --collection repo-name --json
+
+# More results
+hypercraft search "error handling" --engine qfs --limit 50 --json
+```
+
+**When to use each tool:**
+
+| Scenario | Tool | Reason |
+|----------|------|--------|
+| Find implementations | QFS (`--engine qfs`) | Ranked results, highlighted snippets |
+| Structural patterns | `ast-grep` | Syntax-aware matching |
+| Quick grep | Grep | Simple, no index needed |
+| File discovery | Glob | Pattern matching on paths |
+| External docs | Context7 | Official documentation |
+
 ## Workflow
 
 ### Step 1: Define Research Scope

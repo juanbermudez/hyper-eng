@@ -44,6 +44,7 @@ Agent Memory: impl-captain, researcher
 Uses `${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft` for queries:
 - `hypercraft project list --json`
 - `hypercraft task list --project {slug} --json`
+- `hypercraft search "query" --engine qfs --json` (for content search)
 
 ## State Location
 

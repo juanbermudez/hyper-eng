@@ -98,8 +98,21 @@ argument-hint: "[task-id or project-slug/task-id]"
            - Existing files to modify
 
         3. Read existing files to understand patterns:
-           - Use Glob to find related files
-           - Use Grep to find similar implementations
+           - **Prefer QFS** for large codebases:
+             ```bash
+             hypercraft search "pattern" --engine qfs --json
+             ```
+           - Fall back to Glob/Grep for quick searches:
+             - Use Glob to find related files by path pattern
+             - Use Grep to find similar implementations by content
+
+           **When to use each:**
+           | Scenario | Tool | Reason |
+           |----------|------|--------|
+           | Find implementations | QFS | Ranked results, highlighted snippets |
+           | Structural patterns | `ast-grep` | Syntax-aware matching |
+           | Quick grep | Grep | Simple, no index needed |
+           | File discovery | Glob | Pattern matching on paths |
 
         4. Load relevant internal docs if they exist:
            `$HYPER_WORKSPACE_ROOT/docs/` for project-wide documentation

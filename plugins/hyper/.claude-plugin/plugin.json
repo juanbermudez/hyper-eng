@@ -1,7 +1,7 @@
 {
   "name": "hyper",
-  "description": "Spec-driven development with local HyperHome planning. 10 agents, 8 commands, 4 workflow programs, 14 skills (includes Hypercraft VM).",
-  "version": "3.19.0",
+  "description": "Spec-driven development with local HyperHome planning. 10 agents, 8 commands, 4 workflow programs, 14 skills, 2 MCP servers (includes Hypercraft VM).",
+  "version": "3.20.0",
   "author": {
     "name": "Juan Bermudez"
   },
@@ -14,7 +14,9 @@
     "planning",
     "workflow-automation",
     "ai-powered",
-    "hypercraft"
+    "hypercraft",
+    "qfs",
+    "search"
   ],
   "hooks": {
     "PreToolUse": [

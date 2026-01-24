@@ -16,11 +16,21 @@ input feature: "$ARGUMENTS"
 The workflow will guide you through:
 
 1. **Initialize** - Set up workspace and run ID
-2. **Research Phase** - Spawn 4 parallel research sub-agents
+2. **Research Phase** - Spawn 4 parallel research sub-agents (uses QFS for codebase search)
 3. **Direction Gate** - Get early approval before detailed spec
 4. **Specification** - Create detailed technical PRD
 5. **Approval Gate** - Wait for human approval
 6. **Task Breakdown** - Create task files after approval
+
+## Search Strategy
+
+Research agents leverage **QFS** for fast, ranked codebase searches:
+
+```bash
+hypercraft search "pattern" --engine qfs --json
+```
+
+See `/hyper:research` for detailed search options.
 
 ## State Management
 

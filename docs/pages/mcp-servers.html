@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>MCP Server Reference - Hyper-Engineering</title>
-  <meta content="Reference for the Context7 MCP server in the Hyper-Engineering plugin." name="description" />
+  <title>MCP Servers Reference - Hyper-Engineering</title>
+  <meta content="Reference for Context7 and QFS MCP servers in the Hyper-Engineering plugin." name="description" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -36,7 +36,7 @@
             <li><a href="agents.html">Agents (7)</a></li>
             <li><a href="commands.html">Commands</a></li>
             <li><a href="skills.html">Skills (3)</a></li>
-            <li><a href="mcp-servers.html" class="active">MCP Server (1)</a></li>
+            <li><a href="mcp-servers.html" class="active">MCP Servers (2)</a></li>
           </ul>
         </div>
         <div class="nav-section">
@@ -49,6 +49,7 @@
           <h3>On This Page</h3>
           <ul>
             <li><a href="#context7">Context7</a></li>
+            <li><a href="#qfs">QFS (Local Search)</a></li>
             <li><a href="#browser-testing">Browser Testing</a></li>
             <li><a href="#manual-config">Manual Configuration</a></li>
           </ul>
@@ -71,9 +72,9 @@
       </div>
 
       <article class="docs-article">
-        <h1><i class="fa-solid fa-server color-accent"></i> MCP Server Reference</h1>
+        <h1><i class="fa-solid fa-server color-accent"></i> MCP Servers Reference</h1>
         <p class="lead">
-          The plugin bundles Context7 for fetching up-to-date framework documentation. For browser testing, use the <code>web-app-debugger</code> agent with Claude Code's built-in Chrome extension.
+          The plugin bundles two MCP servers: <strong>Context7</strong> for fetching up-to-date framework documentation, and <strong>QFS</strong> for fast local file search. For browser testing, use the <code>web-app-debugger</code> agent with Claude Code's built-in Chrome extension.
         </p>
 
         <div class="callout callout-warning">
@@ -184,6 +185,122 @@
           </div>
         </section>
 
+        <!-- QFS Local Search -->
+        <section id="qfs">
+          <h2><i class="fa-solid fa-magnifying-glass"></i> QFS (Quick File Search)</h2>
+          <p>
+            QFS is a local file search engine that provides fast BM25 full-text search across your codebase. No cloud services, no API keys—everything runs locally on your machine. Index your projects, workspaces, and documentation for instant search.
+          </p>
+
+          <h3>Tools Provided</h3>
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>qfs_search</code></td>
+                <td>BM25 keyword search across indexed files. Fast and accurate full-text search.</td>
+              </tr>
+              <tr>
+                <td><code>qfs_vsearch</code></td>
+                <td>Vector semantic search (requires embeddings). Find conceptually similar content.</td>
+              </tr>
+              <tr>
+                <td><code>qfs_query</code></td>
+                <td>Hybrid search combining BM25 and vector with Reciprocal Rank Fusion.</td>
+              </tr>
+              <tr>
+                <td><code>qfs_get</code></td>
+                <td>Retrieve a specific document by its path. Get full content and metadata.</td>
+              </tr>
+              <tr>
+                <td><code>qfs_status</code></td>
+                <td>Check index health: collection count, document count, last indexed time.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>What Gets Indexed</h3>
+          <p>QFS indexes text-based files in configured collections:</p>
+          <div class="framework-grid">
+            <div class="framework-category">
+              <h4>Documents</h4>
+              <ul>
+                <li>Markdown (.md, .mdx)</li>
+                <li>Text files (.txt)</li>
+                <li>JSON/YAML (.json, .yaml)</li>
+                <li>Config files</li>
+              </ul>
+            </div>
+            <div class="framework-category">
+              <h4>Code</h4>
+              <ul>
+                <li>TypeScript (.ts, .tsx)</li>
+                <li>Rust (.rs)</li>
+                <li>Python (.py)</li>
+                <li>Go, Java, etc.</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3>Example Usage</h3>
+          <div class="card-code-block">
+            <pre><code># Search your indexed files
+
+"Search for authentication handling in the codebase"
+
+"Find all references to the User model"
+
+"Look for error handling patterns"
+
+# QFS searches your local files instantly—no network required</code></pre>
+          </div>
+
+          <h3>CLI Commands</h3>
+          <p>Manage your search index with the Hypercraft CLI:</p>
+          <div class="card-code-block">
+            <pre><code># Add a collection to index
+hypercraft index add docs ./docs --patterns "**/*.md"
+
+# Build/rebuild the index
+hypercraft index build
+
+# Check index status
+hypercraft index status
+
+# Search from CLI
+hypercraft search "query" --engine qfs --mode bm25</code></pre>
+          </div>
+
+          <h3>Configuration</h3>
+          <div class="card-code-block">
+            <pre><code>{
+  "qfs": {
+    "type": "stdio",
+    "command": "${CLAUDE_PLUGIN_ROOT}/binaries/qfs-mcp",
+    "args": [],
+    "env": {
+      "QFS_DB_PATH": "${HOME}/.cache/hypercraft/qfs/index.sqlite"
+    }
+  }
+}</code></pre>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-icon"><i class="fa-solid fa-info-circle"></i></div>
+            <div class="callout-content">
+              <h4>Index First</h4>
+              <p>
+                QFS requires an index to search. Run <code>hypercraft index add</code> and <code>hypercraft index build</code> before using QFS search tools.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <!-- Browser Testing -->
         <section id="browser-testing">
           <h2><i class="fa-brands fa-chrome"></i> Browser Testing</h2>
@@ -237,19 +354,33 @@
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
+    },
+    "qfs": {
+      "type": "stdio",
+      "command": "qfs-mcp",
+      "env": {
+        "QFS_DB_PATH": "~/.cache/hypercraft/qfs/index.sqlite"
+      }
     }
   }
 }</code></pre>
           </div>
 
           <h3>Global Configuration</h3>
-          <p>Or enable everywhere—every project on your machine gets this server. Add to <code>~/.claude/settings.json</code>:</p>
+          <p>Or enable everywhere—every project on your machine gets these servers. Add to <code>~/.claude/settings.json</code>:</p>
           <div class="card-code-block">
             <pre><code>{
   "mcpServers": {
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
+    },
+    "qfs": {
+      "type": "stdio",
+      "command": "qfs-mcp",
+      "env": {
+        "QFS_DB_PATH": "~/.cache/hypercraft/qfs/index.sqlite"
+      }
     }
   }
 }</code></pre>

@@ -93,8 +93,16 @@ hypercraft task create --project auth --title "Phase 1" --priority high --json
 hypercraft task update au-001 --status in-progress
 hypercraft task list --project auth --json
 
-# Search
+# Search (simple)
 hypercraft search "OAuth" --json
+
+# Search (QFS - fast BM25 ranking for large codebases)
+hypercraft search "authentication" --engine qfs --json
+hypercraft search "pattern" --engine qfs --collection repo-name --json
+
+# QFS Index management
+hypercraft index status --json
+hypercraft index build
 ```
 
 See [cli-reference.md](./references/cli-reference.md) for complete CLI documentation.

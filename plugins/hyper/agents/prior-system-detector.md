@@ -91,6 +91,7 @@ ls -la .github/ISSUE_TEMPLATE/ 2>/dev/null
 
 For each detected file, analyze content:
 
+**Quick pattern detection with grep:**
 ```bash
 # Linear detection
 grep -E '(linear\.app|[A-Z]{2,5}-[0-9]+)' CLAUDE.md README.md 2>/dev/null
@@ -101,6 +102,25 @@ grep -E '#[0-9]+' CLAUDE.md README.md 2>/dev/null
 # JIRA detection
 grep -E '[A-Z]+-[0-9]+' CLAUDE.md README.md 2>/dev/null
 ```
+
+**For large codebases, use QFS for faster content search:**
+```bash
+# Check if QFS index is available
+hypercraft index status --json
+
+# Search for task tracking patterns
+hypercraft search "linear.app" --engine qfs --json
+hypercraft search "JIRA" --engine qfs --json
+
+# Search for existing workflow configurations
+hypercraft search "TODO" --engine qfs --limit 50 --json
+```
+
+| Scenario | Tool | Reason |
+|----------|------|--------|
+| Pattern detection | Grep | Regex support for specific patterns |
+| Large codebase search | QFS | Fast ranked results across many files |
+| File discovery | Glob | Pattern matching on paths |
 
 ### Phase 3: CLAUDE.md Section Analysis
 

@@ -296,7 +296,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read projects/auth-system/_projec
 ### Searching (CLI)
 
 ```bash
-# Search across all resources
+# Simple search across workspace resources
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "OAuth" --json
 
 # Search with filters
@@ -305,6 +305,33 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "authentication" --resource-typ
 # File-level search
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file search "OAuth" --json
 ```
+
+### QFS Full-Text Search (Recommended for Large Codebases)
+
+**QFS** provides fast, ranked BM25 full-text search with highlighted snippets:
+
+```bash
+# Check if QFS index is available
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft index status --json
+
+# BM25 search with ranked results
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "authentication" --engine qfs --json
+
+# Search specific collection
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "pattern" --engine qfs --collection repo-name --json
+
+# More results
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "error handling" --engine qfs --limit 50 --json
+```
+
+**When to use each:**
+
+| Scenario | Tool | Reason |
+|----------|------|--------|
+| Find implementations (1000+ files) | QFS | Ranked results, fast |
+| Simple search | CLI search | No index needed |
+| Quick grep | Grep | Regex support |
+| File discovery | Glob | Pattern matching on paths |
 
 ### Activity Tracking
 

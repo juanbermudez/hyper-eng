@@ -117,11 +117,31 @@ Structure your findings as:
 
 **Search Strategies:**
 
-When using search tools:
+**Prefer QFS for fast, ranked content search:**
+```bash
+# Check if index exists
+hypercraft index status --json
+
+# If indexed, use QFS for fast BM25 search with snippets
+hypercraft search "authentication" --engine qfs --json
+
+# Search specific collection
+hypercraft search "error handling" --engine qfs --collection my-repo --json
+```
+
+**Fall back to direct tools when QFS not available:**
 - For Ruby code patterns: `ast-grep --lang ruby -p 'pattern'`
 - For general text search: `rg -i 'search term' --type md`
 - For file discovery: `find . -name 'pattern' -type f`
 - Check multiple variations of common file names
+
+**When to use each:**
+| Scenario | Tool | Reason |
+|----------|------|--------|
+| Find implementations | QFS (`--engine qfs`) | Ranked results, highlighted snippets |
+| Structural patterns | `ast-grep` | Syntax-aware matching |
+| Simple grep | `rg` | Quick, no index needed |
+| File discovery | Glob/find | Pattern matching on paths |
 
 **Important Considerations:**
 

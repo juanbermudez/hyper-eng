@@ -113,6 +113,25 @@ When researching frameworks, always start with official documentation websites:
    - Read through README files, changelogs, and inline documentation
    - Identify configuration options and extension points
 
+5. **Local Codebase Search (QFS)**:
+   When searching for patterns in the project codebase:
+   ```bash
+   # Check if QFS index is available
+   hypercraft index status --json
+
+   # Fast BM25 search with ranked results
+   hypercraft search "authentication middleware" --engine qfs --json
+
+   # Search specific collection
+   hypercraft search "API handler" --engine qfs --collection repo-name --json
+   ```
+
+   | Scenario | Tool | Reason |
+   |----------|------|--------|
+   | Find implementations | QFS (`--engine qfs`) | Ranked results, highlighted snippets |
+   | Quick grep | Grep | Simple, no index needed |
+   | External docs | Context7/WebFetch | Official documentation |
+
 **Your Workflow Process:**
 
 1. **Initial Assessment**:

@@ -17,10 +17,31 @@ The workflow will guide you through:
 
 1. **Initialize** - Set up workspace, run ID, and git branch
 2. **Load Task** - Read task spec and project context
-3. **Analysis** - Understand codebase patterns before implementing
+3. **Analysis** - Understand codebase patterns before implementing (uses QFS)
 4. **Implementation Loop** - Write code with review cycles (max 3 attempts)
 5. **QA Phase** - Run automated and manual verification
 6. **Completion** - Mark complete and commit changes
+
+## Codebase Search
+
+The analysis phase uses **QFS** for fast pattern discovery:
+
+```bash
+# Check index status
+hypercraft index status --json
+
+# Find similar implementations
+hypercraft search "authentication" --engine qfs --json
+
+# Search specific repo collection
+hypercraft search "handler" --engine qfs --collection repo-name --json
+```
+
+| Scenario | Tool | Reason |
+|----------|------|--------|
+| Find implementations | QFS | Ranked results, highlighted snippets |
+| Quick grep | Grep | Simple, no index needed |
+| File discovery | Glob | Pattern matching on paths |
 
 ## Modes
 

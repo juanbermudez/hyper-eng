@@ -31,6 +31,27 @@ $ARGUMENTS
 | security-reviewer | Security implications (deep mode) |
 | performance-analyst | Performance considerations (deep mode) |
 
+## Search Strategy
+
+Research agents use **QFS (Quick File Search)** for fast, ranked codebase searches:
+
+```bash
+# Check index availability
+hypercraft index status --json
+
+# BM25 search with ranked results and snippets
+hypercraft search "authentication" --engine qfs --json
+
+# Search specific collection
+hypercraft search "pattern" --engine qfs --collection repo-name --json
+```
+
+| Scenario | Tool | Reason |
+|----------|------|--------|
+| Find implementations | QFS | Ranked results, highlighted snippets |
+| Quick grep | Grep | Simple, no index needed |
+| External docs | Context7 | Official documentation |
+
 ## Workflow Summary
 
 1. **Clarification** - Use AskUserQuestion to understand research goals

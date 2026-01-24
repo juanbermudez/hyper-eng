@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-3.16.2-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-3.20.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering Plugin
@@ -22,7 +22,7 @@ Works standalone or with the Hypercraft desktop app ([repo](https://github.com/j
 | Commands | 9 |
 | Hypercraft Workflows | 5 |
 | Skills | 14 |
-| MCP Servers | 1 |
+| MCP Servers | 2 |
 
 ---
 
@@ -329,6 +329,7 @@ Core skills including bundled Hypercraft VM:
 | Server | Description |
 |--------|-------------|
 | `context7` | Framework documentation lookup via Context7 |
+| `qfs` | Local file search engine with BM25/vector/hybrid search |
 
 ### Context7
 
@@ -337,6 +338,31 @@ Core skills including bundled Hypercraft VM:
 - `get-library-docs` - Get documentation for a specific library
 
 Supports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, and more.
+
+### QFS (Quick File Search)
+
+Local file search engine with BM25 full-text and optional vector search. Everything runs locally—no cloud services required.
+
+**Tools provided:**
+- `qfs_search` - BM25 keyword search across indexed files
+- `qfs_vsearch` - Vector semantic search (requires embeddings)
+- `qfs_query` - Hybrid search combining BM25 and vector
+- `qfs_get` - Retrieve document by path
+- `qfs_status` - Check index health and statistics
+
+**CLI commands:**
+```bash
+# Add a collection to index
+hypercraft index add docs ./docs --patterns "**/*.md"
+
+# Build/rebuild the index
+hypercraft index build
+
+# Search from CLI
+hypercraft search "query" --engine qfs --mode bm25
+```
+
+Open source: [github.com/juanbermudez/qfs](https://github.com/juanbermudez/qfs)
 
 
 ## CLI & Activity Tracking

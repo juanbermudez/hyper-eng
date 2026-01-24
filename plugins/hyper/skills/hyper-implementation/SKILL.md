@@ -80,12 +80,30 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update \
 
 Before making changes:
 
-1. **Read all files mentioned in task description**
+1. **Use QFS to find relevant files quickly:**
+   ```bash
+   # Check if QFS index is available
+   hypercraft index status --json
+
+   # Find similar implementations
+   hypercraft search "authentication" --engine qfs --json
+
+   # Search specific collection
+   hypercraft search "handler" --engine qfs --collection repo-name --json
+   ```
+
+   | Scenario | Tool | Reason |
+   |----------|------|--------|
+   | Find implementations | QFS | Ranked results, highlighted snippets |
+   | Quick grep | Grep | Simple, no index needed |
+   | File discovery | Glob | Pattern matching on paths |
+
+2. **Read all files mentioned in task description**
    - Never use limit/offset - read files completely
    - Understand current implementation
    - Note patterns and conventions
 
-2. **Read related files for context**
+3. **Read related files for context**
    - Import/export chains
    - Test files
    - Similar features

@@ -61,6 +61,17 @@ argument-hint: "[feature or problem to research] [project-slug]"
         Spawn research sub-agents in parallel using the Task tool.
         Each agent receives specific instructions and knows where to focus.
 
+        **QFS Search Strategy:**
+        Before spawning research agents, check if QFS index is available:
+        ```bash
+        hypercraft index status --json
+        ```
+
+        If indexed, pass QFS search capability to research agents:
+        - BM25 ranked search: `hypercraft search "query" --engine qfs --json`
+        - Collection-specific: `hypercraft search "query" --engine qfs --collection repo-name --json`
+        - Faster than Glob/Grep for large codebases (1000+ files)
+
         **1. Repo Research Analyst** (always spawn)
         ```
         Task tool with subagent_type: "general-purpose"

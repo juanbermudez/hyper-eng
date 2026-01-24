@@ -70,9 +70,21 @@ argument-hint: "[description of issue or what to test]"
     <phase name="code_analysis" required="true">
       <instructions>
         1. Locate relevant source files:
-           - Use Glob to find component files
-           - Use Grep to search for error messages or function names
+           - **Prefer QFS** for large codebases:
+             ```bash
+             hypercraft search "error message" --engine qfs --json
+             hypercraft search "component name" --engine qfs --json
+             ```
+           - Fall back to Glob/Grep for quick searches:
+             - Use Glob to find component files by path pattern
+             - Use Grep to search for error messages or function names
            - Read the files involved in the issue
+
+           | Scenario | Tool | Reason |
+           |----------|------|--------|
+           | Find implementations | QFS | Ranked results, highlighted snippets |
+           | Quick grep | Grep | Simple, no index needed |
+           | File discovery | Glob | Pattern matching on paths |
 
         2. Trace the data flow:
            - Where does the data originate?

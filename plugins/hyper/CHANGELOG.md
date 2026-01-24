@@ -5,6 +5,33 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.20.0] - 2026-01-23
+
+### Added
+
+- **QFS MCP Server** - Local file search engine with BM25/vector/hybrid search
+  - New MCP server bundled with plugin (`qfs-mcp`)
+  - Tools: `qfs_search`, `qfs_vsearch`, `qfs_query`, `qfs_get`, `qfs_status`
+  - SQLite-based indexing with FTS5 full-text search
+  - Optional vector embeddings for semantic search
+  - Hybrid mode with Reciprocal Rank Fusion
+  - No cloud services required - everything runs locally
+  - Open source: [github.com/juanbermudez/qfs](https://github.com/juanbermudez/qfs)
+
+- **QFS CLI Integration** - New commands in Hypercraft CLI
+  - `hypercraft index add <name> <path>` - Add collection to index
+  - `hypercraft index build` - Build/rebuild search index
+  - `hypercraft index status` - Show index statistics
+  - `hypercraft index list` - List indexed collections
+  - `hypercraft index remove <name>` - Remove collection
+  - `hypercraft search --engine qfs` - Use QFS search engine
+  - `hypercraft search --mode bm25|vector|hybrid` - Select search mode
+
+### Changed
+
+- Updated MCP server count from 1 to 2
+- Added `qfs` and `search` to plugin keywords
+
 ## [3.19.0] - 2026-01-23
 
 ### Changed

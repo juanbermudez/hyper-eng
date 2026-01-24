@@ -53,6 +53,25 @@ When researching best practices, prioritize these authoritative sources:
 3. **GitHub examples**: Search for well-maintained repos with many stars
 4. **Recent content**: Add current year to searches for up-to-date practices
 
+**Local Codebase Search (QFS):**
+When searching for patterns in the local codebase:
+```bash
+# Check if QFS index is available
+hypercraft index status --json
+
+# Fast BM25 search with ranked results
+hypercraft search "authentication pattern" --engine qfs --json
+
+# Search specific collection
+hypercraft search "error handling" --engine qfs --collection repo-name --json
+```
+
+| Scenario | Tool | Reason |
+|----------|------|--------|
+| Find implementations | QFS (`--engine qfs`) | Ranked results, highlighted snippets |
+| Quick grep | Grep | Simple, no index needed |
+| External docs | Context7/WebFetch | Official documentation |
+
 ---
 
 When researching best practices, you will:

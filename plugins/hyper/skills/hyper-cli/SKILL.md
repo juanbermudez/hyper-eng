@@ -589,7 +589,11 @@ hypercraft worktree remove my-feature --json
 
 ## Search API
 
-Search across all workspace resources:
+Search across all workspace resources using simple substring or QFS BM25/vector search.
+
+### Simple Search (Default)
+
+Substring search - works without index but slower for large codebases:
 
 ```bash
 # Full-text search
@@ -605,6 +609,71 @@ hypercraft search "OAuth" --status in-progress --json
 # Filter by priority
 hypercraft search "security" --priority high --json
 ```
+
+### QFS Search (Recommended for Large Codebases)
+
+QFS provides fast BM25 full-text search with ranked results and highlighted snippets.
+Requires index to be built first but is much faster for repeated searches.
+
+```bash
+# Check if index exists
+hypercraft index status --json
+
+# If no index, set up collections first
+hypercraft index add hyper-home $HYPER_WORKSPACE_ROOT --patterns "**/*.md" "**/*.mdx"
+hypercraft index add my-repo /path/to/repo --patterns "**/*.ts" "**/*.tsx" "**/*.py"
+hypercraft index build
+
+# QFS BM25 search (fast, ranked results with snippets)
+hypercraft search "authentication" --engine qfs --json
+
+# Search specific collection only
+hypercraft search "OAuth handler" --engine qfs --collection my-repo --json
+
+# Search with more results
+hypercraft search "error handling" --engine qfs --limit 50 --json
+```
+
+### When to Use Each Engine
+
+| Scenario | Engine | Reason |
+|----------|--------|--------|
+| Quick one-off search | `simple` | No index needed |
+| Searching repo code | `qfs` | Fast, ranked results with snippets |
+| Repeated searches | `qfs` | Index makes subsequent searches instant |
+| Large codebases (>1000 files) | `qfs` | Simple search becomes slow |
+| Finding specific function | `qfs` | BM25 ranking finds best matches |
+
+### QFS Index Management
+
+```bash
+# Add a collection (repository, workspace, etc.)
+hypercraft index add <name> <path> --patterns "**/*.ts" "**/*.tsx" --json
+
+# Build/rebuild index (required after adding collections)
+hypercraft index build --json
+
+# Build specific collection only
+hypercraft index build --collection my-repo --json
+
+# List all indexed collections
+hypercraft index list --json
+
+# Show index status and document counts
+hypercraft index status --json
+
+# Remove a collection
+hypercraft index remove <name> --force --json
+```
+
+### Default Collections
+
+When Hypercraft desktop app runs, it automatically creates and maintains these collections:
+- `hyper-home` - All workspace projects, tasks, and resources
+- `personal-drive` - Personal Drive artifacts
+- `repo-{id}` - Each linked repository
+
+These are kept in sync automatically. For CLI-only usage, add collections manually.
 
 ## VFS (Virtual Filesystem) API
 

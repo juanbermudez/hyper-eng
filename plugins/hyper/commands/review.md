@@ -17,10 +17,22 @@ The workflow will guide you through:
 
 1. **Initialize** - Set up workspace and run ID
 2. **Resolve Target** - Determine project/task scope
-3. **Scope Analysis** - Identify files to review
+3. **Scope Analysis** - Identify files to review (uses QFS for discovery)
 4. **Parallel Reviews** - Spawn domain reviewers
 5. **Synthesis** - Write review report artifact
 6. **Fix Tasks (optional)** - Auto-create fix tasks based on settings
+
+## File Discovery
+
+The scope analysis phase uses **QFS** for fast file discovery:
+
+```bash
+# Find files related to feature
+hypercraft search "authentication" --engine qfs --json
+
+# Search for patterns to review
+hypercraft search "error handling" --engine qfs --limit 50 --json
+```
 
 ## State Management
 

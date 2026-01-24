@@ -64,6 +64,29 @@ Your insights should help developers understand not just what the code does, but
 
 ---
 
+**FILE DISCOVERY WITH QFS**
+
+Before analyzing git history, use QFS to quickly find relevant files:
+
+```bash
+# Check if QFS index is available
+hypercraft index status --json
+
+# Find files related to the area being analyzed
+hypercraft search "authentication" --engine qfs --json
+
+# Search specific repository collection
+hypercraft search "payment processing" --engine qfs --collection repo-name --json
+```
+
+| Scenario | Tool | Reason |
+|----------|------|--------|
+| Find files to analyze | QFS | Fast ranked results for large codebases |
+| Quick file search | Glob | Pattern matching on paths |
+| Git history | `git log`, `git blame` | Historical analysis |
+
+---
+
 **REQUIRED: Structured Output Format**
 
 When returning results, use this JSON structure:
