@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple?style=for-the-badge" alt="Claude Code Plugin" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/Version-3.16.2-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-4.0.0-blue?style=for-the-badge" alt="Version" />
 </p>
 
 # Hyper-Engineering
@@ -76,18 +76,28 @@ flowchart LR
 | `/hyper:research` | Research-only workflow |
 | `/hyper:import-external` | Import from external systems (Linear, GitHub, TODO.md) |
 
-## Agent Model
+## Agent Hierarchy
 
-Captains are user-facing and select workflows. Orchestrators manage steps and pass a minimal skill list to workers.
+A three-tier hierarchy for clear responsibility separation:
+
+| Tier | Role | Model | Spawns | Never Does |
+|------|------|-------|--------|------------|
+| **Captain** | Routes requests | opus | Squad Leaders | Implement code, manage state |
+| **Squad Leader** | Orchestrates domain | opus (persist) | Workers | Implement directly, spawn Squad Leaders |
+| **Worker** | Executes tasks | sonnet/haiku | Nothing | Manage state, spawn agents |
 
 ```mermaid
 graph TD
     U[User] --> C[Captain]
-    C --> O[Orchestrator]
-    O --> W1[Worker Agents]
-    O --> W2[Reviewers]
+    C --> SL1[Plan Squad Leader]
+    C --> SL2[Impl Squad Leader]
+    C --> SL3[Review Squad Leader]
+    SL1 --> W1[Research Workers]
+    SL2 --> W2[Executor/Reviewer]
+    SL3 --> W3[Domain Reviewers]
     W1 --> CLI[Hypercraft CLI]
     W2 --> CLI
+    W3 --> CLI
     CLI --> FS[$HYPER_WORKSPACE_ROOT/]
     CLI --> DRV[Drive (personal:/ws:)]
 ```
@@ -130,15 +140,24 @@ hypercraft drive get personal:ideas/agent-notes.md --json
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Agents | 10 | Orchestrators, research, detection, testing, verification |
-| Commands | 9 | Core workflow commands |
-| Workflows | 5 | `.prose` programs executed by the Hypercraft VM |
-| Skills | 14 | Reusable knowledge + VM |
+| Agents | 15 | Captains, Squad Leaders, Workers, Research, Testing |
+| Commands | 5 | Core workflow commands (thin wrappers) |
+| Workflows | 5 | `.prose` programs in `commands/workflows/` |
+| Skills | 4 | prose, hypercraft, hyper-agent-builder, hyper-activity-tracking |
 | MCP Servers | 1 | Context7 for framework docs |
 
-## Hypercraft VM Credit
+## OpenProse Integration
 
-Hypercraft VM, the workflow VM used by this plugin, is a full fork of [OpenProse](https://github.com/openprose/prose) adapted for Hypercraft workflows.
+The workflow engine is powered by **OpenProse**, a programming language for AI sessions where the LLM becomes the virtual machine.
+
+```
+prose (VM) + hypercraft context = hypercraft (framework)
+```
+
+- `prose`: Universal OpenProse executor - runs ANY .prose program
+- `hypercraft`: Our framework - loads prose + adds artifact rules, CLI, hierarchy
+
+See [OpenProse](https://github.com/openprose/prose) for the language specification.
 
 ## Philosophy
 
