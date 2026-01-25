@@ -359,7 +359,7 @@ hypercraft index add docs ./docs --patterns "**/*.md"
 hypercraft index build
 
 # Search from CLI
-hypercraft search "query" --engine qfs --mode bm25
+hypercraft find "query" --mode bm25 --json
 ```
 
 Open source: [github.com/juanbermudez/qfs](https://github.com/juanbermudez/qfs)
@@ -422,7 +422,7 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project archive --slug auth-system
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project archive --slug auth-system --unarchive
 
 # Search across all resources
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "OAuth" --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "OAuth" --json
 
 # Create Drive note
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft drive create "Research Notes" --folder "research" --json

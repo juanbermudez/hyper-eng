@@ -16,6 +16,12 @@ input verbose: "Include detailed task breakdown (default: false)"
 
 agent status-reporter:
   model: haiku
+  skills:
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "status-reporter"
+    HYPER_WORKFLOW: "hyper-status"
   prompt: """You report status of projects and tasks in the workspace.
 
 Your job:
@@ -27,7 +33,7 @@ Your job:
 Use the Hypercraft CLI for queries:
 - ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project list --json
 - ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task list --project {slug} --json
-- ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "{query}" --json
+- ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "{query}" --json
 
 Output clean, scannable reports."""
 

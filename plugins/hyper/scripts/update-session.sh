@@ -1,13 +1,13 @@
 #!/bin/bash
 # Update session workspace metadata as sidecar file
-# Creates/updates ~/.claude/projects/{path}/{session-id}.hyper.json
+# Creates/updates ~/.hyper/sessions/{session-id}.json
 # Called by track-activity.sh after Write|Edit operations
 #
 # Design rationale:
-# - Sidecar file next to session JSONL (same directory app already watches)
-# - Easy to merge into existing sessionsMetadataCollection
-# - Natural association via matching session ID
-# - No new directories to watch
+# - Centralized in HyperHome (~/.hyper/sessions/)
+# - Easy to scan for all active sessions
+# - Decoupled from Claude Code's internal structure
+# - Indexed by session ID for fast lookup
 
 set -euo pipefail
 
@@ -27,7 +27,14 @@ TRANSCRIPT_PATH="${TRANSCRIPT_PATH:-}"
 FILE_PATH="${FILE_PATH:-}"
 WORKSPACE_ROOT="${WORKSPACE_ROOT:-}"
 
-log_debug "update-session.sh called with SESSION_ID=$SESSION_ID TRANSCRIPT_PATH=$TRANSCRIPT_PATH"
+# New fields for agent tracking (set by .prose workflows)
+HYPER_AGENT_ROLE="${HYPER_AGENT_ROLE:-}"       # captain, squad-leader, worker
+HYPER_AGENT_NAME="${HYPER_AGENT_NAME:-}"       # Generated name (e.g., "Captain Zephyr")
+HYPER_RUN_ID="${HYPER_RUN_ID:-}"               # .prose run ID
+HYPER_WORKFLOW="${HYPER_WORKFLOW:-}"           # Workflow name (e.g., "hyper-plan")
+HYPER_PHASE="${HYPER_PHASE:-}"                 # Current phase (e.g., "Research")
+
+log_debug "update-session.sh called with SESSION_ID=$SESSION_ID"
 
 # Validate required inputs
 if [[ -z "$SESSION_ID" ]]; then
@@ -35,23 +42,17 @@ if [[ -z "$SESSION_ID" ]]; then
   exit 0
 fi
 
-if [[ -z "$TRANSCRIPT_PATH" ]]; then
-  log_debug "No TRANSCRIPT_PATH, exiting"
-  exit 0
-fi
+# Resolve HyperHome path
+HYPER_HOME="${HYPER_HOME:-$HOME/.hyper}"
 
-# Derive sidecar path from transcript path
-# ~/.claude/projects/{path}/{session-id}.jsonl → ~/.claude/projects/{path}/{session-id}.hyper.json
-SIDECAR_PATH="${TRANSCRIPT_PATH%.jsonl}.hyper.json"
+# Create sessions directory if it doesn't exist
+SESSIONS_DIR="$HYPER_HOME/sessions"
+mkdir -p "$SESSIONS_DIR"
+
+# Sidecar path: ~/.hyper/sessions/{session-id}.json
+SIDECAR_PATH="$SESSIONS_DIR/${SESSION_ID}.json"
 
 log_debug "Sidecar path: $SIDECAR_PATH"
-
-# Ensure parent directory exists (should already exist if transcript exists)
-SIDECAR_DIR=$(dirname "$SIDECAR_PATH")
-if [[ ! -d "$SIDECAR_DIR" ]]; then
-  log_debug "Sidecar directory doesn't exist: $SIDECAR_DIR"
-  exit 0
-fi
 
 # Determine target from file path
 determine_target() {
@@ -135,20 +136,42 @@ fi
 # Build sidecar JSON
 # Uses camelCase to match TypeScript conventions in the app
 # Note: Use proper conditional JSON values - if set, wrap in quotes; if not, use null
-PARENT_JSON="${PARENT_SESSION:+\"$PARENT_SESSION\"}"
-PARENT_JSON="${PARENT_JSON:-null}"
-WORKSPACE_JSON="${WORKSPACE_ROOT:+\"$WORKSPACE_ROOT\"}"
-WORKSPACE_JSON="${WORKSPACE_JSON:-null}"
+json_string_or_null() {
+  if [[ -n "$1" ]]; then
+    echo "\"$1\""
+  else
+    echo "null"
+  fi
+}
+
+PARENT_JSON=$(json_string_or_null "$PARENT_SESSION")
+WORKSPACE_JSON=$(json_string_or_null "$WORKSPACE_ROOT")
+TRANSCRIPT_JSON=$(json_string_or_null "$TRANSCRIPT_PATH")
+
+# New agent tracking fields
+ROLE_JSON=$(json_string_or_null "$HYPER_AGENT_ROLE")
+NAME_JSON=$(json_string_or_null "$HYPER_AGENT_NAME")
+RUN_ID_JSON=$(json_string_or_null "$HYPER_RUN_ID")
+WORKFLOW_JSON=$(json_string_or_null "$HYPER_WORKFLOW")
+PHASE_JSON=$(json_string_or_null "$HYPER_PHASE")
 
 cat > "$SIDECAR_PATH" << EOF
 {
   "sessionId": "${SESSION_ID}",
   "parentId": ${PARENT_JSON},
+  "transcriptPath": ${TRANSCRIPT_JSON},
   "workspaceRoot": ${WORKSPACE_JSON},
   "currentTarget": ${CURRENT_TARGET},
   "recentTargets": ${UPDATED_TARGETS},
   "startedAt": "${STARTED_AT}",
-  "lastActivity": "${NOW}"
+  "lastActivity": "${NOW}",
+  "agent": {
+    "role": ${ROLE_JSON},
+    "name": ${NAME_JSON},
+    "runId": ${RUN_ID_JSON},
+    "workflow": ${WORKFLOW_JSON},
+    "phase": ${PHASE_JSON}
+  }
 }
 EOF
 

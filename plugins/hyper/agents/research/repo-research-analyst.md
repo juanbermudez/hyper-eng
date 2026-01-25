@@ -123,10 +123,10 @@ Structure your findings as:
 hypercraft index status --json
 
 # If indexed, use QFS for fast BM25 search with snippets
-hypercraft search "authentication" --engine qfs --json
+hypercraft find "authentication" --json
 
 # Search specific collection
-hypercraft search "error handling" --engine qfs --collection my-repo --json
+hypercraft find "error handling" --json
 ```
 
 **Fall back to direct tools when QFS not available:**
@@ -138,7 +138,7 @@ hypercraft search "error handling" --engine qfs --collection my-repo --json
 **When to use each:**
 | Scenario | Tool | Reason |
 |----------|------|--------|
-| Find implementations | QFS (`--engine qfs`) | Ranked results, highlighted snippets |
+| Find implementations | QFS (`hypercraft find`) | Ranked results, highlighted snippets |
 | Structural patterns | `ast-grep` | Syntax-aware matching |
 | Simple grep | `rg` | Quick, no index needed |
 | File discovery | Glob/find | Pattern matching on paths |

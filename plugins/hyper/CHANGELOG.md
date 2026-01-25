@@ -5,6 +5,82 @@ All notable changes to the hyper-engineering plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-01-24
+
+### Breaking Changes
+
+**Major Plugin Refactor - Architecture Overhaul**
+
+This release implements a complete reorganization of the plugin architecture based on the hyper-engineering-plugin-review.md implementation plan.
+
+**Skill Reorganization**
+- Separated `prose` (OpenProse VM) from `hypercraft` (framework)
+- `prose` skill: Pure VM execution engine for `.prose` programs
+- `hypercraft` skill: Framework = prose + context (artifacts, CLI, hierarchy)
+- Relationship: `prose (VM) + hypercraft context = hypercraft (framework)`
+
+**Agent Hierarchy Restructure**
+- New folder structure: `agents/captains/`, `agents/squad-leaders/`, `agents/workers/`
+- Clear Captain → Squad Leader → Worker hierarchy with strict role separation
+- Captains: Route requests, summarize results, never implement
+- Squad Leaders: Orchestrate workers, update state, git ops, HITL gates
+- Workers: Execute focused tasks, report back, never manage state
+
+**Command Reorganization**
+- Moved `.prose` workflow files to `commands/workflows/` subdirectory
+- Command wrappers now reference workflows via frontmatter: `workflow: workflows/hyper-*.prose`
+- All command skills updated from "hyper" to "hypercraft"
+
+### Added
+
+**Session Tracking Environment Variables**
+- All agent definitions in `.prose` files now include env blocks
+- `HYPER_AGENT_ROLE`: captain, squad-leader, or worker
+- `HYPER_AGENT_NAME`: Unique agent identifier
+- `HYPER_WORKFLOW`: Current workflow name (hyper-plan, hyper-implement, etc.)
+- `HYPER_PHASE`: Current execution phase (for workers)
+
+**Unified Discovery Command**
+- `hypercraft find "query" --type <type> --json` for all discovery
+- Types: skill, workflow, agent, project, task
+- Single entry point replaces multiple lookup commands
+
+### Changed
+
+**Plugin Structure**
+```
+plugins/hyper/
+├── agents/
+│   ├── captains/           # User-facing orchestrators (NEW)
+│   ├── squad-leaders/      # Domain orchestrators (NEW)
+│   ├── workers/            # Task executors (NEW)
+│   ├── research/           # Specialized researchers
+│   └── testing/            # Testing agents
+├── commands/
+│   ├── plan.md, implement.md, etc.  # Command wrappers
+│   └── workflows/          # OpenProse workflow programs (NEW)
+├── skills/
+│   ├── prose/              # Pure OpenProse VM (NEW)
+│   └── hypercraft/         # Framework (includes prose) (NEW)
+```
+
+**Documentation Updates**
+- `CLAUDE.md`: Updated skill references and plugin structure
+- `README.md`: Updated agent hierarchy, component counts, OpenProse integration section
+- `docs-internal/skill-architecture.mdx`: Updated with new hierarchy model
+
+### Summary
+
+| Component | Count |
+|-----------|-------|
+| Agents | 15 |
+| Commands | 5 |
+| Workflows | 5 |
+| Skills | 4 |
+| MCP Servers | 1 |
+
+---
+
 ## [3.20.0] - 2026-01-23
 
 ### Added
@@ -24,8 +100,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `hypercraft index status` - Show index statistics
   - `hypercraft index list` - List indexed collections
   - `hypercraft index remove <name>` - Remove collection
-  - `hypercraft search --engine qfs` - Use QFS search engine
-  - `hypercraft search --mode bm25|vector|hybrid` - Select search mode
+  - `hypercraft find "query" --json` - Unified search command
+  - `hypercraft find "query" --mode bm25|vector|hybrid --json` - Select search mode
 
 ### Changed
 

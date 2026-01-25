@@ -1,17 +1,17 @@
 # Session Workspace Metadata Schema
 
-Sidecar files that extend Claude Code session transcripts with workspace context.
+Sidecar files that track Claude Code session workspace context and agent hierarchy.
 
 ## File Location
 
 ```
-~/.claude/projects/{encoded-path}/
-├── abc-123-def.jsonl        ← Claude Code transcript (existing, read-only)
-├── abc-123-def.hyper.json   ← Workspace metadata (our sidecar)
+~/.hyper/sessions/
+├── abc-123-def.json         ← Session metadata (indexed by session ID)
+├── xyz-789-ghi.json
 └── ...
 ```
 
-The sidecar file is created next to the session JSONL, using the same session ID with `.hyper.json` extension.
+Sessions are stored in a centralized `~/.hyper/sessions/` directory, indexed by session ID.
 
 ## Sidecar File Schema
 
@@ -19,6 +19,7 @@ The sidecar file is created next to the session JSONL, using the same session ID
 {
   "sessionId": "abc-123-def",
   "parentId": "xyz-789",
+  "transcriptPath": "~/.claude/projects/{encoded-path}/abc-123-def.jsonl",
   "workspaceRoot": "~/.hyper/accounts/user/hyper/workspaces/ws-123",
   "currentTarget": {
     "type": "task",
@@ -31,21 +32,53 @@ The sidecar file is created next to the session JSONL, using the same session ID
     { "type": "project", "projectSlug": "auth-system", "filePath": "..." }
   ],
   "startedAt": "2026-01-18T10:00:00Z",
-  "lastActivity": "2026-01-18T10:05:00Z"
+  "lastActivity": "2026-01-18T10:05:00Z",
+  "agent": {
+    "role": "squad-leader",
+    "name": "Captain Zephyr",
+    "runId": "plan-20260118-100000-a7b3c9",
+    "workflow": "hyper-plan",
+    "phase": "Research"
+  }
 }
 ```
 
 ## Field Definitions
 
+### Core Fields
+
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `sessionId` | string | Yes | Claude session identifier (matches JSONL filename) |
+| `sessionId` | string | Yes | Claude session identifier |
 | `parentId` | string | No | Parent session (if sub-agent) |
+| `transcriptPath` | string | No | Path to Claude Code JSONL transcript |
 | `workspaceRoot` | string | No | Resolved workspace path |
 | `currentTarget` | object | Yes | What the session is currently working on |
 | `recentTargets` | array | Yes | Last 10 targets (history, most recent first) |
 | `startedAt` | string (ISO 8601) | Yes | When session first modified workspace |
 | `lastActivity` | string (ISO 8601) | Yes | Most recent workspace file modification |
+
+### Agent Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `agent.role` | string | No | Agent role: `captain`, `squad-leader`, `worker` |
+| `agent.name` | string | No | Generated display name (e.g., "Captain Zephyr") |
+| `agent.runId` | string | No | OpenProse run ID for grouping |
+| `agent.workflow` | string | No | Workflow name (e.g., "hyper-plan") |
+| `agent.phase` | string | No | Current workflow phase (e.g., "Research") |
+
+### Environment Variables
+
+Set these when spawning agent sessions to populate the agent fields:
+
+```bash
+export HYPER_AGENT_ROLE="squad-leader"
+export HYPER_AGENT_NAME="Captain Zephyr"
+export HYPER_RUN_ID="plan-20260118-100000-a7b3c9"
+export HYPER_WORKFLOW="hyper-plan"
+export HYPER_PHASE="Research"
+```
 
 ## Target Object Types
 
@@ -102,43 +135,70 @@ The sidecar file is created next to the session JSONL, using the same session ID
 
 ## Design Rationale
 
-### Why Sidecar Files?
+### Why ~/.hyper/sessions/?
 
-1. **Integrates with existing session system** - Same directory the app already watches
-2. **Natural association** - Session ID matches JSONL filename
-3. **No new directories** - Leverages existing `~/.claude/projects/` structure
-4. **Easy to merge** - App can combine JSONL metadata with sidecar data
+1. **Centralized location** - All session metadata in one directory
+2. **Decoupled from Claude Code** - Not tied to `~/.claude/` internal structure
+3. **Easy to scan** - List all active sessions with a single directory read
+4. **Fast lookup** - Files indexed by session ID
+5. **Survives Claude Code changes** - Independent of transcript location changes
 
-### Why Not Separate Registry?
+### Why Not Next to JSONL?
 
-A separate `.sessions/` directory would:
-- Require watching a new location
-- Create divergent session tracking
-- Complicate the data model
+Storing sidecars in `~/.claude/projects/` had issues:
+- Couples to Claude Code's internal structure
+- Harder to scan all sessions across workspaces
+- Would need to watch many directories
 
-Sidecar files keep everything in one place.
+### Agent Hierarchy Tracking
+
+The `agent` object enables rich UI display:
+
+```
+Captain Zephyr (hyper-plan / Research)
+├─ Squad Leader Alpha (hyper-plan / Implementation)
+│  ├─ Worker-001 (working on task-001) ✓
+│  └─ Worker-002 (working on task-002) ...
+└─ Squad Leader Beta (waiting)
+```
 
 ## Desktop App Integration
 
-### Existing Session Watcher
+### Session Watcher
 
-The app already watches `~/.claude/projects/` for session JSONL files. It can be extended to also pick up `.hyper.json` sidecars.
+The app watches `~/.hyper/sessions/` for session sidecar files:
+
+```typescript
+// Watch for sidecar changes
+const watcher = watch('~/.hyper/sessions/', { persistent: true });
+watcher.on('change', (path) => {
+  const sessionId = basename(path, '.json');
+  refreshSessionMetadata(sessionId);
+});
+```
 
 ### Merging into Session Metadata
 
 ```typescript
-// When loading sessions, also check for sidecar
-async function loadSessionWithSidecar(jsonlPath: string): Promise<SessionWithWorkspace> {
-  const session = await parseSessionJsonl(jsonlPath);
+// Load sidecar and merge with Claude Code session
+async function loadSessionWithSidecar(sessionId: string): Promise<SessionWithWorkspace> {
+  const sidecarPath = `~/.hyper/sessions/${sessionId}.json`;
 
-  const sidecarPath = jsonlPath.replace('.jsonl', '.hyper.json');
   if (await fileExists(sidecarPath)) {
     const sidecar = await readJson(sidecarPath);
+    const session = await parseSessionJsonl(sidecar.transcriptPath);
+
     return {
       ...session,
       workspaceTarget: sidecar.currentTarget,
       recentTargets: sidecar.recentTargets,
       workspaceRoot: sidecar.workspaceRoot,
+      // Agent fields
+      agentRole: sidecar.agent?.role,
+      agentName: sidecar.agent?.name,
+      runId: sidecar.agent?.runId,
+      workflow: sidecar.agent?.workflow,
+      phase: sidecar.agent?.phase,
     };
   }
 

@@ -80,22 +80,23 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task update \
 
 Before making changes:
 
-1. **Use QFS to find relevant files quickly:**
+1. **Use unified `find` command to locate relevant files:**
    ```bash
-   # Check if QFS index is available
-   hypercraft index status --json
+   # Search across all resources
+   hypercraft find "authentication" --json
 
-   # Find similar implementations
-   hypercraft search "authentication" --engine qfs --json
+   # Search specific resource types
+   hypercraft find "handler" --type projects --json
+   hypercraft find "component" --type tasks --json
 
-   # Search specific collection
-   hypercraft search "handler" --engine qfs --collection repo-name --json
+   # Hybrid search for complex queries
+   hypercraft find "API error handling" --mode hybrid --json
    ```
 
    | Scenario | Tool | Reason |
    |----------|------|--------|
-   | Find implementations | QFS | Ranked results, highlighted snippets |
-   | Quick grep | Grep | Simple, no index needed |
+   | Find implementations | `hypercraft find` | Ranked results, highlighted snippets |
+   | Quick grep | Grep | Simple regex, no index needed |
    | File discovery | Glob | Pattern matching on paths |
 
 2. **Read all files mentioned in task description**

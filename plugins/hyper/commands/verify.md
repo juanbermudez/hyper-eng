@@ -1,13 +1,14 @@
 ---
 description: Run comprehensive automated and manual verification, creating fix tasks in $HYPER_WORKSPACE_ROOT/ for failures and looping until all checks pass
 argument-hint: "[project-slug/task-id]"
+workflow: workflows/hyper-verify.prose
 ---
 
-Use the **hyper** skill to execute the verification workflow.
+Use the **hypercraft** skill to execute the verification workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-verify.prose` with:
+Load the hypercraft skill (which includes prose VM) and execute the workflow at `workflows/hyper-verify.prose` with:
 
 ```
 input target_id: "$ARGUMENTS"

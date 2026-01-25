@@ -1,13 +1,14 @@
 ---
 description: Run comprehensive code review with domain sub-agents, producing a review artifact in project resources and optional fix tasks.
 argument-hint: "[project-slug] or [project-slug/task-id] or [task-id]"
+workflow: workflows/hyper-review.prose
 ---
 
-Use the **hyper** skill to execute the review workflow.
+Use the **hypercraft** skill to execute the review workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-review.prose` with:
+Load the hypercraft skill (which includes prose VM) and execute the workflow at `workflows/hyper-review.prose` with:
 
 ```
 input target_id: "$ARGUMENTS"
@@ -28,10 +29,10 @@ The scope analysis phase uses **QFS** for fast file discovery:
 
 ```bash
 # Find files related to feature
-hypercraft search "authentication" --engine qfs --json
+hypercraft find "authentication" --json
 
 # Search for patterns to review
-hypercraft search "error handling" --engine qfs --limit 50 --json
+hypercraft find "error handling" --limit 50 --json
 ```
 
 ## State Management

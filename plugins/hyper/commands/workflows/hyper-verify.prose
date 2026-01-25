@@ -30,11 +30,14 @@ use "blocks/verification.prose"
 agent verify-captain:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge (always loaded)
-    - hyper-verification       # Verification-specific workflows
+    - hypercraft               # Core framework (includes prose VM)
+  env:
+    HYPER_AGENT_ROLE: "squad-leader"
+    HYPER_AGENT_NAME: "verify-captain"
+    HYPER_WORKFLOW: "hyper-verify"
   prompt: """You are the Verification Captain. Your job is to run comprehensive quality gates.
 
-Verification layers (from hyper-craft):
+Verification layers (from hypercraft):
 1. **Automated checks**: lint, typecheck, test, build
 2. **Hypercraft state**: Validate framework state files
 3. **UI verification**: Browser testing via skill
@@ -45,13 +48,17 @@ Rules:
 - Document all results with specific details
 - Never mark complete if any check fails
 - Retry failed checks after fixes
-- Return results using hyper-craft output contract"""
+- Return results using hypercraft output contract"""
 
 agent ui-verifier:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge
-    - browser-testing          # Browser automation (user-configurable)
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "ui-verifier"
+    HYPER_WORKFLOW: "hyper-verify"
+    HYPER_PHASE: "UI Verification"
   prompt: """You verify UI state and behavior using browser automation.
 
 Your role:
@@ -61,7 +68,7 @@ Your role:
 4. Take screenshots as evidence
 5. Check for console errors
 
-Return verification results using hyper-craft output contract."""
+Return verification results using hypercraft output contract."""
 
 # ============================================================================
 # Phase 1: Initialize

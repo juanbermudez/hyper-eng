@@ -60,15 +60,15 @@ When searching for patterns in the local codebase:
 hypercraft index status --json
 
 # Fast BM25 search with ranked results
-hypercraft search "authentication pattern" --engine qfs --json
+hypercraft find "authentication pattern" --json
 
 # Search specific collection
-hypercraft search "error handling" --engine qfs --collection repo-name --json
+hypercraft find "error handling" --json
 ```
 
 | Scenario | Tool | Reason |
 |----------|------|--------|
-| Find implementations | QFS (`--engine qfs`) | Ranked results, highlighted snippets |
+| Find implementations | QFS (`hypercraft find`) | Ranked results, highlighted snippets |
 | Quick grep | Grep | Simple, no index needed |
 | External docs | Context7/WebFetch | Official documentation |
 

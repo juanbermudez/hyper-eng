@@ -109,11 +109,11 @@ grep -E '[A-Z]+-[0-9]+' CLAUDE.md README.md 2>/dev/null
 hypercraft index status --json
 
 # Search for task tracking patterns
-hypercraft search "linear.app" --engine qfs --json
-hypercraft search "JIRA" --engine qfs --json
+hypercraft find "linear.app" --json
+hypercraft find "JIRA" --json
 
 # Search for existing workflow configurations
-hypercraft search "TODO" --engine qfs --limit 50 --json
+hypercraft find "TODO" --limit 50 --json
 ```
 
 | Scenario | Tool | Reason |

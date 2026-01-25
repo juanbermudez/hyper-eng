@@ -1,13 +1,14 @@
 ---
-description: Create a comprehensive specification with two approval gates - first validating direction after research, then approving the full spec before task creation. Uses local $HYPER_WORKSPACE_ROOT/ directory for all artifacts.
+description: Create a comprehensive specification with two approval gates - first validating direction after research, then approving the full spec before task creation.
 argument-hint: "[feature or requirement description]"
+workflow: workflows/hyper-plan.prose
 ---
 
-Use the **hyper** skill to execute the planning workflow.
+Use the **hypercraft** skill to execute the planning workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-plan.prose` with:
+Load the hypercraft skill (includes prose VM) and execute `commands/workflows/hyper-plan.prose` with:
 
 ```
 input feature: "$ARGUMENTS"
@@ -27,7 +28,7 @@ The workflow will guide you through:
 Research agents leverage **QFS** for fast, ranked codebase searches:
 
 ```bash
-hypercraft search "pattern" --engine qfs --json
+hypercraft find "pattern" --json
 ```
 
 See `/hyper:research` for detailed search options.

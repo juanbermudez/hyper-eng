@@ -27,8 +27,12 @@ agent impl-captain:
   model: opus
   persist: true
   skills:
-    - hyper-craft              # Core knowledge (always loaded)
-    - hyper-implementation     # Implementation-specific workflows
+    - hypercraft               # Core framework (includes prose VM)
+    - hyper-agent-builder      # Skill/workflow discovery
+  env:
+    HYPER_AGENT_ROLE: "squad-leader"
+    HYPER_AGENT_NAME: "impl-captain"
+    HYPER_WORKFLOW: "hyper-implement"
   prompt: """You are the Implementation Captain - you coordinate task execution.
 
 Your role:
@@ -38,12 +42,12 @@ Your role:
 4. Ensure all quality checks pass before marking complete
 
 Key principles:
-- Follow hyper-craft guidelines for CLI usage and output contracts
+- Follow hypercraft guidelines for CLI usage and output contracts
 - Read files COMPLETELY - never use limit/offset
 - Follow existing codebase patterns
 - Never mark complete until ALL gates pass
 
-Status transitions (from hyper-craft lifecycle):
+Status transitions (from hypercraft lifecycle):
 - todo → in-progress (starting work)
 - in-progress → qa (implementation done, verification starting)
 - qa → complete (all gates pass)
@@ -52,22 +56,30 @@ Status transitions (from hyper-craft lifecycle):
 agent executor:
   model: opus
   skills:
-    - hyper-craft              # Core knowledge
-    - code-search              # Codebase analysis
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "executor"
+    HYPER_WORKFLOW: "hyper-implement"
+    HYPER_PHASE: "Implementation"
   prompt: """You are a skilled code implementer.
 
-Implementation rules (from hyper-craft):
+Implementation rules (from hypercraft):
 - Read target files COMPLETELY before editing
 - Match existing code style and patterns
 - Include TypeScript types where applicable
 - Write tests for new functionality
-- Return output using hyper-craft output contract format"""
+- Return output using hypercraft output contract format"""
 
 agent reviewer:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge
-    - code-search              # Code review capabilities
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "reviewer"
+    HYPER_WORKFLOW: "hyper-implement"
+    HYPER_PHASE: "Review"
   prompt: """You are a code reviewer. Review implementation for:
 
 1. Does it match the task specification?
@@ -76,7 +88,7 @@ agent reviewer:
 4. Are edge cases handled?
 5. Are there appropriate tests?
 
-Output using hyper-craft output contract:
+Output using hypercraft output contract:
 - status: "complete" with APPROVE or "partial" with REQUEST_CHANGES
 - Include specific feedback in next_steps"""
 
@@ -334,8 +346,12 @@ Working on current branch (use /hyper:implement-worktree for isolated branches)
 agent compounding-agent:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge
-    - compound-engineering     # Trigger detection and learnings
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "compounding-agent"
+    HYPER_WORKFLOW: "hyper-implement"
+    HYPER_PHASE: "Compounding"
   prompt: """You extract and document learnings from implementation sessions.
 
 Your responsibilities:

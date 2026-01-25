@@ -57,7 +57,7 @@ Commands:
 | Update status | `hypercraft project update x --status in-progress` | `hypercraft file write projects/x/_project.mdx --frontmatter "status=in-progress"` |
 | Read project | `hypercraft project get x --json` | `hypercraft file read projects/x/_project.mdx --json` |
 | Delete file | N/A (use file API) | `hypercraft file delete projects/x/_project.mdx --force --json` |
-| Search | `hypercraft search "query" --json` | `hypercraft file search "query" --json` |
+| Search | `hypercraft find "query" --json` | `hypercraft find "query" --type projects --json` |
 | Task operations | `hypercraft task list/get/create/update` | `hypercraft file ...` on task files |
 | Drive artifacts | `hypercraft drive list/create/show/delete` | N/A |
 | Activity tracking | `hypercraft activity add/comment` | N/A |
@@ -336,15 +336,23 @@ hypercraft file delete projects/my-feature --force --json
 
 ### Searching for Content
 
+**Use the unified `find` command for ALL discovery operations:**
+
 ```bash
-# Search by content (full text)
-hypercraft file search "authentication" --json
+# Search across all resources
+hypercraft find "authentication" --json
 
-# Search by field value
-hypercraft file search "in-progress" --field status --file-type project --json
+# Search projects only
+hypercraft find "authentication" --type projects --json
 
-# High-level search with filters
-hypercraft search "OAuth" --status in-progress --json
+# Search tasks with status filter
+hypercraft find --type tasks --status in-progress --json
+
+# Search workflows
+hypercraft find "plan" --type workflows --json
+
+# Search skills
+hypercraft find "testing" --type skills --json
 ```
 
 ### Reading Workflow Configuration
@@ -587,80 +595,78 @@ hypercraft worktree status --json
 hypercraft worktree remove my-feature --json
 ```
 
-## Search API
+## Search API (Unified `find` Command)
 
-Search across all workspace resources using simple substring or QFS BM25/vector search.
+**Use `hypercraft find` for ALL discovery operations.** It provides unified search across all resource types powered by the QFS index.
 
-### Simple Search (Default)
-
-Substring search - works without index but slower for large codebases:
+### Basic Discovery
 
 ```bash
-# Full-text search
-hypercraft search "authentication" --json
+# Search across all resources
+hypercraft find "authentication" --json
 
 # Filter by resource type
-hypercraft search "auth" --resource-type project --json
-hypercraft search "login" --resource-type task --json
+hypercraft find "auth" --type projects --json
+hypercraft find "login" --type tasks --json
+hypercraft find "plan" --type workflows --json
+hypercraft find "testing" --type skills --json
+hypercraft find "captain" --type agents --json
 
 # Filter by status
-hypercraft search "OAuth" --status in-progress --json
+hypercraft find --type projects --status in-progress --json
 
 # Filter by priority
-hypercraft search "security" --priority high --json
+hypercraft find --type tasks --priority high --json
+
+# List ALL items of a type
+hypercraft find --type tasks --all --json
+hypercraft find --type workflows --all --json
 ```
 
-### QFS Search (Recommended for Large Codebases)
-
-QFS provides fast BM25 full-text search with ranked results and highlighted snippets.
-Requires index to be built first but is much faster for repeated searches.
+### Search Modes
 
 ```bash
-# Check if index exists
-hypercraft index status --json
+# BM25 full-text search (default, fast)
+hypercraft find "authentication" --json
 
-# If no index, set up collections first
-hypercraft index add hyper-home $HYPER_WORKSPACE_ROOT --patterns "**/*.md" "**/*.mdx"
-hypercraft index add my-repo /path/to/repo --patterns "**/*.ts" "**/*.tsx" "**/*.py"
-hypercraft index build
+# Semantic/vector search
+hypercraft find "authentication patterns" --mode vector --json
 
-# QFS BM25 search (fast, ranked results with snippets)
-hypercraft search "authentication" --engine qfs --json
+# Hybrid search (best for complex queries)
+hypercraft find "how to handle OAuth errors" --mode hybrid --json
 
-# Search specific collection only
-hypercraft search "OAuth handler" --engine qfs --collection my-repo --json
-
-# Search with more results
-hypercraft search "error handling" --engine qfs --limit 50 --json
+# More results
+hypercraft find "error handling" --limit 50 --json
 ```
 
-### When to Use Each Engine
+### Resource Types
 
-| Scenario | Engine | Reason |
-|----------|--------|--------|
-| Quick one-off search | `simple` | No index needed |
-| Searching repo code | `qfs` | Fast, ranked results with snippets |
-| Repeated searches | `qfs` | Index makes subsequent searches instant |
-| Large codebases (>1000 files) | `qfs` | Simple search becomes slow |
-| Finding specific function | `qfs` | BM25 ranking finds best matches |
+| Type | What Gets Searched |
+|------|-------------------|
+| `projects` | Project MDX files (`_project.mdx`) |
+| `tasks` | Task MDX files - aggregated from ALL projects |
+| `workflows` | Workflow programs (`*.prose`) |
+| `skills` | Skill definitions (`SKILL.md`) |
+| `agents` | Agent definitions (`agents/**/*.md`) |
+| `notes` | Drive notes |
+| `all` | Everything (default) |
 
 ### QFS Index Management
 
+The `find` command is powered by the QFS index. Manage it with:
+
 ```bash
+# Check index status
+hypercraft index status --json
+
 # Add a collection (repository, workspace, etc.)
 hypercraft index add <name> <path> --patterns "**/*.ts" "**/*.tsx" --json
 
-# Build/rebuild index (required after adding collections)
+# Build/rebuild index
 hypercraft index build --json
 
-# Build specific collection only
-hypercraft index build --collection my-repo --json
-
-# List all indexed collections
+# List indexed collections
 hypercraft index list --json
-
-# Show index status and document counts
-hypercraft index status --json
 
 # Remove a collection
 hypercraft index remove <name> --force --json
@@ -668,27 +674,29 @@ hypercraft index remove <name> --force --json
 
 ### Default Collections
 
-When Hypercraft desktop app runs, it automatically creates and maintains these collections:
-- `hyper-home` - All workspace projects, tasks, and resources
-- `personal-drive` - Personal Drive artifacts
-- `repo-{id}` - Each linked repository
+When workspace initializes, these collections are auto-added:
+- `workspace-{id}` - Projects and tasks
+- `workflows` - Workflow programs
+- `skills` - Skill definitions
+- `agents` - Agent definitions
+- `drive-{account}` - Drive notes
 
-These are kept in sync automatically. For CLI-only usage, add collections manually.
+## VFS (Path Resolution)
 
-## VFS (Virtual Filesystem) API
-
-Unified access across workspace and Drive:
+VFS converts virtual paths to physical paths:
 
 ```bash
-# List files at virtual path
-hypercraft vfs list /projects --json
-
-# Resolve virtual path to physical
 hypercraft vfs resolve /projects/my-feature --json
-
-# Search across all sources
-hypercraft vfs search "authentication" --json
 ```
+
+### Virtual Paths
+
+| Virtual Path | Resolves To |
+|--------------|-------------|
+| `/projects` | `$HYPER_WORKSPACE_ROOT/projects/` |
+| `/projects/{slug}` | `$HYPER_WORKSPACE_ROOT/projects/{slug}/` |
+| `/notes` | Personal Drive directory |
+| `/settings` | Workspace settings directory |
 
 ## Configuration API
 

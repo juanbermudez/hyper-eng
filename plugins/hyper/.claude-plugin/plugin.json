@@ -1,7 +1,7 @@
 {
   "name": "hyper",
-  "description": "Spec-driven development with local HyperHome planning. 10 agents, 8 commands, 4 workflow programs, 14 skills, 2 MCP servers (includes Hypercraft VM).",
-  "version": "3.20.0",
+  "description": "Spec-driven development with local HyperHome planning. 15 agents (Captain/Squad Leader/Worker hierarchy), 5 commands, 5 workflows, 4 skills (prose + hypercraft), 1 MCP server.",
+  "version": "4.0.0",
   "author": {
     "name": "Juan Bermudez"
   },

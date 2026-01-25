@@ -125,8 +125,8 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft project list --json
 # List tasks for a project
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task list --project auth-system --json
 
-# Search across all resources
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "OAuth" --json
+# Search across all resources (unified find command)
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "OAuth" --json
 ```
 
 ## Activity Tracking
@@ -293,45 +293,47 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read projects/auth-system/_projec
 ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file read projects/auth-system/_project.mdx --frontmatter-only --json
 ```
 
-### Searching (CLI)
+### Searching (Unified `find` Command)
+
+**Use `hypercraft find` for ALL discovery operations.** It's powered by the QFS search index for fast, ranked results.
 
 ```bash
-# Simple search across workspace resources
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "OAuth" --json
+# Search across all resources
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "OAuth" --json
 
-# Search with filters
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "authentication" --resource-type project --status in-progress --json
+# Search with type filter
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "authentication" --type projects --json
 
-# File-level search
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft file search "OAuth" --json
-```
+# Search with status filter
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find --type projects --status in-progress --json
 
-### QFS Full-Text Search (Recommended for Large Codebases)
+# Search tasks across all projects
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find --type tasks --all --json
 
-**QFS** provides fast, ranked BM25 full-text search with highlighted snippets:
+# Search workflows
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "plan" --type workflows --json
 
-```bash
-# Check if QFS index is available
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft index status --json
+# Search skills
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "testing" --type skills --json
 
-# BM25 search with ranked results
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "authentication" --engine qfs --json
-
-# Search specific collection
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "pattern" --engine qfs --collection repo-name --json
+# Semantic/hybrid search for complex queries
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "error handling patterns" --mode hybrid --json
 
 # More results
-${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft search "error handling" --engine qfs --limit 50 --json
+${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft find "error handling" --limit 50 --json
 ```
 
-**When to use each:**
+**Resource types:** `projects`, `tasks`, `workflows`, `skills`, `agents`, `notes`, `all` (default)
 
-| Scenario | Tool | Reason |
-|----------|------|--------|
-| Find implementations (1000+ files) | QFS | Ranked results, fast |
-| Simple search | CLI search | No index needed |
-| Quick grep | Grep | Regex support |
-| File discovery | Glob | Pattern matching on paths |
+**Search modes:** `bm25` (default), `vector`, `hybrid`
+
+| Scenario | Command |
+|----------|---------|
+| Find projects/tasks | `hypercraft find "query" --type projects` |
+| Find workflows | `hypercraft find "plan" --type workflows` |
+| Find skills | `hypercraft find "testing" --type skills` |
+| Cross-type search | `hypercraft find "query"` (searches all) |
+| List all of type | `hypercraft find --type tasks --all` |
 
 ### Activity Tracking
 

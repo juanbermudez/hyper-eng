@@ -77,12 +77,38 @@ See [path-resolution.md](./references/path-resolution.md) for cross-platform det
 
 See [directory-structure.md](./references/directory-structure.md) for full hierarchy.
 
-### CLI Commands (Most Common)
+### CLI Commands - The Two Patterns You Need
+
+**The Hypercraft CLI is the primary interface for agents.** Never use `find`, `grep`, `ls`, `cat`.
+
+#### 1. Discovery: `hypercraft find`
 
 ```bash
-# Initialize workspace
-hypercraft init --name "My Project"
+# Find projects
+hypercraft find "auth" --type projects --json
+hypercraft find --type projects --status in-progress --json
 
+# Find tasks (aggregated from all projects)
+hypercraft find --type tasks --all --json
+hypercraft find "login" --type tasks --json
+
+# Find workflows
+hypercraft find "plan" --type workflows --json
+hypercraft find --type workflows --all --json
+
+# Find skills
+hypercraft find "testing" --type skills --json
+
+# Find agents
+hypercraft find "captain" --type agents --json
+
+# Cross-type semantic search
+hypercraft find "authentication flow" --mode hybrid --json
+```
+
+#### 2. Operations: `hypercraft <resource> <action>`
+
+```bash
 # Projects
 hypercraft project create --slug "auth" --title "Authentication" --priority high --json
 hypercraft project update auth --status in-progress
@@ -91,33 +117,27 @@ hypercraft project get auth --json
 # Tasks
 hypercraft task create --project auth --title "Phase 1" --priority high --json
 hypercraft task update au-001 --status in-progress
-hypercraft task list --project auth --json
 
-# Search (simple)
-hypercraft search "OAuth" --json
+# Files (for workflows, skills, agents)
+hypercraft file read commands/workflows/hyper-plan.prose --json
+hypercraft file write commands/workflows/hyper-debug.prose --body "..." --json
 
-# Search (QFS - fast BM25 ranking for large codebases)
-hypercraft search "authentication" --engine qfs --json
-hypercraft search "pattern" --engine qfs --collection repo-name --json
-
-# QFS Index management
-hypercraft index status --json
-hypercraft index build
+# Drive notes
+hypercraft drive create "Research Notes" --json
+hypercraft drive show <id> --json
 ```
 
 See [cli-reference.md](./references/cli-reference.md) for complete CLI documentation.
 
 ### CLI Capability Discovery
 
-When you need to discover available actions or configuration, prefer the CLI:
-
 ```bash
 hypercraft help
 hypercraft <command> --help
 hypercraft config list --json
 hypercraft settings workflow list --json
-hypercraft vfs list / --json
-hypercraft drive list --json
+hypercraft index status --json        # Check what's indexed
+hypercraft vfs resolve /projects --json  # Path resolution
 ```
 
 ### Status Transitions

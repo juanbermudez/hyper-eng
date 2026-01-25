@@ -120,15 +120,15 @@ When researching frameworks, always start with official documentation websites:
    hypercraft index status --json
 
    # Fast BM25 search with ranked results
-   hypercraft search "authentication middleware" --engine qfs --json
+   hypercraft find "authentication middleware" --json
 
    # Search specific collection
-   hypercraft search "API handler" --engine qfs --collection repo-name --json
+   hypercraft find "API handler" --json
    ```
 
    | Scenario | Tool | Reason |
    |----------|------|--------|
-   | Find implementations | QFS (`--engine qfs`) | Ranked results, highlighted snippets |
+   | Find implementations | QFS (`hypercraft find`) | Ranked results, highlighted snippets |
    | Quick grep | Grep | Simple, no index needed |
    | External docs | Context7/WebFetch | Official documentation |
 

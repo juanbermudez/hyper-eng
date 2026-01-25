@@ -38,29 +38,34 @@ This skill coordinates 4 specialized research agents:
 
 ## Search Strategy
 
-Research agents use **QFS (Quick File Search)** for fast, ranked codebase searches:
+Research agents use the unified **`hypercraft find`** command for fast, ranked codebase searches (powered by QFS):
 
 ```bash
-# Check if QFS index is available
-hypercraft index status --json
+# Search across all resources
+hypercraft find "authentication" --json
 
-# BM25 search with ranked results and snippets
-hypercraft search "authentication" --engine qfs --json
+# Search specific resource types
+hypercraft find "pattern" --type projects --json
+hypercraft find "handler" --type tasks --json
 
-# Search specific collection
-hypercraft search "pattern" --engine qfs --collection repo-name --json
+# Search workflows and skills
+hypercraft find "plan" --type workflows --json
+hypercraft find "testing" --type skills --json
+
+# Hybrid search for complex queries
+hypercraft find "error handling patterns" --mode hybrid --json
 
 # More results
-hypercraft search "error handling" --engine qfs --limit 50 --json
+hypercraft find "error handling" --limit 50 --json
 ```
 
 **When to use each tool:**
 
 | Scenario | Tool | Reason |
 |----------|------|--------|
-| Find implementations | QFS (`--engine qfs`) | Ranked results, highlighted snippets |
+| Find implementations | `hypercraft find` | Ranked results, highlighted snippets |
 | Structural patterns | `ast-grep` | Syntax-aware matching |
-| Quick grep | Grep | Simple, no index needed |
+| Quick grep | Grep | Simple regex, no index needed |
 | File discovery | Glob | Pattern matching on paths |
 | External docs | Context7 | Official documentation |
 

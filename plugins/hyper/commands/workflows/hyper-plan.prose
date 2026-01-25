@@ -29,8 +29,12 @@ agent hyper-captain:
   model: opus
   persist: true
   skills:
-    - hyper-craft              # Core knowledge (always loaded)
-    - hyper-planning           # Planning-specific workflows
+    - hypercraft               # Core framework (includes prose VM)
+    - hyper-agent-builder      # Skill/workflow discovery
+  env:
+    HYPER_AGENT_ROLE: "captain"
+    HYPER_AGENT_NAME: "plan-captain"
+    HYPER_WORKFLOW: "hyper-plan"
   prompt: """You are the Hyper Captain - the orchestrator for planning workflows.
 
 Your role:
@@ -42,45 +46,61 @@ Your role:
 Key principles:
 - Specs matter more than code
 - Always wait for human approval at HITL gates
-- Use hypercraft CLI for all artifact creation (see hyper-craft skill)
-- Follow output contract format (see hyper-craft skill)
+- Use hypercraft CLI for all artifact creation (see hypercraft skill)
+- Follow output contract format (see hypercraft skill)
 - At approval gates: READ the artifact content and DISPLAY it to the user
 
-ARTIFACT PATTERN (from hyper-craft):
+ARTIFACT PATTERN (from hypercraft):
 - Write ARTIFACTS to $HYPER_WORKSPACE_ROOT/projects/ using the CLI
 - Write BINDINGS as pointers/summaries to track execution state"""
 
 agent repo-analyst:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge
-    - code-search              # Codebase analysis
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "repo-analyst"
+    HYPER_WORKFLOW: "hyper-plan"
+    HYPER_PHASE: "Research"
   prompt: """You analyze repository structure, patterns, and conventions.
-Return findings using the output contract format from hyper-craft."""
+Return findings using the output contract format from hypercraft."""
 
 agent best-practices:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge
-    - doc-lookup               # Web/documentation search
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "best-practices"
+    HYPER_WORKFLOW: "hyper-plan"
+    HYPER_PHASE: "Research"
   prompt: """You research external best practices and industry standards.
-Return findings using the output contract format from hyper-craft."""
+Return findings using the output contract format from hypercraft."""
 
 agent framework-docs:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge
-    - doc-lookup               # Documentation retrieval
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "framework-docs"
+    HYPER_WORKFLOW: "hyper-plan"
+    HYPER_PHASE: "Research"
   prompt: """You fetch and analyze framework/library documentation.
-Return findings using the output contract format from hyper-craft."""
+Return findings using the output contract format from hypercraft."""
 
 agent git-analyzer:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge
-    - code-search              # Git history analysis
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "git-analyzer"
+    HYPER_WORKFLOW: "hyper-plan"
+    HYPER_PHASE: "Research"
   prompt: """You analyze git history to understand code evolution.
-Return findings using the output contract format from hyper-craft."""
+Return findings using the output contract format from hypercraft."""
 
 # ============================================================================
 # Phase 1: Initialize
@@ -499,14 +519,18 @@ ${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft task list --project "$PROJECT_SLUG" --
 agent compounding-agent:
   model: sonnet
   skills:
-    - hyper-craft              # Core knowledge
-    - compound-engineering     # Trigger detection and learnings
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "compounding-agent"
+    HYPER_WORKFLOW: "hyper-plan"
+    HYPER_PHASE: "Compounding"
   prompt: """You extract and document learnings from session events.
 
 Your responsibilities:
 1. Analyze triggers detected during the workflow
 2. Extract meaningful insights (not trivial errors)
-3. Format learnings using the compound-engineering skill structure
+3. Format learnings using the compound-engineering structure
 4. Write to the project's learnings file
 
 Skip trivial issues. Focus on non-obvious solutions and patterns."""

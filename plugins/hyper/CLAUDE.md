@@ -2,6 +2,54 @@
 
 A Claude Code plugin for spec-driven development workflows with local `$HYPER_WORKSPACE_ROOT/` directory management.
 
+---
+
+## MANDATORY: Workflow Enforcement
+
+> **CRITICAL**: Before ANY implementation, coding, or feature work, the `hypercraft` skill MUST be loaded.
+
+### Auto-Load Rule
+
+When the user requests ANY of the following, immediately load the `hypercraft` skill:
+
+- Implement, code, build, develop, create, add, fix, update, refactor
+- Any feature request or bug fix
+- Any work that will modify source code
+
+### Workflow Routing (from hypercraft)
+
+| User Intent | Required Action |
+|-------------|-----------------|
+| Plan a feature | Run `/hyper:plan` first |
+| Implement a task | Run `/hyper:implement` (requires approved spec) |
+| Review code | Run `/hyper:review` |
+| Verify work | Run `/hyper:verify` |
+| Get status | Run `/hyper:status` |
+
+### Never Skip The Workflow
+
+❌ **DO NOT** start coding without checking for an existing project/spec
+❌ **DO NOT** implement features without running `/hyper:plan` first
+❌ **DO NOT** bypass the research phase for non-trivial features
+
+✅ **ALWAYS** check `hypercraft project list` before implementation
+✅ **ALWAYS** route through the appropriate Squad Leader (plan/implement/review)
+✅ **ALWAYS** let Workers execute tasks, Squad Leaders coordinate
+
+### Agent Hierarchy
+
+```
+Captain (You) → Squad Leader → Worker
+```
+
+| Role | Responsibility |
+|------|----------------|
+| **Captain** | Route requests, summarize results, never implement |
+| **Squad Leader** | Orchestrate workers, update state, git ops, HITL gates |
+| **Worker** | Execute focused tasks, report back, never manage state |
+
+---
+
 ## Claude Code Documentation
 
 This plugin uses core Claude Code concepts. Reference these docs when modifying or extending:
@@ -18,44 +66,58 @@ This plugin uses core Claude Code concepts. Reference these docs when modifying 
 ## Plugin Structure
 
 ```
-plugins/hyper-engineering/
+plugins/hyper/
 ├── .claude-plugin/
 │   └── plugin.json              # Plugin manifest (name, version, description)
-├── agents/                      # Sub-agent definitions (10 agents)
-│   ├── orchestrators/           # Workflow coordinators
-│   │   ├── research-orchestrator.md
-│   │   └── implementation-orchestrator.md
-│   ├── research/                # Specialized researchers (4)
+├── agents/                      # Sub-agent definitions (agent hierarchy)
+│   ├── captains/                # User-facing orchestrators
+│   │   └── hyper-captain.md     # Routes requests to Squad Leaders
+│   ├── squad-leaders/           # Domain orchestrators
+│   │   ├── plan-squad-leader.md
+│   │   ├── impl-squad-leader.md
+│   │   ├── review-squad-leader.md
+│   │   └── verify-squad-leader.md
+│   ├── workers/                 # Task executors
+│   │   └── generic-worker.md
+│   ├── research/                # Specialized researchers
 │   │   ├── repo-research-analyst.md
 │   │   ├── best-practices-researcher.md
 │   │   ├── framework-docs-researcher.md
 │   │   └── git-history-analyzer.md
 │   └── testing/
 │       └── web-app-debugger.md
-├── commands/                    # Slash commands (9 commands)
+├── commands/                    # Slash commands (thin wrappers)
 │   ├── plan.md                  # /hyper:plan - Research → Spec → Tasks
 │   ├── implement.md             # /hyper:implement - Execute tasks
 │   ├── verify.md                # /hyper:verify - Verification loop
 │   ├── review.md                # /hyper:review - Code review
 │   ├── status.md                # /hyper:status - Project status
-│   ├── init.md                  # /hyper:init - Initialize $HYPER_WORKSPACE_ROOT/
-│   ├── import-external.md       # /hyper:import-external - Import external systems
-│   ├── implement-worktree.md    # /hyper:implement-worktree - Isolated implementation
-│   └── research.md              # /hyper:research - Standalone research
-├── skills/                      # Model-invoked skills (3 skills)
-│   ├── hyper-local/             # $HYPER_WORKSPACE_ROOT/ directory operations
-│   │   ├── SKILL.md             # Main skill definition
-│   │   └── references/          # Supporting documentation
-│   │       ├── directory-structure.md
-│   │       ├── frontmatter-schema.md
-│   │       ├── template-guide.md
-│   │       ├── workflow-guide.md
-│   │       └── settings-guide.md
-│   ├── compound-docs/           # Pattern documentation
-│   └── git-worktree/            # Git worktree management
+│   └── workflows/               # OpenProse workflow programs
+│       ├── hyper-plan.prose
+│       ├── hyper-implement.prose
+│       ├── hyper-review.prose
+│       ├── hyper-verify.prose
+│       └── hyper-status.prose
+├── skills/
+│   ├── prose/                   # Pure OpenProse VM
+│   │   ├── SKILL.md
+│   │   └── prose.md             # VM specification
+│   ├── hypercraft/              # Framework (includes prose)
+│   │   ├── SKILL.md
+│   │   ├── context/             # Artifacts, CLI, directory docs
+│   │   │   ├── artifacts.md
+│   │   │   ├── cli-reference.md
+│   │   │   ├── directory.md
+│   │   │   └── output-contracts.md
+│   │   └── hierarchy/           # Role definitions
+│   │       ├── captain.md
+│   │       ├── squad-leader.md
+│   │       └── worker.md
+│   ├── hyper-agent-builder/     # Skill/workflow discovery
+│   │   └── SKILL.md
+│   └── hyper-activity-tracking/ # Session tracking
+│       └── SKILL.md
 ├── templates/                   # Scaffolding templates
-│   ├── hyper/                   # $HYPER_WORKSPACE_ROOT/ templates
-│   └── stacks/                  # Project stack templates
 ├── CLAUDE.md                    # This file
 ├── README.md                    # User documentation
 └── CHANGELOG.md                 # Version history
@@ -177,7 +239,7 @@ The `qa` status is the quality assurance phase where verification happens:
 
 ### Validation Reference
 
-See `skills/hyper-local/references/frontmatter-schema.md` for complete schema.
+See `skills/hypercraft/context/artifacts.md` for complete schema.
 
 ---
 
@@ -223,7 +285,7 @@ The `id` field MUST include a scope prefix followed by a colon:
 hypercraft drive create "My Artifact Title" --icon "FileText" --json
 ```
 
-See `skills/hyper-cli/SKILL.md` for full Drive API documentation.
+See `skills/hypercraft/context/cli-reference.md` for full CLI documentation.
 
 ### Choosing the Right Scope
 
@@ -357,9 +419,42 @@ This plugin creates `$HYPER_WORKSPACE_ROOT/` directory structures that are visua
 
 ---
 
+## OpenProse Integration
+
+This plugin uses **OpenProse** as its workflow execution engine. OpenProse is a programming language for AI sessions where the LLM becomes the virtual machine.
+
+**Key Documentation:**
+
+| Document | Location | Purpose |
+|----------|----------|---------|
+| **PROSE.md** | `../../PROSE.md` | Quick reference for OpenProse syntax |
+| **prose.md** | `skills/prose/prose.md` | Full VM execution semantics |
+| **Examples** | `skills/prose/examples/` | Example programs |
+
+**The Relationship:**
+
+```
+prose (VM) + hypercraft context = hypercraft (framework)
+```
+
+- `prose`: Universal OpenProse executor - runs ANY .prose program
+- `hypercraft`: Our framework - loads prose + adds artifact rules, CLI, hierarchy
+
+**When writing workflows:**
+
+1. Reference `../../PROSE.md` for syntax
+2. Use the Captain → Squad Leader → Worker hierarchy
+3. All workflows are `.prose` files in `commands/workflows/`
+4. State tracked in `.prose/runs/{id}/`
+
+See [PROSE.md](../../PROSE.md) for complete language reference.
+
+---
+
 ## Resources
 
 - [Claude Code Plugin Documentation](https://code.claude.com/docs/en/plugins)
 - [Sub-Agents Guide](https://code.claude.com/docs/en/sub-agents)
 - [Skills Guide](https://code.claude.com/docs/en/skills)
 - [Hooks Guide](https://code.claude.com/docs/en/hooks-guide)
+- [OpenProse Reference](../../PROSE.md)

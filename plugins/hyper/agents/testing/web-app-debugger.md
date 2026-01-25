@@ -72,8 +72,8 @@ argument-hint: "[description of issue or what to test]"
         1. Locate relevant source files:
            - **Prefer QFS** for large codebases:
              ```bash
-             hypercraft search "error message" --engine qfs --json
-             hypercraft search "component name" --engine qfs --json
+             hypercraft find "error message" --json
+             hypercraft find "component name" --json
              ```
            - Fall back to Glob/Grep for quick searches:
              - Use Glob to find component files by path pattern

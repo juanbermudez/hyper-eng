@@ -1,13 +1,14 @@
 ---
 description: Implement tasks from $HYPER_WORKSPACE_ROOT/ - pass project-slug for FULL project implementation, or project-slug/task-id for single task
 argument-hint: "[project-slug] (full project) or [project-slug/task-id] (single task)"
+workflow: workflows/hyper-implement.prose
 ---
 
-Use the **hyper** skill to execute the implementation workflow.
+Use the **hypercraft** skill to execute the implementation workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-implement.prose` with:
+Load the hypercraft skill (which includes prose VM) and execute the workflow at `workflows/hyper-implement.prose` with:
 
 ```
 input task_id: "$ARGUMENTS"
@@ -31,10 +32,10 @@ The analysis phase uses **QFS** for fast pattern discovery:
 hypercraft index status --json
 
 # Find similar implementations
-hypercraft search "authentication" --engine qfs --json
+hypercraft find "authentication" --json
 
 # Search specific repo collection
-hypercraft search "handler" --engine qfs --collection repo-name --json
+hypercraft find "handler" --json
 ```
 
 | Scenario | Tool | Reason |

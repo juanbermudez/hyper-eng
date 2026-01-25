@@ -40,10 +40,10 @@ Research agents use **QFS (Quick File Search)** for fast, ranked codebase search
 hypercraft index status --json
 
 # BM25 search with ranked results and snippets
-hypercraft search "authentication" --engine qfs --json
+hypercraft find "authentication" --json
 
 # Search specific collection
-hypercraft search "pattern" --engine qfs --collection repo-name --json
+hypercraft find "pattern" --json
 ```
 
 | Scenario | Tool | Reason |

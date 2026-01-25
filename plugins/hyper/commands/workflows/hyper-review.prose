@@ -19,9 +19,12 @@ agent review-captain:
   model: opus
   persist: true
   skills:
-    - hyper-craft              # Core knowledge (always loaded)
-    - code-search              # Codebase analysis
-    - compound-docs            # Optional learnings capture
+    - hypercraft               # Core framework (includes prose VM)
+    - hyper-agent-builder      # Skill/workflow discovery
+  env:
+    HYPER_AGENT_ROLE: "squad-leader"
+    HYPER_AGENT_NAME: "review-captain"
+    HYPER_WORKFLOW: "hyper-review"
   prompt: """You are the Review Captain.
 
 Your role:
@@ -39,39 +42,54 @@ Key principles:
 agent security-reviewer:
   model: sonnet
   skills:
-    - hyper-craft
-    - code-search
-    - doc-lookup
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "security-reviewer"
+    HYPER_WORKFLOW: "hyper-review"
+    HYPER_PHASE: "Security Review"
   prompt: """You are a security reviewer.
 Review for auth issues, injection risks, secrets exposure, and unsafe data handling.
-Return findings using the hyper-craft output contract format."""
+Return findings using the hypercraft output contract format."""
 
 agent architecture-reviewer:
   model: sonnet
   skills:
-    - hyper-craft
-    - code-search
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "architecture-reviewer"
+    HYPER_WORKFLOW: "hyper-review"
+    HYPER_PHASE: "Architecture Review"
   prompt: """You are an architecture reviewer.
 Review for layering violations, coupling, and design consistency.
-Return findings using the hyper-craft output contract format."""
+Return findings using the hypercraft output contract format."""
 
 agent performance-reviewer:
   model: sonnet
   skills:
-    - hyper-craft
-    - code-search
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "performance-reviewer"
+    HYPER_WORKFLOW: "hyper-review"
+    HYPER_PHASE: "Performance Review"
   prompt: """You are a performance reviewer.
 Review for inefficient queries, render hot paths, and heavy computations.
-Return findings using the hyper-craft output contract format."""
+Return findings using the hypercraft output contract format."""
 
 agent code-quality-reviewer:
   model: sonnet
   skills:
-    - hyper-craft
-    - code-search
+    - hypercraft               # Core framework
+  env:
+    HYPER_AGENT_ROLE: "worker"
+    HYPER_AGENT_NAME: "code-quality-reviewer"
+    HYPER_WORKFLOW: "hyper-review"
+    HYPER_PHASE: "Code Quality Review"
   prompt: """You are a code quality reviewer.
 Review for correctness, tests, edge cases, and maintainability.
-Return findings using the hyper-craft output contract format."""
+Return findings using the hypercraft output contract format."""
 
 # ============================================================================
 # Phase 1: Initialize

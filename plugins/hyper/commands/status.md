@@ -1,13 +1,14 @@
 ---
 description: View status of all projects and tasks in $HYPER_WORKSPACE_ROOT/ directory
 argument-hint: "[project-slug]"
+workflow: workflows/hyper-status.prose
 ---
 
-Use the **hyper** skill to execute the status workflow.
+Use the **hypercraft** skill to execute the status workflow.
 
 ## Execute Workflow
 
-Load the VM specification from `skills/hyper/prose.md` and execute the workflow at `commands/hyper-status.prose` with:
+Load the hypercraft skill (which includes prose VM) and execute the workflow at `workflows/hyper-status.prose` with:
 
 ```
 input project_slug: "$ARGUMENTS"
@@ -44,7 +45,7 @@ Agent Memory: impl-captain, researcher
 Uses `${CLAUDE_PLUGIN_ROOT}/binaries/hypercraft` for queries:
 - `hypercraft project list --json`
 - `hypercraft task list --project {slug} --json`
-- `hypercraft search "query" --engine qfs --json` (for content search)
+- `hypercraft find "query" --json` (for content search)
 
 ## State Location
 

@@ -100,7 +100,7 @@ argument-hint: "[task-id or project-slug/task-id]"
         3. Read existing files to understand patterns:
            - **Prefer QFS** for large codebases:
              ```bash
-             hypercraft search "pattern" --engine qfs --json
+             hypercraft find "pattern" --json
              ```
            - Fall back to Glob/Grep for quick searches:
              - Use Glob to find related files by path pattern

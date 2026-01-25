@@ -68,8 +68,7 @@ argument-hint: "[feature or problem to research] [project-slug]"
         ```
 
         If indexed, pass QFS search capability to research agents:
-        - BM25 ranked search: `hypercraft search "query" --engine qfs --json`
-        - Collection-specific: `hypercraft search "query" --engine qfs --collection repo-name --json`
+        - BM25 ranked search: `hypercraft find "query" --json`
         - Faster than Glob/Grep for large codebases (1000+ files)
 
         **1. Repo Research Analyst** (always spawn)

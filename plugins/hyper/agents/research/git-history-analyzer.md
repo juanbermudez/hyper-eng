@@ -73,10 +73,10 @@ Before analyzing git history, use QFS to quickly find relevant files:
 hypercraft index status --json
 
 # Find files related to the area being analyzed
-hypercraft search "authentication" --engine qfs --json
+hypercraft find "authentication" --json
 
 # Search specific repository collection
-hypercraft search "payment processing" --engine qfs --collection repo-name --json
+hypercraft find "payment processing" --json
 ```
 
 | Scenario | Tool | Reason |
